@@ -1,9 +1,9 @@
 # 1942 DarkRP
 ## Scope
 - Just like the 2016 - 2019 era of 1942RP but just... better
--- A passion project to bring back what the POG community once hosted
--- Changed our way since [we do things a bit different here](https://www.youtube.com/shorts/R7y_SUMpfUY).
--- Expect soon a Trello page to follow along with and a suggestion box.
+  -- A passion project to bring back what the POG community once hosted
+  -- Changed our way since [we do things a bit different here](https://www.youtube.com/shorts/R7y_SUMpfUY).
+  -- Expect soon a Trello page to follow along with and a suggestion box.
 
 # Technicals and credit
 This modification of DarkRPModifications is for DarkRP 2.5.0 and above.
