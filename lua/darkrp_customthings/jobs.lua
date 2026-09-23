@@ -217,6 +217,21 @@ TEAM_BAKER = job{
     category = "Civilians",
 }
 
+--[[---------------------------------------------------------------------------
+Team joining players spawn into, and the team you get demoted to
+---------------------------------------------------------------------------]]
+GAMEMODE.DefaultTeam = TEAM_CIVILIAN
+
+--[[---------------------------------------------------------------------------
+Civil Protection = every Reich job unless it sets arrests = false.
+Gives warrants, wanted, arrest and the other police powers.
+---------------------------------------------------------------------------]]
+GAMEMODE.CivilProtection = {}
+for teamNr, jobTbl in pairs(RPExtraTeams) do
+    if jobTbl.faction == "reich" and jobTbl.arrests ~= false then
+        GAMEMODE.CivilProtection[teamNr] = true
+    end
+end
 --[[===========================================================================
 RESISTANCE (incl. black-market dealers)
 ===========================================================================]]
@@ -801,20 +816,5 @@ TEAM_FUHRER = job(whitelisted{
     category = "Reich Command",
 })
 
---[[---------------------------------------------------------------------------
-Team joining players spawn into, and the team you get demoted to
----------------------------------------------------------------------------]]
-GAMEMODE.DefaultTeam = TEAM_CIVILIAN
-
---[[---------------------------------------------------------------------------
-Civil Protection = every Reich job unless it sets arrests = false.
-Gives warrants, wanted, arrest and the other police powers.
----------------------------------------------------------------------------]]
-GAMEMODE.CivilProtection = {}
-for teamNr, jobTbl in pairs(RPExtraTeams) do
-    if jobTbl.faction == "reich" and jobTbl.arrests ~= false then
-        GAMEMODE.CivilProtection[teamNr] = true
-    end
-end
 
 -- No hitman teams in 1942 (hitmenu is disabled in disabled_defaults.lua)
