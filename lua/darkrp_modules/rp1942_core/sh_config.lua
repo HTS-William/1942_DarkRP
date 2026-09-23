@@ -35,6 +35,24 @@ C.Whitelist = {
 }
 
 --[[---------------------------------------------------------------------------
+Branches and enlistment
+Jobs with `requires = { branch = "..." }` can only be taken by someone who is
+CURRENTLY serving in that branch. `entry` is the job command you enlist
+through; it is only used to tell players where to start.
+---------------------------------------------------------------------------]]
+C.Branches = {
+    wehrmacht = { name = "the Wehrmacht",     entry = "wehrrecruit" },
+    waffen_ss = { name = "the Waffen-SS",     entry = "wssrecruit" },
+    ss        = { name = "the Schutzstaffel", entry = "ssrecruit" },
+}
+
+C.FactionNames = {
+    reich      = "the Reich",
+    resistance = "the Resistance",
+    civilian   = "civilian life",
+}
+
+--[[---------------------------------------------------------------------------
 Faction balance
 A faction may hold at most: floor + perOpponent * (players in opponent faction).
 Example with the values below and 3 resistance online: Reich cap = 6 + 2*3 = 12.
@@ -108,6 +126,7 @@ RP1942.Models = {
     dealer       = { "models/player/eli.mdl" },
     wehrmacht    = { "models/player/combine_soldier.mdl" },
     waffen_ss    = { "models/player/combine_soldier_prisonguard.mdl" },
+    ss           = { "models/player/police.mdl" },
     officer      = { "models/player/combine_super_soldier.mdl" },
     scientist    = { "models/player/magnusson.mdl" },
     fuhrer       = { "models/player/breen.mdl" },
