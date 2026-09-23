@@ -81,9 +81,6 @@ TEAM_CIVILIAN = job{
     sortOrder = 1,
 }
 
---[[---------------------------------------------------------------------------
-Commercial
----------------------------------------------------------------------------]]
 TEAM_DESIGNER = job{
     name = "Designer",
     color = Color(150, 110, 70),
@@ -95,7 +92,7 @@ TEAM_DESIGNER = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Commercial",
+    category = "Civilians",
 }
 
 TEAM_DOCTOR = job{
@@ -110,7 +107,7 @@ TEAM_DOCTOR = job{
     admin = 0,
     medic = true,
     faction = "civilian",
-    category = "Commercial",
+    category = "Civilians",
 }
 
 TEAM_BANKER = job{
@@ -124,12 +121,9 @@ TEAM_BANKER = job{
     salary = SAL * 1.3,
     admin = 0,
     faction = "civilian",
-    category = "Commercial",
+    category = "Civilians",
 }
 
---[[---------------------------------------------------------------------------
-Industry (producing)
----------------------------------------------------------------------------]]
 TEAM_PETROLEUM = job{
     name = "Petroleum Producer",
     color = Color(60, 60, 60),
@@ -141,7 +135,7 @@ TEAM_PETROLEUM = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Industry",
+    category = "Civilians",
 }
 
 TEAM_WINEMAKER = job{
@@ -155,7 +149,7 @@ TEAM_WINEMAKER = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Industry",
+    category = "Civilians",
 }
 
 TEAM_FACTORY = job{
@@ -170,7 +164,7 @@ Production halts twice per cycle and must be restarted by hand.]],
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Industry",
+    category = "Civilians",
 }
 
 TEAM_PHARMACIST = job{
@@ -184,7 +178,7 @@ TEAM_PHARMACIST = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Industry",
+    category = "Civilians",
 }
 
 TEAM_BAKER = job{
@@ -198,11 +192,11 @@ TEAM_BAKER = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Industry",
+    category = "Civilians",
 }
 
 --[[===========================================================================
-DEALERS  (civilian faction: a trade, not a side)
+RESISTANCE
 ===========================================================================]]
 TEAM_BLACKMARKET = job{
     name = "Black Market Dealer",
@@ -215,7 +209,7 @@ TEAM_BLACKMARKET = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Dealers",
+    category = "Resistance",
 }
 
 TEAM_RUSTUNG = job{
@@ -229,7 +223,7 @@ TEAM_RUSTUNG = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Dealers",
+    category = "Resistance",
 }
 
 TEAM_CHERKESOV = job(vip{
@@ -243,7 +237,7 @@ TEAM_CHERKESOV = job(vip{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Dealers",
+    category = "Resistance",
 })
 
 TEAM_SUPPLIER = job{
@@ -257,12 +251,10 @@ TEAM_SUPPLIER = job{
     salary = SAL,
     admin = 0,
     faction = "reich",
-    category = "Dealers",
+    category = "Resistance",
 }
 
---[[===========================================================================
-RESISTANCE
-===========================================================================]]
+
 TEAM_THIEF = job{
     name = "Thief",
     color = Color(90, 40, 40),
