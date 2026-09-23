@@ -26,7 +26,7 @@ function ENT:Draw()
 		if self:GetCooldown_Time() <= 0 then
 			draw.DrawText( "Dumpster", "tupac_dumpsters_font_150", 0, -400, color_white, 1 )
 			draw.DrawText( "Press E to USE", "tupac_dumpsters_font_80", 0, -280, color_white, 1 )
-			draw.DrawText( "Job restricted.", "tupac_dumpsters_font_65", 0, -200, color_white, 1 )
+			draw.DrawText( "Hobos find better loot.", "tupac_dumpsters_font_65", 0, -200, color_white, 1 )
 		elseif self:GetCooldown_Time() > 0 then
 			draw.DrawText( "Cooldown:", "tupac_dumpsters_font_65", 0, -400, color_white, 1 )
 			draw.DrawText( string.FormattedTime( self:GetCooldown_Time(), "%01i:%02i"), "tupac_dumpsters_font_150", 0, -300, color_white, 1 )
