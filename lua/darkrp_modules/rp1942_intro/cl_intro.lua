@@ -22,7 +22,7 @@ local card = {
     lines = {
         { style = "title",    text = "1942" },
         { style = "subtitle", text = "Autumn. The third year of the occupation." },
-        { style = "body",     text = "Keep your papers in order. Curfew is enforced." },
+        { style = "body",     text = "'Stettin, Polen' - Szczecin, Poland" },
     },
     color   = Color(230, 224, 208),   -- off-white, like old print
     spacing = 0.02,                   -- gap between lines, fraction of screen height
@@ -43,7 +43,7 @@ TIMING (seconds from when the player finishes loading)
 local cfg = {
     cardDelay    = 0.6,   -- black before the card appears
     cardFadeIn   = 1.2,
-    cardHold     = 3.5,
+    cardHold     = 4.0,
     cardFadeOut  = 1.2,
     blackFade    = 3.0,   -- world fades in after the card is gone
     vignetteTime = 12.0,  -- vignette eases out, starting with the world fade
