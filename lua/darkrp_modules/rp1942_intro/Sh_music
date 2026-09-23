@@ -1,0 +1,19 @@
+--[[---------------------------------------------------------------------------
+1942 DarkRP - intro music settings (shared)
+
+Shared so the server (which sends the file to players) and the client (which
+plays it) agree on the same path.
+
+Put the file in the addon at:
+    addons/1942_darkrp/sound/rp1942/intro.ogg
+.ogg or .mp3 both work; .ogg is usually smaller for the same quality.
+---------------------------------------------------------------------------]]
+RP1942 = RP1942 or {}
+
+RP1942.IntroMusic = {
+    path      = "sound/rp1942/intro.ogg",  -- relative to the game folder; must start with sound/
+    volume    = 0.6,    -- 0-1, before the player's own volume settings
+    fadeIn    = 2.0,    -- seconds
+    fadeOut   = 4.0,    -- seconds
+    fadeOutAt = nil,    -- seconds after the intro starts; nil = end with the intro
+}
