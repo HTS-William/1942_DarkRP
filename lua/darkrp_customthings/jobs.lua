@@ -623,3 +623,4 @@ end
     Schutzstaffel jobs missing
         Should be akin to Wehrmacht, minus "driver" "elite rifleman"
     Reich jobs should follow [join reich_type] > [join specialization] (i.e. two job hops, specialization not visible from the jobs menu unless in a reich_type job)
+]]
