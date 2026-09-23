@@ -102,7 +102,7 @@ TEAM_CIVILIAN = job{
     category = "Civilians",
     sortOrder = 1,
 }
-
+--[=[ depreciated
 TEAM_DESIGNER = job{
     name = "Designer",
     color = Color(150, 110, 70),
@@ -116,7 +116,7 @@ TEAM_DESIGNER = job{
     faction = "civilian",
     category = "Civilians",
 }
-
+]=]
 TEAM_DOCTOR = job{
     name = "Doctor",
     color = Color(170, 170, 170),
@@ -188,7 +188,7 @@ Production halts twice per cycle and must be restarted by hand.]],
     faction = "civilian",
     category = "Civilians",
 }
-
+--[=[ Depreciated - moved to Doctor
 TEAM_PHARMACIST = job{
     name = "Pharmacist",
     color = Color(80, 120, 100),
@@ -202,7 +202,7 @@ TEAM_PHARMACIST = job{
     faction = "civilian",
     category = "Civilians",
 }
-
+]=]
 TEAM_BAKER = job{
     name = "Baker",
     color = Color(190, 160, 110),
@@ -231,10 +231,11 @@ TEAM_BLACKMARKET = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
+    branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
 }
 
-TEAM_RUSTUNG = job{
+--[=[TEAM_RUSTUNG = job{
     name = "Rüstung Dealer",
     color = Color(100, 70, 40),
     model = M.dealer,
@@ -245,10 +246,11 @@ TEAM_RUSTUNG = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
+    branch = "resistance",
     category = "Resistance",
-}
+}]=]
 
-TEAM_CHERKESOV = job(vip{
+TEAM_CHERKESOV = job{
     name = "Cherkesov Dealer",
     color = Color(120, 40, 30),
     model = M.dealer,
@@ -259,8 +261,9 @@ TEAM_CHERKESOV = job(vip{
     salary = SAL,
     admin = 0,
     faction = "civilian",
+    branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
-})
+}
 
 TEAM_THIEF = job{
     name = "Thief",
@@ -273,10 +276,11 @@ TEAM_THIEF = job{
     salary = SAL * 0.8,
     admin = 0,
     faction = "resistance",
+    branch = "resistance",
     category = "Resistance",
 }
 
-TEAM_PROTHIEF = job(vip{
+TEAM_PROTHIEF = job{
     name = "Pro Thief",
     color = Color(110, 45, 45),
     model = M.resistance,
@@ -287,8 +291,9 @@ TEAM_PROTHIEF = job(vip{
     salary = SAL * 0.8,
     admin = 0,
     faction = "resistance",
+    branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
-})
+}
 
 TEAM_RESISTANCE = job{
     name = "Resistance",
@@ -301,6 +306,7 @@ TEAM_RESISTANCE = job{
     salary = SAL * 0.8,
     admin = 0,
     faction = "resistance",
+    branch = "resistance",
     category = "Resistance",
 }
 
@@ -315,10 +321,11 @@ TEAM_RES_MEDIC = job{
     salary = SAL * 0.8,
     admin = 0,
     faction = "resistance",
+    branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
 }
 
-TEAM_RES_OPERATIVE = job(vip{
+TEAM_RES_OPERATIVE = job{
     name = "Resistance Operative",
     color = Color(100, 30, 30),
     model = M.resistance,
@@ -330,8 +337,9 @@ Use /disguise <trade> to pose as a civilian trade, /undisguise to drop it.]],
     salary = SAL,
     admin = 0,
     faction = "resistance",
+    branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
-})
+}
 
 TEAM_RES_LEADER = job{
     name = "Resistance Leader",
@@ -344,6 +352,7 @@ TEAM_RES_LEADER = job{
     salary = SAL * 1.2,
     admin = 0,
     faction = "resistance",
+    branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
 }
 
@@ -372,7 +381,7 @@ TEAM_WEHR_RECRUIT = job{
     sortOrder = 1,
 }
 
-TEAM_WSS_RECRUIT = job(vip{
+TEAM_WSS_RECRUIT = job{
     name = "Waffen-SS Recruit",
     color = Color(75, 80, 64),
     model = M.waffen_ss,
@@ -387,7 +396,7 @@ TEAM_WSS_RECRUIT = job(vip{
     arrests = false,
     category = "Reich",
     sortOrder = 2,
-})
+}
 
 TEAM_SS_RECRUIT = job{
     name = "SS Recruit",
@@ -456,6 +465,7 @@ TEAM_WEHR_RIFLEMAN = job{
     salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 }
@@ -471,6 +481,7 @@ TEAM_WEHR_MEDIC = job{
     salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 }
@@ -486,6 +497,7 @@ TEAM_WEHR_ELITE = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 })
@@ -501,11 +513,12 @@ TEAM_WEHR_SHARPSHOOTER = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 })
 
-TEAM_WEHR_DRIVER = job(vip{
+TEAM_WEHR_DRIVER = job{
     name = "Wehrmacht Driver",
     color = Color(75, 85, 70),
     model = M.wehrmacht,
@@ -516,9 +529,10 @@ TEAM_WEHR_DRIVER = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
-})
+}
 
 TEAM_WEHR_NCO = job{
     name = "Wehrmacht NCO",
@@ -531,6 +545,7 @@ TEAM_WEHR_NCO = job{
     salary = SAL * 1.4,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 }
@@ -547,6 +562,7 @@ TEAM_WEHR_OFFIZIER = job(whitelisted{
     admin = 0,
     chief = true,
     faction = "reich",
+    arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
     sortOrder = 200,
@@ -555,7 +571,7 @@ TEAM_WEHR_OFFIZIER = job(whitelisted{
 --[[===========================================================================
 HOP 2 - WAFFEN-SS ("Waffen-SS" category, visible only inside the Waffen-SS)
 ===========================================================================]]
-TEAM_WSS_RIFLEMAN = job(vip{
+TEAM_WSS_RIFLEMAN = job{
     name = "Waffen-SS Rifleman",
     color = Color(60, 64, 50),
     model = M.waffen_ss,
@@ -566,11 +582,12 @@ TEAM_WSS_RIFLEMAN = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
     category = "Waffen-SS",
-})
+}
 
-TEAM_WSS_MEDIC = job(vip{
+TEAM_WSS_MEDIC = job{
     name = "Waffen-SS Medic",
     color = Color(66, 70, 56),
     model = M.waffen_ss,
@@ -581,11 +598,12 @@ TEAM_WSS_MEDIC = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
     category = "Waffen-SS",
-})
+}
 
-TEAM_WSS_MG = job(vip{
+TEAM_WSS_MG = job{
     name = "Waffen-SS Machinegunner",
     color = Color(55, 60, 45),
     model = M.waffen_ss,
@@ -596,9 +614,10 @@ TEAM_WSS_MG = job(vip{
     salary = SAL * 1.3,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
     category = "Waffen-SS",
-})
+}
 
 TEAM_WSS_NCO = job(vip{
     name = "Waffen-SS NCO",
@@ -611,11 +630,12 @@ TEAM_WSS_NCO = job(vip{
     salary = SAL * 1.5,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
     category = "Waffen-SS",
-})
+}) --kept as VIP so the proper format is seen here
 
-TEAM_1ST_SS = job(vip(whitelisted{
+TEAM_1ST_SS = job(whitelisted{
     name = "1st SS",
     color = Color(20, 20, 20),
     model = M.waffen_ss,
@@ -626,12 +646,13 @@ TEAM_1ST_SS = job(vip(whitelisted{
     salary = SAL * 1.6,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
     category = "Waffen-SS",
     sortOrder = 190,
-}))
+})
 
-TEAM_WSS_OFFIZIER = job(vip(whitelisted{
+TEAM_WSS_OFFIZIER = job(whitelisted{
     name = "Waffen-SS Offizier",
     color = Color(40, 44, 34),
     model = M.officer,
@@ -643,10 +664,11 @@ TEAM_WSS_OFFIZIER = job(vip(whitelisted{
     admin = 0,
     chief = true,
     faction = "reich",
+    arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
     category = "Waffen-SS",
     sortOrder = 200,
-}))
+})
 
 --[[===========================================================================
 HOP 2 - SCHUTZSTAFFEL ("Schutzstaffel" category, visible only inside the SS)
@@ -663,6 +685,7 @@ TEAM_SS_RIFLEMAN = job{
     salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "ss", requires = { branch = "ss" },
     category = "Schutzstaffel",
 }
@@ -678,11 +701,12 @@ TEAM_SS_MEDIC = job{
     salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "ss", requires = { branch = "ss" },
     category = "Schutzstaffel",
 }
 
-TEAM_SS_SHARPSHOOTER = job(vip{
+TEAM_SS_SHARPSHOOTER = job{
     name = "SS Sharpshooter",
     color = Color(40, 40, 38),
     model = M.ss,
@@ -693,9 +717,10 @@ TEAM_SS_SHARPSHOOTER = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "ss", requires = { branch = "ss" },
     category = "Schutzstaffel",
-})
+}
 
 TEAM_SS_NCO = job{
     name = "SS NCO",
@@ -708,6 +733,7 @@ TEAM_SS_NCO = job{
     salary = SAL * 1.4,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "ss", requires = { branch = "ss" },
     category = "Schutzstaffel",
 }
@@ -724,6 +750,7 @@ TEAM_SS_OFFIZIER = job(whitelisted{
     admin = 0,
     chief = true,
     faction = "reich",
+    arrests = true,
     branch = "ss", requires = { branch = "ss" },
     category = "Schutzstaffel",
     sortOrder = 200,
@@ -744,6 +771,7 @@ Use /disguise <trade> to change your cover, /undisguise to show your real title.
     salary = SAL * 1.5,
     admin = 0,
     faction = "reich",
+    arrests = true,
     branch = "gestapo",
     category = "Schutzstaffel",
     sortOrder = 210,
