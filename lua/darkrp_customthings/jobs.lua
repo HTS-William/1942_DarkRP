@@ -3,7 +3,17 @@
 
 Custom fields used by the rp1942 modules (DarkRP ignores unknown fields):
     faction  = "civilian" | "resistance" | "reich"   (faction balance, radio, orders)
+    branch   = "wehrmacht" | "waffen_ss" | "ss" | ... (unit within the Reich)
+    requires = { branch = ... } / { faction = ... }   (must CURRENTLY hold such a job)
     arrests  = false                                  (Reich job WITHOUT police powers)
+    vip / whitelisted                                 (set via the vip{} / whitelisted{} helpers)
+
+Reich enlistment is two hops:
+    1. Join a branch through its Recruit job ("Reich" category, visible to all)
+    2. Pick a posting from that branch's category, which is only VISIBLE in F4
+       while you hold a job in that branch (canSee in categories.lua) and only
+       TAKEABLE from inside the branch (requires = { branch = ... } below).
+Leave the branch and you have to enlist again.
 
 Weapons and models come from RP1942.Weapons / RP1942.Models in
 darkrp_modules/rp1942_core/sh_config.lua. Edit them there, not here.
@@ -12,18 +22,19 @@ Caps: max = 0 is unlimited, whole numbers are hard caps. Fractions (0.25 =
 25% of the server) are deliberately NOT used: at low population they block
 the job entirely.
 ---------------------------------------------------------------------------]]
-if not (RP1942 and RP1942.Weapons and RP1942.Models) then
+if not (RP1942 and RP1942.Weapons and RP1942.Models and RP1942.jobGateFailure) then
     -- Report exactly what the Lua filesystem shows, so the cause is in the error itself
     local _, moduleDirs = file.Find("darkrp_modules/*", "LUA")
     local coreFiles = file.Find("darkrp_modules/rp1942_core/*", "LUA")
     local disabled = GAMEMODE.Config.DisabledCustomModules and GAMEMODE.Config.DisabledCustomModules["rp1942_core"]
 
-    DarkRP.error("The rp1942_core module did not load, so jobs.lua can't run.", 1, {
+    DarkRP.error("The rp1942_core module did not load (or is outdated), so jobs.lua can't run.", 1, {
         "Realm: " .. (SERVER and "SERVER" or "CLIENT"),
         "Folders in darkrp_modules/: " .. (#moduleDirs > 0 and table.concat(moduleDirs, ", ") or "(none)"),
         "Files in darkrp_modules/rp1942_core/: " .. (#coreFiles > 0 and table.concat(coreFiles, ", ") or "(none)"),
         "Disabled in DisabledCustomModules: " .. tostring(disabled == true),
         "RP1942 table exists: " .. tostring(RP1942 ~= nil),
+        "RP1942.jobGateFailure exists: " .. tostring(RP1942 ~= nil and RP1942.jobGateFailure ~= nil) .. " (false = old sh_factions.lua)",
         "Module files must be named sh_*.lua / sv_*.lua / cl_*.lua exactly (no .txt, no ' (1)').",
         "Any error printed BEFORE this one mentioning rp1942_core is the real cause.",
     })
@@ -32,35 +43,46 @@ end
 local W, M = RP1942.Weapons, RP1942.Models
 local SAL = GAMEMODE.Config.normalsalary
 
--- VIP-only job: gated by usergroup, shows "(VIP)" in F4
+-- VIP-only job: shows "(VIP)" in F4
 local function vip(job)
-    local prevCheck = job.customCheck
-    job.customCheck = function(ply)
-        if not RP1942.isVIP(ply) then return false end
-        return prevCheck == nil or prevCheck(ply)
-    end
-    job.CustomCheckFailMsg = job.CustomCheckFailMsg or "This job is for VIP members."
+    job.vip = true
     job.label = (job.label or job.name) .. " (VIP)"
     return job
 end
 
 -- Leadership job: requires a whitelist once RP1942.Config.Whitelist.enabled = true
 local function whitelisted(job)
-    local prevCheck = job.customCheck
-    job.customCheck = function(ply)
-        if not RP1942.hasWhitelist(ply, job.command) then return false end
-        return prevCheck == nil or prevCheck(ply)
-    end
-    job.CustomCheckFailMsg = job.CustomCheckFailMsg or "You are not whitelisted for this rank."
+    job.whitelisted = true
     return job
 end
 
--- DarkRP.createJob takes the name separately; this keeps name and label in one table
+--[[---------------------------------------------------------------------------
+job{} wraps DarkRP.createJob:
+  - keeps name inside the table
+  - turns vip / whitelisted / requires / a job's own customCheck into ONE
+    customCheck, with a CustomCheckFailMsg that says which rule failed
+    (see RP1942.jobGateFailure in rp1942_core/sh_factions.lua)
+---------------------------------------------------------------------------]]
 local function job(tbl)
     local name = tbl.name
     tbl.name = nil
+
+    -- A job's own customCheck becomes the last gate
+    if tbl.customCheck then
+        tbl.gate, tbl.gateFailMsg = tbl.customCheck, tbl.CustomCheckFailMsg
+    end
+
+    if tbl.vip or tbl.whitelisted or tbl.requires or tbl.gate then
+        tbl.customCheck = function(ply) return RP1942.jobGateFailure(ply, tbl) == nil end
+        tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
+    end
+
     return DarkRP.createJob(name, tbl)
 end
+
+--[[###########################################################################
+                           CIVILIANS & RESISTANCE
+###########################################################################]]
 
 --[[===========================================================================
 CIVILIANS
@@ -196,7 +218,7 @@ TEAM_BAKER = job{
 }
 
 --[[===========================================================================
-RESISTANCE
+RESISTANCE (incl. black-market dealers)
 ===========================================================================]]
 TEAM_BLACKMARKET = job{
     name = "Black Market Dealer",
@@ -239,21 +261,6 @@ TEAM_CHERKESOV = job(vip{
     faction = "civilian",
     category = "Resistance",
 })
-
-TEAM_SUPPLIER = job{
-    name = "German Supplier",
-    color = Color(80, 90, 70),
-    model = M.merchant,
-    description = [[Supplies the Reich with weapons and explosives at a steep discount.]],
-    weapons = {},
-    command = "gersupplier",
-    max = 1,
-    salary = SAL,
-    admin = 0,
-    faction = "reich",
-    category = "Resistance",
-}
-
 
 TEAM_THIEF = job{
     name = "Thief",
@@ -340,8 +347,103 @@ TEAM_RES_LEADER = job{
     category = "Resistance",
 }
 
+--[[###########################################################################
+                                   REICH
+###########################################################################]]
+
 --[[===========================================================================
-REICH - WEHRMACHT
+HOP 1 - ENLISTMENT ("Reich" category, visible to everyone)
+Recruits are a staging job: no weapons, no police powers. Pick a posting next.
+===========================================================================]]
+TEAM_WEHR_RECRUIT = job{
+    name = "Wehrmacht Recruit",
+    color = Color(110, 118, 98),
+    model = M.wehrmacht,
+    description = [[Enlist in the Wehrmacht. Your postings will appear in the Wehrmacht section of this menu.]],
+    weapons = {},
+    command = "wehrrecruit",
+    max = 0,   -- faction balance still applies
+    salary = SAL * 0.5,
+    admin = 0,
+    faction = "reich",
+    branch = "wehrmacht",
+    arrests = false,
+    category = "Reich",
+    sortOrder = 1,
+}
+
+TEAM_WSS_RECRUIT = job(vip{
+    name = "Waffen-SS Recruit",
+    color = Color(75, 80, 64),
+    model = M.waffen_ss,
+    description = [[Enlist in the Waffen-SS. Your postings will appear in the Waffen-SS section of this menu.]],
+    weapons = {},
+    command = "wssrecruit",
+    max = 0,
+    salary = SAL * 0.5,
+    admin = 0,
+    faction = "reich",
+    branch = "waffen_ss",
+    arrests = false,
+    category = "Reich",
+    sortOrder = 2,
+})
+
+TEAM_SS_RECRUIT = job{
+    name = "SS Recruit",
+    color = Color(55, 55, 55),
+    model = M.ss,
+    description = [[Enlist in the Schutzstaffel. Your postings will appear in the Schutzstaffel section of this menu.]],
+    weapons = {},
+    command = "ssrecruit",
+    max = 0,
+    salary = SAL * 0.5,
+    admin = 0,
+    faction = "reich",
+    branch = "ss",
+    arrests = false,
+    category = "Reich",
+    sortOrder = 3,
+}
+
+-- Single-hop Reich jobs (no branch)
+TEAM_SUPPLIER = job{
+    name = "German Supplier",
+    color = Color(80, 90, 70),
+    model = M.merchant,
+    description = [[Supplies the Reich with weapons and explosives at a steep discount.]],
+    weapons = {},
+    command = "gersupplier",
+    max = 1,
+    salary = SAL,
+    admin = 0,
+    faction = "reich",
+    branch = "supply",
+    arrests = false,   -- a contractor, not police
+    category = "Reich",
+    sortOrder = 10,
+}
+
+TEAM_SCIENTIST = job{
+    name = "Reich Scientist",
+    color = Color(150, 150, 140),
+    model = M.scientist,
+    -- TODO: role undefined in the design doc. No police powers until decided.
+    description = [[Conducts research for the Reich.]],
+    weapons = {},
+    command = "scientist",
+    max = 1,
+    salary = SAL * 1.5,
+    admin = 0,
+    faction = "reich",
+    branch = "staff",
+    arrests = false,
+    category = "Reich",
+    sortOrder = 11,
+}
+
+--[[===========================================================================
+HOP 2 - WEHRMACHT ("Wehrmacht" category, visible only inside the Wehrmacht)
 ===========================================================================]]
 TEAM_WEHR_RIFLEMAN = job{
     name = "Wehrmacht Rifleman",
@@ -354,6 +456,7 @@ TEAM_WEHR_RIFLEMAN = job{
     salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 }
 
@@ -368,6 +471,7 @@ TEAM_WEHR_MEDIC = job{
     salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 }
 
@@ -382,6 +486,7 @@ TEAM_WEHR_ELITE = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 })
 
@@ -396,6 +501,7 @@ TEAM_WEHR_SHARPSHOOTER = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 })
 
@@ -410,6 +516,7 @@ TEAM_WEHR_DRIVER = job(vip{
     salary = SAL * 1.2,
     admin = 0,
     faction = "reich",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
 })
 
@@ -424,85 +531,8 @@ TEAM_WEHR_NCO = job{
     salary = SAL * 1.4,
     admin = 0,
     faction = "reich",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
     category = "Wehrmacht",
-}
-
---[[===========================================================================
-REICH - WAFFEN-SS
-===========================================================================]]
-TEAM_WSS_RIFLEMAN = job(vip{
-    name = "Waffen-SS Rifleman",
-    color = Color(60, 64, 50),
-    model = M.waffen_ss,
-    description = [[Carries a Gewehr 43.]],
-    weapons = { W.g43, W.arrest },
-    command = "wssrifleman",
-    max = 4,
-    salary = SAL * 1.2,
-    admin = 0,
-    faction = "reich",
-    category = "Waffen-SS",
-})
-
-TEAM_WSS_MEDIC = job(vip{
-    name = "Waffen-SS Medic",
-    color = Color(66, 70, 56),
-    model = M.waffen_ss,
-    description = [[Carries a Gewehr 43 and a medkit.]],
-    weapons = { W.g43, W.arrest, W.medkit },
-    command = "wssmedic",
-    max = 1,
-    salary = SAL * 1.2,
-    admin = 0,
-    faction = "reich",
-    category = "Waffen-SS",
-})
-
-TEAM_WSS_MG = job(vip{
-    name = "Waffen-SS Machinegunner",
-    color = Color(55, 60, 45),
-    model = M.waffen_ss,
-    description = [[Carries an MG 42.]],
-    weapons = { W.mg42, W.arrest },
-    command = "wssmg",
-    max = 2,
-    salary = SAL * 1.3,
-    admin = 0,
-    faction = "reich",
-    category = "Waffen-SS",
-})
-
-TEAM_WSS_NCO = job(vip{
-    name = "Waffen-SS NCO",
-    color = Color(50, 55, 40),
-    model = M.waffen_ss,
-    description = [[Commands the Waffen-SS enlisted ranks. Carries an StG 44.]],
-    weapons = { W.stg44, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
-    command = "wssnco",
-    max = 1,
-    salary = SAL * 1.5,
-    admin = 0,
-    faction = "reich",
-    category = "Waffen-SS",
-})
-
---[[===========================================================================
-REICH - COMMAND
-===========================================================================]]
-TEAM_SCIENTIST = job{
-    name = "Reich Scientist",
-    color = Color(150, 150, 140),
-    model = M.scientist,
-    -- TODO: role undefined in the design doc. No police powers until decided.
-    description = [[Conducts research for the Reich.]],
-    weapons = {},
-    command = "scientist",
-    max = 1,
-    salary = SAL * 1.5,
-    admin = 0,
-    faction = "reich",
-    arrests = false,
-    category = "Reich Command",
 }
 
 TEAM_WEHR_OFFIZIER = job(whitelisted{
@@ -517,42 +547,89 @@ TEAM_WEHR_OFFIZIER = job(whitelisted{
     admin = 0,
     chief = true,
     faction = "reich",
-    category = "Reich Command",
+    branch = "wehrmacht", requires = { branch = "wehrmacht" },
+    category = "Wehrmacht",
+    sortOrder = 200,
 })
 
-TEAM_SS_OFFIZIER = job(whitelisted{
-    name = "SS Offizier",
-    color = Color(30, 30, 30),
-    model = M.officer,
-    description = [[Commands all of the SS.]],
-    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram },
-    command = "ssoffizier",
-    max = 1,
-    salary = SAL * 1.8,
+--[[===========================================================================
+HOP 2 - WAFFEN-SS ("Waffen-SS" category, visible only inside the Waffen-SS)
+===========================================================================]]
+TEAM_WSS_RIFLEMAN = job(vip{
+    name = "Waffen-SS Rifleman",
+    color = Color(60, 64, 50),
+    model = M.waffen_ss,
+    description = [[Carries a Gewehr 43.]],
+    weapons = { W.g43, W.arrest },
+    command = "wssrifleman",
+    max = 4,
+    salary = SAL * 1.2,
     admin = 0,
-    chief = true,
     faction = "reich",
-    category = "Reich Command",
+    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    category = "Waffen-SS",
 })
 
-TEAM_GESTAPO = job(whitelisted{
-    name = "Gestapo Agent",
-    color = Color(120, 120, 110),   -- identical to Civilian ON PURPOSE: DarkRP colours names by team
-    model = M.gestapo,
-    description = [[Geheime Staatspolizei. Works in plain clothes among the population.
-Report for duty with /joingestapo: the job button is locked so your enlistment isn't announced.
-Use /disguise <trade> to change your cover, /undisguise to show your real title.]],
-    weapons = { W.p38, W.arrest, W.unarrest, W.checker },
-    command = "gestapo",
+TEAM_WSS_MEDIC = job(vip{
+    name = "Waffen-SS Medic",
+    color = Color(66, 70, 56),
+    model = M.waffen_ss,
+    description = [[Carries a Gewehr 43 and a medkit.]],
+    weapons = { W.g43, W.arrest, W.medkit },
+    command = "wssmedic",
+    max = 1,
+    salary = SAL * 1.2,
+    admin = 0,
+    faction = "reich",
+    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    category = "Waffen-SS",
+})
+
+TEAM_WSS_MG = job(vip{
+    name = "Waffen-SS Machinegunner",
+    color = Color(55, 60, 45),
+    model = M.waffen_ss,
+    description = [[Carries an MG 42.]],
+    weapons = { W.mg42, W.arrest },
+    command = "wssmg",
     max = 2,
+    salary = SAL * 1.3,
+    admin = 0,
+    faction = "reich",
+    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    category = "Waffen-SS",
+})
+
+TEAM_WSS_NCO = job(vip{
+    name = "Waffen-SS NCO",
+    color = Color(50, 55, 40),
+    model = M.waffen_ss,
+    description = [[Commands the Waffen-SS enlisted ranks. Carries an StG 44.]],
+    weapons = { W.stg44, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    command = "wssnco",
+    max = 1,
     salary = SAL * 1.5,
     admin = 0,
     faction = "reich",
-    category = "Reich Command",
-    -- Only true for the instant /joingestapo runs changeTeam (flag is set server-side)
-    customCheck = function(ply) return ply.RP1942_QuietEnlist == true end,
-    CustomCheckFailMsg = "The Gestapo doesn't advertise. Report for duty with /joingestapo.",
+    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    category = "Waffen-SS",
 })
+
+TEAM_1ST_SS = job(vip(whitelisted{
+    name = "1st SS",
+    color = Color(20, 20, 20),
+    model = M.waffen_ss,
+    description = [[The Führer's personal bodyguard. Carries an StG 44.]],
+    weapons = { W.stg44, W.arrest },
+    command = "firstss",
+    max = 3,
+    salary = SAL * 1.6,
+    admin = 0,
+    faction = "reich",
+    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    category = "Waffen-SS",
+    sortOrder = 190,
+}))
 
 TEAM_WSS_OFFIZIER = job(vip(whitelisted{
     name = "Waffen-SS Offizier",
@@ -566,23 +643,118 @@ TEAM_WSS_OFFIZIER = job(vip(whitelisted{
     admin = 0,
     chief = true,
     faction = "reich",
-    category = "Reich Command",
+    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    category = "Waffen-SS",
+    sortOrder = 200,
 }))
 
-TEAM_1ST_SS = job(vip(whitelisted{
-    name = "1st SS",
-    color = Color(20, 20, 20),
-    model = M.waffen_ss,
-    description = [[The Führer's personal bodyguard. Carries an StG 44.]],
-    weapons = { W.stg44, W.arrest },
-    command = "firstss",
-    max = 3,
-    salary = SAL * 1.6,
+--[[===========================================================================
+HOP 2 - SCHUTZSTAFFEL ("Schutzstaffel" category, visible only inside the SS)
+Mirrors the Wehrmacht, minus Driver and Elite Rifleman.
+===========================================================================]]
+TEAM_SS_RIFLEMAN = job{
+    name = "SS Rifleman",
+    color = Color(45, 45, 45),
+    model = M.ss,
+    description = [[Carries a Karabiner 98k.]],
+    weapons = { W.k98k, W.arrest },
+    command = "ssrifleman",
+    max = 4,
+    salary = SAL * 1.1,
     admin = 0,
     faction = "reich",
-    category = "Reich Command",
-}))
+    branch = "ss", requires = { branch = "ss" },
+    category = "Schutzstaffel",
+}
 
+TEAM_SS_MEDIC = job{
+    name = "SS Medic",
+    color = Color(55, 55, 50),
+    model = M.ss,
+    description = [[Rifleman's kit plus a medkit.]],
+    weapons = { W.k98k, W.arrest, W.medkit },
+    command = "ssmedic",
+    max = 1,
+    salary = SAL * 1.1,
+    admin = 0,
+    faction = "reich",
+    branch = "ss", requires = { branch = "ss" },
+    category = "Schutzstaffel",
+}
+
+TEAM_SS_SHARPSHOOTER = job(vip{
+    name = "SS Sharpshooter",
+    color = Color(40, 40, 38),
+    model = M.ss,
+    description = [[Carries a scoped Karabiner 98k.]],
+    weapons = { W.k98k_scoped, W.arrest },
+    command = "sssharpshooter",
+    max = 1,
+    salary = SAL * 1.2,
+    admin = 0,
+    faction = "reich",
+    branch = "ss", requires = { branch = "ss" },
+    category = "Schutzstaffel",
+})
+
+TEAM_SS_NCO = job{
+    name = "SS NCO",
+    color = Color(35, 35, 35),
+    model = M.ss,
+    description = [[Commands the SS enlisted ranks. Can search for weapons and breach doors with a warrant.]],
+    weapons = { W.k98k, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    command = "ssnco",
+    max = 1,
+    salary = SAL * 1.4,
+    admin = 0,
+    faction = "reich",
+    branch = "ss", requires = { branch = "ss" },
+    category = "Schutzstaffel",
+}
+
+TEAM_SS_OFFIZIER = job(whitelisted{
+    name = "SS Offizier",
+    color = Color(30, 30, 30),
+    model = M.officer,
+    description = [[Commands all of the SS.]],
+    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    command = "ssoffizier",
+    max = 1,
+    salary = SAL * 1.8,
+    admin = 0,
+    chief = true,
+    faction = "reich",
+    branch = "ss", requires = { branch = "ss" },
+    category = "Schutzstaffel",
+    sortOrder = 200,
+})
+
+-- Listed under the SS so civilians never see it (or its player count) in F4.
+-- Joined quietly from ANY job with /joingestapo; the button stays locked.
+TEAM_GESTAPO = job(whitelisted{
+    name = "Gestapo Agent",
+    color = Color(120, 120, 110),   -- identical to Civilian ON PURPOSE: DarkRP colours names by team
+    model = M.gestapo,
+    description = [[Geheime Staatspolizei. Works in plain clothes among the population.
+Report for duty with /joingestapo: the job button is locked so your enlistment isn't announced.
+Use /disguise <trade> to change your cover, /undisguise to show your real title.]],
+    weapons = { W.p38, W.arrest, W.unarrest, W.checker },
+    command = "gestapo",
+    max = 2,
+    salary = SAL * 1.5,
+    admin = 0,
+    faction = "reich",
+    branch = "gestapo",
+    category = "Schutzstaffel",
+    sortOrder = 210,
+    -- Only true for the instant /joingestapo runs changeTeam (flag is set server-side)
+    customCheck = function(ply) return ply.RP1942_QuietEnlist == true end,
+    CustomCheckFailMsg = "The Gestapo doesn't advertise. Report for duty with /joingestapo.",
+})
+
+--[[===========================================================================
+REICH COMMAND ("Reich Command" category, visible to anyone serving the Reich)
+===========================================================================]]
 TEAM_FUHRER = job(whitelisted{
     name = "Führer",
     color = Color(120, 20, 20),
@@ -597,6 +769,7 @@ TEAM_FUHRER = job(whitelisted{
     mayor = true,   -- DarkRP mayor powers: laws, lockdown (curfew), lottery
     candemote = false,
     faction = "reich",
+    branch = "command", requires = { faction = "reich" },
     category = "Reich Command",
 })
 
@@ -617,10 +790,3 @@ for teamNr, jobTbl in pairs(RPExtraTeams) do
 end
 
 -- No hitman teams in 1942 (hitmenu is disabled in disabled_defaults.lua)
---[[TODO:
-    Jobs simplified, catagories merged (Civilians, industrial, commerical into one)
-    German jobs partitioned from others
-    Schutzstaffel jobs missing
-        Should be akin to Wehrmacht, minus "driver" "elite rifleman"
-    Reich jobs should follow [join reich_type] > [join specialization] (i.e. two job hops, specialization not visible from the jobs menu unless in a reich_type job)
-]]
