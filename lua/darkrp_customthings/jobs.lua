@@ -230,7 +230,7 @@ TEAM_BLACKMARKET = job{
     max = 2,
     salary = SAL,
     admin = 0,
-    faction = "civilian",
+    faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
 }
@@ -245,7 +245,7 @@ TEAM_BLACKMARKET = job{
     max = 1,
     salary = SAL,
     admin = 0,
-    faction = "civilian",
+    faction = "resistance",
     branch = "resistance",
     category = "Resistance",
 }]=]
@@ -260,7 +260,7 @@ TEAM_CHERKESOV = job{
     max = 1,
     salary = SAL,
     admin = 0,
-    faction = "civilian",
+    faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
 }
