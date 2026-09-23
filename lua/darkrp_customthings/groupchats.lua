@@ -1,18 +1,24 @@
 --[[---------------------------------------------------------------------------
-Group chats
----------------------------------------------------------------------------
-Team chat for when you have a certain job.
-e.g. with the default police group chat, police officers, chiefs and mayors can
-talk to one another through /g or team chat.
+1942 DarkRP - group chats (/g)
 
-HOW TO MAKE A GROUP CHAT:
-Simple method:
-GAMEMODE:AddGroupChat(List of team variables separated by comma)
-
-Advanced method:
-GAMEMODE:AddGroupChat(a function with ply as argument that returns whether a random player is in one chat group)
-This is for people who know how to script Lua.
-
+DarkRP calls these as f(listener, speaker); speaker can be nil when it only
+asks whether the listener has access at all.
 ---------------------------------------------------------------------------]]
--- Example: GAMEMODE:AddGroupChat(TEAM_MOB, TEAM_GANG)
--- Example: GAMEMODE:AddGroupChat(function(ply) return ply:isCP() end)
+local function factionChat(faction)
+    return function(listener, speaker)
+        if RP1942.getFaction(listener) ~= faction then return false end
+        return speaker == nil or RP1942.getFaction(speaker) == faction
+    end
+end
+
+-- Reich field radio
+DarkRP.createGroupChat(factionChat("reich"))
+
+-- Resistance network
+DarkRP.createGroupChat(factionChat("resistance"))
+
+-- Everyone else: same job only (e.g. Bakers talking shop)
+DarkRP.createGroupChat(function(listener, speaker)
+    if RP1942.getFaction(listener) ~= "civilian" then return false end
+    return speaker == nil or speaker:Team() == listener:Team()
+end)

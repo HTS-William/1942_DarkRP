@@ -1,26 +1,16 @@
 --[[---------------------------------------------------------------------------
-DarkRP disabled defaults
----------------------------------------------------------------------------
+1942 DarkRP - disabled defaults
 
-DarkRP comes with a bunch of default things:
-    - a load of modules
-    - default jobs
-    - shipments and guns
-    - entities (like the money printer)
-    and many more
+Everything stock DarkRP ships that doesn't belong in 1942 is switched off
+here. true = disabled, false = enabled.
 
-If you want to disable or replace the default things, you should disable them here
-
-Note: if you want to have e.g. edit the official medic job, you MUST disable the default one in this file!
-You can copy the medic from DarkRP and paste it in darkrp_config/jobs.lua
+Anything that referenced a stock job (agendas, door groups, group chats,
+demote groups, hitmen) is disabled too: those jobs no longer exist, and our
+own versions live in darkrp_customthings/.
 ---------------------------------------------------------------------------]]
 
-
 --[[---------------------------------------------------------------------------
-The list of modules that are disabled. Set to true to disable, false to enable.
-Modules that are not in this list are enabled by default.
-In some cases some external addons may overwrite one of the modules below and will expect them to be enabled to work.
-In these few cases it will be pretty obvious when you expect something to happen and nothing does.
+Modules
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["modules"] = {
     ["afk"]              = true,
@@ -28,148 +18,136 @@ DarkRP.disabledDefaults["modules"] = {
     ["events"]           = false,
     ["fpp"]              = false,
     ["f1menu"]           = false,
-    ["f4menu"]           = false,
-    ["hitmenu"]          = false,
-    ["hud"]              = false,
-    ["hungermod"]        = true,
+    ["f4menu"]           = false,   -- set true once our own F4 exists
+    ["hitmenu"]          = true,    -- no hitmen in 1942
+    ["hud"]              = false,   -- set true once our own HUD exists
+    ["hungermod"]        = true,    -- TODO: decide. Enabling it makes the Baker's bread matter (rationing).
     ["playerscale"]      = false,
     ["sleep"]            = false,
-    ["fadmin"]           = false,
+    ["fadmin"]           = false,   -- set true if you run ULX/SAM instead
     ["animations"]       = false,
     ["chatindicator"]    = false,
 }
 
 --[[---------------------------------------------------------------------------
-The disabled default jobs. true to disable, false to enable.
-
-NOTE: If you disable a job and remake it, expect things that rely on the job to stop working
-e.g. you disable the gundealer and you make a new job as TEAM_GUN. If you want the shipments/door groups/etc. to
-work for your custom job, remake them to include your job as well.
+Jobs: all stock jobs off. Replacements are in darkrp_customthings/jobs.lua
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["jobs"] = {
-    ["chief"]     = false,
-    ["citizen"]   = false,
-    ["cook"]      = false, --Hungermod only
-    ["cp"]        = false,
-    ["gangster"]  = false,
-    ["gundealer"] = false,
-    ["hobo"]      = false,
-    ["mayor"]     = false,
-    ["medic"]     = false,
-    ["mobboss"]   = false,
+    ["chief"]     = true,
+    ["citizen"]   = true,
+    ["cook"]      = true,
+    ["cp"]        = true,
+    ["gangster"]  = true,
+    ["gundealer"] = true,
+    ["hobo"]      = true,
+    ["mayor"]     = true,
+    ["medic"]     = true,
+    ["mobboss"]   = true,
 }
 
 --[[---------------------------------------------------------------------------
-Shipments and pistols
+Shipments and pistols: modern CS:S guns, all off
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["shipments"] = {
-    ["AK47"]         = false,
-    ["Desert eagle"] = false,
-    ["Fiveseven"]    = false,
-    ["Glock"]        = false,
-    ["M4"]           = false,
-    ["Mac 10"]       = false,
-    ["MP5"]          = false,
-    ["P228"]         = false,
-    ["Pump shotgun"] = false,
-    ["Sniper rifle"] = false,
+    ["AK47"]         = true,
+    ["Desert eagle"] = true,
+    ["Fiveseven"]    = true,
+    ["Glock"]        = true,
+    ["M4"]           = true,
+    ["Mac 10"]       = true,
+    ["MP5"]          = true,
+    ["P228"]         = true,
+    ["Pump shotgun"] = true,
+    ["Sniper rifle"] = true,
 }
 
 --[[---------------------------------------------------------------------------
 Entities
+The tip jar stays: shopkeepers and bakers can use it.
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["entities"] = {
-    ["Drug lab"]      = false,
-    ["Gun lab"]       = false,
-    ["Money printer"] = false,
-    ["Microwave"]     = false, --Hungermod only
+    ["Drug lab"]      = true,
+    ["Gun lab"]       = true,
+    ["Money printer"] = true,   -- replaced by the Banker's Reichsbank printers
+    ["Microwave"]     = true,
     ["Tip Jar"]       = false,
 }
 
 --[[---------------------------------------------------------------------------
-Vehicles
-(at the moment there are no default vehicles)
-You could use this to disable vehicles you added in the vehicles.lua located in the darkrp_customthings folder.
+Vehicles (DarkRP ships none)
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["vehicles"] = {
 
 }
 
 --[[---------------------------------------------------------------------------
-Food
-Food is only enabled when hungermod is enabled (see disabled modules above).
+Food (only used when hungermod is enabled). Modern packaging, all off.
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["food"] = {
-    ["Banana"]           = false,
-    ["Bunch of bananas"] = false,
-    ["Melon"]            = false,
-    ["Glass bottle"]     = false,
-    ["Pop can"]          = false,
-    ["Plastic bottle"]   = false,
-    ["Milk"]             = false,
-    ["Bottle 1"]         = false,
-    ["Bottle 2"]         = false,
-    ["Bottle 3"]         = false,
-    ["Orange"]           = false,
+    ["Banana"]           = true,
+    ["Bunch of bananas"] = true,
+    ["Melon"]            = true,
+    ["Glass bottle"]     = true,
+    ["Pop can"]          = true,
+    ["Plastic bottle"]   = true,
+    ["Milk"]             = true,
+    ["Bottle 1"]         = true,
+    ["Bottle 2"]         = true,
+    ["Bottle 3"]         = true,
+    ["Orange"]           = true,
 }
 
 --[[---------------------------------------------------------------------------
-Door groups
+Door groups (referenced stock jobs)
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["doorgroups"] = {
-    ["Cops and Mayor only"] = false,
-    ["Gundealer only"]      = false,
+    ["Cops and Mayor only"] = true,
+    ["Gundealer only"]      = true,
 }
 
-
 --[[---------------------------------------------------------------------------
-Ammo packets
+Ammo packets: period weapons use their own ammo types
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["ammo"] = {
-    ["Pistol ammo"]  = false,
-    ["Rifle ammo"]   = false,
-    ["Shotgun ammo"] = false,
+    ["Pistol ammo"]  = true,
+    ["Rifle ammo"]   = true,
+    ["Shotgun ammo"] = true,
 }
 
 --[[---------------------------------------------------------------------------
-Agendas
+Agendas (replaced in darkrp_customthings/agendas.lua)
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["agendas"] = {
-    ["Gangster's agenda"] = false,
-    ["Police agenda"] = false,
+    ["Gangster's agenda"] = true,
+    ["Police agenda"] = true,
 }
 
 --[[---------------------------------------------------------------------------
-Chat groups (chat with /g)
-Chat groups do not have names, so their index is used instead.
+Group chats (replaced in darkrp_customthings/groupchats.lua)
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["groupchat"] = {
-    [1] = false, -- Police group chat (mayor, cp, chief and/or your custom CP teams)
-    [2] = false, -- Group chat between gangsters and the mobboss
-    [3] = false, -- Group chat between people of the same team
+    [1] = true, -- Police group chat
+    [2] = true, -- Gangsters and mobboss
+    [3] = true, -- Same team
 }
 
 --[[---------------------------------------------------------------------------
-Jobs that are hitmen
-set to true to disable
+Hitmen
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["hitmen"] = {
-    ["mobboss"] = false,
+    ["mobboss"] = true,
 }
 
 --[[---------------------------------------------------------------------------
-Demote groups
-When anyone is demoted from any job in this group, they will be temporarily banned
-from every job in the group
+Demote groups (replaced in darkrp_customthings/demotegroups.lua)
 ---------------------------------------------------------------------------]]
 DarkRP.disabledDefaults["demotegroups"] = {
-    ["Cops"]      = false,
-    ["Gangsters"] = false,
+    ["Cops"]      = true,
+    ["Gangsters"] = true,
 }
 
 --[[---------------------------------------------------------------------------
 Workarounds
-
 DarkRP works around some bugs in GMod and other addons that aren't maintained
 (properly). Disabling workarounds will cause those things to break again.
 ---------------------------------------------------------------------------]]

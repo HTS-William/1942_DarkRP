@@ -1,23 +1,25 @@
 --[[-----------------------------------------------------------------------
-Categories
----------------------------------------------------------------------------
-The categories of the default F4 menu.
+1942 DarkRP - F4 categories
 
-Please read this page for more information:
-https://darkrp.miraheze.org/wiki/DarkRP:Categories
-
-In case that page can't be reached, here's an example with explanation:
-
-DarkRP.createCategory{
-    name = "Citizens", -- The name of the category.
-    categorises = "jobs", -- What it categorises. MUST be one of "jobs", "entities", "shipments", "weapons", "vehicles", "ammo".
-    startExpanded = true, -- Whether the category is expanded when you open the F4 menu.
-    color = Color(0, 107, 0, 255), -- The color of the category header.
-    canSee = function(ply) return true end, -- OPTIONAL: whether the player can see this category AND EVERYTHING IN IT.
-    sortOrder = 100, -- OPTIONAL: With this you can decide where your category is. Low numbers to put it on top, high numbers to put it on the bottom. It's 100 by default.
-}
-
-
-Add new categories under the next line!
+Category names must match the `category` field in jobs.lua exactly
+(case-sensitive). Lower sortOrder = higher in the F4 menu.
 ---------------------------------------------------------------------------]]
+local function jobCategory(name, color, sortOrder)
+    DarkRP.createCategory{
+        name = name,
+        categorises = "jobs",
+        startExpanded = true,
+        color = color,
+        canSee = function(ply) return true end,
+        sortOrder = sortOrder,
+    }
+end
 
+jobCategory("Civilians",     Color(120, 120, 110), 10)
+jobCategory("Commercial",    Color(150, 110,  70), 20)
+jobCategory("Industry",      Color( 90,  80,  70), 30)
+jobCategory("Dealers",       Color( 70,  50,  40), 40)
+jobCategory("Resistance",    Color(130,  50,  40), 50)
+jobCategory("Wehrmacht",     Color( 93, 101,  82), 60)
+jobCategory("Waffen-SS",     Color( 60,  64,  50), 70)
+jobCategory("Reich Command", Color( 30,  30,  30), 80)

@@ -1,11 +1,20 @@
 --[[---------------------------------------------------------------------------
-DarkRP Agenda's
----------------------------------------------------------------------------
-Agenda's can be set by the agenda manager and read by both the agenda manager and the other teams connected to it.
+1942 DarkRP - agendas ("Orders")
 
-
-HOW TO MAKE AN AGENDA:
-AddAgenda(Title of the agenda, Manager (who edits it), {Listeners (the ones who just see and follow the agenda)})
+Managers can set the text, listeners see it on their HUD.
+A job can only be part of ONE agenda.
 ---------------------------------------------------------------------------]]
--- Example: AddAgenda("Gangster's agenda", TEAM_MOB, {TEAM_GANG})
--- Example: AddAgenda("Police agenda", TEAM_MAYOR, {TEAM_CHIEF, TEAM_POLICE})
+DarkRP.createAgenda("Reich Orders",
+    { TEAM_FUHRER, TEAM_WEHR_OFFIZIER, TEAM_SS_OFFIZIER, TEAM_WSS_OFFIZIER },
+    {
+        TEAM_WEHR_RIFLEMAN, TEAM_WEHR_MEDIC, TEAM_WEHR_ELITE, TEAM_WEHR_SHARPSHOOTER,
+        TEAM_WEHR_DRIVER, TEAM_WEHR_NCO,
+        TEAM_WSS_RIFLEMAN, TEAM_WSS_MEDIC, TEAM_WSS_MG, TEAM_WSS_NCO,
+        TEAM_1ST_SS, TEAM_SCIENTIST, TEAM_GESTAPO,
+    }
+)
+
+DarkRP.createAgenda("Resistance Plans",
+    TEAM_RES_LEADER,
+    { TEAM_THIEF, TEAM_PROTHIEF, TEAM_RESISTANCE, TEAM_RES_MEDIC, TEAM_RES_OPERATIVE }
+)
