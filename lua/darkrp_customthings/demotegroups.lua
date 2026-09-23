@@ -28,4 +28,5 @@ DarkRP.createDemoteGroup("Resistance", {
 
 DarkRP.createDemoteGroup("Arms Dealers", {
     TEAM_BLACKMARKET, TEAM_CHERKESOV, TEAM_SUPPLIER,
-})[[TEAM_RUSTUNG, ]]
+})
+--[[TEAM_RUSTUNG, ]]
