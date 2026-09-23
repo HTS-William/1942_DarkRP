@@ -12,6 +12,23 @@ Caps: max = 0 is unlimited, whole numbers are hard caps. Fractions (0.25 =
 25% of the server) are deliberately NOT used: at low population they block
 the job entirely.
 ---------------------------------------------------------------------------]]
+if not (RP1942 and RP1942.Weapons and RP1942.Models) then
+    -- Report exactly what the Lua filesystem shows, so the cause is in the error itself
+    local _, moduleDirs = file.Find("darkrp_modules/*", "LUA")
+    local coreFiles = file.Find("darkrp_modules/rp1942_core/*", "LUA")
+    local disabled = GAMEMODE.Config.DisabledCustomModules and GAMEMODE.Config.DisabledCustomModules["rp1942_core"]
+
+    DarkRP.error("The rp1942_core module did not load, so jobs.lua can't run.", 1, {
+        "Realm: " .. (SERVER and "SERVER" or "CLIENT"),
+        "Folders in darkrp_modules/: " .. (#moduleDirs > 0 and table.concat(moduleDirs, ", ") or "(none)"),
+        "Files in darkrp_modules/rp1942_core/: " .. (#coreFiles > 0 and table.concat(coreFiles, ", ") or "(none)"),
+        "Disabled in DisabledCustomModules: " .. tostring(disabled == true),
+        "RP1942 table exists: " .. tostring(RP1942 ~= nil),
+        "Module files must be named sh_*.lua / sv_*.lua / cl_*.lua exactly (no .txt, no ' (1)').",
+        "Any error printed BEFORE this one mentioning rp1942_core is the real cause.",
+    })
+end
+
 local W, M = RP1942.Weapons, RP1942.Models
 local SAL = GAMEMODE.Config.normalsalary
 
@@ -235,11 +252,11 @@ TEAM_SUPPLIER = job{
     model = M.merchant,
     description = [[Supplies the Reich with weapons and explosives at a steep discount.]],
     weapons = {},
-    command = "supplier",
+    command = "gersupplier",
     max = 1,
     salary = SAL,
     admin = 0,
-    faction = "civilian",
+    faction = "reich",
     category = "Dealers",
 }
 
