@@ -1,0 +1,324 @@
+diff --git a/lua/autorun/darkrp-full-classic-advert.lua b/lua/autorun/darkrp-full-classic-advert.lua
+index a0e1538..a8a9f79 100644
+--- a/lua/autorun/darkrp-full-classic-advert.lua
++++ b/lua/autorun/darkrp-full-classic-advert.lua
+@@ -1,4 +1,6 @@
+ local function init()
++	if SERVER then hook.Remove( "PlayerInitialSpawn", "dfca-load" ) end
++
+ 	if not DarkRP then
+ 		MsgC(Color(255,0,0), "DarkRP Classic Advert tried to run, but DarkRP wasn't declared!\n")
+ 		return
+diff --git a/lua/entities/dumpsters/cl_init.lua b/lua/entities/dumpsters/cl_init.lua
+index 0135f00..fe7e443 100644
+--- a/lua/entities/dumpsters/cl_init.lua
++++ b/lua/entities/dumpsters/cl_init.lua
+@@ -1,2 +1,39 @@
+-include( "shared.lua" )local function j_scoreboard_createfont( i, name, font_name )	local font_size = i	surface.CreateFont( name .. font_size,{		font = font_name,		size = font_size,		weight = 500	} )endlocal amount_to_create = 150for i = 1, amount_to_create do	j_scoreboard_createfont( i, "tupac_dumpsters_font_", "Bebas Neue Bold" )end
+-function ENT:Draw()	self:DrawModel()	local jump = math.abs( math.cos( CurTime() * 3 ) )	local Ang = self:GetAngles()	Ang:RotateAroundAxis(Ang:Up(), 90);	Ang:RotateAroundAxis(Ang:Forward(), 90);	local Offset = Vector( 0, 0, 50 )	local Pos = self:GetPos() + Offset	cam.Start3D2D( Pos, Angle( 0, LocalPlayer():EyeAngles().y - 90, 90 ), 0.1 )		draw.RoundedBox( 0, -300, -400, 600, 300, Color( 0, 0, 0, 200 ) )		if self:GetCooldown_Time() <= 0 then			draw.DrawText( "Dumpster", "tupac_dumpsters_font_150", 0, -400, color_white, 1 )			draw.DrawText( "Press E to USE", "tupac_dumpsters_font_80", 0, -280, color_white, 1 )			draw.DrawText( "Must be Hobo job.", "tupac_dumpsters_font_65", 0, -200, color_white, 1 )		elseif self:GetCooldown_Time() > 0 then			draw.DrawText( "Cooldown:", "tupac_dumpsters_font_65", 0, -400, color_white, 1 )			draw.DrawText( string.FormattedTime( self:GetCooldown_Time(), "%01i:%02i"), "tupac_dumpsters_font_150", 0, -300, color_white, 1 )		end	cam.End3D2D()end
+\ No newline at end of file
++include( "shared.lua" )
++--> Only sizes 65/80/150 are ever drawn below - the original version created
++--> 150 fonts (one per size 1-150) on every client load, which is wasted work.
++local function j_scoreboard_createfont( i, name, font_name )
++	local font_size = i
++	surface.CreateFont( name .. font_size,{
++		font = font_name,
++		size = font_size,
++		weight = 500
++	} )
++end
++
++for _, size in ipairs( { 65, 80, 150 } ) do
++	j_scoreboard_createfont( size, "tupac_dumpsters_font_", "Bebas Neue Bold" )
++end
++function ENT:Draw()
++	self:DrawModel()
++	local jump = math.abs( math.cos( CurTime() * 3 ) )
++	local Ang = self:GetAngles()
++	Ang:RotateAroundAxis(Ang:Up(), 90);
++	Ang:RotateAroundAxis(Ang:Forward(), 90);
++	local Offset = Vector( 0, 0, 50 )
++	local Pos = self:GetPos() + Offset
++	cam.Start3D2D( Pos, Angle( 0, LocalPlayer():EyeAngles().y - 90, 90 ), 0.1 )
++		draw.RoundedBox( 0, -300, -400, 600, 300, Color( 0, 0, 0, 200 ) )
++		if self:GetCooldown_Time() <= 0 then
++			draw.DrawText( "Dumpster", "tupac_dumpsters_font_150", 0, -400, color_white, 1 )
++			draw.DrawText( "Press E to USE", "tupac_dumpsters_font_80", 0, -280, color_white, 1 )
++			draw.DrawText( "Job restricted.", "tupac_dumpsters_font_65", 0, -200, color_white, 1 )
++		elseif self:GetCooldown_Time() > 0 then
++			draw.DrawText( "Cooldown:", "tupac_dumpsters_font_65", 0, -400, color_white, 1 )
++			draw.DrawText( string.FormattedTime( self:GetCooldown_Time(), "%01i:%02i"), "tupac_dumpsters_font_150", 0, -300, color_white, 1 )
++		end
++	cam.End3D2D()
++end
++
++--> Must match the registration in init.lua, or the client only knows this
++--> entity as "dumpsters" (the folder name) and ENT:Draw never gets used.
++scripted_ents.Register( ENT, "tupac_dumpster" )
+diff --git a/lua/entities/dumpsters/config.lua b/lua/entities/dumpsters/config.lua
+index 32dae94..aa8618b 100644
+--- a/lua/entities/dumpsters/config.lua
++++ b/lua/entities/dumpsters/config.lua
+@@ -1,8 +1,69 @@
+-tupac_dumpsters_config = {}
++tupac_dumpsters_config = {
+ 
+-tupac_dumpsters_config.DumpsterModel = "models/props_junk/trashdumpster01a.mdl" --> The model of the dumpster ( Default: "models/props_junk/trashdumpster01a.mdl" )tupac_dumpsters_config.DumpsterColor = Color( 255, 255, 255 ) --> The color of the dumpster ( Default: Color( 255, 255, 255 ) )tupac_dumpsters_config.DumpsterSize = 1 --> The size of the dumpster ( Multiplier. Default: 1 )tupac_dumpsters_config.UseSound = "doors/door_metal_gate_move1.wav" --> The sound the dumpster makes when it's used ( Default: "doors/door_metal_gate_move1.wav" )tupac_dumpsters_config.SpawnPos = 100 --> How far up does the random item spawn? ( Default: 100 )tupac_dumpsters_config.MinItemsToCreate = 2 --> Minimum amount of items does the dumpster create each time? ( Default: 2 )tupac_dumpsters_config.MaxItemsToCreate = 5 --> Maximum amount of items does the dumpster create each time? ( Default: 5 )tupac_dumpsters_config.WeaponPercentage = 15 --> The chance of a weapon being spawned ( Keep at 100 or less )tupac_dumpsters_config.EntityPercentage = 25 --> The chance of an entity being spawned ( Keep at 100 or less )tupac_dumpsters_config.PropPercentage = 100 --> The chance of a prop being spawned ( Keep at 100 or less )tupac_dumpsters_config.CooldownTime = 10 --> The cooldown time ( In seconds )tupac_dumpsters_config.PropRemovalTime = 8 --> How long it takes for the props to be removed ( Default: 15 )tupac_dumpsters_config.WrongJobMsg = "You are not the right job to use this dumpster!" --> The message that appears in chat when a player hits 'use' on the dumpster and is not the correct job ( Default: "You are not the right job to use this dumpster!" )tupac_dumpsters_config.CooldownMsg = "Please wait out the cooldown time!" --> The message that appears in chat when there is a cooldown and someone hits 'use' on the dumpster ( Default: "Please wait out the cooldown time!" )tupac_dumpsters_config.AllowedJobs = { --> Jobs allowed to use the dumpster	TEAM_HOBO,}tupac_dumpsters_config.Props = { --> Random props that spawn	"models/props_c17/BriefCase001a.mdl",	"models/props_c17/streetsign001c.mdl",	"models/props_lab/desklamp01.mdl",	"models/props_lab/frame002a.mdl",	"models/props_c17/doll01.mdl",	"models/Gibs/wood_gib01e.mdl",	"models/props_c17/clock01.mdl",}
+-tupac_dumpsters_config.Weapons = { --> Random weapons that spawn	"lockpick",	"mcv_vz24",	"mcv_kar98q",	"mcv_wrench",	"mcv_babybrowning",	"mcv_vcpistol",	"mcv_vcpistol2",	"mcv_tt33",}
+-tupac_dumpsters_config.Entities = { --> Random entities that spawn
+-	"cw_ammo_lmg_ammo",	"cw_ammo_magnum_ammo",	"cw_ammo_pistol_ammo",	"cw_ammo_rifle_ammo",	"cw_ammo_smg_ammo",	"cw_ammo_sniper_ammo",	"weed_seed",}
+-tupac_dumpsters_config.AddSpawnPos = { --> The spawn positions	{		pos = Vector( 805.174500, 276.007233, -79.968750 ),		ang = Angle( 7.724401, -91.468979, 0.000000 	),	},}
+---> Don't touch anything belowfunction get_dumpsters_spawn_pos()	return tupac_dumpsters_config.AddSpawnPosend
+\ No newline at end of file
++}
++
++tupac_dumpsters_config.DumpsterModel = "models/props_junk/trashdumpster01a.mdl" --> The model of the dumpster ( Default: "models/props_junk/trashdumpster01a.mdl" )
++tupac_dumpsters_config.DumpsterColor = Color( 255, 255, 255 ) --> The color of the dumpster ( Default: Color( 255, 255, 255 ) )
++tupac_dumpsters_config.DumpsterSize = 1 --> The size of the dumpster ( Multiplier. Default: 1 )
++tupac_dumpsters_config.UseSound = "doors/door_metal_gate_move1.wav" --> The sound the dumpster makes when it's used ( Default: "doors/door_metal_gate_move1.wav" )
++tupac_dumpsters_config.SpawnPos = 100 --> How far up does the random item spawn? ( Default: 100 )
++tupac_dumpsters_config.MinItemsToCreate = 2 --> Minimum amount of items does the dumpster create each time? ( Default: 2 )
++tupac_dumpsters_config.MaxItemsToCreate = 5 --> Maximum amount of items does the dumpster create each time? ( Default: 5 )
++tupac_dumpsters_config.WeaponPercentage = 15 --> The chance of a weapon being spawned ( Keep at 100 or less )
++tupac_dumpsters_config.EntityPercentage = 25 --> The chance of an entity being spawned ( Keep at 100 or less )
++tupac_dumpsters_config.PropPercentage = 100 --> The chance of a prop being spawned ( Keep at 100 or less )
++tupac_dumpsters_config.CooldownTime = 10 --> The cooldown time ( In seconds )
++tupac_dumpsters_config.PropRemovalTime = 8 --> How long it takes for the props to be removed ( Default: 15 )
++tupac_dumpsters_config.WrongJobMsg = "You are not the right job to use this dumpster!" --> The message that appears in chat when a player hits 'use' on the dumpster and is not the correct job ( Default: "You are not the right job to use this dumpster!" )
++tupac_dumpsters_config.CooldownMsg = "Please wait out the cooldown time!" --> The message that appears in chat when there is a cooldown and someone hits 'use' on the dumpster ( Default: "Please wait out the cooldown time!" )
++--> Jobs allowed to use the dumpster, by job COMMAND (see jobs.lua for each
++--> job's `command` field) - not TEAM_ constants. TEAM_ numbers aren't
++--> guaranteed to exist yet when this file loads (same reason sh_config.lua's
++--> Disguise.jobs is keyed by command), and this gamemode has no "Hobo" job
++--> at all, so the original { TEAM_HOBO } was always an empty, useless table.
++--> Add/remove commands here as needed - e.g. resistance = true, labourer = true.
++tupac_dumpsters_config.AllowedJobs = {
++	civilian = true,
++}
++tupac_dumpsters_config.Props = { --> Random props that spawn
++	"models/props_c17/BriefCase001a.mdl",
++	"models/props_c17/streetsign001c.mdl",
++	"models/props_lab/desklamp01.mdl",
++	"models/props_lab/frame002a.mdl",
++	"models/props_c17/doll01.mdl",
++	"models/Gibs/wood_gib01e.mdl",
++	"models/props_c17/clock01.mdl",
++}
++--> Random weapons that spawn. The originals here ("mcv_*") were from a
++--> different weapon base entirely and aren't installed on this server.
++--> These match the placeholder classes already defined in
++--> rp1942_core/sh_config.lua (RP1942.Weapons) - update both together once
++--> your real weapon pack is installed.
++tupac_dumpsters_config.Weapons = {
++	"lockpick",                    -- real DarkRP built-in, always exists
++	"weapon_rp1942_k98k",
++	"weapon_rp1942_p38",
++	"weapon_rp1942_ppk",
++}
++--> Random entities that spawn. The originals here ("cw_ammo_*", "weed_seed")
++--> were from unrelated addons (a different weapon base, a drugs addon) that
++--> aren't installed on this server. These are stock HL2 entities that always
++--> exist, so the dumpster works out of the box; swap in your own once you
++--> have ammo pickups for the rp1942 weapons.
++tupac_dumpsters_config.Entities = {
++	"item_ammo_pistol",
++	"item_ammo_smg1",
++	"item_ammo_ar2",
++	"item_box_buckshot",
++	"item_healthkit",
++}
++tupac_dumpsters_config.AddSpawnPos = { --> The spawn positions
++	{
++		pos = Vector( 805.174500, 276.007233, -79.968750 ),
++		ang = Angle( 7.724401, -91.468979, 0.000000 	),
++	},
++}
++--> Don't touch anything below
++function get_dumpsters_spawn_pos()
++	return tupac_dumpsters_config.AddSpawnPos
++end
+diff --git a/lua/entities/dumpsters/init.lua b/lua/entities/dumpsters/init.lua
+index 55f6bd5..9ec9847 100644
+--- a/lua/entities/dumpsters/init.lua
++++ b/lua/entities/dumpsters/init.lua
+@@ -1,43 +1,117 @@
+---> ClientAddCSLuaFile( "cl_init.lua" )AddCSLuaFile( "shared.lua" )AddCSLuaFile( "config.lua" )--> Serverinclude( "shared.lua" )include( "config.lua" )
+---> Positionlocal spawn_pos = Vector( 0, 0, tupac_dumpsters_config.SpawnPos )
+-
+-function ENT:Initialize()	--> Model	self:SetModel( tupac_dumpsters_config.DumpsterModel )	--> Color	self:SetColor( tupac_dumpsters_config.DumpsterColor )	self:SetModelScale( tupac_dumpsters_config.DumpsterSize )	--> Physics	self:PhysicsInit( SOLID_VPHYSICS )	self:SetMoveType( MOVETYPE_VPHYSICS )	self:SetSolid( SOLID_VPHYSICS )	self:SetUseType( SIMPLE_USE )	self:SetCooldown_Time(0)end
+-
+-function ENT:Use( a, c )	if table.HasValue( tupac_dumpsters_config.AllowedJobs, c:Team() ) then		if self:GetCooldown_Time() <= 0 then			self:EmitSound( tupac_dumpsters_config.UseSound )			self:CreateItems()			self:SetCooldown_Time( tupac_dumpsters_config.CooldownTime )		elseif !( self:GetCooldown_Time() <= 0 ) then			c:SendLua( [[ chat.AddText( Color( 255, 25, 25 ), "[DUMPSTER] ", color_white, tupac_dumpsters_config.CooldownMsg ) ]] )		end --> End of Cooldown check	else		c:SendLua( [[ chat.AddText( Color( 255, 25, 25 ), "[DUMPSTER] ", color_white, tupac_dumpsters_config.WrongJobMsg ) ]] )	end --> End of team checkend
+-
+-function ENT:CreateItems()	--[[	--> Destroy the create items timer	timer.Destroy( "tupac_dumpsters_spawn" )	--> Destroy the cooldown timer	timer.Destroy( "tupac_dumpsters_cooldown" )	]]	--> Creating items timer ( To prevent props from getting stuck together )	timer.Create( "tupac_dumpsters_spawn", 0.2, math.random( tupac_dumpsters_config.MinItemsToCreate, tupac_dumpsters_config.MaxItemsToCreate ), functio`n()		if math.random( 0, 100 ) <= tupac_dumpsters_config.WeaponPercentage then			self:SpawnWeapon()		elseif math.random( 0, 100 ) <= tupac_dumpsters_config.EntityPercentage then			self:SpawnEntity()		elseif math.random( 0, 100 ) <= tupac_dumpsters_config.PropPercentage then			self:SpawnProp()		end	end )	--> Cooldown timer	timer.Create( "tupac_dumpsters_cooldown", 1, tupac_dumpsters_config.CooldownTime, function()		if self:GetCooldown_Time() != 0 then			self:SetCooldown_Time( self:GetCooldown_Time() - 1 )		end	end )end
+-
+-function ENT:SpawnWeapon()	local tupac_dumpsters_weapon = ents.Create( table.Random( tupac_dumpsters_config.Weapons ) )	tupac_dumpsters_weapon:SetPos( self:GetPos() + spawn_pos )	tupac_dumpsters_weapon:Spawn()end
+-function ENT:SpawnEntity()	local tupac_dumpsters_entity = ents.Create( table.Random( tupac_dumpsters_config.Entities ) )	tupac_dumpsters_entity:SetPos( self:GetPos() + spawn_pos )	tupac_dumpsters_entity:Spawn()end
+-function ENT:SpawnProp()
+-
+-
+-	local tupac_dumpsters_prop = ents.Create( "prop_physics" )
+-	tupac_dumpsters_prop:SetModel( table.Random( tupac_dumpsters_config.Props ) )
+-	tupac_dumpsters_prop:SetPos( self:GetPos() + spawn_pos )
+-	tupac_dumpsters_prop:Spawn()
+-	timer.Simple( tupac_dumpsters_config.PropRemovalTime, function()
+-		if tupac_dumpsters_prop:IsValid() then
+-			tupac_dumpsters_prop:Remove()
+-		end
+-	end )
+-end
+-
+---[[
+-	Name:		Create Dumpsters
+-]]
+-
+-local tupac_dumpsters_spawn_positions = get_dumpsters_spawn_pos()
+-function spawn_tupac_dumpsters()
+-	for k, v in pairs( tupac_dumpsters_spawn_positions ) do
+-		local tupac_dumpster = ents.Create( "tupac_dumpster" )
+-		tupac_dumpster:SetPos( v[ "pos" ] )
+-		tupac_dumpster:SetAngles( v[ "ang" ] )
+-		tupac_dumpster:Spawn()
+-		tupac_dumpster:DropToFloor()
+-		local tupac_dumpster_phys = tupac_dumpster:GetPhysicsObject()
+-		tupac_dumpster_phys:EnableMotion( false )
+-	end
+-end
+-
++--> Client
++AddCSLuaFile( "cl_init.lua" )
++AddCSLuaFile( "shared.lua" )
++AddCSLuaFile( "config.lua" )
++
++--> Server
++include( "shared.lua" )
++include( "config.lua" )
++--> Position
++local spawn_pos = Vector( 0, 0, tupac_dumpsters_config.SpawnPos )
++
++function ENT:Initialize()
++	--> Model
++	self:SetModel( tupac_dumpsters_config.DumpsterModel )
++	--> Color
++	self:SetColor( tupac_dumpsters_config.DumpsterColor )
++	self:SetModelScale( tupac_dumpsters_config.DumpsterSize )
++	--> Physics
++	self:PhysicsInit( SOLID_VPHYSICS )
++	self:SetMoveType( MOVETYPE_VPHYSICS )
++	self:SetSolid( SOLID_VPHYSICS )
++	self:SetUseType( SIMPLE_USE )
++	self:SetCooldown_Time(0)
++end
++
++function ENT:Use( a, c )
++	local job = RPExtraTeams[ c:Team() ]
++	if job and tupac_dumpsters_config.AllowedJobs[ job.command ] then
++		if self:GetCooldown_Time() <= 0 then
++			self:EmitSound( tupac_dumpsters_config.UseSound )
++			self:CreateItems()
++			self:SetCooldown_Time( tupac_dumpsters_config.CooldownTime )
++		elseif !( self:GetCooldown_Time() <= 0 ) then
++			--> Player:SendLua is deprecated/blocked by default in modern GMod, so this
++			--> never actually reached the player. DarkRP.notify is what the rest of
++			--> the addon uses for exactly this kind of message.
++			DarkRP.notify( c, 1, 4, tupac_dumpsters_config.CooldownMsg )
++		end --> End of Cooldown check
++	else
++		DarkRP.notify( c, 1, 4, tupac_dumpsters_config.WrongJobMsg )
++	end --> End of team check
++end
++
++function ENT:CreateItems()
++
++	--[[
++	--> Destroy the create items timer
++	timer.Destroy( "tupac_dumpsters_spawn" )
++	--> Destroy the cooldown timer
++	timer.Destroy( "tupac_dumpsters_cooldown" )
++	]]
++	--> Creating items timer ( To prevent props from getting stuck together )
++	timer.Create( "tupac_dumpsters_spawn", 0.2, math.random( tupac_dumpsters_config.MinItemsToCreate, tupac_dumpsters_config.MaxItemsToCreate ), function()
++		if math.random( 0, 100 ) <= tupac_dumpsters_config.WeaponPercentage then
++			self:SpawnWeapon()
++		elseif math.random( 0, 100 ) <= tupac_dumpsters_config.EntityPercentage then
++			self:SpawnEntity()
++		elseif math.random( 0, 100 ) <= tupac_dumpsters_config.PropPercentage then
++			self:SpawnProp()
++		end
++	end )
++	--> Cooldown timer
++	timer.Create( "tupac_dumpsters_cooldown", 1, tupac_dumpsters_config.CooldownTime, function()
++		if self:GetCooldown_Time() != 0 then
++			self:SetCooldown_Time( self:GetCooldown_Time() - 1 )
++		end
++	end )
++end
++
++function ENT:SpawnWeapon()
++	local tupac_dumpsters_weapon = ents.Create( table.Random( tupac_dumpsters_config.Weapons ) )
++	tupac_dumpsters_weapon:SetPos( self:GetPos() + spawn_pos )
++	tupac_dumpsters_weapon:Spawn()
++end
++function ENT:SpawnEntity()
++	local tupac_dumpsters_entity = ents.Create( table.Random( tupac_dumpsters_config.Entities ) )
++	tupac_dumpsters_entity:SetPos( self:GetPos() + spawn_pos )
++	tupac_dumpsters_entity:Spawn()
++end
++function ENT:SpawnProp()
++
++
++	local tupac_dumpsters_prop = ents.Create( "prop_physics" )
++	tupac_dumpsters_prop:SetModel( table.Random( tupac_dumpsters_config.Props ) )
++	tupac_dumpsters_prop:SetPos( self:GetPos() + spawn_pos )
++	tupac_dumpsters_prop:Spawn()
++	timer.Simple( tupac_dumpsters_config.PropRemovalTime, function()
++		if tupac_dumpsters_prop:IsValid() then
++			tupac_dumpsters_prop:Remove()
++		end
++	end )
++end
++
++--[[
++	Name:		Create Dumpsters
++]]
++
++local tupac_dumpsters_spawn_positions = get_dumpsters_spawn_pos()
++function spawn_tupac_dumpsters()
++	for k, v in pairs( tupac_dumpsters_spawn_positions ) do
++		local tupac_dumpster = ents.Create( "tupac_dumpster" )
++		tupac_dumpster:SetPos( v[ "pos" ] )
++		tupac_dumpster:SetAngles( v[ "ang" ] )
++		tupac_dumpster:Spawn()
++		tupac_dumpster:DropToFloor()
++		local tupac_dumpster_phys = tupac_dumpster:GetPhysicsObject()
++		tupac_dumpster_phys:EnableMotion( false )
++	end
++end
++
+ hook.Add( "InitPostEntity", "spawn_dumpsters", spawn_tupac_dumpsters )
++
++--> The folder here is "dumpsters", but every ents.Create() call above uses
++--> "tupac_dumpster". Without registering that name explicitly, GMod only
++--> knows this entity as "dumpsters" and every ents.Create("tupac_dumpster")
++--> call (including the one that spawns the dumpster itself) silently fails.
++scripted_ents.Register( ENT, "tupac_dumpster" )
+diff --git a/lua/entities/dumpsters/shared.lua b/lua/entities/dumpsters/shared.lua
+index 5bf4187..6d71a70 100644
+--- a/lua/entities/dumpsters/shared.lua
++++ b/lua/entities/dumpsters/shared.lua
+@@ -1 +1,13 @@
+-include( "config.lua" )ENT.Type 												= "anim" --> Entity typeENT.Base												= "base_anim" --> Entity baseENT.PrintName										= "Dumpsters"ENT.Author											= "Tupac Shakur & MrKrucible"ENT.Purpose											= ""ENT.AutomaticFrameAdvance 				= trueENT.Spawnable										= trueENT.AdminSpawnable							= truefunction ENT:SetupDataTables()	--> The cooldown timer	self:NetworkVar( "Int", 0, "Cooldown_Time" )end
+\ No newline at end of file
++include( "config.lua" )
++ENT.Type 												= "anim" --> Entity type
++ENT.Base												= "base_anim" --> Entity base
++ENT.PrintName										= "Dumpsters"
++ENT.Author											= "Tupac Shakur & MrKrucible"
++ENT.Purpose											= ""
++ENT.AutomaticFrameAdvance 				= true
++ENT.Spawnable										= true
++ENT.AdminSpawnable							= true
++function ENT:SetupDataTables()
++	--> The cooldown timer
++	self:NetworkVar( "Int", 0, "Cooldown_Time" )
++end
