@@ -1,1 +1,13 @@
-include( "config.lua" )ENT.Type 												= "anim" --> Entity typeENT.Base												= "base_anim" --> Entity baseENT.PrintName										= "Dumpsters"ENT.Author											= "Tupac Shakur & MrKrucible"ENT.Purpose											= ""ENT.AutomaticFrameAdvance 				= trueENT.Spawnable										= trueENT.AdminSpawnable							= truefunction ENT:SetupDataTables()	--> The cooldown timer	self:NetworkVar( "Int", 0, "Cooldown_Time" )end
+include( "config.lua" )
+ENT.Type 												= "anim" --> Entity type
+ENT.Base												= "base_anim" --> Entity base
+ENT.PrintName										= "Dumpsters"
+ENT.Author											= "Tupac Shakur & MrKrucible"
+ENT.Purpose											= ""
+ENT.AutomaticFrameAdvance 				= true
+ENT.Spawnable										= true
+ENT.AdminSpawnable							= true
+function ENT:SetupDataTables()
+	--> The cooldown timer
+	self:NetworkVar( "Int", 0, "Cooldown_Time" )
+end

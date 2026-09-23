@@ -106,6 +106,20 @@ TEAM_CIVILIAN = job{
 -- Set immediately: if a later job errors, players can still join as Civilian
 GAMEMODE.DefaultTeam = TEAM_CIVILIAN
 
+TEAM_HOBO = job{
+    name = "Hobo",
+    color = Color(90, 80, 65),
+    model = M.hobo,
+    description = [[Has nothing and owes nobody. Scrapes by on scraps and whatever's worth taking from the bins.]],
+    weapons = {},
+    command = "hobo",
+    max = 0,
+    salary = SAL * 0.5,
+    admin = 0,
+    faction = "civilian",
+    category = "Civilians",
+}
+
 --[=[ depreciated
 TEAM_DESIGNER = job{
     name = "Designer",

@@ -1,4 +1,6 @@
 local function init()
+	if SERVER then hook.Remove( "PlayerInitialSpawn", "dfca-load" ) end
+
 	if not DarkRP then
 		MsgC(Color(255,0,0), "DarkRP Classic Advert tried to run, but DarkRP wasn't declared!\n")
 		return

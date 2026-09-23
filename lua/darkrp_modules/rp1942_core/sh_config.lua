@@ -117,6 +117,7 @@ local civM = {
 RP1942.Models = {
     civilian     = civM,
     gestapo      = civM,   -- plain clothes: keep this identical to civilian, or the cover is pointless
+    hobo         = { "models/player/group01/male_01.mdl" },
     merchant     = { "models/player/monk.mdl" },
     doctor       = { "models/player/kleiner.mdl" },
     banker       = { "models/player/gman_high.mdl" },
