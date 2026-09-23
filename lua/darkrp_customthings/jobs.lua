@@ -625,3 +625,9 @@ for teamNr, jobTbl in pairs(RPExtraTeams) do
 end
 
 -- No hitman teams in 1942 (hitmenu is disabled in disabled_defaults.lua)
+--[[TODO:
+    Jobs simplified, catagories merged (Civilians, industrial, commerical into one)
+    German jobs partitioned from others
+    Schutzstaffel jobs missing
+        Should be akin to Wehrmacht, minus "driver" "elite rifleman"
+    Reich jobs should follow [join reich_type] > [join specialization] (i.e. two job hops, specialization not visible from the jobs menu unless in a reich_type job)
