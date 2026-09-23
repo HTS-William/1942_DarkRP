@@ -4,12 +4,13 @@
 - Revive the time honored tradition of getting hit in the gut and harassed for selling bread
 - 25k lotto or raid
 
-
 # Technicals and credit
 for DarkRP 2.5.0 and above.
 
-#### Check out the DarkRP wiki for guides, tutorials and documentation! ####
+### Original DarkRP Developed with love by ###
+Falco Peijnenburg - https://github.com/FPtje/DarkRP
+
 [DarkRP Wiki](https://darkrp.miraheze.org/wiki/Main_Page)
 
-#### Original DarkRP Developed with love by ####
-Falco Peijnenburg - https://github.com/FPtje/DarkRP
+### AI DISCLOSURE ###
+Portions of this product have been made with the assisstance of Claude Code for assisstance in the coding and organization of this project
