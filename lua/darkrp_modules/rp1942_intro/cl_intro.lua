@@ -8,7 +8,7 @@ the edges lingers and eases out slowly. Plays once per session, not on respawn.
     rp1942_intro_replay     replay it (for tuning the timings below)
 ---------------------------------------------------------------------------]]
 local cfg = {
-    blackHold    = 1.0,   -- seconds of full black before the fade starts
+    blackHold    = 1.5,   -- seconds of full black before the fade starts
     blackFade    = 3.0,   -- seconds to fade in from black
     vignetteTime = 12.0,  -- seconds for the vignette to fade away (starts with the fade-in)
     vignetteMax  = 235,   -- darkness at the screen edge, 0-255
