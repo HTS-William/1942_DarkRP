@@ -332,7 +332,7 @@ GM.Config.lockdownsound = "npc/overwatch/cityvoice/f_confirmcivilstatus_1_spkr.w
 
 -- The skin DarkRP uses. Set to "default" to use the GMod default derma theme.
 GM.Config.DarkRPSkin = "DarkRP"
-GM.Config.currency = "$"
+GM.Config.currency = "R.M."
 GM.Config.currencyThousandSeparator = ","
 GM.Config.chatCommandPrefix = "/"
 GM.Config.F1MenuHelpPage = "https://darkrp.miraheze.org/wiki/Main_Page"
