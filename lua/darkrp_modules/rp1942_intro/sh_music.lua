@@ -11,7 +11,7 @@ Put the file in the addon at:
 RP1942 = RP1942 or {}
 
 RP1942.IntroMusic = {
-    path      = "sound/rp1942/1942rpintro.mp3",  -- relative to the game folder; must start with sound/
+    path      = "sound/1942rpintro.mp3",  -- relative to the game folder; must start with sound/
     volume    = 0.6,    -- 0-1, before the player's own volume settings
     fadeIn    = 2.0,    -- seconds
     fadeOut   = 4.0,    -- seconds
