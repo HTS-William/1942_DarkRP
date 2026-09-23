@@ -7,8 +7,11 @@ On first spawn:
 Plays once per session, not on respawn. (FAdmin's MOTD is switched off in
 sv_motd.lua in this same module.)
 
-    rp1942_intro 0          player setting: turn the intro off (saved)
+    rp1942_intro 0          player setting: turn the intro (and its music) off (saved)
+    rp1942_intro_volume 0.5 player setting: intro music volume, 0-1 (saved)
     rp1942_intro_replay     replay it (for tuning the timings/text below)
+
+Music settings (file path, fades) are in sh_music.lua.
 ---------------------------------------------------------------------------]]
 
 --[[---------------------------------------------------------------------------
@@ -55,6 +58,7 @@ local blackHold = cardEnd
 local totalTime = blackHold + math.max(cfg.blackFade, cfg.vignetteTime)
 
 local enabled = CreateClientConVar("rp1942_intro", "1", true, false, "Play the intro when joining")
+local musicVolume = CreateClientConVar("rp1942_intro_volume", "1", true, false, "Intro music volume (0-1)", 0, 1)
 local startTime
 
 --[[---------------------------------------------------------------------------
@@ -170,12 +174,78 @@ hook.Add("HUDPaintBackground", "RP1942_IntroVignette", function()
 end)
 
 --[[---------------------------------------------------------------------------
-Triggers
+Music
+sound.PlayFile streams the downloaded file and gives us a channel whose
+volume we can change every frame, which is what makes the fades possible.
 ---------------------------------------------------------------------------]]
-hook.Add("InitPostEntity", "RP1942_IntroStart", function()
-    if enabled:GetBool() then startTime = RealTime() end
+local channel, musicStart
+local musicToken = 0   -- guards against a replay while the previous file is still loading
+
+local function stopMusic()
+    musicToken = musicToken + 1
+    if IsValid(channel) then channel:Stop() end
+    channel, musicStart = nil, nil
+end
+
+local function startMusic()
+    stopMusic()
+
+    local music = RP1942.IntroMusic
+    if not music or not music.path then return end
+
+    -- Missing when the player skipped downloads or the server never sent it
+    if not file.Exists(music.path, "GAME") then return end
+
+    local token = musicToken
+    sound.PlayFile(music.path, "noplay", function(ch, _, errName)
+        if token ~= musicToken then
+            if IsValid(ch) then ch:Stop() end
+            return
+        end
+        if not IsValid(ch) then
+            MsgC(Color(255, 170, 0), "[1942] Intro music failed to play: ", tostring(errName), "\n")
+            return
+        end
+
+        channel, musicStart = ch, RealTime()
+        ch:SetVolume(0)
+        ch:Play()
+    end)
+end
+
+hook.Add("Think", "RP1942_IntroMusic", function()
+    if not channel then return end
+    if not IsValid(channel) then channel, musicStart = nil, nil return end
+
+    local music = RP1942.IntroMusic
+    local elapsed = RealTime() - musicStart
+    local fadeOutAt = music.fadeOutAt or (totalTime - music.fadeOut)
+
+    -- Track finished on its own, or the fade-out is done
+    if channel:GetState() == GMOD_CHANNEL_STOPPED or elapsed >= fadeOutAt + music.fadeOut then
+        stopMusic()
+        return
+    end
+
+    local fade = progress(elapsed, 0, music.fadeIn) * (1 - progress(elapsed, fadeOutAt, music.fadeOut))
+
+    -- Respect the player's own music slider (Options > Audio) as well as ours
+    local gameMusic = GetConVar("snd_musicvolume")
+    local base = music.volume * musicVolume:GetFloat() * (gameMusic and gameMusic:GetFloat() or 1)
+
+    channel:SetVolume(base * fade)
 end)
 
-concommand.Add("rp1942_intro_replay", function()
+--[[---------------------------------------------------------------------------
+Triggers
+---------------------------------------------------------------------------]]
+local function play()
     startTime = RealTime()
+    startMusic()
+end
+
+hook.Add("InitPostEntity", "RP1942_IntroStart", function()
+    if enabled:GetBool() then play() end
 end)
+
+concommand.Add("rp1942_intro_replay", play)
