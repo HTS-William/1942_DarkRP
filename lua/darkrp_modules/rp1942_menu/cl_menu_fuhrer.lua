@@ -79,6 +79,18 @@ function PANEL:Populate()
     self:AddButton("Make economy gooder (+10)", function() self:Request("economy_up") end)
     self:AddButton("Make economy worser (-10)", function() self:Request("economy_down") end)
 
+    -- Treasury -----------------------------------------------------------------
+    self:AddSection("Reich treasury")
+    local treasury = self:AddText("")
+    local baseTreasuryThink = treasury.Think
+    treasury.Think = function(s)
+        if baseTreasuryThink then baseTreasuryThink(s) end
+        local text = RP1942.getTreasury
+            and ("Balance:  " .. DarkRP.formatMoney(RP1942.getTreasury()) .. "   (all income tax is paid in here)")
+            or "Treasury module not loaded."
+        if s:GetText() ~= text then s:SetText(text) end
+    end
+
     if not RP1942.getTaxRate then
         self:AddText("Tax module not loaded.")
         return
