@@ -259,6 +259,8 @@ TEAM_BLACKMARKET = job{
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    menu = "RP1942_ShopMenu",
+    shop = "example",
 }
 
 --[=[TEAM_RUSTUNG = job{
