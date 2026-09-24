@@ -86,7 +86,17 @@ local function job(tbl)
 
     return DarkRP.createJob(name, tbl)
 end
+    -- Jobs with demoteOnDeath = true become Hobos when they die
+    if tbl.demoteOnDeath and not tbl.PlayerDeath then
+        tbl.PlayerDeath = function(ply)
+            local lost = RPExtraTeams[ply:Team()]
+            ply:changeTeam(TEAM_HOBO or GAMEMODE.DefaultTeam, true, true)
+            DarkRP.notify(ply, 1, 6, "You died and lost your position" .. (lost and (" as " .. lost.name) or "") .. ".")
+        end
+    end
 
+    return DarkRP.createJob(name, tbl)
+end
 --[[###########################################################################
                            CIVILIANS & RESISTANCE
 ###########################################################################]]
@@ -382,6 +392,7 @@ TEAM_RES_LEADER = job{
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    demoteOnDeath = true,
 }
 
 --[[###########################################################################
@@ -477,6 +488,7 @@ TEAM_SCIENTIST = job{
     arrests = false,
     category = "Reich",
     sortOrder = 11,
+    demoteOnDeath = true,
 }
 
 --[[===========================================================================
@@ -828,6 +840,7 @@ TEAM_FUHRER = job(whitelisted{
     branch = "command", requires = { faction = "reich" },
     category = "Reich Command",
     menu = "RP1942_FuhrerMenu",
+    demoteOnDeath = true,
 })
 --[[---------------------------------------------------------------------------
 Civil Protection = every Reich job unless it sets arrests = false.
