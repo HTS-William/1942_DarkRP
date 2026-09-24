@@ -13,25 +13,52 @@ end
 for _, size in ipairs( { 65, 80, 150 } ) do
 	j_scoreboard_createfont( size, "tupac_dumpsters_font_", "Bebas Neue Bold" )
 end
-function ENT:Draw()
-	self:DrawModel()
-	local jump = math.abs( math.cos( CurTime() * 3 ) )
-	local Ang = self:GetAngles()
-	Ang:RotateAroundAxis(Ang:Up(), 90);
-	Ang:RotateAroundAxis(Ang:Forward(), 90);
-	local Offset = Vector( 0, 0, 50 )
-	local Pos = self:GetPos() + Offset
-	cam.Start3D2D( Pos, Angle( 0, LocalPlayer():EyeAngles().y - 90, 90 ), 0.1 )
-		draw.RoundedBox( 0, -300, -400, 600, 300, Color( 0, 0, 0, 200 ) )
-		if self:GetCooldown_Time() <= 0 then
+
+--[[---------------------------------------------------------------------------
+Floating label: a subclass of RP1942.Floater (rp1942_core/cl_floater.lua).
+The base class handles position, facing, the distance cutoff and fade;
+this class only says what the dumpster's panel shows.
+
+Built on first draw rather than when this file loads, so it doesn't depend on
+the order GMod loads entities vs. DarkRP modules. If rp1942_core is missing,
+the dumpster still draws, just without a label.
+---------------------------------------------------------------------------]]
+local COLOR_PANEL = Color( 0, 0, 0, 200 )
+local DumpsterLabel
+
+local function getLabel()
+	if DumpsterLabel or not ( RP1942 and RP1942.Floater ) then return DumpsterLabel end
+
+	local cfg = tupac_dumpsters_config or {}
+	DumpsterLabel = RP1942.Floater:extend{
+		offset   = Vector( 0, 0, 50 ),
+		scale    = 0.1,
+		maxDist  = cfg.LabelDistance or 400,      --> not drawn beyond this (~52 units = 1 m)
+		fadeDist = cfg.LabelFadeDistance or 100,  --> fades out over the last N units
+	}
+
+	function DumpsterLabel:Paint( ent )
+		draw.RoundedBox( 0, -300, -400, 600, 300, COLOR_PANEL )
+
+		local cooldown = ent:GetCooldown_Time()
+		if cooldown <= 0 then
 			draw.DrawText( "Dumpster", "tupac_dumpsters_font_150", 0, -400, color_white, 1 )
 			draw.DrawText( "Press E to USE", "tupac_dumpsters_font_80", 0, -280, color_white, 1 )
 			draw.DrawText( "Hobos find better loot.", "tupac_dumpsters_font_65", 0, -200, color_white, 1 )
-		elseif self:GetCooldown_Time() > 0 then
+		else
 			draw.DrawText( "Cooldown:", "tupac_dumpsters_font_65", 0, -400, color_white, 1 )
-			draw.DrawText( string.FormattedTime( self:GetCooldown_Time(), "%01i:%02i"), "tupac_dumpsters_font_150", 0, -300, color_white, 1 )
+			draw.DrawText( string.FormattedTime( cooldown, "%01i:%02i" ), "tupac_dumpsters_font_150", 0, -300, color_white, 1 )
 		end
-	cam.End3D2D()
+	end
+
+	return DumpsterLabel
+end
+
+function ENT:Draw()
+	self:DrawModel()
+
+	local label = getLabel()
+	if label then label:Draw( self ) end
 end
 
 --> Must match the registration in init.lua, or the client only knows this
