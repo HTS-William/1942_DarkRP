@@ -240,6 +240,7 @@ TEAM_BAKER = job{
     admin = 0,
     faction = "civilian",
     category = "Civilians",
+    menu = "RP1942_BakerMenu",
 }
 
 --[[===========================================================================
