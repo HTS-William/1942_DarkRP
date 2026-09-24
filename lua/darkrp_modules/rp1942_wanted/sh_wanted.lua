@@ -43,7 +43,8 @@ RP1942.Wanted = {
 
     -- The tag above wanted players
     showReason      = true,            -- small reason line under WANTED
-    tagMaxDistance  = 3000,            -- further than this, no tag
+    tagMaxDistance  = 800,             -- game units (about 40 per metre): beyond this, no tag.
+                                       -- It fades out over the last quarter of the distance.
 
     -- Alert boxes
     alertTitle      = "Reich Alert!",
@@ -55,6 +56,12 @@ RP1942.Wanted = {
     unwantedText    = "%s is no longer wanted by the Reich.",   -- cleared or ran out
     arrestedText    = "%s has been arrested by the Reich.",
     killedText      = "%s, wanted by the Reich, has been killed.",
+
+    -- What the wanted player sees themselves: a small tag in a corner
+    selfIndicator   = true,
+    selfText        = "WANTED",
+    selfPosition    = "topright",      -- "topleft", "topright" or "topcenter"
+    selfSound       = "buttons/button10.wav", -- once, when you become wanted; false = off
 
     --[[-----------------------------------------------------------------------
     Colours. Color(red, green, blue, alpha), each 0-255 (alpha optional).
@@ -70,5 +77,9 @@ RP1942.Wanted = {
         alertLine  = Color(170, 25, 25),         -- red line under the heading
         alertText  = Color(255, 255, 255),       -- the big message
         alertClear = Color(120, 200, 120),       -- line colour for "no longer wanted"
+
+        selfBg     = Color(22, 21, 19, 225),     -- your own corner tag
+        selfAccent = Color(170, 25, 25),         -- its red bar and pulsing dot
+        selfText   = Color(255, 25, 25),         -- "WANTED"
     },
 }

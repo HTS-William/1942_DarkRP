@@ -27,9 +27,15 @@ local function mix(a, b, t)
     return Color(Lerp(t, a.r, b.r), Lerp(t, a.g, b.g), Lerp(t, a.b, b.b), Lerp(t, a.a or 255, b.a or 255))
 end
 
-local function shadowText(text, font, x, y, col, alignX, alignY)
-    draw.SimpleText(text, font, x + 2, y + 2, COLS.tagShadow, alignX, alignY)
-    draw.SimpleText(text, font, x, y, col, alignX, alignY)
+-- alpha: 0-1, multiplies the colours' own transparency (for fading with distance)
+local function withAlpha(col, alpha)
+    return Color(col.r, col.g, col.b, (col.a or 255) * alpha)
+end
+
+local function shadowText(text, font, x, y, col, alignX, alignY, alpha)
+    alpha = alpha or 1
+    draw.SimpleText(text, font, x + 2, y + 2, withAlpha(COLS.tagShadow, alpha), alignX, alignY)
+    draw.SimpleText(text, font, x, y, withAlpha(col, alpha), alignX, alignY)
 end
 
 --[[---------------------------------------------------------------------------
@@ -45,7 +51,10 @@ function plyMeta:drawWantedInfo()
     if not self:Alive() then return end
     local lp = LocalPlayer()
     local head = self:EyePos()
-    if lp:GetPos():DistToSqr(head) > CFG.tagMaxDistance ^ 2 then return end
+    local dist = lp:GetPos():Distance(head)
+    if dist > CFG.tagMaxDistance then return end
+    -- Full strength up close, fading out over the last quarter of the range
+    local alpha = math.Clamp((CFG.tagMaxDistance - dist) / (CFG.tagMaxDistance * 0.25), 0, 1)
     if head.isInSight and not head:isInSight({ lp, self }) then return end
 
     head.z = head.z + 10
@@ -57,15 +66,15 @@ function plyMeta:drawWantedInfo()
     if GAMEMODE.Config.showname then
         local job = RPExtraTeams[self:Team()]
         local nameCol = job and job.color or team.GetColor(self:Team())
-        draw.DrawNonParsedText(self:Nick(), "DarkRPHUD2", x + 1, y + 1, color_black, 1)
-        draw.DrawNonParsedText(self:Nick(), "DarkRPHUD2", x, y, nameCol, 1)
+        draw.DrawNonParsedText(self:Nick(), "DarkRPHUD2", x + 1, y + 1, withAlpha(color_black, alpha), 1)
+        draw.DrawNonParsedText(self:Nick(), "DarkRPHUD2", x, y, withAlpha(nameCol, alpha), 1)
     end
 
     local bottom = y - 2
     if CFG.showReason then
         local reason = self:getDarkRPVar("wantedReason")
         if reason and reason ~= "" then
-            shadowText(reason, "RP1942_WantedReason", x, bottom, COLS.reason, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+            shadowText(reason, "RP1942_WantedReason", x, bottom, COLS.reason, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, alpha)
             surface.SetFont("RP1942_WantedReason")
             local _, rh = surface.GetTextSize(reason)
             bottom = bottom - rh - 1
@@ -73,7 +82,7 @@ function plyMeta:drawWantedInfo()
     end
 
     local pulse = 0.5 + 0.5 * math.sin(CurTime() * 5)
-    shadowText("WANTED", "RP1942_WantedTag", x, bottom, mix(COLS.tag, COLS.tagPulse, pulse * 0.6), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+    shadowText("WANTED", "RP1942_WantedTag", x, bottom, mix(COLS.tag, COLS.tagPulse, pulse * 0.6), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, alpha)
 end
 
 --[[---------------------------------------------------------------------------
@@ -87,6 +96,7 @@ Reich Alert! boxes
 Newest on top; each slides in, holds, then fades.
 ---------------------------------------------------------------------------]]
 local alerts = {}
+local indicatorH = 0   -- height of the wanted indicator, so alerts in the same corner sit below it
 
 net.Receive("RP1942_Alert", function()
     local text, kind = net.ReadString(), net.ReadString()
@@ -111,6 +121,7 @@ hook.Add("HUDPaint", "RP1942_ReichAlerts", function()
     local boxH = pad + titleH + math.floor(4 * s) + 2 + math.floor(4 * s) + textH + pad
     local y = margin
     if CFG.alertPosition == "topcenter" then y = math.floor(sh * 0.019) + math.floor(60 * s) end
+    if CFG.alertPosition == CFG.selfPosition and indicatorH > 0 then y = y + indicatorH + gap end
 
     local now = RealTime()
     for i = #alerts, 1, -1 do
@@ -146,4 +157,52 @@ hook.Add("HUDPaint", "RP1942_ReichAlerts", function()
 
         y = y + boxH + gap
     end
+end)
+
+--[[---------------------------------------------------------------------------
+The wanted player's own indicator (they can't see the tag over their head):
+a small tag in a corner, with a red bar and a pulsing dot:   ▌● WANTED
+---------------------------------------------------------------------------]]
+local wasWanted = false
+
+local function indicatorLayout()
+    local s = math.Clamp(ScrH() / 1080, 0.7, 1.6)
+    surface.SetFont("RP1942_AlertText")
+    local tw, th = surface.GetTextSize(CFG.selfText)
+    local pad, dot, bar = math.floor(8 * s), math.floor(10 * s), math.floor(4 * s)
+    return s, pad, dot, bar, bar + pad + dot + pad + tw + pad * 2, th + pad * 2
+end
+
+hook.Add("HUDPaint", "RP1942_WantedSelf", function()
+    local lp = LocalPlayer()
+    if not IsValid(lp) then return end
+    local wanted = lp:getDarkRPVar("wanted") and true or false
+    if wanted and not wasWanted and CFG.selfSound then surface.PlaySound(CFG.selfSound) end
+    wasWanted = wanted
+
+    indicatorH = 0
+    if not (wanted and CFG.selfIndicator and lp:Alive()) then return end
+
+    local sw = ScrW()
+    local s, pad, dot, bar, w, h = indicatorLayout()
+    local margin = math.floor(16 * s)
+    local x
+    if CFG.selfPosition == "topleft" then x = margin
+    elseif CFG.selfPosition == "topcenter" then x = math.floor((sw - w) / 2)
+    else x = sw - margin - w end
+    local y = margin
+    if CFG.selfPosition == "topcenter" then y = math.floor(ScrH() * 0.019) + math.floor(60 * s) end
+    indicatorH = h
+
+    draw.RoundedBox(4, x, y, w, h, COLS.selfBg)
+    surface.SetDrawColor(COLS.selfAccent)
+    surface.DrawRect(x, y, bar, h)
+
+    local pulse = 0.35 + 0.65 * (0.5 + 0.5 * math.sin(CurTime() * 4))
+    local dx = x + bar + pad
+    draw.RoundedBox(dot / 2, dx, y + (h - dot) / 2, dot, dot,
+        Color(COLS.selfAccent.r, COLS.selfAccent.g, COLS.selfAccent.b, 255 * pulse))
+
+    draw.SimpleTextOutlined(CFG.selfText, "RP1942_AlertText", dx + dot + pad, y + h / 2, COLS.selfText,
+        TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0, 200))
 end)
