@@ -84,8 +84,6 @@ local function job(tbl)
         end
     end
 
-    return DarkRP.createJob(name, tbl)
-end
     -- Jobs with demoteOnDeath = true become Hobos when they die
     if tbl.demoteOnDeath and not tbl.PlayerDeath then
         tbl.PlayerDeath = function(ply)
