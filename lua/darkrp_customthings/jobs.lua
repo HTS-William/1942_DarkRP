@@ -825,6 +825,7 @@ TEAM_FUHRER = job(whitelisted{
     faction = "reich",
     branch = "command", requires = { faction = "reich" },
     category = "Reich Command",
+    menu = "RP1942_FuhrerMenu",
 })
 --[[---------------------------------------------------------------------------
 Civil Protection = every Reich job unless it sets arrests = false.
