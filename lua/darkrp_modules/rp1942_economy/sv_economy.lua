@@ -29,3 +29,19 @@ end
 hook.Add("InitPostEntity", "RP1942_EconomyStart", function()
     SetGlobal2Int(E.KEY, E.START)
 end)
+
+--[[---------------------------------------------------------------------------
+Wages: every DarkRP payday is scaled by the economy multiplier.
+
+DarkRP stops at the first playerGetSalary hook that returns a value, so this
+must not return for players another rule should handle. It leaves AFK players
+alone, which is what DarkRP's own AFK hook freezes, in case that module is on.
+---------------------------------------------------------------------------]]
+hook.Add("playerGetSalary", "RP1942_EconomyWages", function(ply, amount)
+    if ply:getDarkRPVar("AFK") then return end
+    if not amount or amount <= 0 then return end
+
+    -- suppress = false and no custom message: DarkRP's normal payday
+    -- notification shows the adjusted amount
+    return false, nil, RP1942.applyEconomy(amount, "salary")
+end)
