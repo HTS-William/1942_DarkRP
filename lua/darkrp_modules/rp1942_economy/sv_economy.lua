@@ -31,7 +31,8 @@ hook.Add("InitPostEntity", "RP1942_EconomyStart", function()
 end)
 
 --[[---------------------------------------------------------------------------
-Wages: every DarkRP payday is scaled by the economy multiplier.
+Wages: every DarkRP payday is scaled by the economy, then taxed.
+    base salary -> x economy multiplier -> - income tax (sv_taxes.lua) -> paid
 
 DarkRP stops at the first playerGetSalary hook that returns a value, so this
 must not return for players another rule should handle. It leaves AFK players
@@ -41,7 +42,14 @@ hook.Add("playerGetSalary", "RP1942_EconomyWages", function(ply, amount)
     if ply:getDarkRPVar("AFK") then return end
     if not amount or amount <= 0 then return end
 
-    -- suppress = false and no custom message: DarkRP's normal payday
-    -- notification shows the adjusted amount
-    return false, nil, RP1942.applyEconomy(amount, "salary")
+    local gross = RP1942.applyEconomy(amount, "salary")
+    if not RP1942.applyTax then return false, nil, gross end
+
+    local net, tax, rate = RP1942.applyTax(ply, gross, "salary")
+    if tax <= 0 then
+        return false, nil, net   -- DarkRP's normal payday message
+    end
+
+    return false, string.format("Payday! You received %s after %d%% tax (%s withheld).",
+        DarkRP.formatMoney(net), rate, DarkRP.formatMoney(tax)), net
 end)
