@@ -77,7 +77,9 @@ local function job(tbl)
         tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
     end
 
-    -- Jobs with a menu open it on F3 (DarkRP calls job.ShowSpare1 when F3 is pressed)
+    -- Jobs with a menu open it on F3 (DarkRP calls job.ShowSpare1 when F3 is pressed).
+    -- On the client, the ShowSpare1 hook in rp1942_menu/cl_menu_base.lua handles F3
+    -- first, so the cursor toggle keeps working alongside job menus.
     if tbl.menu and not tbl.ShowSpare1 then
         tbl.ShowSpare1 = function(ply)
             if CLIENT then RP1942.openJobMenu() end
@@ -819,7 +821,7 @@ Use /disguise <trade> to change your cover, /undisguise to show your real title.
 })
 
 --[[===========================================================================
-REICH COMMAND ("Reich Command" category, visible to anyone serving the Reich)
+REICH COMMAND ("Reich Command" category, visible to everyone)
 ===========================================================================]]
 TEAM_FUHRER = job(whitelisted{
     name = "Führer",
@@ -831,11 +833,15 @@ TEAM_FUHRER = job(whitelisted{
     max = 1,
     salary = SAL * 2.5,
     admin = 0,
-    vote = true,
+    vote = false,   -- chosen by the RP1942 election instead (darkrp_modules/rp1942_election);
+                    -- taking the job directly is blocked there, only the winner gets it
     mayor = true,   -- DarkRP mayor powers: laws, lockdown (curfew), lottery
     candemote = false,
     faction = "reich",
-    branch = "command", requires = { faction = "reich" },
+    -- Anyone can run for Führer, from any job or faction (no `requires`),
+    -- and the Reich's faction cap doesn't apply (see sv_faction_balance.lua)
+    branch = "command",
+    ignoreBalance = true,
     category = "Reich Command",
     menu = "RP1942_FuhrerMenu",
     demoteOnDeath = true,

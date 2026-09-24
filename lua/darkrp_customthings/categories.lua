@@ -33,5 +33,5 @@ jobCategory("Wehrmacht",     Color( 93, 101,  82), 40, function(ply) return RP19
 jobCategory("Waffen-SS",     Color( 60,  64,  50), 50, function(ply) return RP1942.inBranch(ply, "waffen_ss") end)
 jobCategory("Schutzstaffel", Color( 30,  30,  30), 60, function(ply) return RP1942.inBranch(ply, "ss", "gestapo") end)
 
--- Anyone currently serving the Reich
-jobCategory("Reich Command", Color(120,  20,  20), 70, function(ply) return RP1942.isFaction(ply, "reich") end)
+-- Visible to everyone: anyone can run for Führer
+jobCategory("Reich Command", Color(120,  20,  20), 70)

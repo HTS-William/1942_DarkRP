@@ -211,6 +211,16 @@ function PANEL:Think()
     if LocalPlayer():Team() ~= self.openedTeam then self:Close() end
 end
 
+-- An open menu has keyboard focus, so F3 never reaches the F3 bind (see the
+-- ShowSpare1 hook below). Catch it here: the key bound to F3's action closes it.
+function PANEL:OnKeyCodePressed(key)
+    local bind = input.LookupKeyBinding(key)
+    if bind and string.find(string.lower(bind), "gm_showspare1", 1, true) then
+        self:Close()
+        return true
+    end
+end
+
 vgui.Register("RP1942_MenuBase", PANEL, "DFrame")
 
 --[[---------------------------------------------------------------------------
@@ -242,3 +252,46 @@ end
 
 concommand.Add("rp1942_menu", RP1942.openJobMenu)
 net.Receive("RP1942_OpenMenu", RP1942.openJobMenu)
+
+--[[---------------------------------------------------------------------------
+F3: one handler for both the cursor and job menus
+
+DarkRP's own F3 toggles the mouse cursor, but a job with ShowSpare1 (every job
+with a menu) replaces that completely. So a cursor turned on before switching
+to such a job could never be turned off again. This hook runs before DarkRP's
+F3 and decides everything itself, in this order:
+
+    1. a job menu is open           -> close it
+    2. the cursor is toggled on     -> turn it off
+    3. the job has a menu           -> open it
+    4. otherwise                    -> turn the cursor on (DarkRP's normal F3)
+---------------------------------------------------------------------------]]
+local cursorOn = false
+local mouseX, mouseY = ScrW() / 2, ScrH() / 2
+
+local function setCursor(on)
+    if on then
+        gui.SetMousePos(mouseX, mouseY)
+    else
+        mouseX, mouseY = gui.MousePos()
+    end
+    cursorOn = on
+    gui.EnableScreenClicker(on)
+end
+
+hook.Add("ShowSpare1", "RP1942_F3", function()
+    if IsValid(RP1942.ActiveMenu) then
+        RP1942.ActiveMenu:Close()
+    elseif cursorOn then
+        setCursor(false)
+    else
+        local job = RPExtraTeams[LocalPlayer():Team()]
+        if job and job.menu then
+            RP1942.openJobMenu()
+        else
+            setCursor(true)
+        end
+    end
+    return true   -- handled: skip DarkRP's own F3
+end)
+

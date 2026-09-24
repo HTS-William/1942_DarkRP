@@ -15,6 +15,10 @@ local factionNames = {
 hook.Add("playerCanChangeTeam", "RP1942_FactionBalance", function(ply, teamNr, force)
     if force then return end
 
+    -- Jobs like the Führer can always be taken, however full the faction is
+    local job = RPExtraTeams[teamNr]
+    if job and job.ignoreBalance then return end
+
     local target = RP1942.getJobFaction(teamNr)
     local rule = RP1942.Config.Balance[target]
     if not rule then return end
