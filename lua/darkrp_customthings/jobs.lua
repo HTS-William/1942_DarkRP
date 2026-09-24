@@ -77,6 +77,13 @@ local function job(tbl)
         tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
     end
 
+    -- Jobs with a menu open it on F3 (DarkRP calls job.ShowSpare1 when F3 is pressed)
+    if tbl.menu and not tbl.ShowSpare1 then
+        tbl.ShowSpare1 = function(ply)
+            if CLIENT then RP1942.openJobMenu() end
+        end
+    end
+
     return DarkRP.createJob(name, tbl)
 end
 
