@@ -272,8 +272,8 @@ TEAM_BLACKMARKET = job{
     menu = "RP1942_ShopMenu",
     shop = "example",
 }
-
-=[TEAM_RUSTUNG = job{
+--[=[
+TEAM_RUSTUNG = job{
     name = "Rüstung Dealer",
     color = Color(100, 70, 40),
     model = M.dealer,
@@ -287,7 +287,7 @@ TEAM_BLACKMARKET = job{
     branch = "resistance",
     category = "Resistance",
 }
-
+]=]
 TEAM_CHERKESOV = job{
     name = "Cherkesov Dealer",
     color = Color(120, 40, 30),
