@@ -365,10 +365,12 @@ TEAM_RES_MEDIC = job{
 
 TEAM_RES_OPERATIVE = job{
     name = "Resistance Operative",
-    color = Color(100, 30, 30),
-    model = M.resistance,
+    color = Color(120, 120, 110),   -- identical to Civilian ON PURPOSE: DarkRP colours names by team
+    model = M.resoperative,         -- RP1942.Models.resoperative in rp1942_core/sh_config.lua
     description = [[Intelligence and infiltration for the underground.
-Use /disguise <trade> to pose as a civilian trade, /undisguise to drop it.]],
+Joining is never announced, and you start under a civilian cover.
+Press F3 for your wardrobe of disguises. Change your cover title with "Set a custom
+job title" in the F4 Commands tab: for you, nobody is told.]],
     weapons = { W.lockpick },
     command = "resoperative",
     max = 2,
@@ -377,6 +379,8 @@ Use /disguise <trade> to pose as a civilian trade, /undisguise to drop it.]],
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    quietJoin = true,               -- never announced (rp1942_core/sv_disguise.lua)
+    menu = "RP1942_WardrobeMenu",   -- F3: the wardrobe (rp1942_menu/cl_menu_wardrobe.lua)
 }
 
 TEAM_RES_LEADER = job{
@@ -798,13 +802,14 @@ TEAM_SS_OFFIZIER = job(whitelisted{
 
 -- Listed under the SS so civilians never see it (or its player count) in F4.
 -- Joined quietly from ANY job with /joingestapo; the button stays locked.
-TEAM_GESTAPO = job(whitelisted{
+TEAM_GESTAPO = job{
     name = "Gestapo Agent",
     color = Color(120, 120, 110),   -- identical to Civilian ON PURPOSE: DarkRP colours names by team
     model = M.gestapo,
     description = [[Geheime Staatspolizei. Works in plain clothes among the population.
-Report for duty with /joingestapo: the job button is locked so your enlistment isn't announced.
-Use /disguise <trade> to change your cover, /undisguise to show your real title.]],
+Joining is never announced, and you start under a civilian cover.
+Press F3 for your wardrobe of disguises. Change your cover title with "Set a custom
+job title" in the F4 Commands tab: for you, nobody is told.]],
     weapons = { W.p38, W.arrest, W.unarrest, W.checker },
     command = "gestapo",
     max = 2,
@@ -815,10 +820,11 @@ Use /disguise <trade> to change your cover, /undisguise to show your real title.
     branch = "gestapo",
     category = "Schutzstaffel",
     sortOrder = 210,
-    -- Only true for the instant /joingestapo runs changeTeam (flag is set server-side)
-    customCheck = function(ply) return ply.RP1942_QuietEnlist == true end,
-    CustomCheckFailMsg = "The Gestapo doesn't advertise. Report for duty with /joingestapo.",
-})
+    -- Joining by any route (F4, /gestapo, /joingestapo) is done silently with a
+    -- civilian cover title: see rp1942_core/sv_disguise.lua
+    quietJoin = true,
+    menu = "RP1942_WardrobeMenu",   -- F3: the wardrobe (rp1942_menu/cl_menu_wardrobe.lua)
+}
 
 --[[===========================================================================
 REICH COMMAND ("Reich Command" category, visible to everyone)

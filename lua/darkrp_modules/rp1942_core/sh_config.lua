@@ -65,15 +65,42 @@ C.Balance = {
 }
 
 --[[---------------------------------------------------------------------------
-Disguises (rp1942_disguise module)
-jobs:     job COMMANDS allowed to use /disguise (commands, because TEAM_ numbers
-          don't exist yet when this file loads)
+Disguises (rp1942_core/sv_disguise.lua)
+jobs:     job COMMANDS whose custom job title (F4 > Commands, or /job) is a
+          SILENT cover: nobody is told. Commands, because TEAM_ numbers don't
+          exist yet when this file loads. Typing your real job name reveals you.
 freeform: false = cover must be the exact name of a civilian job (Baker, Doctor...)
           true  = any title of 3-25 characters
+models:   the F3 wardrobe of each undercover job (see below)
 ---------------------------------------------------------------------------]]
 C.Disguise = {
     jobs     = { gestapo = true, resoperative = true },
-    freeform = false,
+    freeform = true,
+    -- Models offered in each job's F3 wardrobe, by job command. An empty list
+    -- offers every civilian job's models. For example:
+    --   resoperative = { "models/player/group01/male_01.mdl", "models/player/group02/male_04.mdl" },
+    models   = {
+        gestapo      = {},
+        resoperative = {},
+    },
+}
+
+--[[---------------------------------------------------------------------------
+Faction tags (rp1942_core/cl_faction_tags.lua)
+A label above undercover jobs' heads that only their own side can see, so
+colleagues recognise each other. Everyone else sees nothing.
+jobs:      job COMMAND = { text, seenBy = faction that sees it, accent colour }
+distance:  game units (about 40 per metre); it fades out over the last quarter
+---------------------------------------------------------------------------]]
+C.FactionTags = {
+    enabled  = true,
+    jobs     = {
+        gestapo      = { text = "GESTAPO",    seenBy = "reich",      accent = Color(112, 22, 22) },
+        resoperative = { text = "RESISTANCE", seenBy = "resistance", accent = Color(70, 104, 56) },
+    },
+    distance = 600,
+    color    = Color(210, 200, 170),        -- text
+    bg       = Color(14, 13, 12, 200),      -- label background
 }
 
 --[[---------------------------------------------------------------------------
@@ -123,6 +150,9 @@ RP1942.Models = {
     banker       = { "models/player/gman_high.mdl" },
     labourer     = { "models/player/group02/male_02.mdl", "models/player/group02/male_06.mdl" },
     resistance   = { "models/player/group03/male_01.mdl", "models/player/group03/male_05.mdl", "models/player/group03/female_02.mdl" },
+    -- The Resistance Operative's normal model ("Standard issue" in its wardrobe).
+    -- Starts as the Resistance models; change it here without touching other jobs.
+    resoperative = { "models/player/group03/male_01.mdl", "models/player/group03/male_05.mdl", "models/player/group03/female_02.mdl" },
     res_leader   = { "models/player/odessa.mdl" },
     dealer       = { "models/player/eli.mdl" },
     wehrmacht    = { "models/player/combine_soldier.mdl" },

@@ -66,6 +66,10 @@ local function jobAction(job)
         -- The server turns this into the election ballot
         return "Stand for election", function() UI.command(job.command) end
     end
+    if job.quietJoin then
+        -- The server does this silently, with a civilian cover (rp1942_core/sv_disguise.lua)
+        return "Report for duty (quietly)", function() UI.command(job.command) end
+    end
     if job.vote or (job.RequiresVote and job.RequiresVote(LocalPlayer(), job.team)) then
         return "Call a vote for " .. job.name, function() UI.command("vote" .. job.command) end
     end
@@ -270,6 +274,7 @@ RP1942.F4Tabs.jobs = {
             if job.vip then tags[#tags + 1] = "VIP" end
             if job.whitelisted then tags[#tags + 1] = "WHITELISTED" end
             if TEAM_FUHRER and job.team == TEAM_FUHRER then tags[#tags + 1] = "ELECTED" end
+            if job.quietJoin then tags[#tags + 1] = "UNDERCOVER" end
             if job.vote then tags[#tags + 1] = "VOTE" end
             if #tags > 0 then addLabel(table.concat(tags, "  ·  "), "RP1942_F4Small", C.gold, 2) end
 

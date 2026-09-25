@@ -55,6 +55,7 @@ Raiding - Breaking into someone's property to take their valuables.
 /advert - Place an in-character advertisement
 /radio - Talk on the radio
 /election - Open the Führer election ballot
+/roll - Roll a random number (/roll, /roll 20, /roll 5 50, /roll 2d6)
 ]] },
 
 }

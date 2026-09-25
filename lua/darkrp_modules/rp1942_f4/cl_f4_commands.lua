@@ -96,7 +96,13 @@ local SECTIONS = {
         { "Get prop owner", propOwner },
     }},
     { "Citizen options", "categoryAlt", {
-        { entry = { "Set a custom job title - press Enter to apply",
+        { entry = { function()
+                        -- Undercover jobs: the server keeps it silent (rp1942_core/sv_disguise.lua)
+                        if RP1942.canDisguise and RP1942.canDisguise(LocalPlayer()) then
+                            return "Set your cover title (silent: nobody is told) - press Enter to apply"
+                        end
+                        return "Set a custom job title - press Enter to apply"
+                    end,
                     function()
                         local job = RPExtraTeams[LocalPlayer():Team()]
                         return LocalPlayer():getDarkRPVar("job") or (job and job.name) or ""
@@ -132,7 +138,7 @@ RP1942.F4Tabs.commands = {
                     label:DockMargin(4, 4, 0, 2)
                     label:SetFont("RP1942_F4Small")
                     label:SetTextColor(C.sub)
-                    label:SetText(row.entry[1])
+                    label:SetText(isfunction(row.entry[1]) and row.entry[1]() or row.entry[1])
                     label:SizeToContentsY()
 
                     local box = ui.textEntry(list, row.entry[2](), row.entry[3])
