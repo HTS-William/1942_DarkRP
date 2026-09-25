@@ -41,6 +41,11 @@ RP1942.Wanted = {
     exemptFactions  = { reich = true },-- killers in these factions don't become wanted
                                        -- (e.g. the Gestapo executing a traitor)
 
+    -- Joining the Reich wipes the slate clean. Joining an undercover job
+    -- (quietJoin, e.g. the Gestapo) clears it silently, so the timing of an
+    -- alert can't give the enlistment away.
+    clearOnJoinReich = true,
+
     -- The tag above wanted players
     showReason      = true,            -- small reason line under WANTED
     tagMaxDistance  = 800,             -- game units (about 40 per metre): beyond this, no tag.

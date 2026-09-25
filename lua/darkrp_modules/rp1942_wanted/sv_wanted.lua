@@ -52,12 +52,14 @@ hook.Add("playerWanted", "RP1942_WantedAlert", function(ply, actor, reason)
 end)
 
 -- Why they stopped being wanted, set just before DarkRP clears it:
--- "arrested", "killed", or nil (cleared by police or the timer ran out)
+-- "arrested", "killed", "silent" (joined an undercover Reich job: no alert),
+-- or nil (cleared by police, joined the Reich, or the timer ran out)
 hook.Add("playerUnWanted", "RP1942_WantedAlert", function(ply, actor)
     if not IsValid(ply) then return end
     local why = ply.RP1942_ClearReason
     ply.RP1942_ClearReason = nil
     if not ply:getDarkRPVar("wanted") then return true end   -- nothing to announce
+    if why == "silent" then return true end                  -- cleared without telling anyone
 
     local text = why == "arrested" and CFG.arrestedText
         or why == "killed" and CFG.killedText
@@ -99,3 +101,18 @@ hook.Add("PlayerDeath", "RP1942_Wanted", function(victim, _, attacker)
     local job = RPExtraTeams[victim:Team()]
     RP1942.makeWanted(attacker, "reich_kill", nil, victim:Nick(), job and job.name or "Reich")
 end)
+
+--[[---------------------------------------------------------------------------
+Joining the Reich clears wanted status (RP1942.Wanted.clearOnJoinReich).
+Only when coming from outside the Reich: moving between Reich jobs doesn't.
+---------------------------------------------------------------------------]]
+hook.Add("OnPlayerChangedTeam", "RP1942_WantedJoinReich", function(ply, before, after)
+    if not CFG.clearOnJoinReich or not ply:getDarkRPVar("wanted") then return end
+    local newJob, oldJob = RPExtraTeams[after], RPExtraTeams[before]
+    if not (newJob and newJob.faction == "reich") then return end
+    if oldJob and oldJob.faction == "reich" then return end
+
+    ply.RP1942_ClearReason = newJob.quietJoin and "silent" or nil
+    ply:unWanted()
+end)
+
