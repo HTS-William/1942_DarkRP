@@ -43,11 +43,11 @@ Set a path to false to turn that sound off. Players can mute all election
 sounds for themselves with:  rp1942_election_sounds 0
 ---------------------------------------------------------------------------]]
 RP1942.ElectionSounds = {
-    voting       = "ambient/alarms/warningbell1.wav",  -- when the ballot pops up to vote
+    voting       = "plats/elevbell1.wav",  -- when the ballot pops up to vote
     votingVolume = 0.8,
     anthem       = "sounds/anthem.mp3",                -- when a Führer is elected
     anthemVolume = 0.6,   -- also scaled by the player's music volume slider
-    fuhrerKilled       = "ambient/alarms/klaxon1.wav", -- when the Führer dies
+    fuhrerKilled       = "buttons/lightswitch2.wav", -- when the Führer dies
     fuhrerKilledVolume = 0.9,
     broadcast          = "npc/overwatch/radiovoice/on1.wav", -- Führer's /broadcast
     broadcastVolume    = 0.9,
