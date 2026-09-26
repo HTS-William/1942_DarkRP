@@ -12,7 +12,9 @@ arrested timer, the lockdown notice, agendas, voice chat.
                        UNDERCOVER    (your real job, when your title is a cover)
                        LICENSED      (DarkRP gun licence)
     bottom-centre  the economy: tier, a meter (tier boundaries marked), the
-                   wage multiplier, and your tax rate when there is one
+                   wage multiplier, and your tax rate when there is one.
+                   Hover it with the cursor out (C, F3, chat) to see the
+                   Reich treasury and every tax rate.
     bottom-right   weapon name and ammo (only for weapons that use ammo)
 
 Any screen: everything scales with the screen height; on very wide screens
@@ -32,6 +34,7 @@ RP1942.HUDConfig = {
     showAmmo    = true,
     showSalary  = true,
     showEconomy = true,
+    economyDetails = true,     -- hover the economy bar (cursor out) for the treasury and every tax rate
     lowHealth   = 25,          -- at or below this, the health bar pulses
     width       = 380,         -- player panel width at 1080p (scales with the screen)
     economyWidth = 440,        -- economy bar width at 1080p

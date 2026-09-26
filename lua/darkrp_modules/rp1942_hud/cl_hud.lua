@@ -331,6 +331,101 @@ local function drawEconomy(lp, m, avoid)
     return rect
 end
 
+--[[---------------------------------------------------------------------------
+Hovering the economy bar (with the cursor out: C, F3, chat...) opens a panel
+above it with the Reich treasury and every tax rate.
+    REICH TREASURY
+    RM 12,500
+    TAX RATES
+    Civilians                 10%
+    Resistance                 0%
+    Reich                      5%   < your rate is marked
+    JOBS
+    Baker                     15%
+---------------------------------------------------------------------------]]
+local FACTION_LABELS = { civilian = "Civilians", resistance = "Resistance", reich = "Reich" }
+
+local function hovered(rect)
+    if not rect or not vgui.CursorVisible() then return false end
+    local mx, my = gui.MousePos()
+    return mx >= rect.x and mx <= rect.x + rect.w and my >= rect.y and my <= rect.y + rect.h
+end
+
+local function drawEconomyDetails(lp, m, bar)
+    local s, pad, gap = m.s, m.pad, m.gap
+    local rates = RP1942.TaxRates or { factions = {}, jobs = {} }
+    local myJob = RPExtraTeams[lp:Team()]
+    local myRate, mySource = 0, "faction"
+    if RP1942.getTaxRate then myRate, mySource = RP1942.getTaxRate(myJob) end
+
+    -- Rows: factions in their configured order, then job overrides by name
+    local rows = {}
+    local order = (RP1942.TaxConfig and RP1942.TaxConfig.FACTIONS) or { "civilian", "resistance", "reich" }
+    for _, f in ipairs(order) do
+        rows[#rows + 1] = {
+            label = FACTION_LABELS[f] or f,
+            rate = rates.factions[f] or 0,
+            mine = mySource == "faction" and myJob and (myJob.faction or "civilian") == f,
+        }
+    end
+    local jobRows = {}
+    for command, rate in pairs(rates.jobs or {}) do
+        local job = RP1942.getJobByCommand and RP1942.getJobByCommand(command)
+        jobRows[#jobRows + 1] = {
+            label = job and job.name or command,
+            rate = rate,
+            mine = mySource == "job" and myJob and myJob.command == command,
+        }
+    end
+    table.sort(jobRows, function(a, b) return a.label < b.label end)
+    -- Job rates under their own heading (a job can share a faction's name)
+    if #jobRows > 0 then rows[#rows + 1] = { heading = "JOBS" } end
+    for _, r in ipairs(jobRows) do rows[#rows + 1] = r end
+
+    local smallH, nameH, bodyH = fontH("RP1942_HudSmall"), fontH("RP1942_HudName"), fontH("RP1942_HudBody")
+    local rowH = bodyH + math.floor(4 * s)
+    local headingH = gap + smallH + math.floor(4 * s)
+    local rowsH = 0
+    for _, r in ipairs(rows) do rowsH = rowsH + (r.heading and headingH or rowH) end
+    local w = bar.w
+    local h = pad + smallH + math.floor(2 * s) + nameH + gap + math.max(1, math.floor(s)) + gap
+        + smallH + math.floor(4 * s) + rowsH + pad
+    local x = bar.x
+    local y = math.max(m.margin, bar.y - gap - h)
+
+    draw.RoundedBox(6, x, y, w, h, alpha(C("bg"), 245))
+    surface.SetDrawColor(C("tabActive"))
+    surface.DrawRect(x, y + math.floor(6 * s), math.max(2, math.floor(3 * s)), h - math.floor(12 * s))
+
+    local cx, cy, innerW = x + pad, y + pad, w - pad * 2
+    draw.SimpleText("REICH TREASURY", "RP1942_HudSmall", cx, cy, C("sub"))
+    cy = cy + smallH + math.floor(2 * s)
+    local balance = RP1942.getTreasury and RP1942.getTreasury() or 0
+    draw.SimpleText(fit(DarkRP.formatMoney(balance), "RP1942_HudName", innerW), "RP1942_HudName", cx, cy, C("gold"))
+    cy = cy + nameH + gap
+
+    surface.SetDrawColor(alpha(C("sub"), 60))
+    surface.DrawRect(cx, cy, innerW, math.max(1, math.floor(s)))
+    cy = cy + math.max(1, math.floor(s)) + gap
+
+    draw.SimpleText("TAX RATES", "RP1942_HudSmall", cx, cy, C("sub"))
+    cy = cy + smallH + math.floor(4 * s)
+    for _, r in ipairs(rows) do
+        if r.heading then
+            draw.SimpleText(r.heading, "RP1942_HudSmall", cx, cy + gap, C("sub"))
+            cy = cy + headingH
+        else
+            local col = r.mine and C("gold") or C("text")
+            local rateText = r.rate .. "%"
+            local label = r.mine and (r.label .. "  ·  you") or r.label
+            local rateW = textSize("RP1942_HudBody", rateText)
+            draw.SimpleText(fit(label, "RP1942_HudBody", innerW - rateW - gap), "RP1942_HudBody", cx, cy, col)
+            draw.SimpleText(rateText, "RP1942_HudBody", cx + innerW, cy, col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+            cy = cy + rowH
+        end
+    end
+end
+
 RP1942.HUDRects = {}
 
 hook.Add("HUDPaint", "RP1942_HUD", function()
@@ -342,5 +437,6 @@ hook.Add("HUDPaint", "RP1942_HUD", function()
     rects.player = drawPlayerPanel(lp, m)
     if CFG.showAmmo then rects.ammo = drawAmmo(lp, m) end
     if CFG.showEconomy then rects.economy = drawEconomy(lp, m, { rects.player, rects.ammo }) end
+    if CFG.economyDetails ~= false and hovered(rects.economy) then drawEconomyDetails(lp, m, rects.economy) end
     RP1942.HUDRects = rects
 end)
