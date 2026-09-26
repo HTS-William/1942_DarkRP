@@ -34,6 +34,9 @@ tupac_dumpsters_config.HoboWeaponPercentage = 5
 tupac_dumpsters_config.HoboEntityPercentage = 20
 tupac_dumpsters_config.CooldownTime = 270 --> Seconds before the SAME player can search the SAME dumpster again.
                                           --> Everyone has their own cooldown.
+tupac_dumpsters_config.PocketLoot = true --> Weapons and entities go straight into the searcher's DarkRP pocket.
+                                        --> A full pocket: they're tossed out onto the ground instead.
+                                        --> ( Junk props are always tossed out. )
 tupac_dumpsters_config.PropRemovalTime = 5 --> How long it takes for the props to be removed ( Default: 15 )
 tupac_dumpsters_config.CooldownMsg = "You've already searched this dumpster. Try again later." --> Shown when someone on cooldown tries again
 tupac_dumpsters_config.Props = { --> Random props that spawn
@@ -64,6 +67,15 @@ tupac_dumpsters_config.Entities = {
 	"item_box_buckshot",
 	"item_healthkit",
 }
+--> Names shown in "Into your pocket: ..." for classes without a proper name
+tupac_dumpsters_config.EntityNames = {
+	item_ammo_pistol  = "Pistol ammo",
+	item_ammo_smg1    = "SMG ammo",
+	item_ammo_ar2     = "Rifle ammo",
+	item_box_buckshot = "Shotgun shells",
+	item_healthkit    = "Medkit",
+	lockpick          = "Lockpick",
+}
 
 --> Placing dumpsters in game (saved per map in data/rp1942/dumpsters_<map>.json):
 -->     /adddumpster      places one where you're looking, facing you
@@ -84,8 +96,9 @@ tupac_dumpsters_config.AddSpawnPos = {
 --> member to collect. Look at a dumpster and type:
 -->     /deaddrop 500        leave 500 in it
 -->     /deaddrop weapon     leave the weapon in your hands
---> Any Resistance member who searches that dumpster takes everything in it,
---> even if their own search cooldown hasn't run out. Only the Resistance can
+--> Any Resistance member who searches that dumpster collects it, even if their
+--> own search cooldown hasn't run out: money into their wallet, weapons into
+--> their pocket. Whatever doesn't fit in their pocket stays in the drop. Only the Resistance can
 --> see that a dumpster holds a drop.
 tupac_dumpsters_config.DeadDrops = {
 	enabled         = true,

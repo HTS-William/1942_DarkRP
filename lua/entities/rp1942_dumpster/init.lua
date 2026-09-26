@@ -161,32 +161,66 @@ function ENT:CreateItems( ply )
 	--> Per-entity timer name, so searches on different dumpsters never cancel each other.
 	--> Items come out 0.2 s apart so props don't spawn inside each other.
 	local spawnTimer = "tupac_dumpsters_spawn_" .. self:EntIndex()
-	timer.Create( spawnTimer, 0.2, math.random( CFG.MinItemsToCreate, CFG.MaxItemsToCreate ), function()
+	local count = math.random( CFG.MinItemsToCreate, CFG.MaxItemsToCreate )
+	local done, pocketed, dropped = 0, {}, {}
+	timer.Create( spawnTimer, 0.2, count, function()
 		if not IsValid( self ) then timer.Remove( spawnTimer ) return end
+		local name, inPocket
 		if weaponsLeft > 0 and math.random( 1, 100 ) <= weaponChance then
 			weaponsLeft = weaponsLeft - 1
-			self:SpawnWeapon()
+			name, inPocket = self:SpawnWeapon( ply )
 		elseif math.random( 1, 100 ) <= entityChance then
-			self:SpawnEntity()
+			name, inPocket = self:SpawnEntity( ply )
 		elseif math.random( 1, 100 ) <= CFG.PropPercentage then
 			self:SpawnProp()
+		end
+		if name then table.insert( inPocket and pocketed or dropped, name ) end
+
+		--> After the last item: tell the player what they found and where it went
+		done = done + 1
+		if done == count and IsValid( ply ) then
+			if #pocketed > 0 then
+				DarkRP.notify( ply, 0, 5, "Into your pocket: " .. table.concat( pocketed, ", " ) .. "." )
+			end
+			if #dropped > 0 then
+				DarkRP.notify( ply, 1, 5, "Your pocket is full. Left on the ground: " .. table.concat( dropped, ", " ) .. "." )
+			end
 		end
 	end )
 end
 
-function ENT:SpawnWeapon()
-	local class = table.Random( CFG.Weapons )
-	local wep = ents.Create( class )
-	if not IsValid( wep ) then
-		MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in tupac_dumpsters_config.Weapons isn't a valid entity/weapon class - check the spelling in config.lua.\n" )
-		return
-	end
-	wep:SetPos( self:LootPos() )
-	wep:Spawn()
-	self:TossLoot( wep )
+--> A friendly name for loot messages
+local function lootName( class )
+	if CFG.EntityNames and CFG.EntityNames[ class ] then return CFG.EntityNames[ class ] end
+	local stored = weapons.GetStored( class ) or scripted_ents.GetStored( class )
+	local t = stored and ( stored.t or stored )
+	return ( t and t.PrintName and t.PrintName ~= "" and t.PrintName ) or class
 end
 
-function ENT:SpawnEntity()
+--> Weapons and entities go straight into the searcher's pocket (CFG.PocketLoot).
+--> A full pocket, or PocketLoot = false: tossed out of the dumpster instead.
+--> Returns the item's name and whether it was pocketed.
+function ENT:GiveLoot( ply, ent, class )
+	if CFG.PocketLoot and RP1942.pocketOrLeave and RP1942.pocketOrLeave( ply, ent ) then
+		return lootName( class ), true
+	end
+	self:TossLoot( ent )
+	return lootName( class ), false
+end
+
+function ENT:SpawnWeapon( ply )
+	local class = table.Random( CFG.Weapons )
+	--> A DarkRP "spawned_weapon" (the same thing a dropped or bought gun is),
+	--> so it can be pocketed, picked up with E and shows its name
+	local wep = RP1942.makeSpawnedWeapon and RP1942.makeSpawnedWeapon( class, self:LootPos() )
+	if not IsValid( wep ) then
+		MsgC( Color( 255, 170, 0 ), "[Dumpster] couldn't create a weapon for '", class, "'.\n" )
+		return
+	end
+	return self:GiveLoot( ply, wep, class )
+end
+
+function ENT:SpawnEntity( ply )
 	local class = table.Random( CFG.Entities )
 	local ent = ents.Create( class )
 	if not IsValid( ent ) then
@@ -195,7 +229,7 @@ function ENT:SpawnEntity()
 	end
 	ent:SetPos( self:LootPos() )
 	ent:Spawn()
-	self:TossLoot( ent )
+	return self:GiveLoot( ply, ent, class )
 end
 
 function ENT:SpawnProp()
@@ -216,24 +250,48 @@ function ENT:UpdateDropCount()
 	self:SetDeadDrop( #self.drop.weapons + ( self.drop.money > 0 and 1 or 0 ) )
 end
 
+--> "TT-33, TT-33, Luger" -> "2x TT-33, Luger"
+local function countedList( names )
+	local order, counts = {}, {}
+	for _, n in ipairs( names ) do
+		if not counts[ n ] then order[ #order + 1 ] = n end
+		counts[ n ] = ( counts[ n ] or 0 ) + 1
+	end
+	for i, n in ipairs( order ) do
+		if counts[ n ] > 1 then order[ i ] = counts[ n ] .. "x " .. n end
+	end
+	return table.concat( order, ", " )
+end
+
+--> Money goes into the wallet, weapons into the pocket (duplicates are fine:
+--> each gun is its own pocket item). Whatever doesn't fit in the pocket stays
+--> in the drop for the next member.
 function ENT:CollectDrop( ply )
-	local got = {}
+	local got, left = {}, {}
 	if self.drop.money > 0 then
 		ply:addMoney( self.drop.money )
 		got[ #got + 1 ] = DarkRP.formatMoney( self.drop.money )
 	end
 	for _, w in ipairs( self.drop.weapons ) do
-		if not ply:HasWeapon( w.class ) then
-			local wep = ply:Give( w.class )
-			if IsValid( wep ) and w.clip then wep:SetClip1( w.clip ) end
-		elseif w.ammoType and w.clip and w.clip > 0 then
-			ply:GiveAmmo( w.clip, w.ammoType )   --> already carrying one: keep the rounds
+		local wep = RP1942.pocketRoom( ply ) > 0 and RP1942.makeSpawnedWeapon( w.class, ply:GetPos() + Vector( 0, 0, 40 ), w.clip )
+		if IsValid( wep ) and RP1942.pocketOrLeave( ply, wep ) then
+			got[ #got + 1 ] = w.name
+		else
+			if IsValid( wep ) then wep:Remove() end
+			left[ #left + 1 ] = w
 		end
-		got[ #got + 1 ] = w.name
 	end
-	self.drop = { money = 0, weapons = {} }
+	self.drop = { money = 0, weapons = left }
 	self:UpdateDropCount()
-	DarkRP.notify( ply, 0, 6, "You collected a dead drop: " .. table.concat( got, ", " ) .. "." )
+
+	if #got > 0 then
+		DarkRP.notify( ply, 0, 6, "You collected from the dead drop: " .. countedList( got ) .. "." )
+	end
+	if #left > 0 then
+		local names = {}
+		for _, w in ipairs( left ) do names[ #names + 1 ] = w.name end
+		DarkRP.notify( ply, 1, 6, "Your pocket is full. Left in the drop: " .. countedList( names ) .. "." )
+	end
 end
 
 function ENT:ConfiscateDrop( ply )
@@ -249,7 +307,7 @@ end
 local function lookedAtDumpster( ply, range )
 	local tr = ply:GetEyeTrace()
 	local ent = tr.Entity
-	if not IsValid( ent ) or ent:GetClass() ~= "tupac_dumpster" then return nil end
+	if not IsValid( ent ) or ent:GetClass() ~= "rp1942_dumpster" then return nil end
 	if tr.HitPos:Distance( ply:EyePos() ) > ( range or CFG.SearchRange ) then return nil end
 	return ent
 end
@@ -331,7 +389,7 @@ local function writeSaved( list )
 end
 
 local function spawnDumpster( pos, ang, saveId )
-	local d = ents.Create( "tupac_dumpster" )
+	local d = ents.Create( "rp1942_dumpster" )
 	if not IsValid( d ) then return end
 	d:SetPos( pos )
 	d:SetAngles( ang )
@@ -420,11 +478,10 @@ function ENT:OnRemove()
 	end
 end
 
---> The folder here is "dumpsters", but every ents.Create() call above uses
---> "tupac_dumpster". Without registering that name explicitly, GMod only
---> knows this entity as "dumpsters" and every ents.Create("tupac_dumpster")
---> call (including the one that spawns the dumpster itself) silently fails.
-scripted_ents.Register( ENT, "tupac_dumpster" )
+--> The entity's class name comes from its folder: lua/entities/rp1942_dumpster
+--> -> "rp1942_dumpster", the name every ents.Create() above uses. (It used to
+--> live in a folder called "dumpsters" and was registered a second time by
+--> hand, which put two dumpsters in the spawn menu.)
 
 --[[---------------------------------------------------------------------------
 Startup check: spawns (and immediately removes) one of every class in

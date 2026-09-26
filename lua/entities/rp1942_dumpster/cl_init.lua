@@ -87,6 +87,3 @@ function ENT:Draw()
 	if label then label:Draw( self ) end
 end
 
---> Must match the registration in init.lua, or the client only knows this
---> entity as "dumpsters" (the folder name) and ENT:Draw never gets used.
-scripted_ents.Register( ENT, "tupac_dumpster" )

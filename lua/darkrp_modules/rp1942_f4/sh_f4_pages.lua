@@ -78,7 +78,7 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 
 # Supply train
 - About every 20 minutes a Reich supply train pulls into the station, waits briefly, then carries on down the line.
-- Anyone outside the Reich can hold E on it to rob a crate of money and German weapons.
+- Anyone outside the Reich can hold E on it to rob a crate. The money goes into your wallet and any weapon into your pocket.
 - The Reich is expected to guard it. Whatever isn't stolen goes to the Reich treasury.
 - Stay off the tracks while it's moving.
 
@@ -88,12 +88,14 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 
 # Dumpsters
 - Hold E on a dumpster to search it for junk, supplies and the odd weapon. Hobos find better things.
+- Anything useful goes straight into your pocket. If your pocket is full, it lands on the ground.
 - Everyone has their own wait before searching the same dumpster again.
 
 # Dead drops (Resistance)
 /deaddrop 500 - Hide money in the dumpster you're looking at
 /deaddrop weapon - Hide the weapon in your hands
-- Any Resistance member who searches that dumpster collects everything in it. Only the Resistance can see a drop is there.
+- Any Resistance member who searches that dumpster collects it: money into their wallet, weapons into their pocket. Whatever doesn't fit in their pocket stays in the drop.
+- Only the Resistance can see a drop is there.
 - If a member of the Reich searches it first, the drop is confiscated.
 
 # Staff commands

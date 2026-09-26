@@ -1,8 +1,8 @@
 include( "config.lua" )
 ENT.Type 												= "anim" --> Entity type
 ENT.Base												= "base_anim" --> Entity base
-ENT.PrintName										= "Dumpsters"
-ENT.Author											= "Tupac Shakur & MrKrucible"
+ENT.PrintName										= "Dumpster"
+ENT.Author											= "Claude & William"
 ENT.Purpose											= ""
 ENT.AutomaticFrameAdvance 				= true
 ENT.Spawnable										= true
