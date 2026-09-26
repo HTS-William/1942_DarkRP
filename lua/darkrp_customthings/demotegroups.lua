@@ -13,11 +13,11 @@ DarkRP.createDemoteGroup("Wehrmacht", {
 
 DarkRP.createDemoteGroup("Waffen-SS", {
     TEAM_WSS_RECRUIT, TEAM_WSS_RIFLEMAN, TEAM_WSS_MEDIC, TEAM_WSS_MG, TEAM_WSS_NCO,
-    TEAM_1ST_SS, TEAM_WSS_OFFIZIER,
+    TEAM_WSS_OFFIZIER,
 })
 
-DarkRP.createDemoteGroup("SS", {
-    TEAM_SS_RECRUIT, TEAM_SS_RIFLEMAN, TEAM_SS_OFFIZIER,
+DarkRP.createDemoteGroup("Leibstandarte", {
+    TEAM_LAH_RECRUIT, TEAM_LAH_RIFLEMAN, TEAM_LAH_KOMMANDANT,
 })
 
 DarkRP.createDemoteGroup("Gestapo", {

@@ -47,7 +47,7 @@ through; it is only used to tell players where to start.
 C.Branches = {
     wehrmacht = { name = "the Wehrmacht",     entry = "wehrrecruit" },
     waffen_ss = { name = "the Waffen-SS",     entry = "wssrecruit" },
-    ss        = { name = "the Schutzstaffel", entry = "ssrecruit" },
+    leibstandarte = { name = "the Leibstandarte", entry = "lahrecruit" },
 }
 
 C.FactionNames = {
@@ -161,7 +161,7 @@ RP1942.Models = {
     dealer       = { "models/player/eli.mdl" },
     wehrmacht    = { "models/player/combine_soldier.mdl" },
     waffen_ss    = { "models/player/combine_soldier_prisonguard.mdl" },
-    ss           = { "models/player/police.mdl" },
+    leibstandarte = { "models/player/police.mdl" },   -- the Führer's bodyguard
     officer      = { "models/player/combine_super_soldier.mdl" },
     scientist    = { "models/player/magnusson.mdl" },
     fuhrer       = { "models/player/breen.mdl" },

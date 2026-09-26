@@ -3,7 +3,7 @@
 
 Custom fields used by the rp1942 modules (DarkRP ignores unknown fields):
     faction  = "civilian" | "resistance" | "reich"   (faction balance, radio, orders)
-    branch   = "wehrmacht" | "waffen_ss" | "ss" | ... (unit within the Reich)
+    branch   = "wehrmacht" | "waffen_ss" | "leibstandarte" | ... (unit within the Reich)
     requires = { branch = ... } / { faction = ... }   (must CURRENTLY hold such a job)
     arrests  = false                                  (Reich job WITHOUT police powers)
     vip / whitelisted                                 (set via the vip{} / whitelisted{} helpers)
@@ -446,18 +446,18 @@ TEAM_WSS_RECRUIT = job{
     sortOrder = 2,
 }
 
-TEAM_SS_RECRUIT = job{
-    name = "SS Recruit",
+TEAM_LAH_RECRUIT = job{
+    name = "Leibstandarte Recruit",
     color = Color(55, 55, 55),
-    model = M.ss,
-    description = [[Enlist in the Schutzstaffel. Your postings will appear in the Schutzstaffel section of this menu.]],
+    model = M.leibstandarte,
+    description = [[Volunteer for the Leibstandarte, the Führer's personal bodyguard. Serve here to be offered its postings.]],
     weapons = {},
-    command = "ssrecruit",
+    command = "lahrecruit",
     max = 0,
     salary = SAL * 0.5,
     admin = 0,
     faction = "reich",
-    branch = "ss",
+    branch = "leibstandarte",
     arrests = false,
     category = "Reich",
     sortOrder = 3,
@@ -695,24 +695,6 @@ TEAM_WSS_NCO = job(vip{
     subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
 }) --kept as VIP so the proper format is seen here
 
-TEAM_1ST_SS = job(whitelisted{
-    name = "1st SS",
-    color = Color(20, 20, 20),
-    model = M.waffen_ss,
-    description = [[The Führer's personal bodyguard. Carries an StG 44.]],
-    weapons = { W.stg44, W.arrest },
-    command = "firstss",
-    max = 3,
-    salary = SAL * 1.6,
-    admin = 0,
-    faction = "reich",
-    arrests = true,
-    branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Reich",
-    subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
-    sortOrder = 190,
-})
-
 TEAM_WSS_OFFIZIER = job(whitelisted{
     name = "Waffen-SS Offizier",
     color = Color(40, 44, 34),
@@ -733,42 +715,43 @@ TEAM_WSS_OFFIZIER = job(whitelisted{
 })
 
 --[[===========================================================================
-SCHUTZSTAFFEL (in "Reich": SS Recruit -> SS Rifleman -> SS Offizier)
-Just the SS Rifleman and the SS Offizier.
+LEIBSTANDARTE (in "Reich": Leibstandarte Recruit -> Rifleman -> Kommandant)
+The Führer's bodyguard. Wehrmacht = police, Waffen-SS = special
+unit, Leibstandarte = the Führer's protection detail.
 ===========================================================================]]
-TEAM_SS_RIFLEMAN = job{
-    name = "SS Rifleman",
+TEAM_LAH_RIFLEMAN = job{
+    name = "Leibstandarte Rifleman",
     color = Color(45, 45, 45),
-    model = M.ss,
-    description = [[Carries a Karabiner 98k.]],
-    weapons = { W.k98k, W.arrest },
-    command = "ssrifleman",
+    model = M.leibstandarte,
+    description = [[One of the Führer's bodyguards. Stay close to the Führer and keep him alive. Carries an StG 44.]],
+    weapons = { W.stg44, W.arrest },
+    command = "lahrifleman",
     max = 4,
-    salary = SAL * 1.1,
+    salary = SAL * 1.3,
     admin = 0,
     faction = "reich",
     arrests = true,
-    branch = "ss", requires = { branch = "ss" },
+    branch = "leibstandarte", requires = { branch = "leibstandarte" },
     category = "Reich",
-    subOf = "ssrecruit",   -- F4: shown once you are the recruit; server-enforced
+    subOf = "lahrecruit",   -- F4: shown once you are the recruit; server-enforced
 }
 
-TEAM_SS_OFFIZIER = job(whitelisted{
-    name = "SS Offizier",
+TEAM_LAH_KOMMANDANT = job(whitelisted{
+    name = "Leibstandarte Kommandant",
     color = Color(30, 30, 30),
     model = M.officer,
-    description = [[Commands all of the SS.]],
+    description = [[Commands the Leibstandarte and is responsible for the Führer's safety.]],
     weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram },
-    command = "ssoffizier",
+    command = "lahkommandant",
     max = 1,
     salary = SAL * 1.8,
     admin = 0,
     chief = true,
     faction = "reich",
     arrests = true,
-    branch = "ss", requires = { branch = "ss" },
+    branch = "leibstandarte", requires = { branch = "leibstandarte" },
     category = "Reich",
-    subOf = "ssrifleman",   -- F4: shown once you are the base job; server-enforced
+    subOf = "lahrifleman",   -- F4: shown once you are the base job; server-enforced
     sortOrder = 200,
 })
 
