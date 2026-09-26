@@ -18,8 +18,8 @@ Files:
 RP1942 = RP1942 or {}
 
 RP1942.F4Config = {
-    title    = "1942",          -- gold part of the title
-    subtitle = "Options",       -- the rest
+    title    = "42Bros",          -- gold part of the title
+    subtitle = "OccupationRP",       -- the rest
 
     -- Tabs, left to right. Remove a name to hide that tab.
     -- "pages" = every page in sh_f4_pages.lua, each as its own tab.

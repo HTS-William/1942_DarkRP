@@ -266,9 +266,8 @@ TEAM_BLACKMARKET = job{
     max = 2,
     salary = SAL,
     admin = 0,
-    faction = "resistance",
-    branch = "resistance", requires = { faction = "resistance" },
-    category = "Resistance",
+    faction = "civilian",       -- a civilian trade: anyone can take it, no side required
+    category = "Civilians",
     menu = "RP1942_ShopMenu",
     shop = "example",
 }
@@ -283,9 +282,8 @@ TEAM_RUSTUNG = job{
     max = 1,
     salary = SAL,
     admin = 0,
-    faction = "resistance",
-    branch = "resistance",
-    category = "Resistance",
+    faction = "civilian",       -- a civilian trade: anyone can take it, no side required
+    category = "Civilians",
 }
 ]=]
 TEAM_CHERKESOV = job{
@@ -298,9 +296,8 @@ TEAM_CHERKESOV = job{
     max = 1,
     salary = SAL,
     admin = 0,
-    faction = "resistance",
-    branch = "resistance", requires = { faction = "resistance" },
-    category = "Resistance",
+    faction = "civilian",       -- a civilian trade: anyone can take it, no side required
+    category = "Civilians",
 }
 
 TEAM_THIEF = job{
