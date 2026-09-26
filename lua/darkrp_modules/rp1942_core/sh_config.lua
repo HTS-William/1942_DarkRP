@@ -109,18 +109,19 @@ C.FactionTags = {
 
 --[[---------------------------------------------------------------------------
 Weapon classes
-PLACEHOLDERS: replace the right-hand side with the class names from your
-weapon pack. sv_checks.lua prints a warning for any class that doesn't exist.
+The left side is the name jobs.lua uses (W.k98k ...), the right side the class
+from the weapon pack (the same mcv_* classes the dealers sell).
+sv_checks.lua prints a warning for any class that doesn't exist.
 ---------------------------------------------------------------------------]]
 RP1942.Weapons = {
     -- Reich small arms
-    k98k        = "weapon_rp1942_k98k",
-    k98k_scoped = "weapon_rp1942_k98k_scoped",
-    g43         = "weapon_rp1942_g43",
-    mg42        = "weapon_rp1942_mg42",   -- swap for mg34 if preferred
-    stg44       = "weapon_rp1942_stg44",
-    p38         = "weapon_rp1942_p38",    -- officer sidearm
-    ppk         = "weapon_rp1942_ppk",    -- Führer sidearm
+    k98k        = "mcv_kar98",           -- Karabiner-98K
+    k98k_scoped = "mcv_kar98_s",         -- Sniper Karabiner-98K
+    g43         = "mcv_g43",             -- Gewehr 43
+    mg42        = "mcv_mg43b",           -- MG-34 Belt (the pack has no MG-42)
+    stg44       = "mcv_stg44",           -- StG-44
+    p38         = "mcv_p38",             -- Walther P38, officer sidearm
+    ppk         = "mcv_ppk",             -- Suppressed Walther PPK, Führer sidearm
 
     -- DarkRP built-ins (these exist already)
     arrest      = "arrest_stick",

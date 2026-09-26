@@ -15,7 +15,7 @@ Files:
     sh_events.lua        this config
     sv_events.lua        the scheduler and the console command
     sv_event_train.lua   the supply train event
-    cl_events.lua        the "hold E" progress bar
+    (the "hold E" progress bar is rp1942_core/cl_holdbar.lua)
     lua/entities/rp1942_supply_train/   the train itself
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}

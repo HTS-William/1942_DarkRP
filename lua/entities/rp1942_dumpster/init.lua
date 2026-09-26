@@ -48,7 +48,7 @@ end
 
 --[[---------------------------------------------------------------------------
 Searching: press E to start, keep holding E and looking at the dumpster
-(the progress bar is the shared "hold" bar from rp1942_events/cl_events.lua)
+(the progress bar is the shared "hold" bar from rp1942_core/cl_holdbar.lua)
 ---------------------------------------------------------------------------]]
 local function setHold( ply, startTime, endTime, text )
 	ply:SetNW2Float( "RP1942_HoldStart", startTime )
@@ -91,7 +91,13 @@ function ENT:Think()
 
 		if not ok then
 			self.searchers[ ply ] = nil
-			if IsValid( ply ) then setHold( ply, 0, 0 ) end
+			if IsValid( ply ) then
+				setHold( ply, 0, 0 )
+				--> Let go almost straight away: they probably tapped E expecting instant loot
+				if not ply:KeyDown( IN_USE ) and doneAt - now > CFG.SearchTime - 0.6 then
+					DarkRP.notify( ply, 0, 3, "Keep holding E to search the dumpster." )
+				end
+			end
 		elseif now >= doneAt then
 			self.searchers[ ply ] = nil
 			setHold( ply, 0, 0 )
