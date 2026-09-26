@@ -182,6 +182,8 @@ hook.Add("HUDPaint", "RP1942_WantedSelf", function()
 
     indicatorH = 0
     if not (wanted and CFG.selfIndicator and lp:Alive()) then return end
+    -- The 1942 HUD shows WANTED as a status tag instead (rp1942_hud)
+    if RP1942.HUDConfig and RP1942.HUDConfig.enabled then return end
 
     local sw = ScrW()
     local s, pad, dot, bar, w, h = indicatorLayout()

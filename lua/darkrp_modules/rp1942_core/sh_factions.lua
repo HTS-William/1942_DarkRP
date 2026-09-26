@@ -132,6 +132,24 @@ function RP1942.jobGateFailure(ply, job)
         end
     end
 
+    -- Specialisations (subOf = "<base job command>", can chain: Recruit ->
+    -- Rifleman -> Medic): the base job must be your current job or one of the
+    -- jobs above it. So you can move down one step, sideways to a sibling, or
+    -- back up (a Medic can go back to Rifleman).
+    if job.subOf then
+        local current = RPExtraTeams[ply:Team()]
+        local inFamily, guard = false, 0
+        while current and guard < 10 do
+            if current.command == job.subOf then inFamily = true break end
+            current = current.subOf and RP1942.getJobByCommand(current.subOf)
+            guard = guard + 1
+        end
+        if not inFamily then
+            local base = RP1942.getJobByCommand(job.subOf)
+            return "Become " .. (base and base.name or job.subOf) .. " first, then specialise."
+        end
+    end
+
     if job.gate and not job.gate(ply) then
         return job.gateFailMsg or "You can't take this job right now."
     end

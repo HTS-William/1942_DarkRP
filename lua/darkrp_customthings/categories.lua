@@ -26,12 +26,7 @@ end
 -- Open to everyone
 jobCategory("Civilians",  Color(120, 120, 110), 10)
 jobCategory("Resistance", Color(130,  50,  40), 20)
-jobCategory("Reich",      Color( 93, 101,  82), 30)   -- hop 1: enlistment
-
--- Hop 2: only visible while serving in the branch
-jobCategory("Wehrmacht",     Color( 93, 101,  82), 40, function(ply) return RP1942.inBranch(ply, "wehrmacht") end)
-jobCategory("Waffen-SS",     Color( 60,  64,  50), 50, function(ply) return RP1942.inBranch(ply, "waffen_ss") end)
-jobCategory("Schutzstaffel", Color( 30,  30,  30), 60, function(ply) return RP1942.inBranch(ply, "ss", "gestapo") end)
+jobCategory("Reich",      Color( 93, 101,  82), 30)   -- every German job, folded like the Resistance
 
 -- Visible to everyone: anyone can run for Führer
 jobCategory("Reich Command", Color(120,  20,  20), 70)

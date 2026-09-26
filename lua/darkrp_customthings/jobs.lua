@@ -45,6 +45,8 @@ local SAL = GAMEMODE.Config.normalsalary
 
 -- VIP-only job: shows "(VIP)" in F4
 local function vip(job)
+    -- VIP switched off (RP1942.Config.VIPEnabled): the job is a normal job
+    if not (RP1942.Config and RP1942.Config.VIPEnabled) then return job end
     job.vip = true
     job.label = (job.label or job.name) .. " (VIP)"
     return job
@@ -72,7 +74,7 @@ local function job(tbl)
         tbl.gate, tbl.gateFailMsg = tbl.customCheck, tbl.CustomCheckFailMsg
     end
 
-    if tbl.vip or tbl.whitelisted or tbl.requires or tbl.gate then
+    if tbl.vip or tbl.whitelisted or tbl.requires or tbl.subOf or tbl.gate then
         tbl.customCheck = function(ply) return RP1942.jobGateFailure(ply, tbl) == nil end
         tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
     end
@@ -358,6 +360,7 @@ TEAM_RES_MEDIC = job{
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    subOf = "resistance",   -- F4: folded under the Resistance card
 }
 
 TEAM_RES_OPERATIVE = job{
@@ -376,6 +379,7 @@ job title" in the F4 Commands tab: for you, nobody is told.]],
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    subOf = "resistance",   -- F4: folded under the Resistance card
     quietJoin = true,               -- never announced (rp1942_core/sv_disguise.lua)
     menu = "RP1942_WardrobeMenu",   -- F3: the wardrobe (rp1942_menu/cl_menu_wardrobe.lua)
 }
@@ -393,6 +397,7 @@ TEAM_RES_LEADER = job{
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    subOf = "resistance",   -- F4: folded under the Resistance card
     demoteOnDeath = true,
 }
 
@@ -401,8 +406,11 @@ TEAM_RES_LEADER = job{
 ###########################################################################]]
 
 --[[===========================================================================
-HOP 1 - ENLISTMENT ("Reich" category, visible to everyone)
-Recruits are a staging job: no weapons, no police powers. Pick a posting next.
+THE REICH - every German job is in the "Reich" category, folded like the
+Resistance: a civilian sees the three recruits (plus Supplier, Scientist,
+Gestapo). Becoming a recruit shows that branch's Rifleman; becoming a
+Rifleman shows its specialisations (subOf in each job, enforced server-side).
+Recruits are a staging job: no weapons, no police powers.
 ===========================================================================]]
 TEAM_WEHR_RECRUIT = job{
     name = "Wehrmacht Recruit",
@@ -493,7 +501,7 @@ TEAM_SCIENTIST = job{
 }
 
 --[[===========================================================================
-HOP 2 - WEHRMACHT ("Wehrmacht" category, visible only inside the Wehrmacht)
+WEHRMACHT (in "Reich": Wehrmacht Recruit -> Rifleman -> specialisations)
 ===========================================================================]]
 TEAM_WEHR_RIFLEMAN = job{
     name = "Wehrmacht Rifleman",
@@ -508,7 +516,8 @@ TEAM_WEHR_RIFLEMAN = job{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrecruit",   -- F4: shown once you are the recruit; server-enforced
 }
 
 TEAM_WEHR_MEDIC = job{
@@ -524,7 +533,8 @@ TEAM_WEHR_MEDIC = job{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrifleman",   -- F4: shown once you are the base job; server-enforced
 }
 
 TEAM_WEHR_ELITE = job(vip{
@@ -540,7 +550,8 @@ TEAM_WEHR_ELITE = job(vip{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrifleman",   -- F4: shown once you are the base job; server-enforced
 })
 
 TEAM_WEHR_SHARPSHOOTER = job(vip{
@@ -556,7 +567,8 @@ TEAM_WEHR_SHARPSHOOTER = job(vip{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrifleman",   -- F4: shown once you are the base job; server-enforced
 })
 
 TEAM_WEHR_DRIVER = job{
@@ -572,7 +584,8 @@ TEAM_WEHR_DRIVER = job{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrifleman",   -- F4: shown once you are the base job; server-enforced
 }
 
 TEAM_WEHR_NCO = job{
@@ -588,7 +601,8 @@ TEAM_WEHR_NCO = job{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrifleman",   -- F4: shown once you are the base job; server-enforced
 }
 
 TEAM_WEHR_OFFIZIER = job(whitelisted{
@@ -605,12 +619,13 @@ TEAM_WEHR_OFFIZIER = job(whitelisted{
     faction = "reich",
     arrests = true,
     branch = "wehrmacht", requires = { branch = "wehrmacht" },
-    category = "Wehrmacht",
+    category = "Reich",
+    subOf = "wehrrifleman",   -- F4: shown once you are the base job; server-enforced
     sortOrder = 200,
 })
 
 --[[===========================================================================
-HOP 2 - WAFFEN-SS ("Waffen-SS" category, visible only inside the Waffen-SS)
+WAFFEN-SS (in "Reich": Waffen-SS Recruit -> Rifleman -> specialisations)
 ===========================================================================]]
 TEAM_WSS_RIFLEMAN = job{
     name = "Waffen-SS Rifleman",
@@ -625,7 +640,8 @@ TEAM_WSS_RIFLEMAN = job{
     faction = "reich",
     arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Waffen-SS",
+    category = "Reich",
+    subOf = "wssrecruit",   -- F4: shown once you are the recruit; server-enforced
 }
 
 TEAM_WSS_MEDIC = job{
@@ -641,7 +657,8 @@ TEAM_WSS_MEDIC = job{
     faction = "reich",
     arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Waffen-SS",
+    category = "Reich",
+    subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
 }
 
 TEAM_WSS_MG = job{
@@ -657,7 +674,8 @@ TEAM_WSS_MG = job{
     faction = "reich",
     arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Waffen-SS",
+    category = "Reich",
+    subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
 }
 
 TEAM_WSS_NCO = job(vip{
@@ -673,7 +691,8 @@ TEAM_WSS_NCO = job(vip{
     faction = "reich",
     arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Waffen-SS",
+    category = "Reich",
+    subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
 }) --kept as VIP so the proper format is seen here
 
 TEAM_1ST_SS = job(whitelisted{
@@ -689,7 +708,8 @@ TEAM_1ST_SS = job(whitelisted{
     faction = "reich",
     arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Waffen-SS",
+    category = "Reich",
+    subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
     sortOrder = 190,
 })
 
@@ -707,13 +727,14 @@ TEAM_WSS_OFFIZIER = job(whitelisted{
     faction = "reich",
     arrests = true,
     branch = "waffen_ss", requires = { branch = "waffen_ss" },
-    category = "Waffen-SS",
+    category = "Reich",
+    subOf = "wssrifleman",   -- F4: shown once you are the base job; server-enforced
     sortOrder = 200,
 })
 
 --[[===========================================================================
-HOP 2 - SCHUTZSTAFFEL ("Schutzstaffel" category, visible only inside the SS)
-Mirrors the Wehrmacht, minus Driver and Elite Rifleman.
+SCHUTZSTAFFEL (in "Reich": SS Recruit -> SS Rifleman -> SS Offizier)
+Just the SS Rifleman and the SS Offizier.
 ===========================================================================]]
 TEAM_SS_RIFLEMAN = job{
     name = "SS Rifleman",
@@ -728,55 +749,8 @@ TEAM_SS_RIFLEMAN = job{
     faction = "reich",
     arrests = true,
     branch = "ss", requires = { branch = "ss" },
-    category = "Schutzstaffel",
-}
-
-TEAM_SS_MEDIC = job{
-    name = "SS Medic",
-    color = Color(55, 55, 50),
-    model = M.ss,
-    description = [[Rifleman's kit plus a medkit.]],
-    weapons = { W.k98k, W.arrest, W.medkit },
-    command = "ssmedic",
-    max = 1,
-    salary = SAL * 1.1,
-    admin = 0,
-    faction = "reich",
-    arrests = true,
-    branch = "ss", requires = { branch = "ss" },
-    category = "Schutzstaffel",
-}
-
-TEAM_SS_SHARPSHOOTER = job{
-    name = "SS Sharpshooter",
-    color = Color(40, 40, 38),
-    model = M.ss,
-    description = [[Carries a scoped Karabiner 98k.]],
-    weapons = { W.k98k_scoped, W.arrest },
-    command = "sssharpshooter",
-    max = 1,
-    salary = SAL * 1.2,
-    admin = 0,
-    faction = "reich",
-    arrests = true,
-    branch = "ss", requires = { branch = "ss" },
-    category = "Schutzstaffel",
-}
-
-TEAM_SS_NCO = job{
-    name = "SS NCO",
-    color = Color(35, 35, 35),
-    model = M.ss,
-    description = [[Commands the SS enlisted ranks. Can search for weapons and breach doors with a warrant.]],
-    weapons = { W.k98k, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
-    command = "ssnco",
-    max = 1,
-    salary = SAL * 1.4,
-    admin = 0,
-    faction = "reich",
-    arrests = true,
-    branch = "ss", requires = { branch = "ss" },
-    category = "Schutzstaffel",
+    category = "Reich",
+    subOf = "ssrecruit",   -- F4: shown once you are the recruit; server-enforced
 }
 
 TEAM_SS_OFFIZIER = job(whitelisted{
@@ -793,12 +767,14 @@ TEAM_SS_OFFIZIER = job(whitelisted{
     faction = "reich",
     arrests = true,
     branch = "ss", requires = { branch = "ss" },
-    category = "Schutzstaffel",
+    category = "Reich",
+    subOf = "ssrifleman",   -- F4: shown once you are the base job; server-enforced
     sortOrder = 200,
 })
 
--- Listed under the SS so civilians never see it (or its player count) in F4.
--- Joined quietly from ANY job with /joingestapo; the button stays locked.
+-- In "Reich", visible to everyone so anyone can join from F4 (quietly: see
+-- quietJoin). F4 hides its player count from anyone outside the Reich, so
+-- seeing the card doesn't reveal whether agents are around.
 TEAM_GESTAPO = job{
     name = "Gestapo Agent",
     color = Color(120, 120, 110),   -- identical to Civilian ON PURPOSE: DarkRP colours names by team
@@ -815,7 +791,7 @@ job title" in the F4 Commands tab: for you, nobody is told.]],
     faction = "reich",
     arrests = true,
     branch = "gestapo",
-    category = "Schutzstaffel",
+    category = "Reich",
     sortOrder = 210,
     -- Joining by any route (F4, /gestapo, /joingestapo) is done silently with a
     -- civilian cover title: see rp1942_core/sv_disguise.lua

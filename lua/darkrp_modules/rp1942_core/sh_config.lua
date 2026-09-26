@@ -14,9 +14,13 @@ local C = RP1942.Config
 
 --[[---------------------------------------------------------------------------
 VIP
-Usergroups that count as VIP. Staff are included so they can test VIP jobs;
-remove them if you don't want that.
+VIPEnabled: false = VIP is switched off. Jobs marked vip{...} in jobs.lua are
+            open to everyone and show no VIP tag. true = only the groups below.
+VIPGroups:  usergroups that count as VIP. Staff are included so they can test
+            VIP jobs; remove them if you don't want that.
 ---------------------------------------------------------------------------]]
+C.VIPEnabled = false
+
 C.VIPGroups = {
     ["vip"]        = true,
     ["admin"]      = true,

@@ -9,13 +9,26 @@
     └─────────────────────────────────────┘ └─────────────────────┘
 
 Card name colours: green = you can take it, red = you can't (locked or
-full), gold = your current job. Which categories show follows DarkRP's
+full), gold = your current job.
+
+Specialisations: a job with subOf = "<base job command>" (jobs.lua) only
+appears once you hold the base job (or one of its specialisations), right
+after the base job's card. Chains work: Recruit -> Rifleman -> Medic. Until then the base card shows a "+N ROLES" badge
+and its details list what it unlocks. The server enforces the same rule.
+
+Your own job's card is hidden (its specialisations still show), and a
+category left with nothing to show is skipped.
+
+Undercover jobs (quietJoin) hide their player count from anyone outside their
+faction, so the card can't reveal whether agents are around. Which categories show follows DarkRP's
 category canSee (the faction hop system). Everything is checked again by
 DarkRP on the server when you press the button.
 ---------------------------------------------------------------------------]]
 RP1942.F4Tabs = RP1942.F4Tabs or {}
 
 local IDLE_SEQUENCES = { "idle_all_01", "idle_all_02", "idle_subtle", "idle" }
+
+
 
 --[[---------------------------------------------------------------------------
 Can the local player take this job? Returns state, reason.
@@ -26,6 +39,12 @@ local function slotLimit(job)
     if not job.max or job.max == 0 then return nil end
     if job.max < 1 then return math.max(1, math.ceil(player.GetCount() * job.max)) end
     return job.max
+end
+
+-- Undercover jobs keep their numbers from the other side
+local function countHidden(job)
+    return job.quietJoin and job.faction and RP1942.isFaction
+        and not RP1942.isFaction(LocalPlayer(), job.faction) or false
 end
 
 local function jobState(job)
@@ -52,7 +71,7 @@ local function jobState(job)
     end
 
     local limit = slotLimit(job)
-    if limit and team.NumPlayers(job.team) >= limit then
+    if limit and team.NumPlayers(job.team) >= limit and not countHidden(job) then
         if TEAM_FUHRER and job.team == TEAM_FUHRER then return "full", "The office is occupied." end
         return "full", "Every slot is taken."
     end
@@ -171,6 +190,23 @@ RP1942.F4Tabs.jobs = {
         local cols = CFG.jobColumns or 3
 
         local selected   -- the job shown in the detail panel
+
+        -- Specialisations by base job, and which base job's family you're in
+        local rolesByParent, familyOpen = {}, {}
+        for _, j in ipairs(RPExtraTeams) do
+            if j.subOf then
+                rolesByParent[j.subOf] = rolesByParent[j.subOf] or {}
+                table.insert(rolesByParent[j.subOf], j)
+            end
+        end
+        -- Your job and every base job above it are "unlocked": their
+        -- specialisations show (so siblings and the next step are visible)
+        local mine, guard = RPExtraTeams[LocalPlayer():Team()], 0
+        while mine and guard < 10 do
+            familyOpen[mine.command] = true
+            mine = mine.subOf and RP1942.getJobByCommand and RP1942.getJobByCommand(mine.subOf)
+            guard = guard + 1
+        end
         local detail = vgui.Create("DPanel", page)
         detail:Dock(RIGHT)
         detail:DockMargin(gap, 0, 0, 0)
@@ -284,7 +320,7 @@ RP1942.F4Tabs.jobs = {
             local limit = slotLimit(job)
             local rows = {
                 { "Salary", DarkRP.formatMoney(job.salary or 0) },
-                { "Slots", team.NumPlayers(job.team) .. " / " .. (limit or "unlimited") },
+                { "Slots", (countHidden(job) and "?" or team.NumPlayers(job.team)) .. " / " .. (limit or "unlimited") },
             }
             local factions = RP1942.Config and RP1942.Config.FactionNames
             if job.faction and factions and factions[job.faction] then
@@ -297,6 +333,14 @@ RP1942.F4Tabs.jobs = {
                 weps[#weps + 1] = w and w.PrintName and w.PrintName ~= "" and language.GetPhrase(w.PrintName) or class
             end
             rows[#rows + 1] = { "Weapons", #weps > 0 and table.concat(weps, ", ") or "None" }
+            local roles = rolesByParent[job.command]
+            if roles then
+                local names = {}
+                for _, r in ipairs(roles) do names[#names + 1] = r.name end
+                local text = table.concat(names, ", ")
+                if not familyOpen[job.command] then text = text .. "  (unlocked once you're a " .. job.name .. ")" end
+                rows[#rows + 1] = { "Specialisations", text }
+            end
             for i, r in ipairs(rows) do
                 addLabel(r[1], "RP1942_F4Small", C.sub, i == 1 and gap * 2 or gap)
                 addLabel(r[2], "RP1942_F4Body", C.text)
@@ -314,10 +358,14 @@ RP1942.F4Tabs.jobs = {
         end
 
         ------------------------------------------------------------------ cards
-        local function addCard(grid, job)
+        -- childOf: parent command if this is a folded sub-role; roles: how many
+        -- sub-roles this card has (0 = none)
+        local function addCard(grid, job, childOf, roles)
             local card = vgui.Create("DButton", grid)
             card:SetText("")
             card.hover = 0
+            card.childOf = childOf
+            card.job = job
             card.DoClick = function()
                 surface.PlaySound("ui/buttonclick.wav")
                 showJob(job)
@@ -354,13 +402,27 @@ RP1942.F4Tabs.jobs = {
                 draw.SimpleText(UI.fit(job.name, "RP1942_F4Head", w - 12), "RP1942_F4Head", 7, h - barH + 3, nameCol)
 
                 local limit = slotLimit(job)
-                local slots = team.NumPlayers(job.team) .. (limit and (" / " .. limit) or "")
+                local slots = (countHidden(job) and "?" or team.NumPlayers(job.team)) .. (limit and (" / " .. limit) or "")
                 if job.vip then slots = slots .. "  ·  VIP" end
                 draw.SimpleText(slots, "RP1942_F4Small", 7, h - 4, C.sub, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 
                 if selected == job then
                     surface.SetDrawColor(C.gold)
                     surface.DrawOutlinedRect(0, 0, w, h, 2)
+                end
+                if childOf then
+                    -- A sub-role: gold strip along the top ties it to its parent
+                    surface.SetDrawColor(C.gold.r, C.gold.g, C.gold.b, 170)
+                    surface.DrawRect(0, 0, w, 3)
+                end
+                if roles > 0 then
+                    local open = familyOpen[job.command]
+                    local label = (open and "" or "+") .. roles .. (roles == 1 and " ROLE" or " ROLES")
+                    surface.SetFont("RP1942_F4Small")
+                    local tw, th = surface.GetTextSize(label)
+                    local bw, bh, m = tw + 12, th + 4, 6
+                    draw.RoundedBox(3, m, m, bw, bh, open and C.cardSelected or C.category)
+                    draw.SimpleText(label, "RP1942_F4Small", m + bw / 2, m + bh / 2, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 end
                 if cstate == "current" then
                     surface.SetFont("RP1942_F4Small")
@@ -384,34 +446,78 @@ RP1942.F4Tabs.jobs = {
             end
             if #jobs == 0 then return end
 
-            local bar = UI.categoryBar(list, cat.name, #jobs .. (#jobs == 1 and " job" or " jobs"))
+            -- Sub-roles go straight after their parent (if the parent is here)
+            local present, rolesOf, top = {}, {}, {}
+            for _, job in ipairs(jobs) do present[job.command] = true end
+            for _, job in ipairs(jobs) do
+                if job.subOf and present[job.subOf] then
+                    rolesOf[job.subOf] = rolesOf[job.subOf] or {}
+                    table.insert(rolesOf[job.subOf], job)
+                else
+                    top[#top + 1] = job
+                end
+            end
+
+            -- What will actually show: not your own job, and specialisations
+            -- only once you hold their base job
+            local myTeam = LocalPlayer():Team()
+            local function countShown(job, parentCmd, depth)
+                local n = 0
+                if job.team ~= myTeam and (not parentCmd or familyOpen[parentCmd]) then n = 1 end
+                if depth < 10 then
+                    for _, role in ipairs(rolesOf[job.command] or {}) do n = n + countShown(role, job.command, depth + 1) end
+                end
+                return n
+            end
+            local shownCount = 0
+            for _, job in ipairs(top) do shownCount = shownCount + countShown(job, nil, 0) end
+            if shownCount == 0 then return end   -- e.g. Reich Command when you're the Führer
+
+            local bar = UI.categoryBar(list, cat.name, shownCount .. (shownCount == 1 and " job" or " jobs"))
             bar:Dock(TOP)
             bar:DockMargin(0, 0, 0, gap)
 
             local grid = list:Add("Panel")
             grid:Dock(TOP)
             grid:DockMargin(0, 0, 0, gap * 2)
-            for _, job in ipairs(jobs) do
-                addCard(grid, job)
-                firstJob = firstJob or job
+            -- Depth-first: each job, then its specialisations (and theirs)
+            local function addTree(job, parentCmd, depth)
+                local roles = rolesOf[job.command] or {}
+                addCard(grid, job, parentCmd, #roles)
+                if depth < 10 then
+                    for _, role in ipairs(roles) do addTree(role, job.command, depth + 1) end
+                end
+            end
+            for _, job in ipairs(top) do addTree(job, nil, 0) end
+            for _, card in ipairs(grid:GetChildren()) do
+                if card.job.team ~= myTeam and (not card.childOf or familyOpen[card.childOf]) then
+                    firstJob = firstJob or card.job
+                    break
+                end
             end
             grid.PerformLayout = function(g, w)
                 local cw = math.floor((w - gap * (cols - 1)) / cols)
                 local ch = math.floor(cw * 1.08)
-                for i, child in ipairs(g:GetChildren()) do
-                    local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
-                    child:SetPos(col * (cw + gap), row * (ch + gap))
-                    child:SetSize(cw, ch)
+                local i = 0
+                for _, child in ipairs(g:GetChildren()) do
+                    -- Specialisations only show once you hold the base job (or one of them)
+                    local show = child.job.team ~= LocalPlayer():Team()          -- not your own job
+                        and (not child.childOf or familyOpen[child.childOf] == true)
+                    child:SetVisible(show)
+                    if show then
+                        child:SetPos((i % cols) * (cw + gap), math.floor(i / cols) * (ch + gap))
+                        child:SetSize(cw, ch)
+                        i = i + 1
+                    end
                 end
-                local rows = math.ceil(#g:GetChildren() / cols)
+                local rows = math.max(1, math.ceil(i / cols))
                 local tall = rows * ch + (rows - 1) * gap
                 if g:GetTall() ~= tall then g:SetTall(tall) end
             end
         end
         for _, cat in ipairs(DarkRP.getCategories().jobs or {}) do addCategory(cat) end
 
-        -- Start on your current job
-        local current = RPExtraTeams[LocalPlayer():Team()]
-        showJob(current or firstJob or RPExtraTeams[1])
+        -- Open on the first job listed (your own isn't listed)
+        showJob(firstJob or RPExtraTeams[LocalPlayer():Team()] or RPExtraTeams[1])
     end,
 }

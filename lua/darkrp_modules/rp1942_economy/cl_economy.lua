@@ -19,6 +19,9 @@ hook.Add("OnScreenSizeChanged", "RP1942_EconomyFont", buildFont)
 
 hook.Add("HUDPaint", "RP1942_EconomyHUD", function()
     if not SHOW_HUD then return end
+    -- The 1942 HUD shows the economy as a bar at the bottom instead (rp1942_hud)
+    local hud = RP1942.HUDConfig
+    if hud and hud.enabled and hud.showEconomy then return end
     local tier = RP1942.getEconomyTier()
     draw.SimpleTextOutlined(tier.text, "RP1942_EconomyHUD", ScrW() / 2, 8,
         COLOR_TEXT, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1, COLOR_OUTLINE)

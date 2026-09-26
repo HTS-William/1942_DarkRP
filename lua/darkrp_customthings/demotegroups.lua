@@ -17,8 +17,11 @@ DarkRP.createDemoteGroup("Waffen-SS", {
 })
 
 DarkRP.createDemoteGroup("SS", {
-    TEAM_SS_RECRUIT, TEAM_SS_RIFLEMAN, TEAM_SS_MEDIC, TEAM_SS_SHARPSHOOTER, TEAM_SS_NCO,
-    TEAM_SS_OFFIZIER, TEAM_GESTAPO,   -- Gestapo sat under the SS (RSHA)
+    TEAM_SS_RECRUIT, TEAM_SS_RIFLEMAN, TEAM_SS_OFFIZIER,
+})
+
+DarkRP.createDemoteGroup("Gestapo", {
+    TEAM_GESTAPO,
 })
 
 DarkRP.createDemoteGroup("Resistance", {
