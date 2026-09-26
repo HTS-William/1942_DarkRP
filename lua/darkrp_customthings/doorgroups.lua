@@ -11,3 +11,8 @@ AddDoorGroup("NAME OF THE GROUP HERE, you will see this when looking at a door",
 
 -- Example: AddDoorGroup("Cops and Mayor only", TEAM_CHIEF, TEAM_POLICE, TEAM_MAYOR)
 -- Example: AddDoorGroup("Gundealer only", TEAM_GUN)
+
+
+-- Faction doors: Reich, Resistance, Civilians and the Reich units, built from
+-- the jobs' factions. Set doors with /factiondoor (see rp1942_doors/sh_doors.lua).
+if RP1942 and RP1942.createFactionDoorGroups then RP1942.createFactionDoorGroups() end

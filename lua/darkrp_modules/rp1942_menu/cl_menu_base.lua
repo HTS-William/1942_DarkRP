@@ -107,9 +107,30 @@ function PANEL:Setup(job)
     local w, h = self:GetMenuSize()
     self:SetSize(w, h)
     self:Center()
+    self:KeepClearOfHUD()
     self:MakePopup()
 
     self:Populate()
+end
+
+-- Don't open on top of the HUD (economy bar, player panel, ammo): if the menu
+-- would overlap one, move it up above it, and shrink it if it still won't fit.
+function PANEL:KeepClearOfHUD()
+    local rects = RP1942.HUDRects
+    if not rects then return end
+
+    local x, y = self:GetPos()
+    local w, h = self:GetSize()
+    local gap, top = 8, 8
+    local limit = ScrH()
+    for _, r in pairs(rects) do
+        if r.x < x + w and x < r.x + r.w then limit = math.min(limit, r.y - gap) end
+    end
+    if y + h <= limit then return end
+
+    h = math.min(h, limit - top)
+    self:SetSize(w, h)
+    self:SetPos(x, math.max(top, limit - h))
 end
 
 -- Overridable defaults -------------------------------------------------------

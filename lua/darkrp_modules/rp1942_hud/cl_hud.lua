@@ -332,8 +332,9 @@ local function drawEconomy(lp, m, avoid)
 end
 
 --[[---------------------------------------------------------------------------
-Hovering the economy bar (with the cursor out: C, F3, chat...) opens a panel
-above it with the Reich treasury and every tax rate.
+Hovering the economy bar (with the cursor out: C, F3, chat, a job menu...)
+opens a panel above it with the Reich treasury and every tax rate. It's drawn
+on top of menus, and job menus open clear of the HUD (cl_menu_base.lua).
     REICH TREASURY
     RM 12,500
     TAX RATES
@@ -437,6 +438,18 @@ hook.Add("HUDPaint", "RP1942_HUD", function()
     rects.player = drawPlayerPanel(lp, m)
     if CFG.showAmmo then rects.ammo = drawAmmo(lp, m) end
     if CFG.showEconomy then rects.economy = drawEconomy(lp, m, { rects.player, rects.ammo }) end
-    if CFG.economyDetails ~= false and hovered(rects.economy) then drawEconomyDetails(lp, m, rects.economy) end
     RP1942.HUDRects = rects
+end)
+
+-- Drawn after all menus (PostRenderVGUI), so an open job menu can't cover it.
+-- Only while the cursor is over bare screen, not over a menu that overlaps the bar.
+hook.Add("PostRenderVGUI", "RP1942_HUDEconomyDetails", function()
+    if not CFG.enabled or not CFG.showEconomy or CFG.economyDetails == false then return end
+    local bar = RP1942.HUDRects and RP1942.HUDRects.economy
+    if not hovered(bar) then return end
+    local over = vgui.GetHoveredPanel()
+    if IsValid(over) and over ~= vgui.GetWorldPanel() and over ~= GetHUDPanel() then return end
+    local lp = LocalPlayer()
+    if hidden(lp) then return end
+    drawEconomyDetails(lp, metrics(), bar)
 end)
