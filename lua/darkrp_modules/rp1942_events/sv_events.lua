@@ -69,15 +69,17 @@ hook.Add("InitPostEntity", "RP1942_WorldEvents", function()
 end)
 
 --[[---------------------------------------------------------------------------
-Admin commands (who may use them: RP1942.Events.adminCheck in sh_events.lua)
+Admin commands. Who may: with ULX, per rank in its menu (Groups > 42Bros:
+ulx train / ulx event / ulx stopevent); without ULX, RP1942.Events.adminCheck.
     Chat:     /train              start the supply train
               /event              list events and what's running
               /event <id>         start an event
               /event stop         end the running event
     Console:  rp1942_event [<id> | stop]   (same as /event; also works from the server console)
 ---------------------------------------------------------------------------]]
-local function runEventCommand(ply, arg, say)
-    if IsValid(ply) and not CFG.adminCheck(ply) then return say("You aren't allowed to run events.") end
+local function runEventCommand(ply, arg, say, access)
+    access = access or (string.lower(arg or "") == "stop" and "ulx stopevent" or "ulx event")
+    if IsValid(ply) and not RP1942.staffCan(ply, access, CFG.adminCheck) then return say("You aren't allowed to run events.") end
 
     arg = string.lower(arg or "")
     if arg == "" then
@@ -126,6 +128,6 @@ DarkRP.defineChatCommand("event", function(ply, args)
 end)
 
 DarkRP.defineChatCommand("train", function(ply)
-    runEventCommand(ply, "train", chatSay(ply))
+    runEventCommand(ply, "train", chatSay(ply), "ulx train")
     return ""
 end)

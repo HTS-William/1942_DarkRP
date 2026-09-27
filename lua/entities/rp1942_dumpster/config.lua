@@ -81,7 +81,7 @@ tupac_dumpsters_config.EntityNames = {
 -->     /adddumpster      places one where you're looking, facing you
 -->     /removedumpster   removes the one you're looking at (and from the save)
 --> Who may use those commands:
-tupac_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() end
+tupac_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() end   --> without ULX; with ULX it's set per rank (Groups > 42Bros)
 
 --> Fixed spawn positions (always spawned, on every map load). Dumpsters placed
 --> with /adddumpster don't need to be listed here.

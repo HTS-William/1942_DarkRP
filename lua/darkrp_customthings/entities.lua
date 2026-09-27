@@ -16,3 +16,62 @@ https://darkrp.miraheze.org/wiki/DarkRP:CustomEntityFields
 
 Add entities under the following line:
 ---------------------------------------------------------------------------]]
+
+--[[---------------------------------------------------------------------------
+Production (rp1942_production). Shown in the F4 Shop tab to these jobs only.
+max = how many one player can own at once.
+---------------------------------------------------------------------------]]
+DarkRP.createEntity("Bread Oven", {
+    ent = "rp1942_oven",
+    model = "models/props_furniture/kitchen_oven1.mdl",
+    price = 800,
+    max = 2,
+    cmd = "buyoven",
+    allowed = { TEAM_BAKER },
+    category = "Production",
+})
+
+DarkRP.createEntity("Sack of Flour", {
+    ent = "rp1942_flour",
+    model = "models/props_junk/garbage_bag001a.mdl",
+    price = 60,
+    max = 4,
+    cmd = "buyflour",
+    allowed = { TEAM_BAKER },
+    category = "Production",
+})
+
+DarkRP.createEntity("Wine Barrel", {
+    ent = "rp1942_wine_barrel",
+    model = "models/props_c17/woodbarrel001.mdl",
+    price = 250,
+    max = 3,
+    cmd = "buywinebarrel",
+    allowed = { TEAM_WINEMAKER },
+    category = "Production",
+})
+
+-- Not placed where you look: built on the nearest free oil site (admins mark
+-- them with /addoilsite) and bolted down. Only offered while a site is free.
+DarkRP.createEntity("Oil Derrick", {
+    ent = "rp1942_oil_rig",
+    model = "models/props_c17/FurnitureBoiler001a.mdl",
+    price = 1500,
+    max = 1,
+    cmd = "buyoilderrick",
+    allowed = { TEAM_PETROLEUM },
+    category = "Production",
+    customCheck = function(ply) return GetGlobal2Int("RP1942_OilSitesFree", 0) > 0 end,
+    CustomCheckFailMsg = "Every oil site is taken, or none has been marked on this map yet.",
+    spawn = function(ply, tr, tbl) return RP1942.buildOilRig(ply) end,
+})
+
+DarkRP.createEntity("Factory Line", {
+    ent = "rp1942_factory",
+    model = "models/props_wasteland/laundry_washer001a.mdl",
+    price = 1200,
+    max = 1,
+    cmd = "buyfactory",
+    allowed = { TEAM_FACTORY },
+    category = "Production",
+})

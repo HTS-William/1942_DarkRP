@@ -30,3 +30,13 @@ jobCategory("Reich",      Color( 93, 101,  82), 30)   -- every German job, folde
 
 -- Visible to everyone: anyone can run for Führer
 jobCategory("Reich Command", Color(120,  20,  20), 70)
+
+-- F4 Shop: the producing jobs' machines and supplies (entities.lua)
+DarkRP.createCategory{
+    name = "Production",
+    categorises = "entities",
+    startExpanded = true,
+    color = Color(160, 120, 60),
+    canSee = function() return true end,
+    sortOrder = 10,
+}

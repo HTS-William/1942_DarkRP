@@ -75,13 +75,31 @@ jobs:     job COMMANDS whose custom job title (F4 > Commands, or /job) is a
           exist yet when this file loads. Typing your real job name reveals you.
 freeform: false = cover must be the exact name of a civilian job (Baker, Doctor...)
           true  = any title of 3-25 characters
-models:   the F3 wardrobe of each undercover job (see below)
+presets:  the tabs in each undercover job's F3 wardrobe (see below)
+models:   an optional extra "Wardrobe" tab of plain models (see below)
 ---------------------------------------------------------------------------]]
 C.Disguise = {
     jobs     = { gestapo = true, resoperative = true },
     freeform = true,
-    -- Models offered in each job's F3 wardrobe, by job command. An empty list
-    -- offers every civilian job's models. For example:
+
+    -- Wardrobe tabs, by job command. Each tab lists that faction's jobs from
+    -- jobs.lua; clicking one of a job's models puts it on AND silently sets
+    -- your title to that job's name, like "Set a custom job title" in F4.
+    -- Tabs: "civilian", "resistance", "reich"
+    presets  = {
+        gestapo      = { "civilian", "resistance" },   -- infiltrate the Resistance
+        resoperative = { "civilian", "reich" },        -- pass as a Reich soldier
+    },
+
+    -- Leadership jobs are left out of the tabs: every whitelisted job
+    -- (Offiziere, the Leibstandarte Kommandant, the Führer) and the jobs listed
+    -- here. true = offer them too. The undercover jobs themselves are never offered.
+    allowLeaders = false,
+    leaderJobs   = { resleader = true },
+
+    -- Optional: a plain list of models per job, shown as an extra "Wardrobe"
+    -- tab (model only, the title isn't touched). Leave empty for no extra tab.
+    -- For example:
     --   resoperative = { "models/player/group01/male_01.mdl", "models/player/group02/male_04.mdl" },
     models   = {
         gestapo      = {},

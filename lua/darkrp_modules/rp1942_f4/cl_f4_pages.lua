@@ -2,6 +2,7 @@
 1942 DarkRP - F4 text pages (client)
 One tab per page in sh_f4_pages.lua. In the text:
     # Heading   -> red bar        - Point  -> bullet        empty line -> space
+    #staff Heading -> a section only staff see (RP1942.isF4Staff)
 ---------------------------------------------------------------------------]]
 local function buildPage(page, text)
     local UI = RP1942.F4UI
@@ -26,9 +27,21 @@ local function buildPage(page, text)
     end
 
     local first = true
+    local staff = RP1942.isF4Staff and RP1942.isF4Staff(LocalPlayer())
+    local hidden = false   -- inside a staff-only section, for a non-staff player
     for raw in string.gmatch((text or "") .. "\n", "(.-)\r?\n") do
         local str = string.Trim(raw)
-        if string.sub(str, 1, 2) == "# " then
+        -- "#staff Heading": a heading whose section only staff see
+        local staffHead = string.match(str, "^#staff%s+(.+)$")
+        if staffHead then
+            hidden = not staff
+            str = "# " .. staffHead
+        elseif string.sub(str, 1, 2) == "# " then
+            hidden = false
+        end
+        if hidden then
+            -- skip it
+        elseif string.sub(str, 1, 2) == "# " then
             local bar = UI.categoryBar(list, string.sub(str, 3))
             bar:Dock(TOP)
             bar:DockMargin(0, first and 0 or gap, 0, gap)
@@ -41,7 +54,7 @@ local function buildPage(page, text)
         else
             line(str)
         end
-        if str ~= "" then first = false end
+        if str ~= "" and not hidden then first = false end
     end
 end
 

@@ -8,6 +8,10 @@
     │ [card] [card] [card]                │ │ [ Become job ]      │
     └─────────────────────────────────────┘ └─────────────────────┘
 
+Jobs with several models show "N outfits" on their card, and a strip of
+outfit pictures under the model in the detail panel: click one to pick it
+(saved as your preferred model for that job, like DarkRP's own F4).
+
 Card name colours: green = you can take it, red = you can't (locked or
 full), gold = your current job.
 
@@ -228,33 +232,84 @@ RP1942.F4Tabs.jobs = {
         model:SetTall(math.floor(ScrH() * 0.30))
         model:SetMouseInputEnabled(true)
 
-        -- Arrows to pick between a job's models (only when it has several)
+        -- Outfits: a strip of pictures under the model (only when the job has
+        -- several). Click one to preview it; it's saved as your pick for that
+        -- job and worn when you take it (or on your next respawn).
         local modelIndex = 1
-        local function arrow(dir)
-            local b = vgui.Create("DButton", model)
-            b:SetText("")
-            b:SetSize(math.floor(28 * s), math.floor(40 * s))
-            b.Paint = function(btn, w, h)
-                local models = selected and jobModels(selected) or {}
-                if #models < 2 then return end
-                draw.RoundedBox(4, 0, 0, w, h, btn:IsHovered() and C.tabHover or Color(0, 0, 0, 110))
-                draw.SimpleText(dir < 0 and "<" or ">", "RP1942_F4Head", w / 2, h / 2, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            end
-            b.DoClick = function()
-                local models = selected and jobModels(selected) or {}
-                if #models < 2 then return end
-                modelIndex = (modelIndex - 1 + dir) % #models + 1
-                model:SetJobModel(models[modelIndex])
-                if DarkRP.setPreferredJobModel then DarkRP.setPreferredJobModel(selected.team, models[modelIndex]) end
-                surface.PlaySound("ui/buttonclick.wav")
-            end
-            return b
+        model.PerformLayout = function(self) frameWholeModel(self) end
+
+        local outfits = vgui.Create("DPanel", detail)
+        outfits:Dock(TOP)
+        outfits:DockMargin(0, gap, 0, 0)
+        outfits.Paint = nil
+        outfits:SetVisible(false)
+        outfits:SetTall(0)
+
+        local outfitHead = vgui.Create("DLabel", outfits)
+        outfitHead:Dock(TOP)
+        outfitHead:SetFont("RP1942_F4Small")
+        outfitHead:SetTextColor(C.sub)
+        outfitHead:SetTall(math.floor(18 * s))
+
+        local outfitGrid = vgui.Create("DIconLayout", outfits)
+        outfitGrid:Dock(TOP)
+        outfitGrid:DockMargin(0, 4, 0, 0)
+        outfitGrid:SetSpaceX(math.floor(4 * s))
+        outfitGrid:SetSpaceY(math.floor(4 * s))
+
+        -- The strip is as tall as its rows of pictures (DIconLayout sizes itself)
+        outfits.PerformLayout = function(self)
+            local tall = outfitHead:GetTall() + 4 + outfitGrid:GetTall()
+            if self:GetTall() ~= tall then self:SetTall(tall) end
         end
-        local left, right = arrow(-1), arrow(1)
-        model.PerformLayout = function(self, w, h)
-            left:SetPos(0, (h - left:GetTall()) / 2)
-            right:SetPos(w - right:GetWide(), (h - right:GetTall()) / 2)
-            frameWholeModel(self)
+        outfitGrid.OnSizeChanged = function() outfits:InvalidateLayout() end
+
+        local function pickOutfit(i)
+            local models = selected and jobModels(selected) or {}
+            if not models[i] then return end
+            modelIndex = i
+            model:SetJobModel(models[i])
+            if DarkRP.setPreferredJobModel then DarkRP.setPreferredJobModel(selected.team, models[i]) end
+            outfitHead:SetText("OUTFIT " .. i .. " OF " .. #models)
+        end
+
+        local function buildOutfits(job)
+            outfitGrid:Clear()
+            local models = jobModels(job)
+            if #models < 2 then outfits:SetVisible(false) return end
+            outfits:SetVisible(true)
+            outfitHead:SetText("OUTFIT " .. modelIndex .. " OF " .. #models)
+
+            local size = math.floor(52 * s)
+            for i, mdl in ipairs(models) do
+                local cell = outfitGrid:Add("DButton")
+                cell:SetSize(size, size)
+                cell:SetText("")
+                cell:SetTooltip("Outfit " .. i)
+                cell.hover = 0
+                cell.Paint = function(c, w, h)
+                    c.hover = Lerp(FrameTime() * 12, c.hover, c:IsHovered() and 1 or 0)
+                    draw.RoundedBox(4, 0, 0, w, h, modelIndex == i and C.cardSelected or UI.mix(C.card, C.cardHover, c.hover))
+                end
+                cell.PaintOver = function(c, w, h)
+                    if modelIndex == i then
+                        surface.SetDrawColor(C.gold)
+                        surface.DrawOutlinedRect(0, 0, w, h, 2)
+                    end
+                end
+                cell.DoClick = function()
+                    if modelIndex == i then return end
+                    surface.PlaySound("ui/buttonclick.wav")
+                    pickOutfit(i)
+                end
+                local icon = cell:Add("ModelImage")
+                icon:SetPos(2, 2)
+                icon:SetSize(size - 4, size - 4)
+                icon:SetModel(mdl)
+                icon:SetMouseInputEnabled(false)
+            end
+
+            outfitGrid:InvalidateLayout(true)
         end
 
         local actionLabel, actionFn = "", function() end
@@ -300,6 +355,7 @@ RP1942.F4Tabs.jobs = {
             local pref = preferredModel(job)
             for i, m in ipairs(models) do if m == pref then modelIndex = i end end
             model:SetJobModel(pref)
+            buildOutfits(job)
             refreshAction()
 
             info:Clear()
@@ -404,6 +460,8 @@ RP1942.F4Tabs.jobs = {
                 local limit = slotLimit(job)
                 local slots = (countHidden(job) and "?" or team.NumPlayers(job.team)) .. (limit and (" / " .. limit) or "")
                 if job.vip then slots = slots .. "  ·  VIP" end
+                local outfitCount = #jobModels(job)
+                if outfitCount > 1 then slots = slots .. "  ·  " .. outfitCount .. " outfits" end
                 draw.SimpleText(slots, "RP1942_F4Small", 7, h - 4, C.sub, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 
                 if selected == job then

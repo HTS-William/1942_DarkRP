@@ -9,8 +9,9 @@ Three parts:
     Quiet joining     jobs with quietJoin = true (the Gestapo) are never announced
     Silent cover      for undercover jobs (RP1942.Config.Disguise.jobs), the custom
                       job title (F4 > Commands, or /job) isn't announced either
-    Wardrobe          the F3 wardrobe's model choice (Gestapo, Resistance
-                      Operative), kept until a job change
+    Wardrobe          the F3 wardrobe (Gestapo, Resistance Operative): preset
+                      tabs that set a job's model and title together, plus
+                      plain models; kept until a job change
 ---------------------------------------------------------------------------]]
 
 -- Case-insensitive lookup of a civilian job by display name
@@ -130,6 +131,15 @@ local function setCover(ply, text)
     DarkRP.notify(ply, 0, 4, "Your cover is now '" .. title .. "'. Nobody was told.")
 end
 
+-- The same, from the title box in the F3 wardrobe
+RP1942.addMenuHandler("RP1942_WardrobeMenu", "title", function(ply, text)
+    if not RP1942.canDisguise(ply) then return end
+    local now = CurTime()
+    if (ply.RP1942_NextCover or 0) > now then return end
+    ply.RP1942_NextCover = now + 2
+    setCover(ply, string.sub(text or "", 1, 64))
+end)
+
 hook.Add("canChatCommand", "RP1942_SilentCover", function(ply, cmd, args)
     if cmd ~= "job" or not RP1942.canDisguise(ply) then return end
     setCover(ply, args)
@@ -161,6 +171,25 @@ RP1942.addMenuHandler("RP1942_WardrobeMenu", "model", function(ply, model)
     ply:SetModel(model)
     ply:SetupHands()
     DarkRP.notify(ply, 0, 4, "Disguise changed.")
+end)
+
+-- A preset from one of the wardrobe tabs: that job's model AND its name as
+-- your title, silently (like "Set a custom job title"). arg = "tab|command|model number"
+RP1942.addMenuHandler("RP1942_WardrobeMenu", "preset", function(ply, arg)
+    if not RP1942.canDisguise(ply) then return end
+    local now = CurTime()
+    if (ply.RP1942_NextWardrobe or 0) > now then return end
+
+    local tabId, command, index = string.match(arg or "", "^([%w_]+)|([%w_]+)|(%d+)$")
+    local job, model = RP1942.findDisguisePreset(ply, tabId, command, tonumber(index))
+    if not job then return end   -- not offered to this job (or a blocked leadership job)
+    ply.RP1942_NextWardrobe = now + WARDROBE_COOLDOWN
+
+    ply.RP1942_DisguiseModel = model
+    ply:SetModel(model)
+    ply:SetupHands()
+    ply:updateJob(job.name)
+    DarkRP.notify(ply, 0, 5, "You now pass as a " .. job.name .. ". Nobody was told.")
 end)
 
 -- On respawn, keep wearing the disguise (runs before DarkRP picks the job model)

@@ -28,8 +28,9 @@ RP1942.Events = {
                                               -- Admin-started events don't change this timer.
     minPlayers  = 4,                          -- no automatic events below this many players online
 
-    -- Who may use /train, /event and rp1942_event. IsAdmin() is true for
-    -- admins and superadmins; use ply:IsSuperAdmin() to tighten it.
+    -- Who may use /train, /event and rp1942_event when ULX isn't running
+    -- (with ULX: per rank, ULX menu > Groups > 42Bros). IsAdmin() is true
+    -- for admins and superadmins; use ply:IsSuperAdmin() to tighten it.
     adminCheck  = function(ply) return ply:IsAdmin() end,
 }
 
@@ -37,14 +38,14 @@ DarkRP.declareChatCommand{
     command     = "event",
     description = "Admin: list world events, start one (/event train) or end it (/event stop)",
     delay       = 1.5,
-    condition   = function(ply) return RP1942.Events.adminCheck(ply) end,
+    condition   = function(ply) return RP1942.staffCan(ply, "ulx event", RP1942.Events.adminCheck) end,
 }
 
 DarkRP.declareChatCommand{
     command     = "train",
     description = "Admin: start the supply train event now",
     delay       = 1.5,
-    condition   = function(ply) return RP1942.Events.adminCheck(ply) end,
+    condition   = function(ply) return RP1942.staffCan(ply, "ulx train", RP1942.Events.adminCheck) end,
 }
 
 --[[---------------------------------------------------------------------------

@@ -423,14 +423,16 @@ end
 hook.Add( "InitPostEntity", "spawn_dumpsters", spawn_tupac_dumpsters )
 hook.Add( "PostCleanupMap", "spawn_dumpsters", spawn_tupac_dumpsters )   --> admin map cleanups don't delete them for good
 
-local function allowed( ply )
-	if CFG.AdminCheck( ply ) then return true end
+local function allowed( ply, access )
+	if RP1942 and RP1942.staffCan then
+		if RP1942.staffCan( ply, access, CFG.AdminCheck ) then return true end
+	elseif CFG.AdminCheck( ply ) then return true end
 	DarkRP.notify( ply, 1, 4, "You aren't allowed to place dumpsters." )
 	return false
 end
 
 DarkRP.defineChatCommand( "adddumpster", function( ply )
-	if not allowed( ply ) then return "" end
+	if not allowed( ply, "ulx adddumpster" ) then return "" end
 	local tr = ply:GetEyeTrace()
 	if not tr.Hit or tr.HitPos:Distance( ply:EyePos() ) > 400 then
 		DarkRP.notify( ply, 1, 4, "Look at the floor where the dumpster should go." )
@@ -457,7 +459,7 @@ DarkRP.defineChatCommand( "adddumpster", function( ply )
 end )
 
 DarkRP.defineChatCommand( "removedumpster", function( ply )
-	if not allowed( ply ) then return "" end
+	if not allowed( ply, "ulx removedumpster" ) then return "" end
 	local d = lookedAtDumpster( ply, 400 )
 	if not d then
 		DarkRP.notify( ply, 1, 4, "Look at a dumpster to remove it." )

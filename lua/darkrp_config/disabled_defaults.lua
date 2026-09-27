@@ -24,7 +24,7 @@ DarkRP.disabledDefaults["modules"] = {
     ["hungermod"]        = true,    -- TODO: decide. Enabling it makes the Baker's bread matter (rationing).
     ["playerscale"]      = false,
     ["sleep"]            = false,
-    ["fadmin"]           = false,   -- set true if you run ULX/SAM instead
+    ["fadmin"]           = true,    -- off: the server runs ULX + ULib instead
     ["animations"]       = false,
     ["chatindicator"]    = false,
 }

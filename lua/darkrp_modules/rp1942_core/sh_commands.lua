@@ -53,3 +53,58 @@ function RP1942.disguiseModels(ply)
     end
     return civilianModels()
 end
+
+--[[---------------------------------------------------------------------------
+Wardrobe preset tabs for ply's job (RP1942.Config.Disguise.presets).
+Returns a list of tabs:
+    { id = "reich", name = "Reich", jobs = {
+        { command = "wehrrifleman", name = "Wehrmacht Rifleman", models = { ... } }, ... } }
+Same on server and client, so the server can check a request against it.
+---------------------------------------------------------------------------]]
+local TAB_NAMES = { civilian = "Civilian", resistance = "Resistance", reich = "Reich" }
+
+local function jobModels(job)
+    local list = {}
+    for _, m in ipairs(istable(job.model) and job.model or { job.model }) do
+        if isstring(m) and m ~= "" then list[#list + 1] = m end
+    end
+    return list
+end
+
+local function offered(job, cfg)
+    if cfg.jobs[job.command] then return false end   -- never another undercover job
+    if cfg.allowLeaders then return true end
+    return not (job.whitelisted or (cfg.leaderJobs and cfg.leaderJobs[job.command]))
+end
+
+function RP1942.disguisePresets(ply)
+    local cfg = RP1942.Config and RP1942.Config.Disguise
+    local job = IsValid(ply) and RPExtraTeams[ply:Team()]
+    if not (cfg and job and cfg.presets) then return {} end
+
+    local tabs = {}
+    for _, faction in ipairs(cfg.presets[job.command] or {}) do
+        local tab = { id = faction, name = TAB_NAMES[faction] or faction, jobs = {} }
+        for _, j in ipairs(RPExtraTeams) do
+            if (j.faction or "civilian") == faction and offered(j, cfg) then
+                local models = jobModels(j)
+                if #models > 0 then
+                    tab.jobs[#tab.jobs + 1] = { command = j.command, name = j.name, models = models }
+                end
+            end
+        end
+        if #tab.jobs > 0 then tabs[#tabs + 1] = tab end
+    end
+    return tabs
+end
+
+-- One preset by tab id, job command and model number, if ply may use it
+function RP1942.findDisguisePreset(ply, tabId, command, index)
+    for _, tab in ipairs(RP1942.disguisePresets(ply)) do
+        if tab.id == tabId then
+            for _, j in ipairs(tab.jobs) do
+                if j.command == command and j.models[index] then return j, j.models[index] end
+            end
+        end
+    end
+end

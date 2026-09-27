@@ -58,3 +58,4 @@ local function setFactionDoor(ply, args)
 end
 
 DarkRP.definePrivilegedChatCommand("factiondoor", "DarkRP_ChangeDoorSettings", setFactionDoor)
+RP1942.setFactionDoor = setFactionDoor   -- for ulx factiondoor (lua/ulx/modules/sh/42bros.lua)
