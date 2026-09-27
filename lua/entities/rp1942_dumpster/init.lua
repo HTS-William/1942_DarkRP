@@ -8,6 +8,7 @@ include( "shared.lua" )
 include( "config.lua" )
 
 util.AddNetworkString( "tupac_dumpsters_cooldown" )
+util.AddNetworkString( "tupac_dumpsters_clipboard" )
 
 local CFG = tupac_dumpsters_config
 
@@ -406,19 +407,72 @@ local function spawnDumpster( pos, ang, saveId )
 	return d
 end
 
+--> Is pos next to one of the fixed dumpsters for this map? (so a saved one
+--> that was later hardcoded with /getdumpsterpos doesn't spawn twice)
+local function nearFixed( pos, fixed )
+	for _, f in ipairs( fixed ) do
+		if math.abs( f.x - pos.x ) < 32 and math.abs( f.y - pos.y ) < 32 and math.abs( f.z - pos.z ) < 64 then return true end
+	end
+	return false
+end
+
 function spawn_tupac_dumpsters()
+	local map, fixed = game.GetMap(), {}
 	for _, v in pairs( get_dumpsters_spawn_pos() ) do
-		local d = spawnDumpster( v.pos, v.ang )
-		if IsValid( d ) then
-			d:DropToFloor()
-			local phys = d:GetPhysicsObject()
-			if IsValid( phys ) then phys:EnableMotion( false ) end
+		if not v.map or v.map == map then   --> no map = every map
+			local d = spawnDumpster( v.pos, v.ang )
+			if IsValid( d ) then
+				d:DropToFloor()
+				local phys = d:GetPhysicsObject()
+				if IsValid( phys ) then phys:EnableMotion( false ) end
+				fixed[ #fixed + 1 ] = v.pos
+			end
 		end
 	end
 	for id, v in pairs( loadSaved() ) do
-		spawnDumpster( Vector( v.x, v.y, v.z ), Angle( 0, v.yaw, 0 ), id )
+		local pos = Vector( v.x, v.y, v.z )
+		if not nearFixed( pos, fixed ) then
+			spawnDumpster( pos, Angle( 0, v.yaw, 0 ), id )
+		end
 	end
 end
+
+--[[---------------------------------------------------------------------------
+/getdumpsterpos: every dumpster on this map as code for config.lua's
+AddSpawnPos, copied to your clipboard and printed in your console. The
+table it writes keeps the entries for other maps as they are, and lists
+this map's dumpsters with map = "<this map>". Paste it over the old
+AddSpawnPos table. (Saved ones that are now hardcoded won't spawn twice.)
+---------------------------------------------------------------------------]]
+local function fmt( n ) return string.format( "%.2f", n ) end
+
+function tupac_dumpsters_positionsCode()
+	local map = game.GetMap()
+	local lines, kept, count = {}, {}, 0
+	lines[ #lines + 1 ] = "tupac_dumpsters_config.AddSpawnPos = {"
+	--> Entries for other maps (and every-map ones), unchanged
+	for _, v in ipairs( get_dumpsters_spawn_pos() ) do
+		if v.map ~= map then
+			lines[ #lines + 1 ] = string.format( "\t{ %spos = Vector( %s, %s, %s ), ang = Angle( %s, %s, %s ) },",
+				v.map and ( 'map = "' .. v.map .. '", ' ) or "", fmt( v.pos.x ), fmt( v.pos.y ), fmt( v.pos.z ), fmt( v.ang.p ), fmt( v.ang.y ), fmt( v.ang.r ) )
+			if not v.map then kept[ #kept + 1 ] = v.pos end
+		end
+	end
+	--> Every dumpster standing on this map now
+	lines[ #lines + 1 ] = "\t-- " .. map .. " (/getdumpsterpos, " .. os.date( "%Y-%m-%d" ) .. ")"
+	for _, d in ipairs( ents.FindByClass( "rp1942_dumpster" ) ) do
+		local pos, ang = d:GetPos(), d:GetAngles()
+		if not nearFixed( pos, kept ) then   --> already listed as an every-map entry
+			lines[ #lines + 1 ] = string.format( '\t{ map = "%s", pos = Vector( %s, %s, %s ), ang = Angle( 0, %s, 0 ) },',
+				map, fmt( pos.x ), fmt( pos.y ), fmt( pos.z ), fmt( ang.y ) )
+			count = count + 1
+		end
+	end
+	lines[ #lines + 1 ] = "}"
+	return table.concat( lines, "\n" ), count
+end
+
+
 
 hook.Add( "InitPostEntity", "spawn_dumpsters", spawn_tupac_dumpsters )
 hook.Add( "PostCleanupMap", "spawn_dumpsters", spawn_tupac_dumpsters )   --> admin map cleanups don't delete them for good
@@ -476,6 +530,17 @@ DarkRP.defineChatCommand( "removedumpster", function( ply )
 	end
 	ServerLog( string.format( "[1942] %s removed a dumpster at %s\n", ply:Nick(), tostring( d:GetPos() ) ) )
 	d:Remove()
+	return ""
+end )
+
+DarkRP.defineChatCommand( "getdumpsterpos", function( ply )
+	if not allowed( ply, "ulx getdumpsterpos" ) then return "" end
+	local code, count = tupac_dumpsters_positionsCode()
+	for line in string.gmatch( code .. "\n", "(.-)\n" ) do ply:PrintMessage( HUD_PRINTCONSOLE, line ) end
+	net.Start( "tupac_dumpsters_clipboard" )
+	net.WriteString( code )
+	net.Send( ply )
+	DarkRP.notify( ply, 0, 8, count .. " dumpster positions copied to your clipboard (and printed in your console). Paste them over AddSpawnPos in rp1942_dumpster/config.lua." )
 	return ""
 end )
 

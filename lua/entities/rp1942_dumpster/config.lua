@@ -83,8 +83,12 @@ tupac_dumpsters_config.EntityNames = {
 --> Who may use those commands:
 tupac_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() end   --> without ULX; with ULX it's set per rank (Groups > 42Bros)
 
---> Fixed spawn positions (always spawned, on every map load). Dumpsters placed
---> with /adddumpster don't need to be listed here.
+--> Fixed spawn positions, spawned on every map load. map = "..." limits an
+--> entry to that map; without it, it spawns on every map. Dumpsters placed
+--> with /adddumpster don't need to be listed here, but /getdumpsterpos turns
+--> all of this map's dumpsters into this table (copied to your clipboard):
+--> paste it over the table below. Saved dumpsters that are hardcoded here
+--> won't spawn twice.
 tupac_dumpsters_config.AddSpawnPos = {
 	{
 		pos = Vector( 805.174500, 276.007233, -79.968750 ),

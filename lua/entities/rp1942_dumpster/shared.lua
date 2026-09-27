@@ -33,6 +33,11 @@ if DarkRP and DarkRP.declareChatCommand then
 		delay = 1,
 	}
 	DarkRP.declareChatCommand{
+		command = "getdumpsterpos",
+		description = "Admin: copy every dumpster on this map as code for config.lua (AddSpawnPos)",
+		delay = 2,
+	}
+	DarkRP.declareChatCommand{
 		command = "deaddrop",
 		description = "Resistance: hide money (/deaddrop 500) or your weapon (/deaddrop weapon) in the dumpster you're looking at",
 		delay = 1.5,

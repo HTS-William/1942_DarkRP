@@ -127,6 +127,10 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - Some doors belong to a faction or a Reich unit. Its name shows on the door.
 - Only members can lock and unlock them, and nobody can buy them.
 
+# Props
+- A prop you're holding with the physgun is see-through and passes through players and other props, so it can't push or hurt anyone. This goes for staff too.
+- When you let go, it turns solid again as soon as nobody is standing inside it.
+
 # Dumpsters
 - Hold E on a dumpster to search it for junk, supplies and the odd weapon. Hobos find better things.
 - Anything useful goes straight into your pocket. If your pocket is full, it lands on the ground.
@@ -140,7 +144,7 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - If a member of the Reich searches it first, the drop is confiscated.
 
 #staff Staff commands
-All of these are also in the ULX menu (!menu > Cmds > 42Bros) with descriptions, and as !commands (!train). Who may use each is set per rank in the ULX menu (Groups tab, 42Bros).
+The scoreboard (TAB) has ULX buttons too: click a player for teleport, freeze, jail, gag, kick, ban and wanted. All of these are also in the ULX menu (!menu > Cmds > 42Bros) with descriptions, and as !commands (!train). Who may use each is set per rank in the ULX menu (Groups tab, 42Bros).
 /train - Start the supply train now
 /event - List world events. /event stop ends the running one
 !stopevent - End the running world event
@@ -151,6 +155,7 @@ All of these are also in the ULX menu (!menu > Cmds > 42Bros) with descriptions,
 /factiondoor - Look at a door and set its faction (reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)
 /adddumpster - Place a dumpster where you're looking (saved for this map)
 /removedumpster - Remove the dumpster you're looking at
+/getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
 /addmarket - Place a market where you're looking (saved for this map)
 /removemarket - Remove the market you're looking at
 /addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)

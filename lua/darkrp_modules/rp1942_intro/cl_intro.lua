@@ -145,6 +145,10 @@ hook.Add("HUDPaintBackground", "RP1942_IntroVignette", function()
 
     if elapsed >= totalTime then
         startTime = nil   -- whole intro finished: stop doing any work
+        if not RP1942.IntroDone then
+            RP1942.IntroDone = true
+            hook.Run("RP1942_IntroFinished")   -- e.g. the RP name form (cl_rpname.lua)
+        end
         return
     end
 
@@ -245,7 +249,16 @@ local function play()
 end
 
 hook.Add("InitPostEntity", "RP1942_IntroStart", function()
-    if enabled:GetBool() then play() end
+    if enabled:GetBool() then
+        play()
+    else
+        -- No intro: whatever waits for it goes a moment after spawning
+        timer.Simple(3, function()
+            if RP1942.IntroDone then return end
+            RP1942.IntroDone = true
+            hook.Run("RP1942_IntroFinished")
+        end)
+    end
 end)
 
 concommand.Add("rp1942_intro_replay", play)

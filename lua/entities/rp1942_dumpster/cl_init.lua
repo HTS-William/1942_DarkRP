@@ -15,6 +15,11 @@ the dumpster still draws, just without a label.
 ---------------------------------------------------------------------------]]
 local DumpsterLabel
 
+--> /getdumpsterpos: the code for config.lua, onto the clipboard
+net.Receive( "tupac_dumpsters_clipboard", function()
+	SetClipboardText( net.ReadString() )
+end )
+
 --> This player's own cooldowns, sent by the server: [dumpster] = CurTime() when ready
 local readyAt = setmetatable( {}, { __mode = "k" } )
 net.Receive( "tupac_dumpsters_cooldown", function()
