@@ -322,13 +322,32 @@ function RP1942.drawPanel(ent)
         ErrorNoHalt("[1942] Panel error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
     end
     if P.hover then RP1942.PanelHover = { ent = ent, id = P.hover, t = RealTime() } end
+    if P.cx then RP1942.PanelLook = { ent = ent, t = RealTime() } end   -- the crosshair is somewhere on it
 end
 
--- E while a button is highlighted presses it (and doesn't also "use" the prop)
+-- E while a button is highlighted presses it (and doesn't also "use" the prop).
+-- Buttons whose id starts with "local:" only change this player's view (e.g.
+-- scrolling a list): they go to ENT:OnLocalPress(id) here, not the server.
+-- The mouse wheel over a panel calls ENT:OnPanelScroll(+1 / -1) if it has one
+-- (instead of switching weapons).
 hook.Add("PlayerBindPress", "RP1942_PanelPress", function(ply, bind, pressed)
-    if not pressed or not string.find(bind, "+use", 1, true) then return end
+    if not pressed then return end
+    if bind == "invnext" or bind == "invprev" then
+        local l = RP1942.PanelLook
+        if l and IsValid(l.ent) and l.ent.OnPanelScroll and RealTime() - l.t < 0.15 then
+            l.ent:OnPanelScroll(bind == "invnext" and 1 or -1)
+            return true
+        end
+        return
+    end
+    if not string.find(bind, "+use", 1, true) then return end
     local h = RP1942.PanelHover
     if not (h and IsValid(h.ent) and RealTime() - h.t < 0.15) then return end
+    if string.sub(h.id, 1, 6) == "local:" then
+        if h.ent.OnLocalPress then h.ent:OnLocalPress(string.sub(h.id, 7)) end
+        surface.PlaySound("buttons/lightswitch2.wav")
+        return true
+    end
     net.Start("RP1942_PanelPress")
     net.WriteEntity(h.ent)
     net.WriteString(h.id)
@@ -402,6 +421,7 @@ market can use it too). Everything draws in canvas pixels inside PaintPanel.
     B.Lamp(cx, cy, r, on, color)           indicator lamp
     B.Stars(x, y, quality, size)           embossed brass stars
     B.PushButton(P, id, cx, cy, r, color, label, enabled)   round button (look + E)
+    B.Toggle(P, id, cx, cy, on, enabled)   a power lever: up = ON, down = OFF (look + E)
 ---------------------------------------------------------------------------]]
 local B = {}
 RP1942.Brass = B
@@ -576,6 +596,25 @@ function B.PushButton(P, id, cx, cy, r, col, label, enabled)
     B.Circle(cx, cy, r, c)
     B.Circle(cx - r * 0.25, cy - r * 0.35, r * 0.45, Color(math.min(c.r + 60, 255), math.min(c.g + 60, 255), math.min(c.b + 60, 255), 160))
     B.Plaque(cx, cy + r + 20, 180, 38, label, "RP1942_BrassLabel")
+    return hot
+end
+
+-- A power lever on a brass mount: up = ON (green lamp), down = OFF
+function B.Toggle(P, id, cx, cy, on, enabled)
+    local hot = P:Hot(id, cx - 40, cy - 44, 80, 132, enabled)
+    if hot then draw.RoundedBox(10, cx - 36, cy - 42, 72, 84, B.WHITE) end
+    draw.RoundedBox(8, cx - 32, cy - 38, 64, 76, B.DARK)
+    draw.RoundedBox(8, cx - 30, cy - 36, 60, 72, B.BRASS)
+    B.Rivet(cx - 20, cy - 26); B.Rivet(cx + 20, cy + 26)
+    draw.RoundedBox(4, cx - 7, cy - 26, 14, 52, Color(20, 20, 20))           -- the slot
+    local ky = on and cy - 22 or cy + 22
+    B.Line(cx, cy, cx, ky, 8, Color(60, 60, 60))                             -- the lever
+    B.Circle(cx, ky, 12, Color(25, 25, 25))                                  -- bakelite knob
+    B.Circle(cx - 3, ky - 4, 4, Color(120, 120, 120))
+    B.Lamp(cx + 20, cy - 24, 5, on, Color(90, 220, 90))
+    draw.RoundedBox(6, cx - 52, cy + 48, 104, 34, B.DARK)
+    draw.RoundedBox(6, cx - 50, cy + 50, 100, 30, B.BRASS)
+    draw.SimpleText(on and "POWER  ON" or "POWER  OFF", "RP1942_BrassSmall", cx, cy + 65, B.INK, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     return hot
 end
 

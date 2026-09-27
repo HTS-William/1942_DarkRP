@@ -7,6 +7,8 @@
     matching repair button (the wrong one costs extra downtime). The run's
     stars come from its downtime, and better runs have better odds of rare
     goods. When the run is done, COLLECT and the next run starts.
+    The POWER lever switches it off: the run (and any downtime) pause where
+    they are. Repairs need the power on.
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"
 ENT.Base      = "base_anim"
@@ -27,21 +29,26 @@ function ENT:SetupDataTables()
     self:NetworkVar("Float",  3, "HaltedAt")
     self:NetworkVar("String", 0, "Fault")        -- the fault's id while halted
     self:NetworkVar("String", 1, "ReadyList")    -- "clock,rations": goods waiting to be collected
+    self:NetworkVar("Bool",   0, "Off")          -- switched off: everything paused
+    self:NetworkVar("Float",  4, "PausedAt")     -- when it was switched off
 end
+
+-- The line's clock: stands still while it's switched off
+function ENT:Now() return self:GetOff() and self:GetPausedAt() or CurTime() end
 
 function ENT:Config() return RP1942.Production.factory end
 
 -- Seconds of running this run (the clock stops while halted)
 function ENT:Progress()
     local run = self:GetRunBase()
-    if self:GetState() == self.STATE_RUNNING then run = run + (CurTime() - self:GetRunTime()) end
+    if self:GetState() == self.STATE_RUNNING then run = run + (self:Now() - self:GetRunTime()) end
     return math.min(run, self:Config().runTime)
 end
 
 -- Seconds halted this run
 function ENT:Downtime()
     local down = self:GetDownBase()
-    if self:GetState() == self.STATE_HALTED then down = down + (CurTime() - self:GetHaltedAt()) end
+    if self:GetState() == self.STATE_HALTED then down = down + (self:Now() - self:GetHaltedAt()) end
     return down
 end
 

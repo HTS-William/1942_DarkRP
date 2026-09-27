@@ -28,6 +28,32 @@ net.Receive("RP1942_PanelPress", function(_, ply)
 end)
 
 --[[---------------------------------------------------------------------------
+Machine power (ovens, derricks, factory lines). Switching off pauses the
+machine: its clocks stop where they are (ENT:Now() returns the moment it was
+switched off). Switching on moves the listed timestamps on by however long
+it was off, so it carries on as if nothing happened.
+The entity needs NetworkVars "Off" (Bool) and "PausedAt" (Float).
+Returns true if it changed.
+---------------------------------------------------------------------------]]
+function RP1942.setMachinePower(ent, on, fields)
+    if on == not ent:GetOff() then return false end
+    local now = CurTime()
+    if on then
+        local d = now - ent:GetPausedAt()
+        for _, f in ipairs(fields or {}) do
+            local v = ent["Get" .. f](ent)
+            if v and v > 0 then ent["Set" .. f](ent, v + d) end
+        end
+        ent:SetPausedAt(0)
+        ent:SetOff(false)
+    else
+        ent:SetPausedAt(now)
+        ent:SetOff(true)
+    end
+    return true
+end
+
+--[[---------------------------------------------------------------------------
 Goods
 ---------------------------------------------------------------------------]]
 function RP1942.spawnGood(goodId, pos, ang, quality)

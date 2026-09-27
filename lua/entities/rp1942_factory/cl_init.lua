@@ -1,10 +1,9 @@
 include("shared.lua")
 
 --[[---------------------------------------------------------------------------
-The factory's control plate, in brass & enamel (like the oven's). It floats
-above the prop until the real prop is in; then mount it with the
-rp1942_panel_* console commands and paste the printed line into
-RP1942.PanelSpots in sh_production.lua.
+The factory's control plate, in brass & enamel (like the oven's). Where it
+sits on the prop: RP1942.PanelSpots.rp1942_factory in sh_production.lua
+(fine-tune it in game with the rp1942_panel_* console commands).
 ---------------------------------------------------------------------------]]
 ENT.PanelSize  = { w = 640, h = 770 }
 ENT.PanelScale = 0.045
@@ -24,6 +23,7 @@ function ENT:PaintPanel(P, w, h)
     local c = self:Config()
     local state = self:GetState()
     local running, halted, done = state == self.STATE_RUNNING, state == self.STATE_HALTED, state == self.STATE_DONE
+    local off = self:GetOff()
     local flash = math.floor(RealTime() * 3) % 2 == 0
 
     B.Plate(w, h, ENAMEL)
@@ -39,7 +39,7 @@ function ENT:PaintPanel(P, w, h)
     -- Right column: line lamps, this run's stars
     local rx = 360
     draw.SimpleText("LINE", "RP1942_BrassSmall", rx, 96, B.LIGHT)
-    B.Lamp(rx + 22, 140, 16, running, GREEN)
+    B.Lamp(rx + 22, 140, 16, running and not off, GREEN)
     draw.SimpleText("RUNNING", "RP1942_BrassSmall", rx + 22, 172, B.WHITE, TEXT_ALIGN_CENTER)
     B.Lamp(rx + 132, 140, 16, halted and flash, RED)
     draw.SimpleText("HALTED", "RP1942_BrassSmall", rx + 132, 172, B.WHITE, TEXT_ALIGN_CENTER)
@@ -51,6 +51,7 @@ function ENT:PaintPanel(P, w, h)
     -- What to do now
     local msg, col
     if done then msg, col = "RUN COMPLETE  -  COLLECT THE GOODS", B.LIGHT
+    elseif off then msg, col = halted and "SWITCHED OFF  -  SWITCH ON TO REPAIR" or "SWITCHED OFF  -  RUN PAUSED", Color(170, 166, 150)
     elseif halted then
         local f
         for _, x in ipairs(RP1942.FactoryFaults) do if x.id == self:GetFault() then f = x end end
@@ -69,7 +70,7 @@ function ENT:PaintPanel(P, w, h)
         local on = halted and self:GetFault() == f.id
         B.Lamp(cx, 328, 11, on and flash, RED)
         draw.SimpleText(f.lamp, "RP1942_BrassSmall", cx, 350, on and B.WHITE or B.LIGHT, TEXT_ALIGN_CENTER)
-        B.PushButton(P, "fix:" .. f.id, cx, 418, 34, FIX_BTN, f.button, halted)
+        B.PushButton(P, "fix:" .. f.id, cx, 418, 34, FIX_BTN, f.button, halted and not off)
     end
 
     -- Output and COLLECT
@@ -92,8 +93,9 @@ function ENT:PaintPanel(P, w, h)
         draw.SimpleText("OUTPUT:  " .. c.items .. " GOODS AT THE END OF THE RUN", "RP1942_BrassLabel", w / 2, 544, Color(170, 166, 150), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
     B.PushButton(P, "collect", w / 2, 630, 30, COLLECT_BTN, "COLLECT", done)
+    B.Toggle(P, "power", 540, 622, not off, true)
 
-    local names = { collect = "COLLECT THE GOODS" }
+    local names = { collect = "COLLECT THE GOODS", power = off and "SWITCH ON" or "SWITCH OFF  (PAUSES THE RUN)" }
     for _, f in ipairs(RP1942.FactoryFaults) do names["fix:" .. f.id] = f.button end
     draw.SimpleText(P.hover and ((names[P.hover] or P.hover) .. "  ·  PRESS E") or "LOOK AT A BUTTON  ·  PRESS E",
         "RP1942_BrassSmall", w / 2, h - 24, P.hover and B.WHITE or B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)

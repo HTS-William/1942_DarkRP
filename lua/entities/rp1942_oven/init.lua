@@ -25,7 +25,7 @@ end
 
 -- Start the next sack if the oven is free and the tray is empty
 function ENT:TryStart()
-    if self:IsBaking() or self:GetReady() > 0 or self:GetFlour() <= 0 then return end
+    if self:GetOff() or self:IsBaking() or self:GetReady() > 0 or self:GetFlour() <= 0 then return end
     local c = self:Config()
     local now = CurTime()
     self:SetFlour(self:GetFlour() - 1)
@@ -37,15 +37,35 @@ function ENT:TryStart()
     self.lastTick = now
 
     self:EmitSound("ambient/fire/mtov_flame2.wav", 65)
-    if self.fire then self.fire:Stop() end
-    self.fire = CreateSound(self, "ambient/fire/fire_small_loop1.wav")
-    self.fire:SetSoundLevel(55)
-    self.fire:PlayEx(0.4, 100)
+    self:FireSound(true)
+end
+
+function ENT:FireSound(on)
+    if self.fire then self.fire:Stop() self.fire = nil end
+    if on then
+        self.fire = CreateSound(self, "ambient/fire/fire_small_loop1.wav")
+        self.fire:SetSoundLevel(55)
+        self.fire:PlayEx(0.4, 100)
+    end
+end
+
+-- The POWER lever: off pauses the bake and the fire, on carries on
+function ENT:SetPower(on)
+    if not RP1942.setMachinePower(self, on, { "DoneAt", "BakeStart", "HeatTime" }) then return end
+    self.lastTick = CurTime()
+    if on then
+        self:EmitSound("buttons/lever1.wav", 65)
+        if self:IsBaking() then self:FireSound(true) end
+        self:TryStart()
+    else
+        self:EmitSound("buttons/lever4.wav", 65)
+        self:FireSound(false)
+    end
 end
 
 function ENT:Think()
     local now = CurTime()
-    if self:IsBaking() then
+    if self:IsBaking() and not self:GetOff() then
         local dt = now - (self.lastTick or now)
         self.lastTick = now
         if self:HeatZone() == "right" then self:SetGreen(self:GetGreen() + dt) end
@@ -56,7 +76,7 @@ function ENT:Think()
             self:SetDoneAt(0)
             self:SetReady(loaves)
             self:SetReadyQuality(loaves)
-            if self.fire then self.fire:Stop() self.fire = nil end
+            self:FireSound(false)
             self:EmitSound("buttons/bell1.wav", 70, 110)
         end
     end
@@ -66,8 +86,11 @@ end
 
 -- Buttons on the panel (rp1942_production: look + E)
 function ENT:OnPanelPress(ply, id)
-    if id == "stoke" then
-        if not self:IsBaking() then return end
+    if id == "power" then
+        self:SetPower(self:GetOff())
+
+    elseif id == "stoke" then
+        if not self:IsBaking() or self:GetOff() then return end
         local now = CurTime()
         self:SetHeatBase(math.min(100, self:Heat() + self:Config().heat.stoke))
         self:SetHeatTime(now)
@@ -98,5 +121,5 @@ function ENT:Use(ply)
 end
 
 function ENT:OnRemove()
-    if self.fire then self.fire:Stop() end
+    self:FireSound(false)
 end

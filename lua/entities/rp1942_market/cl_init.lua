@@ -43,6 +43,19 @@ local function rows()
     return list
 end
 
+local VISIBLE = 4        -- rows shown at once; the rest scroll
+local ROW_H, ROW_GAP = 64, 8
+
+-- Scrolling (this player's view only): the arrows on the board, or the
+-- mouse wheel while looking at it
+function ENT:ScrollBy(n)
+    self.scroll = math.Clamp((self.scroll or 0) + n, 0, math.max((self.rowCount or 0) - VISIBLE, 0))
+end
+function ENT:OnPanelScroll(dir) self:ScrollBy(dir) end
+function ENT:OnLocalPress(id)
+    if id == "up" then self:ScrollBy(-1) elseif id == "down" then self:ScrollBy(1) end
+end
+
 function ENT:PaintPanel(P, w, h)
     local C = RP1942.PanelColors
     local x, y, iw = 28, 72, w - 56
@@ -55,54 +68,84 @@ function ENT:PaintPanel(P, w, h)
     end
     y = y + 36
 
-    -- One row per good (and quality): name, stars, price, trend, SELL
-    local total, count, perGood = 0, 0, {}
+    -- Totals for the pocket, over every row (not just the ones on screen)
     local list = rows()
-    for i, r in ipairs(list) do
-        if i > 5 then break end
+    local total, count, perGood = 0, 0, {}
+    for _, r in ipairs(list) do
+        if r.n > 0 then
+            total = total + RP1942.marketPrice(r.id, r.q) * r.n
+            count = count + r.n
+            perGood[r.id] = (perGood[r.id] or 0) + r.n
+        end
+    end
+
+    -- The rows that fit, from the scroll position
+    self.rowCount = #list
+    self:ScrollBy(0)   -- keep it in range if the list got shorter
+    local first = (self.scroll or 0) + 1
+    local listW = iw - 52                     -- room for the scroll column on the right
+    local top = y
+    for i = first, math.min(first + VISIBLE - 1, #list) do
+        local r = list[i]
         local good = RP1942.Goods[r.id]
         local price = RP1942.marketPrice(r.id, r.q)
-        local rh = 64
         surface.SetDrawColor(r.n > 0 and Color(40, 37, 33) or Color(28, 26, 24))
-        surface.DrawRect(x - 8, y, iw + 16, rh)
+        surface.DrawRect(x - 8, y, listW + 8, ROW_H)
         P:Text(good.name, "RP1942_PanelBody", x + 4, y + 8, r.n > 0 and C.text or C.dim)
         P:Stars(x + 4, y + 36, r.q, 18)
-        P:Text(DarkRP.formatMoney(price), "RP1942_PanelTitle", x + 300, y + 32, C.text, TEXT_ALIGN_RIGHT)
+        P:Text(DarkRP.formatMoney(price), "RP1942_PanelTitle", x + 280, y + 32, C.text, TEXT_ALIGN_RIGHT)
 
         local trend = RP1942.marketTrend(r.id)
         local pct = math.floor(math.abs(trend) * 100 + 0.5)
         if pct >= 1 then
-            arrow(x + 316, y + 22, trend > 0, trend > 0 and UP or DOWN)
-            P:Text(pct .. "%", "RP1942_PanelSmall", x + 336, y + 18, trend > 0 and UP or DOWN)
+            arrow(x + 292, y + 22, trend > 0, trend > 0 and UP or DOWN)
+            P:Text(pct .. "%", "RP1942_PanelSmall", x + 310, y + 18, trend > 0 and UP or DOWN)
         end
 
-        P:Button("sell:" .. r.id .. ":" .. r.q, x + iw - 150, y + 10, 150, rh - 20,
+        P:Button("sell:" .. r.id .. ":" .. r.q, x + listW - 140, y + 10, 132, ROW_H - 20,
             r.n > 0 and ("SELL (" .. r.n .. ")") or "SELL", { enabled = r.n > 0, color = Color(60, 100, 52) })
-
-        if r.n > 0 then
-            total = total + price * r.n
-            count = count + r.n
-            perGood[r.id] = (perGood[r.id] or 0) + r.n
-        end
-        y = y + rh + 8
+        y = y + ROW_H + ROW_GAP
     end
+
+    -- Scroll column: up, a track with the thumb, down
+    local areaH = VISIBLE * (ROW_H + ROW_GAP) - ROW_GAP
+    local sx, sw = x + iw - 40, 40
+    local canUp, canDown = first > 1, first + VISIBLE - 1 < #list
+    P:Button("local:up", sx, top, sw, 44, "", { enabled = canUp, color = Color(52, 48, 42) })
+    arrow(sx + 13, top + 16, true, canUp and C.text or C.faint)
+    P:Button("local:down", sx, top + areaH - 44, sw, 44, "", { enabled = canDown, color = Color(52, 48, 42) })
+    arrow(sx + 13, top + areaH - 28, false, canDown and C.text or C.faint)
+    local trackY, trackH = top + 50, areaH - 100
+    surface.SetDrawColor(C.well)
+    surface.DrawRect(sx + 16, trackY, 8, trackH)
+    if #list > VISIBLE then
+        local thumbH = math.max(trackH * VISIBLE / #list, 20)
+        local thumbY = trackY + (trackH - thumbH) * ((first - 1) / (#list - VISIBLE))
+        surface.SetDrawColor(ACCENT)
+        surface.DrawRect(sx + 14, thumbY, 12, thumbH)
+    else
+        surface.SetDrawColor(ACCENT)
+        surface.DrawRect(sx + 14, trackY, 12, trackH)
+    end
+    y = top + areaH + 14
 
     -- "Your pocket: 3x Loaf of Bread, 3x Bottle of Wine"
     local summary = {}
     for id, n in SortedPairs(perGood) do summary[#summary + 1] = n .. "x " .. RP1942.Goods[id].name end
-    y = y + 6
-    P:Text(count > 0 and ("Your pocket: " .. table.concat(summary, ", ")) or "Your pocket has no goods. Pocket some, or push them into the crate.",
-        "RP1942_PanelBody", x, y, C.dim)
-    y = y + 40
+    local pocketText = count > 0 and ("Your pocket: " .. table.concat(summary, ", ")) or "Your pocket has no goods. Pocket some, or push them into the crate."
+    surface.SetFont("RP1942_PanelSmall")
+    if surface.GetTextSize(pocketText) > iw then pocketText = "Your pocket: " .. count .. " goods, " .. table.Count(perGood) .. " kinds" end
+    P:Text(pocketText, "RP1942_PanelSmall", x, y, C.dim)
+    y = y + 30
 
     -- Everything, after tax (the same rate as wages)
     local rate = RP1942.getTaxRate and RP1942.getTaxRate(RPExtraTeams[LocalPlayer():Team()]) or 0
     local net = total - math.floor(total * rate / 100)
-    P:Button("sellall", x, y, iw, 60, count > 0 and ("SELL EVERYTHING IN MY POCKET  (" .. DarkRP.formatMoney(net) .. " after tax)") or "SELL EVERYTHING IN MY POCKET",
+    P:Button("sellall", x, y, iw, 56, count > 0 and ("SELL EVERYTHING  (" .. DarkRP.formatMoney(net) .. " after tax)") or "SELL EVERYTHING IN MY POCKET",
         { enabled = count > 0, color = Color(60, 100, 52) })
-    y = y + 76
+    y = y + 66
 
-    P:Text("Prices follow the economy and quality; demand changes every hour. Goods you carry are listed first.", "RP1942_PanelSmall", x, y, C.faint)
+    P:Text("Scroll with the arrows or the mouse wheel. Goods you carry are listed first.", "RP1942_PanelSmall", x, y, C.faint)
 end
 
 function ENT:Draw()

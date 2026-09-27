@@ -101,9 +101,10 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 
 # Production and markets
 - Ovens, wine barrels, oil derricks, factory lines and markets have panels: look at a button and press E.
+- Ovens, oil derricks and factory lines have a POWER lever. Switching one off pauses it where it is; switching it back on carries on.
 - Bakers buy ovens and sacks of flour in the F4 Shop and push sacks into the oven (it queues 3). While it bakes, keep the fire in the green with STOKE FIRE: more time in the green means more loaves and better bread. COLLECT BREAD when it's done.
 - Winemakers buy wine barrels and press START. While it ferments it calls for stirring: STIR before the timer runs out. Every stir raises the vintage. BOTTLE when it's done.
-- Petroleum Producers buy an oil derrick. It's built on the nearest free oil site and bolted down (it's marked on your screen once built). It pumps on its own, but the well pressure drifts up and down: OPEN VALVE lowers it, CLOSE VALVE raises it. Keep it in the green for more canisters of crude and a better grade. FILL CANISTERS when the tank is full.
+- Petroleum Producers buy an oil derrick. It's built on the nearest free oil site and bolted down (it's marked on your screen once built). It pumps on its own. With the valve shut the pressure climbs; turn the valve wheel to open it and the pressure falls, then turn it again to shut it. Keep it in the green for more canisters of crude and a better grade. If the pressure drops to nothing with the valve open, the pump stalls and switches itself off: switch it back on, and the pressure builds up again from zero. Don't leave it in the red: after a while an alarm sounds, and if the pressure still isn't brought down, the derrick explodes. FILL CANISTERS when the tank is full.
 - Factory Owners buy a factory line. It halts twice a run: the BELT, BOILER or FUSE lamp flashes, and you press the matching repair (the wrong one costs extra time). The less downtime, the better the run and the better the odds of rare goods like clocks and radios. COLLECT when the run is done.
 - Goods have a quality of 1 to 3 stars, and better goods sell for more.
 - Sell goods at a market: SELL a kind of good from your pocket, SELL EVERYTHING, or push goods into the crate. Prices follow the economy, and one good is in demand each hour for a bonus. Sales are taxed like wages.
@@ -155,6 +156,7 @@ All of these are also in the ULX menu (!menu > Cmds > 42Bros) with descriptions,
 /addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)
 /removeoilsite - Remove the oil site nearest where you're looking, and its derrick
 /oilsites - Show every oil site on this map for a minute
+!prodspawn - Open the production spawner: machines, flour and goods at any quality, plus finish/remove for the machine you're looking at
 !testexplosion <damage> <radius> - Set off a test explosion where you're aiming (it does real damage)
 rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where a prop's panel sits, then print the line for the config
 ]] },

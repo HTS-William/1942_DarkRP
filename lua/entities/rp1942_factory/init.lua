@@ -15,7 +15,7 @@ end
 
 function ENT:StartRun()
     local c = self:Config()
-    local now = CurTime()
+    local now = self:Now()   -- switched off: the new run waits, paused
     self:SetState(self.STATE_RUNNING)
     self:SetRunBase(0)
     self:SetRunTime(now)
@@ -33,7 +33,7 @@ function ENT:StartRun()
         self.haltAt[i] = c.runTime * math.Rand(from + (to - from) * 0.2, from + (to - from) * 0.85)
     end
 
-    self:Engine(true)
+    self:Engine(not self:GetOff())
 end
 
 function ENT:Engine(on)
@@ -42,6 +42,18 @@ function ENT:Engine(on)
         self.engine = CreateSound(self, "ambient/machines/turbine_loop_2.wav")
         self.engine:SetSoundLevel(60)
         self.engine:PlayEx(0.35, 110)
+    end
+end
+
+-- The POWER lever: off pauses the run (and any downtime), on carries on
+function ENT:SetPower(on)
+    if not RP1942.setMachinePower(self, on, { "RunTime", "HaltedAt" }) then return end
+    if on then
+        self:EmitSound("buttons/lever1.wav", 65)
+        self:Engine(self:GetState() == self.STATE_RUNNING)
+    else
+        self:EmitSound("buttons/lever4.wav", 65)
+        self:Engine(false)
     end
 end
 
@@ -99,7 +111,7 @@ end
 
 function ENT:Think()
     local now = CurTime()
-    if self:GetState() == self.STATE_RUNNING then
+    if self:GetState() == self.STATE_RUNNING and not self:GetOff() then
         local run = self:Progress()
         local nextHalt = self.haltAt and self.haltAt[self:GetHalts() + 1]
         if nextHalt and run >= nextHalt then
@@ -114,9 +126,14 @@ end
 
 -- Buttons on the panel: "fix:<fault>" and "collect"
 function ENT:OnPanelPress(ply, id)
+    if id == "power" then
+        self:SetPower(self:GetOff())
+        return
+    end
+
     local fault = string.match(id, "^fix:(%w+)$")
     if fault then
-        if self:GetState() ~= self.STATE_HALTED then return end
+        if self:GetState() ~= self.STATE_HALTED or self:GetOff() then return end
         local now = CurTime()
         if fault == self:GetFault() then
             self:SetDownBase(self:GetDownBase() + (now - self:GetHaltedAt()))

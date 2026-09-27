@@ -17,10 +17,10 @@ the panel and press E.
                 runs out. Every stir it gets raises the vintage. Then BOTTLE.
     Petroleum   buys an oil derrick. It isn't placed by hand: it's built on a
     Producer    free OIL SITE (placed by admins with /addoilsite) and can't be
-                moved. It pumps on its own; the well pressure wanders up and
-                down, and OPEN VALVE / CLOSE VALVE keep it in the green. More
-                time in the green = more canisters of crude and more stars.
-                FILL CANISTERS when the tank is full; it then pumps again.
+                moved. It pumps on its own. With the valve shut the pressure
+                climbs; turn the wheel to open it and the pressure falls. Keep
+                it in the green: more time there = more canisters of crude and
+                more stars. FILL CANISTERS when the tank is full.
     Factory     buys a factory line. It runs on its own, but halts twice a
     Owner       run with a fault (BELT, BOILER or FUSE): press the matching
                 repair button. The less downtime, the better the run, and the
@@ -42,6 +42,7 @@ Files:
     sv_production.lua     selling, quality, demand, the economy nudge, markets (/addmarket)
     cl_production.lua     the interactive panels, labels and the drunk effect
     sv_oil_sites.lua      oil sites (/addoilsite) and building derricks on them
+    sv/cl_prodspawn.lua   the staff production spawner (!prodspawn)
     lua/entities/rp1942_good, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
         rp1942_oil_rig, rp1942_factory
     darkrp_customthings/entities.lua   the F4 shop entries (prices, limits, jobs)
@@ -169,9 +170,15 @@ RP1942.Production = {
         model     = "models/props_c17/FurnitureBoiler001a.mdl",   -- placeholder until the real prop
         pumpTime  = 360,              -- seconds to fill the tank
         good      = "oil",
-        -- Well pressure 0-100. It drifts up or down (the direction and speed
-        -- change every changeEvery seconds); the valves push it back.
-        pressure  = { start = 55, low = 35, high = 70, drift = 0.9, valve = 14, changeEvery = { 20, 40 } },
+        -- Well pressure 0-100. With the valve closed it climbs (rise per
+        -- second); turning the wheel opens the valve and it falls (fall per
+        -- second). Both speeds wander by up to +-vary every changeEvery seconds.
+        pressure  = { start = 40, low = 35, high = 70, rise = 0.8, fall = 1.4, vary = 0.3, changeEvery = { 20, 40 } },
+        wheelTime = 1.2,              -- seconds the wheel takes to turn (it can't be spun faster)
+        -- Left in the red too long: after warnAfter seconds (in a row) an
+        -- alarm sounds; after explodeAfter it blows up (and is gone).
+        -- Switching it off pauses the count. damage/radius: the blast.
+        blowout   = { warnAfter = 15, explodeAfter = 40, damage = 180, radius = 350 },
         -- Share of the pumping spent in the green -> canisters (and stars)
         grades    = { { share = 0.8, count = 3 }, { share = 0.5, count = 2 }, { share = 0, count = 1 } },
         siteAdmin = function(ply) return ply:IsSuperAdmin() end,   -- who may /addoilsite etc. without ULX (with ULX: its Groups tab)
@@ -217,8 +224,10 @@ RP1942.PanelSpots = RP1942.PanelSpots or {}
 -- kitchen_oven1: 31 deep x 70 wide x 50 tall, origin at the back. The brass
 -- plate sits on the front of the oven (tuned in game with rp1942_panel_*).
 RP1942.PanelSpots.rp1942_oven = { mount = "face", face = "front", width = 0.46, top = 0.95, size = 0.86, nudge = { 17.5, 0.0, 0.0 } }
--- The derrick and factory float their panels until they get their real props
--- (then tune them in game like the oven and paste the printed line here).
+-- The factory line's plate (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_factory = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { -4.0, -55.0, 80.0 } }
+-- The oil derrick's plate (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_oil_rig = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.33, nudge = { -9.0, -41.0, 29.0 } }
 
 -- The good id of an entity, or nil
 function RP1942.goodOf(ent)
@@ -265,6 +274,12 @@ RP1942.FactoryFaults = {
     { id = "belt",   lamp = "BELT",   button = "RETHREAD BELT" },
     { id = "boiler", lamp = "BOILER", button = "VENT BOILER" },
     { id = "fuse",   lamp = "FUSE",   button = "REPLACE FUSE" },
+}
+
+DarkRP.declareChatCommand{
+    command     = "prodspawn",
+    description = "Staff: open the production spawner (machines, flour, goods at any quality)",
+    delay       = 1,
 }
 
 DarkRP.declareChatCommand{
