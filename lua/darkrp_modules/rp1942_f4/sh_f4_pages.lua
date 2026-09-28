@@ -103,7 +103,7 @@ Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard.
 Riflemen - Every Reich unit starts at Rifleman. Its specialisations appear in the job menu once you hold it.
 Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The Führer is elected, and the Gestapo joins quietly, so neither is voted.
-Unit music - Each unit has its own music that plays for you (only you) when you take the job. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
+Unit music - Each unit has its own music that plays for you (only you) when you join it as a Rifleman. Moving through its specialisations doesn't replay it. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
 
 # Wanted by the Reich
 - Killing a member of the Reich makes you wanted. A red WANTED tag shows above your name.

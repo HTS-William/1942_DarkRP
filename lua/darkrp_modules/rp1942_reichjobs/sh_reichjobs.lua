@@ -12,9 +12,11 @@ The F4 menu shows "Call a vote for ..." when a vote is needed; in chat it's
 Wired into every job with faction = "reich" by job{} in jobs.lua.
 
 MUSIC
-Plays for the player who took the job, and nobody else. Moving between two
-jobs with the same track doesn't restart it; leaving for a job without one
-stops it. Players can mute it for themselves with  rp1942_job_music 0  and
+Plays once, for that player only, when they become a unit's Rifleman from
+outside that unit (i.e. when they're voted in, or transfer from another
+unit). Moving through the specialisations (Rifleman -> Medic -> NCO...,
+and back to Rifleman) plays nothing new and doesn't cut the song off;
+leaving the Reich stops it. Players can mute it for themselves with  rp1942_job_music 0  and
 stop what's playing with  rp1942_job_music_stop . Volume follows their music
 volume slider.
 Files are paths from the addon folder, and are sent to players on join.
@@ -32,24 +34,11 @@ RP1942.ReichJobs = {
     musicVolume = 0.6,   -- also scaled by the player's music volume slider
     -- Job command -> track. Jobs not listed play nothing.
     music = {
-        -- Wehrmacht
-        wehrrifleman     = "sounds/42wehrmacht.mp3",
-        wehrmedic        = "sounds/42wehrmacht.mp3",
-        wehrelite        = "sounds/42wehrmacht.mp3",
-        wehrsharpshooter = "sounds/42wehrmacht.mp3",
-        wehrdriver       = "sounds/42wehrmacht.mp3",
-        wehrnco          = "sounds/42nco.mp3",
-        wehroffizier     = "sounds/42officer.mp3",
-        -- Waffen-SS
-        wssrifleman      = "sounds/42waffen.mp3",
-        wssmedic         = "sounds/42waffen.mp3",
-        wssmg            = "sounds/42waffen.mp3",
-        wssnco           = "sounds/42nco.mp3",
-        wssoffizier      = "sounds/42officer.mp3",
-        -- Leibstandarte
-        lahrifleman      = "sounds/42leib.mp3",
-        lahkommandant    = "sounds/42officer.mp3",
-        -- Not set: gersupplier, scientist, gestapo, fuhrer (the Führer has the anthem)
+        wehrrifleman = "sounds/42wehrmacht.mp3",
+        wssrifleman  = "sounds/42waffen.mp3",
+        lahrifleman  = "sounds/42leib.mp3",
+        -- Only the Riflemen (the way into each unit). sounds/42nco.mp3 and
+        -- sounds/42officer.mp3 are unused for now.
     },
 }
 
@@ -59,4 +48,18 @@ function RP1942.reichJobNeedsVote(ply, command)
     if not v.enabled or v.exempt[command] then return false end
     if not IsValid(ply) or not RP1942.getFaction then return false end
     return RP1942.getFaction(ply) ~= "reich"
+end
+
+-- What happens to the music when a player goes from oldTeam to newTeam:
+-- a track path to play, "stop", or nil (leave whatever is playing alone)
+function RP1942.reichJobMusicFor(oldTeam, newTeam)
+    local new = RPExtraTeams and RPExtraTeams[newTeam]
+    local old = RPExtraTeams and RPExtraTeams[oldTeam]
+    if not new or new.faction ~= "reich" then
+        return (old and old.faction == "reich") and "stop" or nil
+    end
+    local track = RP1942.ReichJobs.music[new.command]
+    if not track then return nil end                            -- a specialisation: no change
+    if old and old.faction == "reich" and old.branch == new.branch then return nil end   -- back down to Rifleman
+    return track
 end

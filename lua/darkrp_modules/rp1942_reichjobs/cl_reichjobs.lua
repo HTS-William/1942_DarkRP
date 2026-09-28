@@ -73,7 +73,7 @@ concommand.Add("rp1942_job_music_test", function()
     local ply = LocalPlayer()
     local job = RPExtraTeams and RPExtraTeams[ply:Team()]
     local path = trackFor(ply:Team())
-    print("[1942] Your job: " .. tostring(job and job.name) .. " (" .. tostring(job and job.command) .. ")  track: " .. tostring(path or "none"))
+    print("[1942] Your job: " .. tostring(job and job.name) .. " (" .. tostring(job and job.command) .. ")  track: " .. tostring(path or "none (only the Riflemen have one)"))
     if path then stop() play(path, true) end
 end, nil, "Play your current job's music and print diagnostics")
 
@@ -89,8 +89,9 @@ timer.Create("RP1942_JobMusicWatch", 0.25, 0, function()
     local t = ply:Team()
     if lastTeam == nil then lastTeam = t return end   -- just joined: no music for the job we spawned in
     if t == lastTeam then return end
+    local what = RP1942.reichJobMusicFor(lastTeam, t)
     lastTeam = t
-    play(trackFor(t))
+    if what == "stop" then stop() elseif what then play(what) end
 end)
 
 -- Backup: the server's message on a job change

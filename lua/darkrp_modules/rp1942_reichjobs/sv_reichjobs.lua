@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich jobs (server): sends a player their unit's music
+1942 DarkRP - Reich jobs (server): sends a player their unit's music when they join it
 (settings: sh_reichjobs.lua)
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_JobMusic")
@@ -17,10 +17,11 @@ for _, path in pairs(RP1942.ReichJobs.music) do
     end
 end
 
-hook.Add("OnPlayerChangedTeam", "RP1942_JobMusic", function(ply, _, newTeam)
-    local job = RPExtraTeams and RPExtraTeams[newTeam]
-    local path = job and RP1942.ReichJobs.music[job.command] or ""
+-- Backup for the client's own job watcher (cl_reichjobs.lua)
+hook.Add("OnPlayerChangedTeam", "RP1942_JobMusic", function(ply, oldTeam, newTeam)
+    local what = RP1942.reichJobMusicFor(oldTeam, newTeam)
+    if not what then return end
     net.Start("RP1942_JobMusic")
-    net.WriteString(path)   -- "" = this job has none: stop any playing
-    net.Send(ply)           -- only this player hears it
+    net.WriteString(what == "stop" and "" or what)   -- "" = stop
+    net.Send(ply)   -- only this player hears it
 end)
