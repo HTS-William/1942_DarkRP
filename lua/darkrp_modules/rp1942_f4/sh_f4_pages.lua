@@ -108,6 +108,9 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
 - Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
 
+# Martial law
+- The Führer can declare martial law (/lockdown). A siren sounds and a banner orders everyone to stay in their homes; anyone found outside may be arrested. /unlockdown lifts it.
+
 # Economy and taxes
 - The economy bar at the bottom of the screen shows how the economy is doing. A better economy means higher wages.
 - The Führer sets the tax rates. Taxes come out of your wages and go to the Reich treasury.

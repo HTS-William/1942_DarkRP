@@ -532,14 +532,29 @@ local STYLES = {
         rule = COL.red, titleCol = COL.gold, titleFont = "RP1942_ElAlertSub",
         pulse = Color(255, 226, 150), bodyCol = COL.text, bodyFont = "RP1942_ElAlertMsg",
     },
+    -- Martial law: a red banner (red body, darker red rules, cream text)
+    lockdown = {
+        flash = Color(120, 0, 0, 70), bg = Color(128, 18, 16), rule = Color(70, 8, 8), titleCol = Color(250, 238, 220),
+        titleFont = "RP1942_ElAlertSub", pulse = Color(255, 190, 170), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
+    },
+    lifted = {
+        bg = Color(96, 16, 14), rule = Color(60, 8, 8), titleCol = Color(250, 238, 220), titleFont = "RP1942_ElAlertSub",
+        pulse = Color(255, 210, 190), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
+    },
 }
 
-local banner   -- { style, title, body, footer, seconds, start } while showing
+-- Banners showing, newest at the bottom. Several can be up at once (a
+-- broadcast during martial law, say): they stack down the screen instead of
+-- covering each other, and slide up when one above them goes.
+local banners = {}
+local MAX_BANNERS = 3
 
 local function showBanner(style, title, body, seconds, footer)
-    banner = { style = STYLES[style], title = title, body = body, footer = footer,
+    banners[#banners + 1] = { style = STYLES[style], title = title, body = body, footer = footer,
                seconds = seconds, start = RealTime() }
+    while #banners > MAX_BANNERS do table.remove(banners, 1) end
 end
+RP1942.showAlertBanner = showBanner   -- for other modules
 
 -- Splits text into lines no wider than maxW (words longer than a line are cut)
 local function wrap(text, font, maxW, maxLines)
@@ -607,13 +622,11 @@ net.Receive("RP1942_FuhrerBroadcast", function()
     showBanner("broadcast", "MESSAGE FROM THE FÜHRER", text, seconds, "- Führer " .. name)
 end)
 
-hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
-    if not banner then return end
+-- One banner at height y; returns how much room it took
+local function drawBanner(banner, y0)
     local st = banner.style
     local duration = banner.seconds
     local t = RealTime() - banner.start
-    if t > duration then banner = nil return end
-
     local sw, sh = ScrW(), ScrH()
 
     -- Screen flash, fading over the first second or so (not every style has one)
@@ -633,15 +646,17 @@ hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
     local h = ruleH + pad + titleH + math.floor(8 * s) + #banner.lines * bodyH
         + (banner.footer and (math.floor(8 * s) + footH) or 0) + pad + ruleH
 
-    -- Headline: slides down, holds, fades out
+    -- Slides in from above, glides to its place in the stack, fades out
     local slide = math.Clamp(t / 0.4, 0, 1)
     slide = math.ease and math.ease.OutBack(slide) or slide
     local fade = math.Clamp((duration - t) / 0.8, 0, 1)
+    banner.y = banner.y and Lerp(math.min(FrameTime() * 10, 1), banner.y, y0) or y0
     local x = (sw - w) / 2
-    local y = Lerp(slide, -h, math.floor(sh * 0.019) + 18)
+    local y = Lerp(slide, -h, banner.y)
     local a = 255 * fade
 
-    draw.RoundedBox(8, x, y, w, h, Color(COL.bg.r, COL.bg.g, COL.bg.b, 240 * fade))
+    local bg = st.bg or COL.bg
+    draw.RoundedBox(8, x, y, w, h, Color(bg.r, bg.g, bg.b, 240 * fade))
     surface.SetDrawColor(st.rule.r, st.rule.g, st.rule.b, a)
     surface.DrawRect(x, y, w, ruleH)                 -- rule, top
     surface.DrawRect(x, y + h - ruleH, w, ruleH)     -- and bottom
@@ -663,4 +678,31 @@ hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
         draw.SimpleText(banner.footer, "RP1942_ElSmall", sw / 2, cy + math.floor(8 * s),
             Color(COL.sub.r, COL.sub.g, COL.sub.b, a), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
+    -- A fading banner gives its room back gradually, so the ones below glide up
+    return (h + math.floor(10 * s)) * fade
+end
+
+hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
+    if #banners == 0 then return end
+    local now = RealTime()
+    for i = #banners, 1, -1 do
+        if now - banners[i].start > banners[i].seconds then table.remove(banners, i) end
+    end
+    local y = math.floor(ScrH() * 0.019) + 18
+    for _, b in ipairs(banners) do
+        y = y + drawBanner(b, y)
+    end
 end)
+
+-- Martial law (DarkRP's lockdown): a banner in the broadcast style
+net.Receive("RP1942_MartialLaw", function()
+    local on, name = net.ReadBool(), net.ReadString()
+    local m = RP1942.MartialLaw or {}
+    if on then
+        showBanner("lockdown", m.title or "MARTIAL LAW : STAY IN YOUR HOMES!", m.body or "", m.seconds or 12,
+            name ~= "" and ("- Führer " .. name) or nil)
+    else
+        showBanner("lifted", m.liftedTitle or "MARTIAL LAW HAS BEEN LIFTED", m.liftedBody or "", m.liftedSeconds or 7)
+    end
+end)
+

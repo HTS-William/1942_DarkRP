@@ -51,6 +51,22 @@ RP1942.ElectionSounds = {
     fuhrerKilledVolume = 0.9,
     broadcast          = "npc/overwatch/radiovoice/on1.wav", -- Führer's /broadcast
     broadcastVolume    = 0.9,
+    lockdown           = "sounds/42lockdown.mp3",  -- martial law (DarkRP's /lockdown)
+    lockdownVolume     = 1,
+}
+
+--[[---------------------------------------------------------------------------
+Martial law: DarkRP's lockdown (/lockdown, the Führer's power), shown as a
+banner like the broadcast, with the sound above. Banners stack, so a
+broadcast during martial law isn't covered.
+---------------------------------------------------------------------------]]
+RP1942.MartialLaw = {
+    title       = "MARTIAL LAW : STAY IN YOUR HOMES!",
+    body        = "By order of the Führer, a curfew is in force. Anyone found outside may be arrested.",
+    seconds     = 12,
+    liftedTitle = "MARTIAL LAW HAS BEEN LIFTED",
+    liftedBody  = "The curfew is over. You may leave your homes.",
+    liftedSeconds = 7,
 }
 
 --[[---------------------------------------------------------------------------

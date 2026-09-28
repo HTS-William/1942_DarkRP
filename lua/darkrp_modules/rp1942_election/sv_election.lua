@@ -15,7 +15,7 @@ util.AddNetworkString("RP1942_FuhrerBroadcast")  -- server -> client: show a /br
 
 -- Addon sound files have to be sent to players, or only the server has them.
 -- Stock game sounds (not found as files here) need nothing.
-for _, key in ipairs({ "voting", "anthem", "fuhrerKilled", "broadcast" }) do
+for _, key in ipairs({ "voting", "anthem", "fuhrerKilled", "broadcast", "lockdown" }) do
     local path = RP1942.ElectionSounds[key]
     if path then
         if file.Exists(path, "GAME") then
@@ -422,3 +422,19 @@ function RP1942.removeFuhrer(admin)
     ServerLog(string.format("[1942] %s removed %s (%s) as Führer\n", IsValid(admin) and admin:Nick() or "Console", old:Nick(), old:SteamID()))
     return true
 end
+
+--[[---------------------------------------------------------------------------
+Martial law (DarkRP's lockdown): everyone gets the banner and the sound
+---------------------------------------------------------------------------]]
+util.AddNetworkString("RP1942_MartialLaw")
+
+local function martialLaw(on, ply)
+    net.Start("RP1942_MartialLaw")
+    net.WriteBool(on)
+    net.WriteString(IsValid(ply) and ply:Nick() or "")
+    net.Broadcast()
+    if on then playSound("lockdown") end
+end
+hook.Add("lockdownStarted", "RP1942_MartialLaw", function(ply) martialLaw(true, ply) end)
+hook.Add("lockdownEnded", "RP1942_MartialLaw", function(ply) martialLaw(false, ply) end)
+
