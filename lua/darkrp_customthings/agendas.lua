@@ -4,6 +4,7 @@
 Managers can set the text, listeners see it on their HUD.
 A job can only be part of ONE agenda.
 ---------------------------------------------------------------------------]]
+-- The Reich Banker is listed with the Reich in F4 but deliberately left out here
 DarkRP.createAgenda("Reich Orders",
     { TEAM_FUHRER, TEAM_WEHR_OFFIZIER, TEAM_WSS_OFFIZIER, TEAM_LAH_KOMMANDANT },
     {

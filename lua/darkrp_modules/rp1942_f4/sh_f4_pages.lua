@@ -158,12 +158,12 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Every market sale helps the economy a little, and a better economy means higher wages for everyone. Selling privately to other players doesn't move the economy.
 
 # Money printers
-- Banking Printer (Banker only, legal): up to 3. Every print is split with the Reich treasury: 15% when the economy is normal (50), more when it's weak, less when it's strong, so a good economy lets the Banker keep more. A Reich member who destroys a Banking Printer pays R.M. 1,250 for it, into the treasury.
-- Money Printer (illegal): up to 3, for anyone outside the Reich except the Banker. It isn't tied to the economy. The Reich can SEIZE it from its panel, or shoot it, for a reward, and its owner is fined 1,250 R.M., paid to the Reich treasury.
+- Banking Printer (Reich Banker only, legal): up to 3. Every print is split with the Reich treasury: 15% when the economy is normal (50), more when it's weak, less when it's strong, so a good economy lets the Reich Banker keep more. A Reich member who destroys a Banking Printer pays R.M. 1,250 for it, into the treasury.
+- Money Printer (illegal): up to 3, for anyone outside the Reich except the Reich Banker. It isn't tied to the economy. The Reich can SEIZE it from its panel, or shoot it, for a reward, and its owner is fined 1,250 R.M., paid to the Reich treasury.
 - Printers start at 1,000 R.M. a print. Money waits in the tray: COLLECT takes it, and anyone can, so guard your printers.
 - They heat up while they run and explode at 100 degrees, taking the money with them. Switch one OFF to let it cool, then back ON. At Cooling tier 5 it stays cool.
 - UPGRADES (5 tiers each, bought by the owner): Output (+40% a tier on the Banking Printer, +35% on the Money Printer), Speed (prints sooner), Cooling (heats slower) and Muffler (quieter, but never silent).
-- If you join the Reich or become the Banker, your illegal printers are dismantled. Leaving the Banker job returns the Banking Printers.
+- If you join the Reich or become the Reich Banker, your illegal printers are dismantled. Leaving the Reich Banker job returns the Banking Printers.
 
 # Supply train
 - About every 20 minutes a Reich supply train rumbles in, sounds its horn as it stops at the station, waits 30 seconds, sounds it again and carries on down the line.

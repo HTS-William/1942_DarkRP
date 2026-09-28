@@ -99,6 +99,6 @@ DarkRP.createEntity("Money Printer", {
     category = "Printers",
     -- Anyone outside the Reich, and not the Banker (who only has the legal one)
     customCheck = function(ply) return RP1942.canOwnIllegalPrinter(ply) end,
-    CustomCheckFailMsg = "The Reich and the Banker can't own illegal printers.",
+    CustomCheckFailMsg = "The Reich and the Reich Banker can't own illegal printers.",
 })
 

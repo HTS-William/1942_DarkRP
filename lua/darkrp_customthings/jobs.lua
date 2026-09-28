@@ -179,7 +179,7 @@ TEAM_DOCTOR = job{
 }
 
 TEAM_BANKER = job{
-    name = "Banker",
+    name = "Reich Banker",
     color = Color(130, 120, 60),
     model = M.banker,
     description = [[Runs the Reichsbank's legal Banking Printers (F4 Shop, up to 3). Every print is split with the Reich treasury: 15% at a normal economy, more when it's weak, less when it's strong. Upgrade them, switch them off to cool before they overheat, and guard them: anyone can empty the tray.]],
@@ -189,7 +189,10 @@ TEAM_BANKER = job{
     salary = SAL * 1.3,
     admin = 0,
     faction = "civilian",
-    category = "Civilians",
+    category = "Reich",
+    sortOrder = 12,
+    -- Listed with the Reich, but still a civilian job (faction): no vote, no
+    -- arrest immunity, and NOT in the Reich Orders agenda (agendas.lua)
 }
 
 TEAM_PETROLEUM = job{
