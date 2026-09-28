@@ -56,14 +56,17 @@ rp1942_dumpsters_config.PocketLoot = true --> Weapons and entities go straight i
                                         --> ( Junk props are always tossed out. )
 rp1942_dumpsters_config.PropRemovalTime = 5 --> How long it takes for the props to be removed ( Default: 15 )
 rp1942_dumpsters_config.CooldownMsg = "You've already searched this dumpster. Try again later." --> Shown when someone on cooldown tries again
-rp1942_dumpsters_config.Props = { --> Random props that spawn
-	"models/props_c17/BriefCase001a.mdl",
-	"models/props_c17/streetsign001c.mdl",
-	"models/props_lab/desklamp01.mdl",
-	"models/props_lab/frame002a.mdl",
-	"models/props_c17/doll01.mdl",
-	"models/Gibs/wood_gib01e.mdl",
-	"models/props_c17/clock01.mdl",
+rp1942_dumpsters_config.Props = { --> Random junk that spawns (removed after PropRemovalTime)
+	"models/props_junk/garbage_glassbottle001a.mdl",
+	"models/props_junk/garbage_glassbottle002a.mdl",
+	"models/props_junk/garbage_glassbottle003a.mdl",
+	"models/props_junk/garbage_metalcan001a.mdl",
+	"models/props_junk/garbage_metalcan002a.mdl",
+	"models/props_junk/garbage_milkcarton001a.mdl",
+	"models/props_junk/garbage_milkcarton002a.mdl",
+	"models/props_junk/garbage_newspaper001a.mdl",
+	"models/props_junk/garbage_plasticbottle003a.mdl",
+	"models/props_junk/glassbottle01a.mdl",
 }
 rp1942_dumpsters_config.Weapons = { --> Random weapons that spawn
 	"lockpick",
@@ -108,6 +111,10 @@ rp1942_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() e
 --> paste it over the table below. Saved dumpsters that are hardcoded here
 --> won't spawn twice.
 rp1942_dumpsters_config.AddSpawnPos = {
+	{
+		pos = Vector( 805.174500, 276.007233, -79.968750 ),
+		ang = Angle( 7.724401, -91.468979, 0.000000 	),
+	},
 }
 
 --> Resistance dead drops: hide money or a weapon in a dumpster for another
