@@ -17,7 +17,7 @@ full), gold = your current job.
 
 Specialisations: a job with subOf = "<base job command>" (jobs.lua) only
 appears once you hold the base job (or one of its specialisations), right
-after the base job's card. Chains work: Recruit -> Rifleman -> Medic. Until then the base card shows a "+N ROLES" badge
+after the base job's card. Chains work: Thief -> Pro Thief, Rifleman -> Medic. Until then the base card shows a "+N ROLES" badge
 and its details list what it unlocks. The server enforces the same rule.
 
 Your own job's card is hidden (its specialisations still show), and a
@@ -367,7 +367,7 @@ RP1942.F4Tabs.jobs = {
             if job.whitelisted then tags[#tags + 1] = "WHITELISTED" end
             if TEAM_FUHRER and job.team == TEAM_FUHRER then tags[#tags + 1] = "ELECTED" end
             if job.quietJoin then tags[#tags + 1] = "UNDERCOVER" end
-            if job.vote then tags[#tags + 1] = "VOTE" end
+            if job.vote or (job.RequiresVote and job.RequiresVote(LocalPlayer(), job.team)) then tags[#tags + 1] = "VOTE" end
             if #tags > 0 then addLabel(table.concat(tags, "  ·  "), "RP1942_F4Small", C.gold, 2) end
 
             if reason then addLabel(reason, "RP1942_F4Body", C.unavailable, gap) end

@@ -132,8 +132,8 @@ function RP1942.jobGateFailure(ply, job)
         end
     end
 
-    -- Specialisations (subOf = "<base job command>", can chain: Recruit ->
-    -- Rifleman -> Medic): the base job must be your current job or one of the
+    -- Specialisations (subOf = "<base job command>", can chain: Rifleman ->
+    -- Medic -> ...): the base job must be your current job or one of the
     -- jobs above it. So you can move down one step, sideways to a sibling, or
     -- back up (a Medic can go back to Rifleman).
     if job.subOf then

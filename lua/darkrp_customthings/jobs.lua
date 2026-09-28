@@ -8,12 +8,13 @@ Custom fields used by the rp1942 modules (DarkRP ignores unknown fields):
     arrests  = false                                  (Reich job WITHOUT police powers)
     vip / whitelisted                                 (set via the vip{} / whitelisted{} helpers)
 
-Reich enlistment is two hops:
-    1. Join a branch through its Recruit job ("Reich" category, visible to all)
-    2. Pick a posting from that branch's category, which is only VISIBLE in F4
-       while you hold a job in that branch (canSee in categories.lua) and only
-       TAKEABLE from inside the branch (requires = { branch = ... } below).
-Leave the branch and you have to enlist again.
+Reich enlistment:
+    1. Take a branch's Rifleman ("Reich" category, visible to all). From
+       outside the Reich that takes a vote of the server (rp1942_reichjobs).
+    2. Holding the Rifleman shows that branch's specialisations in F4
+       (subOf), and they're only TAKEABLE from inside the branch
+       (requires = { branch = ... } below).
+Leave the branch and you have to enlist (and be voted in) again.
 
 Weapons and models come from RP1942.Weapons / RP1942.Models in
 darkrp_modules/rp1942_core/sh_config.lua. Edit them there, not here.
@@ -64,7 +65,7 @@ job{} wraps DarkRP.createJob:
   - turns vip / whitelisted / requires / a job's own customCheck into ONE
     customCheck, with a CustomCheckFailMsg that says which rule failed
     (see RP1942.jobGateFailure in rp1942_core/sh_factions.lua)
-  - makes getting a real Reich job (Recruit -> Rifleman, or from outside) take a vote (rp1942_reichjobs)
+  - makes joining the Reich from outside take a vote (rp1942_reichjobs)
 ---------------------------------------------------------------------------]]
 local function job(tbl)
     local name = tbl.name
@@ -80,8 +81,7 @@ local function job(tbl)
         tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
     end
 
-    -- Reich jobs: Recruit -> Rifleman (or joining from outside) takes a vote;
-    -- recruits and moves inside the Reich don't
+    -- Reich jobs: joining the Reich from outside takes a vote; moves inside it don't
     -- (RP1942.reichJobNeedsVote and its exemptions: rp1942_reichjobs/sh_reichjobs.lua)
     if tbl.faction == "reich" and not tbl.vote and not tbl.RequiresVote and RP1942.reichJobNeedsVote then
         local command = tbl.command
@@ -185,7 +185,7 @@ TEAM_BANKER = job{
     description = [[Runs the Reichsbank's legal Banking Printers (F4 Shop, up to 3). Every print is split with the Reich treasury: 15% at a normal economy, more when it's weak, less when it's strong. Upgrade them, switch them off to cool before they overheat, and guard them: anyone can empty the tray.]],
     weapons = {},
     command = "banker",
-    max = 2,
+    max = 1,
     salary = SAL * 1.3,
     admin = 0,
     faction = "civilian",
@@ -199,11 +199,11 @@ TEAM_PETROLEUM = job{
     description = [[Buys an oil derrick (F4 Shop). It's built on a free oil site and bolted down. It pumps on its own, and the pressure climbs while the valve is shut: turn the valve wheel to open and close it and keep the pressure in the green. The better you tend it, the more canisters of crude and the finer the grade. Sell oil at a market or to other players.]],
     weapons = {},
     command = "petroleum",
-    max = 2,
+    max = 1,
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Civilians",
+    category = "Production",
 }
 
 TEAM_WINEMAKER = job{
@@ -213,11 +213,11 @@ TEAM_WINEMAKER = job{
     description = [[Buys wine barrels (F4 Shop). Start one fermenting and stir it whenever it calls: every stir raises the vintage. 3 bottles per barrel. Sell wine at a market or to other players.]],
     weapons = {},
     command = "winemaker",
-    max = 2,
+    max = 3,
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Civilians",
+    category = "Production",
 }
 
 TEAM_FACTORY = job{
@@ -231,7 +231,7 @@ TEAM_FACTORY = job{
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Civilians",
+    category = "Production",
 }
 --[=[ Depreciated - moved to Doctor
 TEAM_PHARMACIST = job{
@@ -255,11 +255,11 @@ TEAM_BAKER = job{
     description = [[Buys ovens and sacks of flour (F4 Shop). Push sacks into an oven and keep its fire in the green while it bakes: the better you tend it, the more loaves and the finer the bread. Sell bread at a market or to other players.]],
     weapons = {},
     command = "baker",
-    max = 3,
+    max = 4,
     salary = SAL,
     admin = 0,
     faction = "civilian",
-    category = "Civilians",
+    category = "Production",
     menu = "RP1942_BakerMenu",
 }
 
@@ -273,11 +273,11 @@ TEAM_BLACKMARKET = job{
     description = [[Deals pistols, shotguns, scoped rifles and melee weapons.]],
     weapons = {},
     command = "blackmarket",
-    max = 2,
+    max = 3,
     salary = SAL,
     admin = 0,
     faction = "civilian",       -- a civilian trade: anyone can take it, no side required
-    category = "Civilians",
+    category = "Resistance",
     menu = "RP1942_ShopMenu",
     shop = "example",
 }
@@ -303,11 +303,11 @@ TEAM_CHERKESOV = job{
     description = [[Deals almost everything on the server, including explosives otherwise only the German Supplier can get.]],
     weapons = {},
     command = "cherkesov",
-    max = 1,
+    max = 3,
     salary = SAL,
     admin = 0,
     faction = "civilian",       -- a civilian trade: anyone can take it, no side required
-    category = "Civilians",
+    category = "Resistance",
 }
 
 TEAM_THIEF = job{
@@ -317,7 +317,7 @@ TEAM_THIEF = job{
     description = [[Carries a standard lockpick.]],
     weapons = { W.lockpick },
     command = "thief",
-    max = 4,
+    max = 3,
     salary = SAL * 0.8,
     admin = 0,
     faction = "resistance",
@@ -329,15 +329,16 @@ TEAM_PROTHIEF = job{
     name = "Pro Thief",
     color = Color(110, 45, 45),
     model = M.resistance,
-    description = [[Carries an upgraded lockpick that works much faster.]],
+    description = [[Carries a professional lockpick that opens doors in a fraction of the time.]],
     weapons = { W.lockpick_pro },
     command = "prothief",
-    max = 2,
+    max = 1,
     salary = SAL * 0.8,
     admin = 0,
     faction = "resistance",
     branch = "resistance", requires = { faction = "resistance" },
     category = "Resistance",
+    subOf = "thief",   -- F4: shown once you are a Thief; server-enforced
 }
 
 TEAM_RESISTANCE = job{
@@ -415,62 +416,10 @@ TEAM_RES_LEADER = job{
 
 --[[===========================================================================
 THE REICH - every German job is in the "Reich" category, folded like the
-Resistance: a civilian sees the three recruits (plus Supplier, Scientist,
-Gestapo). Becoming a recruit shows that branch's Rifleman; becoming a
-Rifleman shows its specialisations (subOf in each job, enforced server-side).
-Recruits are a staging job: no weapons, no police powers.
+Resistance: a civilian sees the three Riflemen (plus Supplier, Scientist,
+Gestapo). Becoming a Rifleman shows its specialisations (subOf in each job,
+enforced server-side). Joining from outside the Reich is voted.
 ===========================================================================]]
-TEAM_WEHR_RECRUIT = job{
-    name = "Wehrmacht Recruit",
-    color = Color(110, 118, 98),
-    model = M.wehrmacht,
-    description = [[Enlist in the Wehrmacht. Your postings will appear in the Wehrmacht section of this menu.]],
-    weapons = {},
-    command = "wehrrecruit",
-    max = 0,   -- faction balance still applies
-    salary = SAL * 0.5,
-    admin = 0,
-    faction = "reich",
-    branch = "wehrmacht",
-    arrests = false,
-    category = "Reich",
-    sortOrder = 1,
-}
-
-TEAM_WSS_RECRUIT = job{
-    name = "Waffen-SS Recruit",
-    color = Color(75, 80, 64),
-    model = M.waffen_ss,
-    description = [[Enlist in the Waffen-SS. Your postings will appear in the Waffen-SS section of this menu.]],
-    weapons = {},
-    command = "wssrecruit",
-    max = 0,
-    salary = SAL * 0.5,
-    admin = 0,
-    faction = "reich",
-    branch = "waffen_ss",
-    arrests = false,
-    category = "Reich",
-    sortOrder = 2,
-}
-
-TEAM_LAH_RECRUIT = job{
-    name = "Leibstandarte Recruit",
-    color = Color(55, 55, 55),
-    model = M.leibstandarte,
-    description = [[Volunteer for the Leibstandarte, the Führer's personal bodyguard. Serve here to be offered its postings.]],
-    weapons = {},
-    command = "lahrecruit",
-    max = 0,
-    salary = SAL * 0.5,
-    admin = 0,
-    faction = "reich",
-    branch = "leibstandarte",
-    arrests = false,
-    category = "Reich",
-    sortOrder = 3,
-}
-
 -- Single-hop Reich jobs (no branch)
 TEAM_SUPPLIER = job{
     name = "German Supplier",
@@ -509,7 +458,7 @@ TEAM_SCIENTIST = job{
 }
 
 --[[===========================================================================
-WEHRMACHT (in "Reich": Wehrmacht Recruit -> Rifleman -> specialisations)
+WEHRMACHT (in "Reich": Rifleman -> specialisations)
 ===========================================================================]]
 TEAM_WEHR_RIFLEMAN = job{
     name = "Wehrmacht Rifleman",
@@ -523,9 +472,9 @@ TEAM_WEHR_RIFLEMAN = job{
     admin = 0,
     faction = "reich",
     arrests = true,
-    branch = "wehrmacht", requires = { branch = "wehrmacht" },
+    branch = "wehrmacht",   -- the way in: open to all (voted from outside the Reich)
     category = "Reich",
-    subOf = "wehrrecruit",   -- F4: shown once you are the recruit; server-enforced
+    sortOrder = 1,
 }
 
 TEAM_WEHR_MEDIC = job{
@@ -633,7 +582,7 @@ TEAM_WEHR_OFFIZIER = job(whitelisted{
 })
 
 --[[===========================================================================
-WAFFEN-SS (in "Reich": Waffen-SS Recruit -> Rifleman -> specialisations)
+WAFFEN-SS (in "Reich": Rifleman -> specialisations)
 ===========================================================================]]
 TEAM_WSS_RIFLEMAN = job{
     name = "Waffen-SS Rifleman",
@@ -647,9 +596,9 @@ TEAM_WSS_RIFLEMAN = job{
     admin = 0,
     faction = "reich",
     arrests = true,
-    branch = "waffen_ss", requires = { branch = "waffen_ss" },
+    branch = "waffen_ss",   -- the way in: open to all (voted from outside the Reich)
     category = "Reich",
-    subOf = "wssrecruit",   -- F4: shown once you are the recruit; server-enforced
+    sortOrder = 2,
 }
 
 TEAM_WSS_MEDIC = job{
@@ -723,7 +672,7 @@ TEAM_WSS_OFFIZIER = job(whitelisted{
 })
 
 --[[===========================================================================
-LEIBSTANDARTE (in "Reich": Leibstandarte Recruit -> Rifleman -> Kommandant)
+LEIBSTANDARTE (in "Reich": Rifleman -> Kommandant)
 The Führer's bodyguard. Wehrmacht = police, Waffen-SS = special
 unit, Leibstandarte = the Führer's protection detail.
 ===========================================================================]]
@@ -739,9 +688,9 @@ TEAM_LAH_RIFLEMAN = job{
     admin = 0,
     faction = "reich",
     arrests = true,
-    branch = "leibstandarte", requires = { branch = "leibstandarte" },
+    branch = "leibstandarte",   -- the way in: open to all (voted from outside the Reich)
     category = "Reich",
-    subOf = "lahrecruit",   -- F4: shown once you are the recruit; server-enforced
+    sortOrder = 3,
 }
 
 TEAM_LAH_KOMMANDANT = job(whitelisted{

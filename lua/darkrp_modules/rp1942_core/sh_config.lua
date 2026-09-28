@@ -45,9 +45,9 @@ CURRENTLY serving in that branch. `entry` is the job command you enlist
 through; it is only used to tell players where to start.
 ---------------------------------------------------------------------------]]
 C.Branches = {
-    wehrmacht = { name = "the Wehrmacht",     entry = "wehrrecruit" },
-    waffen_ss = { name = "the Waffen-SS",     entry = "wssrecruit" },
-    leibstandarte = { name = "the Leibstandarte", entry = "lahrecruit" },
+    wehrmacht = { name = "the Wehrmacht",     entry = "wehrrifleman" },
+    waffen_ss = { name = "the Waffen-SS",     entry = "wssrifleman" },
+    leibstandarte = { name = "the Leibstandarte", entry = "lahrifleman" },
 }
 
 C.FactionNames = {
@@ -148,7 +148,7 @@ RP1942.Weapons = {
     checker     = "weaponchecker",
     ram         = "door_ram",
     lockpick    = "lockpick",
-    lockpick_pro = "lockpick",            -- TODO: replace with the upgraded lockpick SWEP
+    lockpick_pro = "rp1942_lockpick_pro", -- the Pro Thief's fast lockpick (lua/weapons/rp1942_lockpick_pro.lua)
     medkit      = "med_kit",
 }
 

@@ -94,15 +94,16 @@ E - Use things, and press buttons on machine panels (look at the button)
 /jobmenu - Open your job's menu (same as F3)
 
 # The factions
-Civilians - Everyday people of the town: tradesmen, dealers, doctors and the like.
-Resistance - Fighters working against the Reich from the shadows.
+Civilians - Everyday people of the town: doctors, bankers, hobos and the like.
+Production - The trades that make goods to sell: Baker, Winemaker, Petroleum Producer and Factory Owner.
+Resistance - Fighters working against the Reich from the shadows. The Black Market and Cherkesov dealers are listed with them (anyone can deal). Thieves carry a lockpick; once you're a Thief, the Pro Thief (one at a time) gets a professional lockpick that's several times faster.
 Reich - The occupying authority, made up of the units below.
 Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard.
-Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job menu once you hold the base job.
-Joining the Reich - Anyone can enlist as a Recruit. Getting your rifle (Recruit to Rifleman) needs a vote of the server, and so does taking any other Reich job from outside the Reich (F4 shows Call a vote; in chat /vote plus the job's command). Once you hold a real Reich job, moving up or across is instant. The Führer is elected, and the Gestapo joins quietly, so neither is voted.
-Unit music - Each unit has its own music that plays for you (only you) when you get your rifle or a higher job (not for Recruits). rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
+Riflemen - Every Reich unit starts at Rifleman. Its specialisations appear in the job menu once you hold it.
+Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The Führer is elected, and the Gestapo joins quietly, so neither is voted.
+Unit music - Each unit has its own music that plays for you (only you) when you take the job. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
 
 # Wanted by the Reich
 - Killing a member of the Reich makes you wanted. A red WANTED tag shows above your name.
@@ -141,7 +142,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Petroleum Producer
 - Buy an Oil Derrick. It isn't placed by hand: it's built on the nearest free oil site and bolted down, and it's marked on your screen once built. If every site is taken, it isn't for sale until one frees up.
 - It pumps on its own. With the valve shut the pressure climbs; turn the red valve wheel to open it and the pressure falls, then turn it again to shut it. Keep the needle in the green.
-- More time in the green means more canisters of crude (up to 3) and a better grade. FILL CANISTERS when the tank is full, and it starts pumping again.
+- More time in the green means more canisters of crude (up to 3, around R.M. 1,000 each at a market) and a better grade. FILL CANISTERS when the tank is full, and it starts pumping again.
 - If the pressure drops to nothing with the valve open, the pump stalls and switches itself off. Switch it back on: the pressure builds up again from zero.
 - Don't leave it in the red. After a while an alarm sounds and a red light flashes; if the pressure still isn't brought down, the derrick explodes, and it's gone.
 

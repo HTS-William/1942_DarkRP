@@ -25,6 +25,7 @@ end
 
 -- Open to everyone
 jobCategory("Civilians",  Color(120, 120, 110), 10)
+jobCategory("Production", Color(150, 115,  60), 15)   -- Baker, Winemaker, Petroleum Producer, Factory Owner
 jobCategory("Resistance", Color(130,  50,  40), 20)
 jobCategory("Reich",      Color( 93, 101,  82), 30)   -- every German job, folded like the Resistance
 

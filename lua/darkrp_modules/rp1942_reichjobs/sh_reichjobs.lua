@@ -2,15 +2,13 @@
 1942 DarkRP - Reich jobs: joining by vote, and each unit's own music
 
 VOTE
-Anyone can enlist as a Recruit (no vote). Getting your rifle takes a vote of
-the whole server (DarkRP's normal job vote, 20 seconds; it passes by itself
-if you're alone on the server): Recruit -> Rifleman is voted, and so is
-taking any other Reich job from outside the Reich (Supplier, Scientist).
-Once you hold a real Reich job, moving up or across inside the Reich
-(Rifleman -> NCO, Medic...) is instant. Leave the Reich, or drop back to a
-Recruit, and the next step needs a vote again.
+Joining the Reich from outside it (a Rifleman, the Supplier, the Scientist)
+takes a vote of the whole server (DarkRP's normal job vote, 20 seconds; it
+passes by itself if you're alone on the server). Once you're in, moving up
+or across inside the Reich (Rifleman -> NCO, Medic, another unit) is
+instant. Leave the Reich and you need a vote again to come back.
 The F4 menu shows "Call a vote for ..." when a vote is needed; in chat it's
-/vote<command>, e.g. /votewehrrecruit.
+/vote<command>, e.g. /votewehrrifleman.
 Wired into every job with faction = "reich" by job{} in jobs.lua.
 
 MUSIC
@@ -28,10 +26,7 @@ RP1942.ReichJobs = {
         enabled = true,
         -- Jobs (by command) that never need a vote. The Führer is elected;
         -- the Gestapo joins quietly (a vote would announce the agent).
-        exempt = { fuhrer = true, gestapo = true, wehrrecruit = true, wssrecruit = true, lahrecruit = true },
-        -- Holding one of these doesn't count as being in the Reich yet: the
-        -- next step (the Rifleman) is voted
-        recruits = { wehrrecruit = true, wssrecruit = true, lahrecruit = true },
+        exempt = { fuhrer = true, gestapo = true },
     },
 
     musicVolume = 0.6,   -- also scaled by the player's music volume slider
@@ -54,8 +49,7 @@ RP1942.ReichJobs = {
         -- Leibstandarte
         lahrifleman      = "sounds/42leib.mp3",
         lahkommandant    = "sounds/42officer.mp3",
-        -- Not set: the three recruits, gersupplier, scientist, gestapo,
-        -- fuhrer (the Führer has the anthem)
+        -- Not set: gersupplier, scientist, gestapo, fuhrer (the Führer has the anthem)
     },
 }
 
@@ -64,7 +58,5 @@ function RP1942.reichJobNeedsVote(ply, command)
     local v = RP1942.ReichJobs.vote
     if not v.enabled or v.exempt[command] then return false end
     if not IsValid(ply) or not RP1942.getFaction then return false end
-    if RP1942.getFaction(ply) ~= "reich" then return true end
-    local current = RPExtraTeams and RPExtraTeams[ply:Team()]
-    return current ~= nil and v.recruits[current.command] == true
+    return RP1942.getFaction(ply) ~= "reich"
 end

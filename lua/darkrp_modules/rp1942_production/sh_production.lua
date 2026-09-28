@@ -83,7 +83,7 @@ RP1942.Goods = {
     oil = {
         name    = "Canister of Crude Oil",
         model   = "models/props_junk/gascan001a.mdl",
-        value   = 140,
+        value   = 1000,   -- the derrick needs tending the whole time (not AFK-able)
         economy = 0.15,
     },
 
