@@ -535,7 +535,7 @@ local STYLES = {
     -- Martial law: a red banner (red body, darker red rules, cream text)
     lockdown = {
         flash = Color(120, 0, 0, 70), bg = Color(128, 18, 16), rule = Color(70, 8, 8), titleCol = Color(250, 238, 220),
-        titleFont = "RP1942_ElAlertSub", pulse = Color(255, 190, 170), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
+        titleFont = "RP1942_ElAlert",   -- big and bold pulse = Color(255, 190, 170), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
     },
     lifted = {
         bg = Color(96, 16, 14), rule = Color(60, 8, 8), titleCol = Color(250, 238, 220), titleFont = "RP1942_ElAlertSub",
@@ -549,9 +549,11 @@ local STYLES = {
 local banners = {}
 local MAX_BANNERS = 3
 
-local function showBanner(style, title, body, seconds, footer)
+-- stay (optional): a function; the banner stays up while it returns true,
+-- then fades (seconds is ignored)
+local function showBanner(style, title, body, seconds, footer, stay)
     banners[#banners + 1] = { style = STYLES[style], title = title, body = body, footer = footer,
-               seconds = seconds, start = RealTime() }
+               seconds = seconds, start = RealTime(), stay = stay }
     while #banners > MAX_BANNERS do table.remove(banners, 1) end
 end
 RP1942.showAlertBanner = showBanner   -- for other modules
@@ -686,7 +688,16 @@ hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
     if #banners == 0 then return end
     local now = RealTime()
     for i = #banners, 1, -1 do
-        if now - banners[i].start > banners[i].seconds then table.remove(banners, i) end
+        local b = banners[i]
+        if b.stay then
+            if b.stay() then
+                b.seconds = now - b.start + 10         -- still going: keep it up
+            else
+                b.seconds = now - b.start + 0.8        -- over: fade out now
+                b.stay = nil
+            end
+        end
+        if now - b.start > b.seconds then table.remove(banners, i) end
     end
     local y = math.floor(ScrH() * 0.019) + 18
     for _, b in ipairs(banners) do
@@ -694,15 +705,41 @@ hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
     end
 end)
 
--- Martial law (DarkRP's lockdown): a banner in the broadcast style
+-- Martial law (DarkRP's lockdown): a red banner that stays at the top until
+-- the lockdown ends, then a short "lifted" one. No chat lines (sv_election).
+local function inLockdown() return GetGlobalBool("DarkRP_LockDown", false) end
+local martialShown = false
+
+local function showMartialLaw(name)
+    local m = RP1942.MartialLaw or {}
+    martialShown = true
+    local shownAt = RealTime()
+    showBanner("lockdown", m.title or "MARTIAL LAW : STAY IN YOUR HOMES!", m.body or "", 10,
+        (name and name ~= "") and ("- Führer " .. name) or nil,
+        function()
+            -- (the lockdown flag can reach us a moment after the message)
+            local on = inLockdown() or RealTime() - shownAt < 3
+            if not on then martialShown = false end
+            return on
+        end)
+end
+
 net.Receive("RP1942_MartialLaw", function()
     local on, name = net.ReadBool(), net.ReadString()
     local m = RP1942.MartialLaw or {}
     if on then
-        showBanner("lockdown", m.title or "MARTIAL LAW : STAY IN YOUR HOMES!", m.body or "", m.seconds or 12,
-            name ~= "" and ("- Führer " .. name) or nil)
+        if not martialShown then showMartialLaw(name) end
     else
         showBanner("lifted", m.liftedTitle or "MARTIAL LAW HAS BEEN LIFTED", m.liftedBody or "", m.liftedSeconds or 7)
     end
 end)
 
+-- Joined during martial law: show the banner (without the siren)
+hook.Add("InitPostEntity", "RP1942_MartialLawJoin", function()
+    timer.Simple(5, function() if inLockdown() and not martialShown then showMartialLaw() end end)
+end)
+
+-- The banner replaces DarkRP's own lockdown text on the HUD
+hook.Add("HUDShouldDraw", "RP1942_MartialLaw", function(name)
+    if name == "DarkRP_LockdownHUD" then return false end
+end)

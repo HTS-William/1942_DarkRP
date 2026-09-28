@@ -669,9 +669,12 @@ if CLIENT then
 		return EasyChat.GUI and IsValid(EasyChat.GUI.ChatBox) and EasyChat.GUI.ChatBox:IsVisible()
 	end
 
+	-- 1942 DarkRP: the chatbox sits at the left, centred vertically, so it
+	-- stays clear of the HUD in the bottom left corner
 	function EasyChat.GetDefaultBounds()
-		local coef_w, coef_h = ScrW() / 2560, ScrH() / 1440
-		return 50 * coef_w, ScrH() - (320 + (coef_h * 300)), 550, 320
+		local coef_w = ScrW() / 2560
+		local w, h = 550, 320
+		return 50 * coef_w, math.floor(ScrH() / 2 - h / 2), w, h
 	end
 
 	function EasyChat.IsOnRightSide()
@@ -792,6 +795,13 @@ if CLIENT then
 		if not json then return x, y, w, h end
 
 		local bounds = util.JSONToTable(json)
+		-- 1942 DarkRP: a chatbox saved over the bottom-left HUD (the old default)
+		-- moves to the new default once; anywhere else it stays where it was put
+		if bounds and bounds.y and bounds.h and not cookie.GetString("rp1942_chat_moved")
+			and bounds.y + bounds.h > ScrH() - 260 and bounds.x < ScrW() / 3 then
+			cookie.Set("rp1942_chat_moved", "1")
+			return x, y, w, h
+		end
 		if bounds then
 			if bounds.x >= ScrW() then bounds.x = x end
 			if bounds.y >= ScrH() then bounds.y = y end

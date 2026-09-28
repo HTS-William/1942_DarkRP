@@ -438,3 +438,25 @@ end
 hook.Add("lockdownStarted", "RP1942_MartialLaw", function(ply) martialLaw(true, ply) end)
 hook.Add("lockdownEnded", "RP1942_MartialLaw", function(ply) martialLaw(false, ply) end)
 
+-- No chat lines or notifications for martial law: the banner says it all.
+-- (DarkRP prints lockdown_started / lockdown_ended to everyone; those two
+-- messages are dropped, everything else passes through.)
+hook.Add("InitPostEntity", "RP1942_MartialLawQuiet", function()
+    local function isLockdownMsg(msg)
+        return msg == DarkRP.getPhrase("lockdown_started") or msg == DarkRP.getPhrase("lockdown_ended")
+    end
+    local printAll, notifyAll = DarkRP.printMessageAll, DarkRP.notifyAll
+    if printAll then
+        DarkRP.printMessageAll = function(msgType, msg, ...)
+            if isLockdownMsg(msg) then return end
+            return printAll(msgType, msg, ...)
+        end
+    end
+    if notifyAll then
+        DarkRP.notifyAll = function(msgType, len, msg, ...)
+            if isLockdownMsg(msg) then return end
+            return notifyAll(msgType, len, msg, ...)
+        end
+    end
+end)
+
