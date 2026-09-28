@@ -83,7 +83,7 @@ RP1942.F4Tabs.shop = {
         local C = UI.C
         local s = UI.scale()
         local gap = math.floor(8 * s)
-        local cols = 4
+        local cardW = math.floor(150 * s)   -- target card width: smaller = more, smaller cards per row
         local ply = LocalPlayer()
 
         local list = vgui.Create("DScrollPanel", page)
@@ -103,9 +103,11 @@ RP1942.F4Tabs.shop = {
             icon:SetMouseInputEnabled(false)
 
             card.PerformLayout = function(_, w, h)
-                local size = math.floor(math.min(w - 16, h * 0.58))
+                surface.SetFont("RP1942_F4Head");  local _, nameH = surface.GetTextSize("Ag")
+                surface.SetFont("RP1942_F4Body");  local _, priceH = surface.GetTextSize("Ag")
+                local size = math.max(24, math.floor(math.min(w - 24, h - (nameH + priceH + 10) - 12)))
                 icon:SetSize(size, size)
-                icon:SetPos((w - size) / 2, 8)
+                icon:SetPos((w - size) / 2, 6)
             end
             card.DoClick = function()
                 if not ply:canAfford(e.price) then surface.PlaySound("buttons/button10.wav") return end
@@ -142,8 +144,9 @@ RP1942.F4Tabs.shop = {
                 grid:DockMargin(0, 0, 0, gap * 2)
                 for _, e in ipairs(sec.entries) do addCard(grid, e) end
                 grid.PerformLayout = function(g, w)
+                    local cols = math.max(3, math.floor((w + gap) / (cardW + gap)))
                     local cw = math.floor((w - gap * (cols - 1)) / cols)
-                    local ch = math.floor(cw * 0.95)
+                    local ch = math.floor(cw * 1.05)
                     for i, child in ipairs(g:GetChildren()) do
                         child:SetPos(((i - 1) % cols) * (cw + gap), math.floor((i - 1) / cols) * (ch + gap))
                         child:SetSize(cw, ch)
