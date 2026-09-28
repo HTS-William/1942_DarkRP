@@ -111,10 +111,7 @@ rp1942_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() e
 --> paste it over the table below. Saved dumpsters that are hardcoded here
 --> won't spawn twice.
 rp1942_dumpsters_config.AddSpawnPos = {
-	{
-		pos = Vector( 805.174500, 276.007233, -79.968750 ),
-		ang = Angle( 7.724401, -91.468979, 0.000000 	),
-	},
+
 }
 
 --> Resistance dead drops: hide money or a weapon in a dumpster for another
