@@ -69,6 +69,17 @@ Exploiting - Using scripts, hacks, bugs or glitches to get an advantage.
 Metagaming - Using out-of-character information (OOC chat, streams, Discord) in character.
 Raiding - Breaking into someone's property to take their valuables.
 
+# Your name
+- When you first join, the Meldeamt (registration office) asks for your roleplay name: a first and a last name that fits 1942. Random Name suggests one.
+- It's the name everyone sees, and the one that will go on your papers.
+/rpname First Last - Change your roleplay name later
+
+# Keys and menus
+F4 - Jobs, the shop, commands and these pages
+F3 - Your job's own menu, if it has one (the wardrobe for undercover jobs, the Führer's office...)
+TAB - The scoreboard. Hold it to look; click a player to see their card (copy SteamID, Steam profile, mute their voice, send a message). Once you click, it stays open until you press TAB again.
+E - Use things, and press buttons on machine panels (look at the button)
+
 # Chat commands
 // - Talk to everyone out of character (OOC)
 .// - Talk out of character to people near you
@@ -79,6 +90,7 @@ Raiding - Breaking into someone's property to take their valuables.
 /radio - Talk on the radio
 /election - Open the Führer election ballot
 /roll - Roll a random number (/roll, /roll 20, /roll 5 50, /roll 2d6)
+/jobmenu - Open your job's menu (same as F3)
 
 # The factions
 Civilians - Everyday people of the town: tradesmen, dealers, doctors and the like.
@@ -99,17 +111,41 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - The Führer sets the tax rates. Taxes come out of your wages and go to the Reich treasury.
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
 
-# Production and markets
-- Ovens, wine barrels, oil derricks, factory lines and markets have panels: look at a button and press E.
-- Ovens, oil derricks and factory lines have a POWER lever. Switching one off pauses it where it is; switching it back on carries on.
-- Bakers buy ovens and sacks of flour in the F4 Shop and push sacks into the oven (it queues 3). While it bakes, keep the fire in the green with STOKE FIRE: more time in the green means more loaves and better bread. COLLECT BREAD when it's done.
-- Winemakers buy wine barrels and press START. While it ferments it calls for stirring: STIR before the timer runs out. Every stir raises the vintage. BOTTLE when it's done.
-- Petroleum Producers buy an oil derrick. It's built on the nearest free oil site and bolted down (it's marked on your screen once built). It pumps on its own. With the valve shut the pressure climbs; turn the valve wheel to open it and the pressure falls, then turn it again to shut it. Keep it in the green for more canisters of crude and a better grade. If the pressure drops to nothing with the valve open, the pump stalls and switches itself off: switch it back on, and the pressure builds up again from zero. Don't leave it in the red: after a while an alarm sounds, and if the pressure still isn't brought down, the derrick explodes. FILL CANISTERS when the tank is full.
-- Factory Owners buy a factory line. It halts twice a run: the BELT, BOILER or FUSE lamp flashes, and you press the matching repair (the wrong one costs extra time). The less downtime, the better the run and the better the odds of rare goods like clocks and radios. COLLECT when the run is done.
-- Goods have a quality of 1 to 3 stars, and better goods sell for more.
-- Sell goods at a market: SELL a kind of good from your pocket, SELL EVERYTHING, or push goods into the crate. Prices follow the economy, and one good is in demand each hour for a bonus. Sales are taxed like wages.
+# Production
+- Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.
+- Machines have brass control panels: look at a button, lever or wheel and press E.
+- Ovens, oil derricks and factory lines have a POWER lever. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
+- Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
+- Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
+- E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).
+- Anyone can press a machine's buttons, so keep an eye on yours.
+
+# Baker
+- Buy a Bread Oven and Sacks of Flour. Push sacks into the oven: it holds 3 and bakes them one at a time.
+- While it bakes the fire cools. STOKE FIRE to keep the needle in the green; too cold or too hot and the batch suffers.
+- More time in the green means more loaves (up to 3) and more stars. COLLECT BREAD when it's done, and the next sack goes in.
+
+# Winemaker
+- Buy a Wine Barrel and press START. While it ferments it calls for stirring a few times: STIR before its timer runs out.
+- Every stir it gets raises the vintage. BOTTLE when it's done for 3 bottles. The barrel is used up.
+
+# Petroleum Producer
+- Buy an Oil Derrick. It isn't placed by hand: it's built on the nearest free oil site and bolted down, and it's marked on your screen once built. If every site is taken, it isn't for sale until one frees up.
+- It pumps on its own. With the valve shut the pressure climbs; turn the red valve wheel to open it and the pressure falls, then turn it again to shut it. Keep the needle in the green.
+- More time in the green means more canisters of crude (up to 3) and a better grade. FILL CANISTERS when the tank is full, and it starts pumping again.
+- If the pressure drops to nothing with the valve open, the pump stalls and switches itself off. Switch it back on: the pressure builds up again from zero.
+- Don't leave it in the red. After a while an alarm sounds and a red light flashes; if the pressure still isn't brought down, the derrick explodes, and it's gone.
+
+# Factory Owner
+- Buy a Factory Line. It runs on its own and makes 2 goods per run.
+- Twice a run it halts with a fault: the BELT, BOILER or FUSE lamp flashes. Press the matching repair button (RETHREAD BELT, VENT BOILER or REPLACE FUSE). The wrong one costs extra downtime.
+- The less downtime, the better the run, and the better the odds of rare goods: common (rations, boots), uncommon (pots, kettles), rare (clocks) and very rare (radios). COLLECT when the run is done.
+
+# Markets
+- Sell goods at a market: SELL one kind of good from your pocket, SELL EVERYTHING, or push goods into the crate.
+- Scroll the price board with its arrows or your mouse wheel. Goods you carry are listed first.
+- Prices follow the economy, and one good is in demand each hour for a bonus. Arrows show how prices have moved. Sales are taxed like wages.
 - Every market sale helps the economy a little, and a better economy means higher wages for everyone. Selling privately to other players doesn't move the economy.
-- E picks goods up to carry. Shift+E eats bread or drinks wine.
 
 # Supply train
 - About every 20 minutes a Reich supply train pulls into the station, waits briefly, then carries on down the line.
@@ -122,6 +158,7 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - Picking one puts on that job's clothes and takes its title. Nobody is told. Jobs with several outfits open a model selection: click an outfit to preview it, then Wear This (or double-click).
 - Officers, commanders, the Führer and the Resistance Leader can't be impersonated.
 - You can also type any cover title in the wardrobe. Your own side always sees your faction tag over your head.
+- On the scoreboard you show as your cover. Only your own side and staff see that you're undercover.
 
 # Faction doors
 - Some doors belong to a faction or a Reich unit. Its name shows on the door.
@@ -143,27 +180,35 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - Only the Resistance can see a drop is there.
 - If a member of the Reich searches it first, the drop is confiscated.
 
-#staff Staff commands
-The scoreboard (TAB) has ULX buttons too: click a player for teleport, freeze, jail, gag, kick, ban and wanted. All of these are also in the ULX menu (!menu > Cmds > 42Bros) with descriptions, and as !commands (!train). Who may use each is set per rank in the ULX menu (Groups tab, 42Bros).
+#staff Staff: where to find things
+- Scoreboard (TAB): click a player for Go to, Bring, Return, Spectate, Freeze, Jail, Strip, Slay, God, Cloak, Gag, Mute, Make/Clear wanted, Kick and Ban. Only the ones your rank may use are shown.
+- ULX menu (!menu > Cmds > 42Bros): every server command below, with descriptions. They also work as !commands (!train). The /chat versions work too.
+- Who may use each one is set per rank in the ULX menu (Groups tab, 42Bros). The chat versions follow the same ticks.
+- A player's undercover job shows on the scoreboard for staff, marked UNDERCOVER.
+
+#staff Staff: events, economy and players
 /train - Start the supply train now
-/event - List world events. /event stop ends the running one
-!stopevent - End the running world event
+/event - List world events. /event <id> starts one, /event stop ends the running one (also !stopevent)
 !seteconomy 50 - Set the economy bar (1-110)
 !treasury 5000 - Add money to the Reich treasury (a negative amount takes it away)
 !makewanted <player> <reason> - Make someone wanted by the Reich
 !clearwanted <player> - Clear someone's wanted status
-/factiondoor - Look at a door and set its faction (reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)
-/adddumpster - Place a dumpster where you're looking (saved for this map)
-/removedumpster - Remove the dumpster you're looking at
-/getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
+
+#staff Staff: production
+!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets and every good at any quality (into your pocket or at your crosshair). Also Finish its timer and Remove it for the machine you're looking at. Z undoes a spawn.
 /addmarket - Place a market where you're looking (saved for this map)
 /removemarket - Remove the market you're looking at
 /addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)
 /removeoilsite - Remove the oil site nearest where you're looking, and its derrick
 /oilsites - Show every oil site on this map for a minute
-!prodspawn - Open the production spawner: machines, flour and goods at any quality, plus finish/remove for the machine you're looking at
+rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where a machine's panel sits, then print the line for the config
+
+#staff Staff: map setup
+/factiondoor - Look at a door and set its faction (reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)
+/adddumpster - Place a dumpster where you're looking (saved for this map)
+/removedumpster - Remove the dumpster you're looking at
+/getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
 !testexplosion <damage> <radius> - Set off a test explosion where you're aiming (it does real damage)
-rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where a prop's panel sits, then print the line for the config
 ]] },
 
 }
