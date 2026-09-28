@@ -139,7 +139,8 @@ RP1942.Weapons = {
     mg42        = "mcv_mg43b",           -- MG-34 Belt (the pack has no MG-42)
     stg44       = "mcv_stg44",           -- StG-44
     p38         = "mcv_p38",             -- Walther P38, officer sidearm
-    ppk         = "mcv_ppk",             -- Suppressed Walther PPK, Führer sidearm
+    ppk         = "mcv_ppk",             -- Suppressed Walther PPK
+    luger       = "mcv_luger",           -- Luger P08, Führer sidearm
 
     -- DarkRP built-ins (these exist already)
     arrest      = "arrest_stick",

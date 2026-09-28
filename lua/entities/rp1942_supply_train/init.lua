@@ -117,11 +117,10 @@ function ENT:ShoveAhead(c)
     end
 end
 
-function ENT:StartWheels(c)
-    if self.wheels then self.wheels:Stop() end
-    self.wheels = CreateSound(self, c.wheelSound)
-    self.wheels:SetSoundLevel(c.wheelLevel or 90)
-    self.wheels:Play()
+-- The horn, as a sound at the train's position: heard across the map even by
+-- players the train entity hasn't reached yet
+function ENT:Horn(c)
+    if c.hornSound then sound.Play(c.hornSound, self:WorldSpaceCenter(), c.hornLevel or 140, 100, 1) end
 end
 
 function ENT:Think()
@@ -129,20 +128,13 @@ function ENT:Think()
     local now = CurTime()
     local phase = self:GetPhase()
 
-    -- Horn and wheels on the first think, once clients know the entity exists
-    if not self.started then
-        self.started = true
-        self:EmitSound(c.hornSound, c.hornLevel or 140)
-        self:StartWheels(c)
-    end
-
     if phase == self.ARRIVING or phase == self.DEPARTING then
         local pos, arrived = self:TargetPos()
         self:MoveTo(pos)
         self:ShoveAhead(c)
         if arrived then
-            if self.wheels then self.wheels:FadeOut(1) end
             if phase == self.ARRIVING then
+                if c.hornOnArrive ~= false then self:Horn(c) end
                 self:SetPhaseNow(self.STOPPED)
             else
                 self:Finish()
@@ -150,9 +142,8 @@ function ENT:Think()
         end
 
     elseif phase == self.STOPPED then
-        if now - self:GetPhaseStart() >= (c.stopTime or 20) then
-            if c.hornOnDepart then self:EmitSound(c.hornSound, c.hornLevel or 140) end
-            self:StartWheels(c)
+        if now - self:GetPhaseStart() >= (c.stopTime or 30) then
+            if c.hornOnDepart ~= false then self:Horn(c) end
             self:SetPhaseNow(self.DEPARTING)
         end
 
@@ -309,7 +300,6 @@ function ENT:GiveCrate(ply, c)
 end
 
 function ENT:OnRemove()
-    if self.wheels then self.wheels:Stop() end
     for ply in pairs(self.robbers or {}) do
         if IsValid(ply) then setHold(ply, 0, 0) end
     end

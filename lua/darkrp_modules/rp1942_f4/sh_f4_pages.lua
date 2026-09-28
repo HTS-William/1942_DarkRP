@@ -106,11 +106,14 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - Killing a member of the Reich makes you wanted. A red WANTED tag shows above your name.
 - Robbing the supply train also makes you wanted.
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
+- Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
 
 # Economy and taxes
 - The economy bar at the bottom of the screen shows how the economy is doing. A better economy means higher wages.
 - The Führer sets the tax rates. Taxes come out of your wages and go to the Reich treasury.
+- The Führer can make a Reich payout: the same amount from the treasury to everyone in the factions he picks (F3, Reich payout).
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
+- The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped.
 
 # Production
 - Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.
@@ -157,7 +160,7 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - If you join the Reich or become the Banker, your illegal printers are dismantled. Leaving the Banker job returns the Banking Printers.
 
 # Supply train
-- About every 20 minutes a Reich supply train pulls into the station, waits briefly, then carries on down the line.
+- About every 20 minutes a Reich supply train rumbles in, sounds its horn as it stops at the station, waits 30 seconds, sounds it again and carries on down the line.
 - Anyone outside the Reich can hold E on it to rob a crate. The money goes into your wallet and any weapon into your pocket.
 - The Reich is expected to guard it. Whatever isn't stolen goes to the Reich treasury.
 - Stay off the tracks while it's moving.

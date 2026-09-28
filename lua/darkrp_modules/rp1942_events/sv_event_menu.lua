@@ -26,6 +26,12 @@ function RP1942.openEventMenu(ply)
     local active = RP1942.activeEvent()
     t.running = active and active.id or ""
     t.players = player.GetCount()
+    -- Could each event run automatically right now? (and why not)
+    for id, e in pairs(t.events) do
+        local ev = RP1942.EventList[id]
+        local ok, why = RP1942.canStartEvent(ev)
+        e.ready, e.why = ok == true, why
+    end
     net.Start("RP1942_EventMenu")
     net.WriteString(util.TableToJSON(t))
     net.Send(ply)

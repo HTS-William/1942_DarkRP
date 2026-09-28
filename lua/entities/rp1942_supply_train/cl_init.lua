@@ -54,7 +54,7 @@ local function getLabel()
 
         local status = STATUS[ent:GetPhase()] or ""
         if ent:GetPhase() == ent.STOPPED then
-            local left = math.max(0, (ent:GetConfig().stopTime or 20) - (CurTime() - ent:GetPhaseStart()))
+            local left = math.max(0, (ent:GetConfig().stopTime or 30) - (CurTime() - ent:GetPhaseStart()))
             status = status .. "  " .. string.FormattedTime(left, "%01i:%02i")
         end
         local crates = ent:GetCrates()
@@ -84,3 +84,33 @@ function ENT:DrawTranslucent()
     local label = getLabel()
     if label then label:Draw(self) end
 end
+
+--[[---------------------------------------------------------------------------
+The wheels' rumble, played here (not by the server) so it's already running
+the moment the train appears for you, and for anyone who comes into range
+mid-journey. On while it moves, fading out when it stops or vanishes.
+---------------------------------------------------------------------------]]
+function ENT:UpdateWheels()
+    local c = self:GetConfig()
+    local moving = self:GetPhase() == self.ARRIVING or self:GetPhase() == self.DEPARTING
+    if moving and c.wheelSound then
+        if not (self.wheels and self.wheels:IsPlaying()) then
+            self.wheels = CreateSound(self, c.wheelSound)
+            self.wheels:SetSoundLevel(c.wheelLevel or 90)
+            self.wheels:Play()
+        end
+    elseif self.wheels and self.wheels:IsPlaying() and not self.wheelsFading then
+        self.wheelsFading = true
+        self.wheels:FadeOut(1)
+        timer.Simple(1.1, function() if IsValid(self) then self.wheelsFading = nil end end)
+    end
+end
+
+function ENT:Think()
+    self:UpdateWheels()
+end
+
+function ENT:OnRemove()
+    if self.wheels then self.wheels:Stop() end
+end
+

@@ -57,7 +57,7 @@ RP1942.Printers = {
     -- Upgrades: per-tier effect and the price of each tier (1-5)
     upgrades = {
         -- Output: extra money per print per tier, by printer (bank = Banking Printer)
-        output  = { name = "Output",  desc = "+%d%% money per print, per tier", per = { bank = 0.40, illegal = 0.35 }, cost = { 800, 1600, 2800, 4500, 7000 } },
+        output  = { name = "Output",  desc = "More money per print, per tier", per = { bank = 0.40, illegal = 0.35 }, cost = { 800, 1600, 2800, 4500, 7000 } },
         speed   = { name = "Speed",   desc = "Prints 15 s sooner, per tier",     per = 15,   cost = { 800, 1600, 2800, 4500, 7000 } },
         cooling = { name = "Cooling", desc = "Heats slower; tier 5 stays cool",  per = 0.2,  cost = { 600, 1200, 2200, 3500, 5500 } },
         muffler = { name = "Muffler", desc = "Quieter, but never silent",        per = 0.13, cost = { 300, 600, 1000, 1500, 2200 } },

@@ -127,14 +127,15 @@ local function open(data)
     local minE = number(row("Minutes between events (shortest)", "Min and max the same = a fixed gap"), mins(data.intervalMin), 1)
     local maxE = number(row("Minutes between events (longest)", "Different from the shortest = a random gap"), mins(data.intervalMax), 1)
     local first = number(row("Minutes before the first event", "After a map change or restart"), mins(data.firstDelay), 1)
-    local minP = number(row("Player minimum", "No automatic events below this many online"), data.minPlayers)
+    local minP = number(row("Player minimum", "For every event: changing it sets each event's minimum below too"), data.minPlayers)
     local retry = number(row("Retry after (minutes)", "When nothing could run (too few players). 0 = wait a full gap"), mins(data.retryDelay), 1)
 
     -- Each event
     local evRows = {}
     header("EVENTS")
     for id, e in SortedPairs(data.events or {}) do
-        local r = row(e.name or id, "id: " .. id)
+        local hint = e.ready and "Ready to run automatically" or ("Won't run now: " .. tostring(e.why or "?"))
+        local r = row(e.name or id, hint)
         local startBtn = UI.button(r, "Start now", function()
             net.Start("RP1942_EventMenuAction") net.WriteString("start:" .. id) net.SendToServer()
         end)
@@ -143,8 +144,15 @@ local function open(data)
         startBtn:SetWide(math.floor(100 * s))
         local tog = toggle(r, e.enabled)
         local mp = number(r, e.minPlayers)
+        mp:SetWide(math.floor(56 * s))
         mp:SetTooltip("Player minimum for this event")
-        evRows[id] = { tog = tog, mp = mp }
+        local ml = vgui.Create("DLabel", r)
+        ml:Dock(RIGHT)
+        ml:SetFont("RP1942_F4Small")
+        ml:SetTextColor(C.sub)
+        ml:SetText("min players")
+        ml:SizeToContentsX(6)
+        evRows[id] = { tog = tog, mp = mp, start = e.minPlayers }
     end
     if data.running ~= "" then
         local r = row("Stop the running event", data.running)
@@ -168,7 +176,14 @@ local function open(data)
             events = {},
         }
         if t.intervalMax < t.intervalMin then t.intervalMax = t.intervalMin end
-        for id, r in pairs(evRows) do t.events[id] = { enabled = r.tog.on, minPlayers = r.mp:Value() } end
+        -- A changed global minimum applies to every event, unless that event's
+        -- own box was changed too
+        local globalChanged = t.minPlayers ~= data.minPlayers
+        for id, r in pairs(evRows) do
+            local own = r.mp:Value()
+            if globalChanged and own == r.start then own = t.minPlayers end
+            t.events[id] = { enabled = r.tog.on, minPlayers = own }
+        end
         net.Start("RP1942_EventMenuSave")
         net.WriteString(util.TableToJSON(t))
         net.SendToServer()

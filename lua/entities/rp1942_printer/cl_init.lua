@@ -134,7 +134,10 @@ function ENT:PaintUpgrades(P, w, h, C)
         local tier = self:Tier(id)
         draw.RoundedBox(6, x, y, iw, 104, C.card)
         draw.SimpleText(def.name, "RP1942_PanelHead", x + 16, y + 12, C.text)
-        local desc = id == "output" and string.format(def.desc, math.floor(self:OutputPer() * 100 + 0.5)) or def.desc
+        local desc = def.desc
+        if id == "output" then   -- the rate differs by printer, so it's filled in here
+            desc = "+" .. math.floor(self:OutputPer() * 100 + 0.5) .. "% money per print, per tier"
+        end
         draw.SimpleText(desc, "RP1942_PanelSmall", x + 16, y + 42, C.sub)
         for i = 1, c.tiers do
             draw.RoundedBox(2, x + 16 + (i - 1) * 30, y + 76, 24, 12, i <= tier and (tier >= c.tiers and C.green or C.gold) or C.well)

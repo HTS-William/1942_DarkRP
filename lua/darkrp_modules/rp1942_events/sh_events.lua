@@ -60,8 +60,9 @@ DarkRP.declareChatCommand{
 
 --[[---------------------------------------------------------------------------
 Supply train
-A Reich supply train rolls in from behind the start point, stops at the
-station, blows its horn and carries on down the line. It vanishes when it
+A Reich supply train rolls in from behind the start point (wheels already
+rumbling), blows its horn as it stops at the station, waits, blows it again
+as it leaves and carries on down the line. It vanishes when it
 reaches the end. Anyone outside the Reich can hold E on it to rob a crate
 (money and a weapon, straight into their pockets), which makes them wanted.
 Whatever wasn't stolen by the end goes to the Reich treasury.
@@ -94,8 +95,12 @@ RP1942.Events.train = {
     hornLevel  = 140,        -- how far the horn carries (decibels; 140 is most of a map)
     wheelLevel = 90,
 
-    stopTime     = 20,       -- seconds it waits at the station
-    hornOnDepart = true,     -- blow the horn again when it leaves the station
+    stopTime     = 30,       -- seconds it waits at the station
+    hornOnArrive = true,     -- blow the horn once when it pulls into the station
+    hornOnDepart = true,     -- and once when it leaves
+    -- The wheels' rumble plays from the moment it appears until it stops, and
+    -- again from departure to the end of the line (played by each player's
+    -- game, so anyone who comes into range hears it straight away)
     speed        = 200,      -- units per second at full speed (a running player is ~240)
     accelTime    = 4,        -- seconds to get up to speed / to brake to a stop
     fadeTime     = 0.5,      -- seconds it takes to vanish at the end
