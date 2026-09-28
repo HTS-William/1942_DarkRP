@@ -186,7 +186,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - When you let go, it turns solid again as soon as nobody is standing inside it.
 
 # Dumpsters
-- Hold E on a dumpster to search it for junk, supplies and the odd weapon. Hobos find better things.
+- Hold E on a dumpster to search it for junk, supplies, poor-quality goods you can sell at a market, and the odd weapon. Hobos find better things.
 - Anything useful goes straight into your pocket. If your pocket is full, it lands on the ground.
 - Everyone has their own wait before searching the same dumpster again.
 
@@ -216,8 +216,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
-/saveprod - Look at a machine placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
+!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+/saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
 /saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 /unsaveprod - Look at a saved machine: remove it for good
 /prodsaves - Count the saved machines on this map and highlight them for a minute

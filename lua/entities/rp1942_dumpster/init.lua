@@ -162,6 +162,8 @@ function ENT:CreateItems( ply )
 		and RPExtraTeams[ ply:Team() ] and RPExtraTeams[ ply:Team() ].command == CFG.HoboJob
 
 	local weaponChance = isHobo and CFG.HoboWeaponPercentage or CFG.WeaponPercentage
+	local goodsChance = ( isHobo and CFG.HoboGoodsPercentage or CFG.GoodsPercentage ) or 0
+	local goodsLeft = CFG.MaxGoodsPerSearch or 2
 	local entityChance = isHobo and CFG.HoboEntityPercentage or CFG.EntityPercentage
 	local weaponsLeft = CFG.MaxWeaponsPerSearch or 1
 
@@ -176,6 +178,9 @@ function ENT:CreateItems( ply )
 		if weaponsLeft > 0 and math.random( 1, 100 ) <= weaponChance then
 			weaponsLeft = weaponsLeft - 1
 			name, inPocket = self:SpawnWeapon( ply )
+		elseif goodsLeft > 0 and RP1942 and RP1942.spawnGood and math.random( 1, 100 ) <= goodsChance then
+			goodsLeft = goodsLeft - 1
+			name, inPocket = self:SpawnGood( ply )
 		elseif math.random( 1, 100 ) <= entityChance then
 			name, inPocket = self:SpawnEntity( ply )
 		elseif math.random( 1, 100 ) <= CFG.PropPercentage then
@@ -237,6 +242,35 @@ function ENT:SpawnEntity( ply )
 	ent:SetPos( self:LootPos() )
 	ent:Spawn()
 	return self:GiveLoot( ply, ent, class )
+end
+
+--> A low-quality production good to sell at a market
+local function pickGood()
+	local total, pool = 0, {}
+	for id, w in pairs( CFG.Goods or {} ) do
+		if w > 0 and RP1942.Goods[ id ] then
+			total = total + w
+			pool[ #pool + 1 ] = { id = id, w = w }
+		end
+	end
+	if total <= 0 then return end
+	local roll = math.random() * total
+	for _, p in ipairs( pool ) do
+		roll = roll - p.w
+		if roll <= 0 then return p.id end
+	end
+	return pool[ #pool ].id
+end
+
+function ENT:SpawnGood( ply )
+	local id = pickGood()
+	if not id then return end
+	local q = math.Clamp( CFG.GoodsQuality or 1, 1, 3 )
+	local ent = RP1942.spawnGood( id, self:LootPos(), nil, q )
+	if not IsValid( ent ) then return end
+	if IsValid( ply ) then ent.RP1942_Holder = ply end   --> the market pays whoever found it
+	local _, pocketed = self:GiveLoot( ply, ent, "rp1942_good" )
+	return RP1942.qualityName( q ) .. " " .. RP1942.Goods[ id ].name, pocketed
 end
 
 function ENT:SpawnProp()

@@ -49,6 +49,7 @@ local MACHINES = {
     rp1942_oven = true, rp1942_flour = true, rp1942_wine_barrel = true,
     rp1942_factory = true, rp1942_oil_rig = true, rp1942_market = true,
     rp1942_printer_bank = true, rp1942_printer_illegal = true,
+    rp1942_dumpster = true,
 }
 
 local function aim(ply)
@@ -90,7 +91,7 @@ local function spawnMachine(ply, class)
     if class == "rp1942_oil_rig" then
         ent:Anchor(ent:GetPos(), ent:GetAngles())   -- bolted down where it stands (no oil site used)
         ent:StartPump()
-    elseif class == "rp1942_market" then
+    elseif class == "rp1942_market" or class == "rp1942_dumpster" then
         local phys = ent:GetPhysicsObject()
         if IsValid(phys) then phys:EnableMotion(false) end
     end
@@ -182,6 +183,15 @@ end
 
 local function spawnSaved(id, v)
     if not MACHINES[v.class] then return end
+    -- Already one there (e.g. a dumpster also hardcoded in its config, or
+    -- placed with /adddumpster / /addmarket): don't stack a second
+    local here = Vector(v.x, v.y, v.z)
+    for _, other in ipairs(ents.FindInSphere(here, 32)) do
+        if other:GetClass() == v.class then
+            other.RP1942_SaveId = id
+            return other
+        end
+    end
     local ent = ents.Create(v.class)
     if not IsValid(ent) then return end
     local pos, ang = Vector(v.x, v.y, v.z), Angle(v.p or 0, v.yaw or 0, v.r or 0)
@@ -207,7 +217,7 @@ local function spawnAllSaved()
     if n > 0 then MsgC(Color(160, 220, 120), "[1942] Production: spawned " .. n .. " saved machine(s).\n") end
 end
 hook.Add("InitPostEntity", "RP1942_ProdSaves", function() timer.Simple(1, spawnAllSaved) end)
-hook.Add("PostCleanupMap", "RP1942_ProdSaves", spawnAllSaved)
+hook.Add("PostCleanupMap", "RP1942_ProdSaves", function() timer.Simple(0.5, spawnAllSaved) end)   -- after the dumpsters' and markets' own respawns
 
 -- Add one machine to the save; returns true if it was newly saved
 local function saveOne(ent, list)
@@ -230,7 +240,7 @@ end
 local function lookedAtMachine(ply)
     local ent = aim(ply).Entity
     if IsValid(ent) and MACHINES[ent:GetClass()] then return ent end
-    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, barrel, factory line, derrick, market or printer).")
+    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, barrel, factory line, derrick, market, printer or dumpster).")
 end
 
 function RP1942.prodSave(ply)

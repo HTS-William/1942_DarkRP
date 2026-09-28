@@ -32,6 +32,23 @@ rp1942_dumpsters_config.MaxWeaponsPerSearch = 1 --> Never more than this many gu
 rp1942_dumpsters_config.HoboJob = "hobo"
 rp1942_dumpsters_config.HoboWeaponPercentage = 5
 rp1942_dumpsters_config.HoboEntityPercentage = 20
+--> Production goods (rp1942_production) found in the trash, always at the low
+--> quality below, so players have something to sell at a market. Rolled per
+--> item after the weapon roll, before the entity roll.
+rp1942_dumpsters_config.GoodsPercentage = 12
+rp1942_dumpsters_config.HoboGoodsPercentage = 25
+rp1942_dumpsters_config.MaxGoodsPerSearch = 2
+rp1942_dumpsters_config.GoodsQuality = 1 --> 1 = poor (1 star), 2 = fine, 3 = excellent
+rp1942_dumpsters_config.Goods = { --> good id (RP1942.Goods in sh_production.lua) = how likely, relative to the others
+	rations = 30,
+	boots   = 30,
+	bread   = 15,
+	pot     = 8,
+	kettle  = 7,
+	wine    = 6,
+	clock   = 3,
+	radio   = 1,
+}
 rp1942_dumpsters_config.CooldownTime = 270 --> Seconds before the SAME player can search the SAME dumpster again.
                                           --> Everyone has their own cooldown.
 rp1942_dumpsters_config.PocketLoot = true --> Weapons and entities go straight into the searcher's DarkRP pocket.
@@ -81,6 +98,7 @@ rp1942_dumpsters_config.EntityNames = {
 -->     /adddumpster      places one where you're looking, facing you
 -->     /removedumpster   removes the one you're looking at (and from the save)
 --> Who may use those commands:
+-->     or spawn one from !prodspawn and save it with /saveprod (like any machine)
 rp1942_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() end   --> without ULX; with ULX it's set per rank (Groups > 42Bros)
 
 --> Fixed spawn positions, spawned on every map load. map = "..." limits an

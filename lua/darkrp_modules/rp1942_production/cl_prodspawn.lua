@@ -44,6 +44,7 @@ local MACHINES = {
     { class = "rp1942_market",      name = "Market",       cfg = "market", note = "not saved" },
     { class = "rp1942_printer_bank",    name = "Banking Printer", model = "models/props_c17/consolebox01a.mdl", note = "legal" },
     { class = "rp1942_printer_illegal", name = "Money Printer",   model = "models/props_c17/consolebox01a.mdl", note = "illegal" },
+    { class = "rp1942_dumpster",        name = "Dumpster",        model = "models/props_junk/trashdumpster01a.mdl", note = "frozen" },
 }
 
 local frame
