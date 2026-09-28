@@ -18,6 +18,11 @@ local RARITY_COL = {
     rare = Color(110, 160, 255), ["very rare"] = Color(230, 150, 255),
 }
 
+-- Repaint the panel quickly while the fault lamp flashes
+function ENT:PanelFast()
+    return self:GetState() == self.STATE_HALTED and not self:GetOff()
+end
+
 function ENT:PaintPanel(P, w, h)
     local B = RP1942.Brass
     local c = self:Config()

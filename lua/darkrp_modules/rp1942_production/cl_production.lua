@@ -290,6 +290,58 @@ local function cursor(pos, ang, scale, w, h)
     return x, y
 end
 
+--[[---------------------------------------------------------------------------
+Drawing a panel. Painting a brass plate is hundreds of shapes, so it isn't
+painted every frame: each panel is painted into its own texture (a render
+target) a few times a second, and every frame just shows that texture
+(one quad). It repaints quickly while you're looking at it, so buttons still
+react at once, and slowly otherwise. ENT:PanelFast() returning true (e.g. a
+wheel turning) makes it repaint quickly too.
+
+    rp1942_panel_cache 0     paint every frame instead (to compare)
+    rp1942_panel_idlefps 8   repaints per second when nobody's looking at it
+---------------------------------------------------------------------------]]
+local cacheCvar = CreateClientConVar("rp1942_panel_cache", "1", true, false, "Cache production panels in textures (faster)")
+local idleCvar = CreateClientConVar("rp1942_panel_idlefps", "8", true, false, "Production panel repaints per second when not looked at", 1, 30)
+local LOOK_FPS, FAST_FPS = 30, 20
+
+-- Coverage-correct alpha while painting into a texture (so see-through
+-- touches like the brass sheen don't punch holes in the panel)
+local function blendOn()
+    render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ONE, BLEND_ONE_MINUS_SRC_ALPHA, BLENDFUNC_ADD)
+end
+local function blendOff() render.OverrideBlend(false) end
+
+local textures = {}   -- "index_WxH" -> { rt =, mat = }
+local function panelTexture(ent, w, h)
+    local key = ent:EntIndex() .. "_" .. w .. "x" .. h
+    local t = textures[key]
+    if t then return t end
+    local rt = GetRenderTargetEx("rp1942_panel_" .. key, w, h, RT_SIZE_OFFSCREEN, MATERIAL_RT_DEPTH_NONE,
+        bit.bor(4, 8, 256), 0, IMAGE_FORMAT_RGBA8888)   -- clamp S/T, no mipmaps
+    local mat = CreateMaterial("rp1942_panelmat_" .. key, "UnlitGeneric", {
+        ["$basetexture"] = rt:GetName(), ["$translucent"] = "1", ["$vertexalpha"] = "1", ["$vertexcolor"] = "1",
+    })
+    t = { rt = rt, mat = mat }
+    textures[key] = t
+    return t
+end
+
+local function paint(ent, P, w, h)
+    if not ent.PanelNoBackground then   -- a panel that draws its own shape (e.g. a brass plate) skips this
+        surface.SetDrawColor(COL.bg)
+        surface.DrawRect(0, 0, w, h)
+    end
+    local ok, err = pcall(ent.PaintPanel, ent, P, w, h)
+    if P.cx then   -- a small ring where you're looking
+        surface.DrawCircle(P.cx, P.cy, 6, COL.text.r, COL.text.g, COL.text.b, 200)
+    end
+    if not ok and err ~= ent._panelError then
+        ent._panelError = err
+        ErrorNoHalt("[1942] Panel error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
+    end
+end
+
 function RP1942.drawPanel(ent)
     if not ent.PanelSize or not ent.PaintPanel then return end
     local pos, ang, scale, mounted = placement(ent)
@@ -300,29 +352,47 @@ function RP1942.drawPanel(ent)
     if dist > maxDist then return end
     local alpha = math.Clamp((maxDist - dist) / 80, 0, 1)
     local w, h = ent.PanelSize.w, ent.PanelSize.h
+    local cx, cy = cursor(pos, ang, scale, w, h)
 
-    local P = setmetatable({ w = w, h = h, ent = ent }, Painter)
-    P.cx, P.cy = cursor(pos, ang, scale, w, h)
-
-    cam.Start3D2D(pos, ang, scale)
-        surface.SetAlphaMultiplier(alpha)
-        if not ent.PanelNoBackground then   -- a panel that draws its own shape (e.g. a brass plate) skips this
-            surface.SetDrawColor(COL.bg)
-            surface.DrawRect(0, 0, w, h)
+    if not cacheCvar:GetBool() then
+        -- The old way: paint it all, every frame
+        local P = setmetatable({ w = w, h = h, ent = ent, cx = cx, cy = cy }, Painter)
+        cam.Start3D2D(pos, ang, scale)
+            surface.SetAlphaMultiplier(alpha)
+            paint(ent, P, w, h)
+            surface.SetAlphaMultiplier(1)
+        cam.End3D2D()
+        ent._panelHover = P.hover
+    else
+        -- Repaint the texture when it's due
+        local now = RealTime()
+        local fps = cx and LOOK_FPS or ((ent.PanelFast and ent:PanelFast()) and FAST_FPS or idleCvar:GetFloat())
+        local tex = panelTexture(ent, w, h)
+        if not ent._panelPainted or now - ent._panelPainted >= 1 / fps or ent._panelTex ~= tex then
+            ent._panelPainted, ent._panelTex = now, tex
+            local P = setmetatable({ w = w, h = h, ent = ent, cx = cx, cy = cy }, Painter)
+            render.PushRenderTarget(tex.rt)
+                render.Clear(0, 0, 0, 0, true, true)
+                cam.Start2D()
+                    blendOn()
+                    paint(ent, P, w, h)
+                    blendOff()
+                cam.End2D()
+            render.PopRenderTarget()
+            ent._panelHover = P.hover
         end
-        local ok, err = pcall(ent.PaintPanel, ent, P, w, h)
-        if P.cx then   -- a small ring where you're looking
-            surface.DrawCircle(P.cx, P.cy, 6, COL.text.r, COL.text.g, COL.text.b, 200)
-        end
-        surface.SetAlphaMultiplier(1)
-    cam.End3D2D()
-
-    if not ok and err ~= ent._panelError then
-        ent._panelError = err
-        ErrorNoHalt("[1942] Panel error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
+        -- Show it: one textured quad
+        cam.Start3D2D(pos, ang, scale)
+            surface.SetMaterial(tex.mat)
+            surface.SetDrawColor(255, 255, 255, 255 * alpha)
+            surface.DrawTexturedRect(0, 0, w, h)
+        cam.End3D2D()
     end
-    if P.hover then RP1942.PanelHover = { ent = ent, id = P.hover, t = RealTime() } end
-    if P.cx then RP1942.PanelLook = { ent = ent, t = RealTime() } end   -- the crosshair is somewhere on it
+
+    if cx then
+        RP1942.PanelLook = { ent = ent, t = RealTime() }   -- the crosshair is somewhere on it
+        if ent._panelHover then RP1942.PanelHover = { ent = ent, id = ent._panelHover, t = RealTime() } end
+    end
 end
 
 -- E while a button is highlighted presses it (and doesn't also "use" the prop).

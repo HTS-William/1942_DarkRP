@@ -53,6 +53,11 @@ local function valveWheel(P, ent, cx, cy, r, enabled)
     return hot
 end
 
+-- Repaint the panel quickly while the wheel turns or the alarm flashes
+function ENT:PanelFast()
+    return self:WheelTurning() or (not self:GetOff() and self:Alarming())
+end
+
 function ENT:PaintPanel(P, w, h)
     local B = RP1942.Brass
     local c = self:Config()
