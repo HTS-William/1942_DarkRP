@@ -535,7 +535,8 @@ local STYLES = {
     -- Martial law: a red banner (red body, darker red rules, cream text)
     lockdown = {
         flash = Color(120, 0, 0, 70), bg = Color(128, 18, 16), rule = Color(70, 8, 8), titleCol = Color(250, 238, 220),
-        titleFont = "RP1942_ElAlert",   -- big and bold pulse = Color(255, 190, 170), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
+        titleFont = "RP1942_ElAlert",   -- big and bold
+        pulse = Color(255, 190, 170), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
     },
     lifted = {
         bg = Color(96, 16, 14), rule = Color(60, 8, 8), titleCol = Color(250, 238, 220), titleFont = "RP1942_ElAlertSub",
@@ -643,8 +644,9 @@ local function drawBanner(banner, y0)
     local w = math.min(sw * 0.9, 1150 * s)
     local pad, ruleH = math.floor(18 * s), math.floor(6 * s)
     local titleFont = st.titleFont or "RP1942_ElAlert"
-    banner.lines = banner.lines or wrap(banner.body, st.bodyFont, w - pad * 4, 4)
-    local titleH, bodyH, footH = fontH(titleFont), fontH(st.bodyFont), fontH("RP1942_ElSmall")
+    local bodyFont = st.bodyFont or "RP1942_ElAlertMsg"
+    banner.lines = banner.lines or wrap(banner.body or "", bodyFont, w - pad * 4, 4)
+    local titleH, bodyH, footH = fontH(titleFont), fontH(bodyFont), fontH("RP1942_ElSmall")
     local h = ruleH + pad + titleH + math.floor(8 * s) + #banner.lines * bodyH
         + (banner.footer and (math.floor(8 * s) + footH) or 0) + pad + ruleH
 
@@ -665,15 +667,16 @@ local function drawBanner(banner, y0)
 
     -- The title pulses for the first few seconds, then settles
     local pulse = math.max(0, 1 - t / 4) * (0.5 + 0.5 * math.sin(t * 10))
-    local titleCol = mix(st.titleCol or COL.text, st.pulse, pulse)
+    local titleCol = mix(st.titleCol or COL.text, st.pulse or COL.text, pulse)
     titleCol.a = a
     local cy = y + ruleH + pad
     draw.SimpleText(fit(banner.title, titleFont, w - pad * 2), titleFont, sw / 2, cy, titleCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     cy = cy + titleH + math.floor(8 * s)
 
-    local bodyCol = Color(st.bodyCol.r, st.bodyCol.g, st.bodyCol.b, a)
+    local bc = st.bodyCol or COL.text
+    local bodyCol = Color(bc.r, bc.g, bc.b, a)
     for _, line in ipairs(banner.lines) do
-        draw.SimpleText(line, st.bodyFont, sw / 2, cy, bodyCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        draw.SimpleText(line, bodyFont, sw / 2, cy, bodyCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
         cy = cy + bodyH
     end
     if banner.footer then
