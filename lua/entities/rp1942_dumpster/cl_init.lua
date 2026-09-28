@@ -16,13 +16,13 @@ the dumpster still draws, just without a label.
 local DumpsterLabel
 
 --> /getdumpsterpos: the code for config.lua, onto the clipboard
-net.Receive( "tupac_dumpsters_clipboard", function()
+net.Receive( "rp1942_dumpsters_clipboard", function()
 	SetClipboardText( net.ReadString() )
 end )
 
 --> This player's own cooldowns, sent by the server: [dumpster] = CurTime() when ready
 local readyAt = setmetatable( {}, { __mode = "k" } )
-net.Receive( "tupac_dumpsters_cooldown", function()
+net.Receive( "rp1942_dumpsters_cooldown", function()
 	local ent, t = net.ReadEntity(), net.ReadFloat()
 	if IsValid( ent ) then readyAt[ ent ] = t end
 end )
@@ -46,7 +46,7 @@ end
 local function getLabel()
 	if DumpsterLabel or not ( RP1942 and RP1942.Floater ) then return DumpsterLabel end
 
-	local cfg = tupac_dumpsters_config or {}
+	local cfg = rp1942_dumpsters_config or {}
 	DumpsterLabel = RP1942.Floater:extend{
 		scale    = 0.1,
 		maxDist  = cfg.LabelDistance or 300,      --> not drawn beyond this (~52 units = 1 m)
@@ -61,7 +61,7 @@ local function getLabel()
 
 	function DumpsterLabel:Paint( ent )
 		local C = colors()
-		local drop = ent:GetDeadDrop() > 0 and tupac_dumpsters_isDropper( LocalPlayer() )
+		local drop = ent:GetDeadDrop() > 0 and rp1942_dumpsters_isDropper( LocalPlayer() )
 		local w, h = 300, drop and 122 or 88
 		local x, y = -w / 2, -h
 

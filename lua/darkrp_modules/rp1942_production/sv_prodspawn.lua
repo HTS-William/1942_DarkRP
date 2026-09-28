@@ -10,8 +10,16 @@ the machine you're looking at (finish its timer, remove it).
               ULX, superadmins
 
 Everything spawns at your crosshair, owned by you, and can be undone with Z.
-Markets spawned here are NOT saved (use /addmarket for that), and derricks
-spawned here stand where you aim, not on an oil site.
+Derricks spawned here stand where you aim, not on an oil site.
+
+Making placed machines permanent (saved per map in
+data/rp1942/prodsaves_<map>.json, respawned on every map start and cleanup,
+frozen in place and owned by nobody, so any player can use them):
+    /saveprod      the machine you're looking at
+    /saveprodall   every machine you placed from this menu and haven't saved
+    /unsaveprod    the saved machine you're looking at: removed, and from the save
+    /prodsaves     how many are saved on this map (and highlights them for a minute)
+The menu's TOOLS row has buttons for the first three.
 The client half is cl_prodspawn.lua.
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_ProdSpawnOpen")
@@ -77,6 +85,7 @@ local function spawnMachine(ply, class)
     -- Stand it on what you're aiming at
     if tr.HitNormal.z > 0.5 then ent:SetPos(tr.HitPos - Vector(0, 0, ent:OBBMins().z) + Vector(0, 0, 1)) end
     own(ent, ply)
+    ent.RP1942_ProdSpawnedBy = ply
 
     if class == "rp1942_oil_rig" then
         ent:Anchor(ent:GetPos(), ent:GetAngles())   -- bolted down where it stands (no oil site used)
@@ -141,11 +150,152 @@ local function remove(ply)
     local ent = aim(ply).Entity
     if IsValid(ent) and (MACHINES[ent:GetClass()] or ent:GetClass() == "rp1942_good") then
         ServerLog(string.format("[1942] %s removed %s (production spawner)\n", ply:Nick(), ent:GetClass()))
+        if ent.RP1942_SaveId then
+            DarkRP.notify(ply, 0, 5, "That one was saved: it's gone for now but comes back on restart. Use /unsaveprod to remove it for good.")
+        end
         ent:Remove()
     else
         DarkRP.notify(ply, 1, 4, "Look at a production machine or a good.")
     end
 end
+
+--[[---------------------------------------------------------------------------
+Permanent machines
+---------------------------------------------------------------------------]]
+util.AddNetworkString("RP1942_ProdSaves")
+
+local SAVE_DIR = "rp1942"
+local function saveFile() return SAVE_DIR .. "/prodsaves_" .. game.GetMap() .. ".json" end
+local function loadSaves()
+    local raw = file.Read(saveFile(), "DATA")
+    return raw and util.JSONToTable(raw) or {}
+end
+local function writeSaves(list)
+    file.CreateDir(SAVE_DIR)
+    file.Write(saveFile(), util.TableToJSON(list, true))
+end
+
+local function freeze(ent)
+    local phys = ent:GetPhysicsObject()
+    if IsValid(phys) then phys:EnableMotion(false) phys:Sleep() end
+end
+
+local function spawnSaved(id, v)
+    if not MACHINES[v.class] then return end
+    local ent = ents.Create(v.class)
+    if not IsValid(ent) then return end
+    local pos, ang = Vector(v.x, v.y, v.z), Angle(v.p or 0, v.yaw or 0, v.r or 0)
+    ent:SetPos(pos)
+    ent:SetAngles(ang)
+    ent:Spawn()
+    ent:Activate()
+    ent.RP1942_SaveId = id
+    if v.class == "rp1942_oil_rig" then
+        ent:Anchor(pos, ang)
+        ent:StartPump()
+    else
+        freeze(ent)
+    end
+    return ent
+end
+
+local function spawnAllSaved()
+    local n = 0
+    for id, v in pairs(loadSaves()) do
+        if IsValid(spawnSaved(id, v)) then n = n + 1 end
+    end
+    if n > 0 then MsgC(Color(160, 220, 120), "[1942] Production: spawned " .. n .. " saved machine(s).\n") end
+end
+hook.Add("InitPostEntity", "RP1942_ProdSaves", function() timer.Simple(1, spawnAllSaved) end)
+hook.Add("PostCleanupMap", "RP1942_ProdSaves", spawnAllSaved)
+
+-- Add one machine to the save; returns true if it was newly saved
+local function saveOne(ent, list)
+    if ent.RP1942_SaveId and list[ent.RP1942_SaveId] then return false end
+    local id = tostring(os.time()) .. "_" .. ent:EntIndex() .. "_" .. math.random(1000, 9999)
+    local pos, ang = ent:GetPos(), ent:GetAngles()
+    list[id] = { class = ent:GetClass(), x = pos.x, y = pos.y, z = pos.z, p = ang.p, yaw = ang.y, r = ang.r }
+    ent.RP1942_SaveId = id
+    ent.RP1942_ProdSpawnedBy = nil
+    if ent:GetClass() == "rp1942_oil_rig" then ent:Anchor(pos, ang) else freeze(ent) end
+    return true
+end
+
+local function saveCan(ply)
+    if RP1942.staffCan(ply, "ulx saveprod", function(p) return p:IsSuperAdmin() end) then return true end
+    DarkRP.notify(ply, 1, 4, "You aren't allowed to save production machines.")
+    return false
+end
+
+local function lookedAtMachine(ply)
+    local ent = aim(ply).Entity
+    if IsValid(ent) and MACHINES[ent:GetClass()] then return ent end
+    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, barrel, factory line, derrick, market or printer).")
+end
+
+function RP1942.prodSave(ply)
+    if not saveCan(ply) then return end
+    local ent = lookedAtMachine(ply)
+    if not ent then return end
+    local list = loadSaves()
+    if not saveOne(ent, list) then return DarkRP.notify(ply, 1, 4, "That " .. (ent.PrintName or "machine") .. " is already saved.") end
+    writeSaves(list)
+    DarkRP.notify(ply, 0, 5, (ent.PrintName or "Machine") .. " saved: it will be here after every restart. (/unsaveprod to undo)")
+    ServerLog(string.format("[1942] %s saved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
+end
+
+function RP1942.prodSaveAll(ply)
+    if not saveCan(ply) then return end
+    local list, n = loadSaves(), 0
+    for _, ent in ipairs(ents.GetAll()) do
+        if ent.RP1942_ProdSpawnedBy == ply and MACHINES[ent:GetClass()] and saveOne(ent, list) then n = n + 1 end
+    end
+    if n == 0 then return DarkRP.notify(ply, 1, 4, "You have no unsaved machines placed from the production spawner.") end
+    writeSaves(list)
+    DarkRP.notify(ply, 0, 5, "Saved " .. n .. " machine(s) for this map.")
+    ServerLog(string.format("[1942] %s saved %d production machine(s)\n", ply:Nick(), n))
+end
+
+function RP1942.prodUnsave(ply)
+    if not saveCan(ply) then return end
+    local ent = lookedAtMachine(ply)
+    if not ent then return end
+    local list = loadSaves()
+    if not (ent.RP1942_SaveId and list[ent.RP1942_SaveId]) then
+        return DarkRP.notify(ply, 1, 4, "That " .. (ent.PrintName or "machine") .. " isn't saved. (Remove it from the spawner's tools, or Z)")
+    end
+    list[ent.RP1942_SaveId] = nil
+    writeSaves(list)
+    ServerLog(string.format("[1942] %s unsaved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
+    ent:Remove()
+    DarkRP.notify(ply, 0, 5, "Removed, and from this map's save.")
+end
+
+function RP1942.prodSaves(ply)
+    if not saveCan(ply) then return end
+    local counts, total, spots = {}, 0, {}
+    for _, v in pairs(loadSaves()) do
+        counts[v.class] = (counts[v.class] or 0) + 1
+        total = total + 1
+        spots[#spots + 1] = Vector(v.x, v.y, v.z)
+    end
+    if total == 0 then return DarkRP.notify(ply, 0, 5, "No saved machines on this map yet. Look at one and use /saveprod.") end
+    local parts = {}
+    for class, n in SortedPairs(counts) do
+        local stored = scripted_ents.GetStored(class)
+        parts[#parts + 1] = n .. "x " .. ((stored and stored.t and stored.t.PrintName) or class)
+    end
+    DarkRP.notify(ply, 0, 8, total .. " saved machine(s): " .. table.concat(parts, ", ") .. ". Highlighted for a minute.")
+    net.Start("RP1942_ProdSaves")
+    net.WriteUInt(math.min(#spots, 255), 8)
+    for i = 1, math.min(#spots, 255) do net.WriteVector(spots[i]) end
+    net.Send(ply)
+end
+
+DarkRP.defineChatCommand("saveprod", function(ply) RP1942.prodSave(ply) return "" end)
+DarkRP.defineChatCommand("saveprodall", function(ply) RP1942.prodSaveAll(ply) return "" end)
+DarkRP.defineChatCommand("unsaveprod", function(ply) RP1942.prodUnsave(ply) return "" end)
+DarkRP.defineChatCommand("prodsaves", function(ply) RP1942.prodSaves(ply) return "" end)
 
 net.Receive("RP1942_ProdSpawn", function(_, ply)
     if not canSpawn(ply) then return end
@@ -166,5 +316,11 @@ net.Receive("RP1942_ProdSpawn", function(_, ply)
         finish(ply)
     elseif kind == "remove" then
         remove(ply)
+    elseif kind == "save" then
+        RP1942.prodSave(ply)
+    elseif kind == "saveall" then
+        RP1942.prodSaveAll(ply)
+    elseif kind == "unsave" then
+        RP1942.prodUnsave(ply)
     end
 end)

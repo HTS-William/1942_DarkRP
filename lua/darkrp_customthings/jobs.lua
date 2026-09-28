@@ -64,6 +64,7 @@ job{} wraps DarkRP.createJob:
   - turns vip / whitelisted / requires / a job's own customCheck into ONE
     customCheck, with a CustomCheckFailMsg that says which rule failed
     (see RP1942.jobGateFailure in rp1942_core/sh_factions.lua)
+  - makes getting a real Reich job (Recruit -> Rifleman, or from outside) take a vote (rp1942_reichjobs)
 ---------------------------------------------------------------------------]]
 local function job(tbl)
     local name = tbl.name
@@ -77,6 +78,14 @@ local function job(tbl)
     if tbl.vip or tbl.whitelisted or tbl.requires or tbl.subOf or tbl.gate then
         tbl.customCheck = function(ply) return RP1942.jobGateFailure(ply, tbl) == nil end
         tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
+    end
+
+    -- Reich jobs: Recruit -> Rifleman (or joining from outside) takes a vote;
+    -- recruits and moves inside the Reich don't
+    -- (RP1942.reichJobNeedsVote and its exemptions: rp1942_reichjobs/sh_reichjobs.lua)
+    if tbl.faction == "reich" and not tbl.vote and not tbl.RequiresVote and RP1942.reichJobNeedsVote then
+        local command = tbl.command
+        tbl.RequiresVote = function(ply) return RP1942.reichJobNeedsVote(ply, command) end
     end
 
     -- Jobs with a menu open it on F3 (DarkRP calls job.ShowSpare1 when F3 is pressed).

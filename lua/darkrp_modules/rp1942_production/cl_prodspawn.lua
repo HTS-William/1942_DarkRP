@@ -185,14 +185,13 @@ local function open()
 
     ---------------------------------------------------------------- tools
     header("TOOLS  ·  ON WHAT YOU'RE LOOKING AT")
-    local tools = scroll:Add("DPanel")
+    local tools = scroll:Add("DIconLayout")   -- wraps onto a second row on narrow screens
     tools:Dock(TOP)
-    tools:SetTall(40)
-    tools.Paint = nil
+    tools:SetSpaceX(8)
+    tools:SetSpaceY(8)
     local function tool(label, kind)
         local b = tools:Add("DButton")
-        b:Dock(LEFT)
-        b:DockMargin(0, 0, 8, 0)
+        b:SetTall(40)
         b:SetFont("RP1942_PSBody")
         b:SetText(label)
         b:SetTextColor(C.text)
@@ -202,6 +201,9 @@ local function open()
     end
     tool("Finish its timer now", "finish")
     tool("Remove it", "remove")
+    tool("Save it (permanent)", "save")
+    tool("Unsave it", "unsave")
+    tool("Save all I placed", "saveall")
 
     local note = scroll:Add("DLabel")
     note:Dock(TOP)
@@ -211,7 +213,27 @@ local function open()
     note:SetWrap(true)
     note:SetAutoStretchVertical(true)
     note:SetText("Finish ends the bake / ferment / tank / run right away, with the grade it had earned so far (and switches it on if it was off). "
-        .. "Markets spawned here aren't saved: use /addmarket for a permanent one. Derricks spawned here don't use an oil site.")
+        .. "Save makes a machine permanent for this map: it comes back frozen in place and owned by nobody after every restart (anyone can use it; "
+        .. "nobody can upgrade a saved printer). Unsave removes it for good. /prodsaves shows them all. Derricks spawned here don't use an oil site.")
 end
 
 net.Receive("RP1942_ProdSpawnOpen", open)
+
+-- /prodsaves: highlight every saved machine for a minute
+local savedSpots, savedUntil = {}, 0
+net.Receive("RP1942_ProdSaves", function()
+    savedSpots = {}
+    for i = 1, net.ReadUInt(8) do savedSpots[i] = net.ReadVector() end
+    savedUntil = CurTime() + 60
+end)
+hook.Add("HUDPaint", "RP1942_ProdSaves", function()
+    if CurTime() > savedUntil then return end
+    local C = colors()
+    for _, pos in ipairs(savedSpots) do
+        local sp = (pos + Vector(0, 0, 40)):ToScreen()
+        if sp.visible then
+            draw.RoundedBox(4, sp.x - 5, sp.y - 5, 10, 10, C.gold)
+            draw.SimpleText("SAVED  " .. math.floor(LocalPlayer():GetPos():Distance(pos) / 52.5) .. " m", "RP1942_PSBody", sp.x, sp.y - 8, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+        end
+    end
+end)

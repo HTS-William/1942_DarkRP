@@ -101,6 +101,8 @@ Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard.
 Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job menu once you hold the base job.
+Joining the Reich - Anyone can enlist as a Recruit. Getting your rifle (Recruit to Rifleman) needs a vote of the server, and so does taking any other Reich job from outside the Reich (F4 shows Call a vote; in chat /vote plus the job's command). Once you hold a real Reich job, moving up or across is instant. The Führer is elected, and the Gestapo joins quietly, so neither is voted.
+Unit music - Each unit has its own music that plays for you (only you) when you get your rifle or a higher job (not for Recruits). rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
 
 # Wanted by the Reich
 - Killing a member of the Reich makes you wanted. A red WANTED tag shows above your name.
@@ -214,7 +216,11 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers and every good at any quality (into your pocket or at your crosshair). Also Finish its timer and Remove it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+/saveprod - Look at a machine placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
+/saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
+/unsaveprod - Look at a saved machine: remove it for good
+/prodsaves - Count the saved machines on this map and highlight them for a minute
 /addmarket - Place a market where you're looking (saved for this map)
 /removemarket - Remove the market you're looking at
 /addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)

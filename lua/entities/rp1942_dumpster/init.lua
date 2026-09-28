@@ -7,10 +7,10 @@ AddCSLuaFile( "config.lua" )
 include( "shared.lua" )
 include( "config.lua" )
 
-util.AddNetworkString( "tupac_dumpsters_cooldown" )
-util.AddNetworkString( "tupac_dumpsters_clipboard" )
+util.AddNetworkString( "rp1942_dumpsters_cooldown" )
+util.AddNetworkString( "rp1942_dumpsters_clipboard" )
 
-local CFG = tupac_dumpsters_config
+local CFG = rp1942_dumpsters_config
 
 function ENT:Initialize()
 	--> Model
@@ -41,7 +41,7 @@ function ENT:StartCooldown( ply )
 	local readyAt = CurTime() + CFG.CooldownTime
 	self.readyAt[ ply:SteamID64() ] = readyAt
 	--> Only this player's label needs to know
-	net.Start( "tupac_dumpsters_cooldown" )
+	net.Start( "rp1942_dumpsters_cooldown" )
 		net.WriteEntity( self )
 		net.WriteFloat( readyAt )
 	net.Send( ply )
@@ -67,7 +67,7 @@ function ENT:Use( activator, caller )
 	if self.searchers[ ply ] then return end
 
 	--> On cooldown: only a Resistance member collecting a dead drop gets through
-	local collecting = self:HasDrop() and tupac_dumpsters_isDropper( ply )
+	local collecting = self:HasDrop() and rp1942_dumpsters_isDropper( ply )
 	if self:CooldownLeft( ply ) > 0 and not collecting then
 		DarkRP.notify( ply, 1, 4, CFG.CooldownMsg )
 		return
@@ -119,7 +119,7 @@ end
 function ENT:FinishSearch( ply )
 	--> A dead drop is collected (Resistance) or confiscated (Reich) first
 	if self:HasDrop() then
-		if tupac_dumpsters_isDropper( ply ) then
+		if rp1942_dumpsters_isDropper( ply ) then
 			self:CollectDrop( ply )
 			--> Collecting while on cooldown is free: no loot, no new cooldown
 			if self:CooldownLeft( ply ) > 0 then return end
@@ -167,7 +167,7 @@ function ENT:CreateItems( ply )
 
 	--> Per-entity timer name, so searches on different dumpsters never cancel each other.
 	--> Items come out 0.2 s apart so props don't spawn inside each other.
-	local spawnTimer = "tupac_dumpsters_spawn_" .. self:EntIndex()
+	local spawnTimer = "rp1942_dumpsters_spawn_" .. self:EntIndex()
 	local count = math.random( CFG.MinItemsToCreate, CFG.MaxItemsToCreate )
 	local done, pocketed, dropped = 0, {}, {}
 	timer.Create( spawnTimer, 0.2, count, function()
@@ -231,7 +231,7 @@ function ENT:SpawnEntity( ply )
 	local class = table.Random( CFG.Entities )
 	local ent = ents.Create( class )
 	if not IsValid( ent ) then
-		MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in tupac_dumpsters_config.Entities isn't a valid entity class - check the spelling in config.lua.\n" )
+		MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in rp1942_dumpsters_config.Entities isn't a valid entity class - check the spelling in config.lua.\n" )
 		return
 	end
 	ent:SetPos( self:LootPos() )
@@ -321,7 +321,7 @@ end
 
 local function deadDrop( ply, args )
 	local dd = CFG.DeadDrops
-	if not tupac_dumpsters_isDropper( ply ) then
+	if not rp1942_dumpsters_isDropper( ply ) then
 		DarkRP.notify( ply, 1, 4, "Only the Resistance can leave dead drops." )
 		return ""
 	end
@@ -416,7 +416,7 @@ local function nearFixed( pos, fixed )
 	return false
 end
 
-function spawn_tupac_dumpsters()
+function spawn_rp1942_dumpsters()
 	local map, fixed = game.GetMap(), {}
 	for _, v in pairs( get_dumpsters_spawn_pos() ) do
 		if not v.map or v.map == map then   --> no map = every map
@@ -446,10 +446,10 @@ AddSpawnPos table. (Saved ones that are now hardcoded won't spawn twice.)
 ---------------------------------------------------------------------------]]
 local function fmt( n ) return string.format( "%.2f", n ) end
 
-function tupac_dumpsters_positionsCode()
+function rp1942_dumpsters_positionsCode()
 	local map = game.GetMap()
 	local lines, kept, count = {}, {}, 0
-	lines[ #lines + 1 ] = "tupac_dumpsters_config.AddSpawnPos = {"
+	lines[ #lines + 1 ] = "rp1942_dumpsters_config.AddSpawnPos = {"
 	--> Entries for other maps (and every-map ones), unchanged
 	for _, v in ipairs( get_dumpsters_spawn_pos() ) do
 		if v.map ~= map then
@@ -474,8 +474,8 @@ end
 
 
 
-hook.Add( "InitPostEntity", "spawn_dumpsters", spawn_tupac_dumpsters )
-hook.Add( "PostCleanupMap", "spawn_dumpsters", spawn_tupac_dumpsters )   --> admin map cleanups don't delete them for good
+hook.Add( "InitPostEntity", "spawn_dumpsters", spawn_rp1942_dumpsters )
+hook.Add( "PostCleanupMap", "spawn_dumpsters", spawn_rp1942_dumpsters )   --> admin map cleanups don't delete them for good
 
 local function allowed( ply, access )
 	if RP1942 and RP1942.staffCan then
@@ -535,9 +535,9 @@ end )
 
 DarkRP.defineChatCommand( "getdumpsterpos", function( ply )
 	if not allowed( ply, "ulx getdumpsterpos" ) then return "" end
-	local code, count = tupac_dumpsters_positionsCode()
+	local code, count = rp1942_dumpsters_positionsCode()
 	for line in string.gmatch( code .. "\n", "(.-)\n" ) do ply:PrintMessage( HUD_PRINTCONSOLE, line ) end
-	net.Start( "tupac_dumpsters_clipboard" )
+	net.Start( "rp1942_dumpsters_clipboard" )
 	net.WriteString( code )
 	net.Send( ply )
 	DarkRP.notify( ply, 0, 8, count .. " dumpster positions copied to your clipboard (and printed in your console). Paste them over AddSpawnPos in rp1942_dumpster/config.lua." )
@@ -545,7 +545,7 @@ DarkRP.defineChatCommand( "getdumpsterpos", function( ply )
 end )
 
 function ENT:OnRemove()
-	timer.Remove( "tupac_dumpsters_spawn_" .. self:EntIndex() )
+	timer.Remove( "rp1942_dumpsters_spawn_" .. self:EntIndex() )
 	for ply in pairs( self.searchers or {} ) do
 		if IsValid( ply ) then setHold( ply, 0, 0 ) end
 	end
@@ -562,14 +562,14 @@ Weapons/Entities so a bad classname shows up as a clear warning in console
 at boot, instead of an ugly "Tried to use a NULL entity!" the first time a
 player actually uses a dumpster and rolls that specific class.
 ---------------------------------------------------------------------------]]
-hook.Add( "InitPostEntity", "tupac_dumpsters_sanity_check", function()
+hook.Add( "InitPostEntity", "rp1942_dumpsters_sanity_check", function()
 	local function checkList( list, label )
 		for _, class in ipairs( list ) do
 			local e = ents.Create( class )
 			if IsValid( e ) then
 				e:Remove()
 			else
-				MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in tupac_dumpsters_config.", label, " is not a valid class - it will silently fail to spawn in-game.\n" )
+				MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in rp1942_dumpsters_config.", label, " is not a valid class - it will silently fail to spawn in-game.\n" )
 			end
 		end
 	end

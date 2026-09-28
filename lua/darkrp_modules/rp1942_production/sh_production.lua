@@ -283,6 +283,27 @@ DarkRP.declareChatCommand{
 }
 
 DarkRP.declareChatCommand{
+    command     = "saveprod",
+    description = "Staff: save the production machine you're looking at, permanently for this map",
+    delay       = 1,
+}
+DarkRP.declareChatCommand{
+    command     = "saveprodall",
+    description = "Staff: save every machine you placed from the production spawner, permanently for this map",
+    delay       = 1,
+}
+DarkRP.declareChatCommand{
+    command     = "unsaveprod",
+    description = "Staff: remove the saved machine you're looking at, and from the save",
+    delay       = 1,
+}
+DarkRP.declareChatCommand{
+    command     = "prodsaves",
+    description = "Staff: count and highlight the saved machines on this map",
+    delay       = 1,
+}
+
+DarkRP.declareChatCommand{
     command     = "addoilsite",
     description = "Admin: mark an oil site where you're looking (derricks are built there; saved for this map)",
     delay       = 1,

@@ -14,8 +14,8 @@ function ENT:SetupDataTables()
 end
 
 --> Can this player leave / collect dead drops?
-function tupac_dumpsters_isDropper( ply )
-	local dd = tupac_dumpsters_config.DeadDrops
+function rp1942_dumpsters_isDropper( ply )
+	local dd = rp1942_dumpsters_config.DeadDrops
 	if not ( dd and dd.enabled ) or not IsValid( ply ) then return false end
 	return RP1942 and RP1942.getFaction and RP1942.getFaction( ply ) == dd.faction
 end

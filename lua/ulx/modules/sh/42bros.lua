@@ -202,13 +202,18 @@ lookAt("addmarket", ULib.ACCESS_SUPERADMIN, "Look at the floor: places a market 
 lookAt("removemarket", ULib.ACCESS_SUPERADMIN, "Look at a market: removes it, and from this map's save.")
 function ulx.rp1942getdumpsterpos(ply)
     if not IsValid(ply) then
-        if tupac_dumpsters_positionsCode then print((tupac_dumpsters_positionsCode())) end
+        if rp1942_dumpsters_positionsCode then print((rp1942_dumpsters_positionsCode())) end
         return
     end
     if darkrpCommand(ply, "getdumpsterpos") then ulx.fancyLogAdmin(ply, true, "#A copied the dumpster positions") end
 end
 register("getdumpsterpos", ulx.rp1942getdumpsterpos, "!getdumpsterpos", ULib.ACCESS_SUPERADMIN,
     "Copies every dumpster on this map to your clipboard as code for rp1942_dumpster/config.lua (AddSpawnPos), to hardcode them. Also printed in your console (or the server console).")
+
+lookAt("saveprod", ULib.ACCESS_SUPERADMIN, "Look at a production machine (oven, flour, barrel, factory line, derrick, market or printer): saves it for this map. It comes back after every restart and cleanup, frozen in place and owned by nobody.")
+lookAt("saveprodall", ULib.ACCESS_SUPERADMIN, "Saves every machine you placed from !prodspawn that isn't saved yet, for this map.")
+lookAt("unsaveprod", ULib.ACCESS_SUPERADMIN, "Look at a saved machine: removes it, and from this map's save.")
+lookAt("prodsaves", ULib.ACCESS_SUPERADMIN, "Counts the saved machines on this map and highlights them on your screen for a minute.")
 
 lookAt("addoilsite", ULib.ACCESS_SUPERADMIN, "Look at the ground or a platform: marks an oil site. Bought oil derricks are built on the nearest free one, facing where you stood. Saved for this map.")
 lookAt("removeoilsite", ULib.ACCESS_SUPERADMIN, "Look near an oil site: removes it (and the derrick on it), and from this map's save.")
