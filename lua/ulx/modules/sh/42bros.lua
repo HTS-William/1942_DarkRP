@@ -73,6 +73,47 @@ end
 register("stopevent", ulx.rp1942stopevent, "!stopevent", ULib.ACCESS_ADMIN,
     "End the world event that's running now (e.g. send the train away).")
 
+function ulx.rp1942eventsettings(ply)
+    if not IsValid(ply) then return ULib.tsayError(ply, "Use this in game.", true) end
+    if not RP1942.openEventMenu then return ULib.tsayError(ply, "World events aren't loaded.", true) end
+    RP1942.openEventMenu(ply)
+end
+register("eventsettings", ulx.rp1942eventsettings, "!eventsettings", ULib.ACCESS_SUPERADMIN,
+    "Opens the world event settings: minutes between events, the player minimum, retrying when too few are on, each event on/off, and start/stop buttons. Saved for the server.")
+
+--[[---------------------------------------------------------------------------
+The Führer
+---------------------------------------------------------------------------]]
+function ulx.rp1942setfuhrer(ply, target)
+    if not RP1942.appointFuhrer then return ULib.tsayError(ply, "The election isn't loaded.", true) end
+    local ok, why = RP1942.appointFuhrer(target, ply)
+    if not ok then return ULib.tsayError(ply, "Can't: " .. tostring(why), true) end
+    ulx.fancyLogAdmin(ply, "#A appointed #T Führer", target)
+end
+local sf = register("setfuhrer", ulx.rp1942setfuhrer, "!setfuhrer", ULib.ACCESS_SUPERADMIN,
+    "Makes a player the Führer right now, without an election. A running election is cancelled (fees refunded) and the sitting Führer is moved to the default job.")
+sf:addParam{ type = ULib.cmds.PlayerArg }
+
+function ulx.rp1942removefuhrer(ply)
+    if not RP1942.removeFuhrer then return ULib.tsayError(ply, "The election isn't loaded.", true) end
+    local ok, why = RP1942.removeFuhrer(ply)
+    if not ok then return ULib.tsayError(ply, "Can't: " .. tostring(why), true) end
+    ulx.fancyLogAdmin(ply, "#A removed the Führer from office")
+end
+register("removefuhrer", ulx.rp1942removefuhrer, "!removefuhrer", ULib.ACCESS_SUPERADMIN,
+    "Removes the sitting Führer from office (moved to the default job), so a new election can be held.")
+
+--[[---------------------------------------------------------------------------
+ESP
+---------------------------------------------------------------------------]]
+function ulx.rp1942esp(ply)
+    if not IsValid(ply) then return ULib.tsayError(ply, "Use this in game.", true) end
+    if not RP1942.toggleESP then return ULib.tsayError(ply, "ESP isn't loaded.", true) end
+    RP1942.toggleESP(ply)
+end
+register("esp", ulx.rp1942esp, "!esp", ULib.ACCESS_ADMIN,
+    "Toggles admin ESP for you: every player through walls, anywhere on the map, with their name, real job (and cover if undercover), rank, health and distance.")
+
 --[[---------------------------------------------------------------------------
 Economy and treasury
 ---------------------------------------------------------------------------]]

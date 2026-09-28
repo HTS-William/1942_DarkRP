@@ -388,3 +388,37 @@ hook.Add("canChatCommand", "RP1942_FuhrerBroadcast", function(ply, cmd, arg)
     return false   -- handled: DarkRP's own /broadcast doesn't run
 end)
 
+
+--[[---------------------------------------------------------------------------
+Staff: appoint or remove the Führer without an election
+    ulx setfuhrer <player>   (ULX 42Bros)   /  RP1942.appointFuhrer(ply, admin)
+    ulx removefuhrer         (ULX 42Bros)   /  RP1942.removeFuhrer(admin)
+A running election is cancelled (fees refunded). The sitting Führer, if
+someone else, is moved to the default job.
+---------------------------------------------------------------------------]]
+function RP1942.appointFuhrer(ply, admin)
+    if not (IsValid(ply) and TEAM_FUHRER) then return false, "no such player" end
+    if ply:Team() == TEAM_FUHRER then return false, ply:Nick() .. " is already the Führer" end
+    if E.phase ~= IDLE then refundAll("The Führer has been appointed, so the election was cancelled.") end
+
+    local old = RP1942.getFuhrer()
+    if IsValid(old) and old ~= ply then
+        old:changeTeam(GAMEMODE.DefaultTeam, true, true)
+        DarkRP.notify(old, 1, 6, "You have been replaced as Führer.")
+    end
+    ply:changeTeam(TEAM_FUHRER, true, true)   -- forced: skips the election-only rule
+    announce(ply:Nick() .. " has been appointed Führer.")
+    playSound("anthem")
+    ServerLog(string.format("[1942] %s appointed %s (%s) Führer\n", IsValid(admin) and admin:Nick() or "Console", ply:Nick(), ply:SteamID()))
+    return true
+end
+
+function RP1942.removeFuhrer(admin)
+    local old = RP1942.getFuhrer()
+    if not IsValid(old) then return false, "there is no Führer" end
+    old:changeTeam(GAMEMODE.DefaultTeam, true, true)
+    DarkRP.notify(old, 1, 6, "You have been removed as Führer.")
+    announce(old:Nick() .. " is no longer the Führer.")
+    ServerLog(string.format("[1942] %s removed %s (%s) as Führer\n", IsValid(admin) and admin:Nick() or "Console", old:Nick(), old:SteamID()))
+    return true
+end

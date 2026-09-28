@@ -8,7 +8,8 @@ last name. It's set with DarkRP's own /rpname, so DarkRP still checks it
 "First Last" name that isn't their Steam name aren't asked again.
 The name is what will go on their papers (a future papers system).
 
-    rp1942_rpname   open the form again (console)
+    /register       open the form again (chat)
+    rp1942_rpname   the same, in console
 ---------------------------------------------------------------------------]]
 local FIRST = {
     "Hans", "Karl", "Friedrich", "Otto", "Wilhelm", "Heinrich", "Ernst", "Walter", "Paul", "Kurt", "Josef", "Franz",
@@ -183,3 +184,4 @@ hook.Add("RP1942_IntroFinished", "RP1942_RPName", function()
 end)
 
 concommand.Add("rp1942_rpname", open)
+net.Receive("RP1942_OpenRPName", open)   -- /register

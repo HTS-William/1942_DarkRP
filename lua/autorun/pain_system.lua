@@ -5,6 +5,7 @@
     - Voices pain based on where a player was hit (leg / arm / torso)
     - Leg hits stop the player from jumping and sprinting for a while
     - Fall damage voices leg pain
+    - Fire damage (from any source) voices burning screams on a slower rhythm
 ---------------------------------------------------------------------------]]
 
 PainSystem = PainSystem or {}
@@ -18,6 +19,8 @@ local CFG = {
     HealRestoreLegs   = 0.75,   -- Healing up to this fraction of max health restores legs. false = disabled.
     AllowNPCAttackers = false,  -- Should NPCs shooting players also trigger pain?
     SoundCooldown     = 0.75,   -- Min seconds between pain sounds per player (prevents spam from shotguns/SMGs)
+    FireSounds        = true,   -- Scream when burning (from ANY fire: players, env_fire, molotovs, explosions, etc.)
+    FireCooldown      = 2.5,    -- Min seconds between burn screams (fire deals damage many times a second)
     SoundLevel        = 75,     -- Sound level in dB (75 = normal voice range)
     UseFemaleVoices   = true,   -- Female player models use vo/npc/female01/ versions of the same lines
     HeadCategory      = "torso" -- Sound set for headshots ("torso", "arm", "leg", or false for silence)
@@ -71,6 +74,16 @@ local SOUNDS = {
         "vo/npc/male01/hitingut02.wav",
         "vo/npc/male01/mygut02.wav",
     },
+    fire = {
+        "vo/npc/male01/pain07.wav",
+        "vo/npc/male01/pain08.wav",
+        "vo/npc/male01/pain09.wav",
+        "vo/npc/male01/help01.wav",
+    },
+}
+
+local COOLDOWN_KEY = {
+    fire = "PainSys_NextFireSound",
 }
 
 for _, list in pairs(SOUNDS) do
@@ -101,12 +114,21 @@ local function IsFemale(ply)
     return false
 end
 
-local function PlayPain(ply, category)
+local function PlayPain(ply, category, extraCooldown)
     local list = category and SOUNDS[category]
     if not list then return end
 
     local now = CurTime()
     if (ply.PainSys_NextSound or 0) > now then return end
+
+    -- Some categories (fire) have their own, longer cooldown on top of the shared one,
+    -- so a bullet hit while burning can still be voiced quickly.
+    local key = COOLDOWN_KEY[category]
+    if key then
+        if (ply[key] or 0) > now then return end
+        ply[key] = now + (extraCooldown or 0)
+    end
+
     ply.PainSys_NextSound = now + CFG.SoundCooldown
 
     local snd = list[math.random(#list)]
@@ -184,6 +206,16 @@ hook.Add("PostEntityTakeDamage", "PainSystem_React", function(ply, dmginfo, took
     if dmginfo:IsFallDamage() then
         PlayPain(ply, "leg")
         if CFG.FallCripplesLegs then PainSystem.InjureLegs(ply) end
+        return
+    end
+
+    -- Fire: handled before the attacker check, because burn damage usually comes from
+    -- an entityflame / env_fire rather than a player. It never uses hitgroups, so it
+    -- can't accidentally cripple legs via a stale LastHitGroup.
+    if dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) then
+        if CFG.FireSounds then
+            PlayPain(ply, "fire", CFG.FireCooldown)
+        end
         return
     end
 

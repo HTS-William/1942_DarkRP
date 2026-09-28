@@ -72,6 +72,7 @@ Raiding - Breaking into someone's property to take their valuables.
 # Your name
 - When you first join, the Meldeamt (registration office) asks for your roleplay name: a first and a last name that fits 1942. Random Name suggests one.
 - It's the name everyone sees, and the one that will go on your papers.
+/register - Open the registration form again, to change your roleplay name
 /rpname First Last - Change your roleplay name later
 
 # Keys and menus
@@ -187,6 +188,10 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - A player's undercover job shows on the scoreboard for staff, marked UNDERCOVER.
 
 #staff Staff: events, economy and players
+!esp - Toggle ESP: every player through walls, anywhere on the map, with name, real job (and cover), rank, health and distance
+!eventsettings - World event settings: minutes between events, player minimum, retry when too few are on, each event on/off, start/stop
+!setfuhrer <player> - Make someone Führer now, without an election (cancels a running one, replaces the sitting Führer)
+!removefuhrer - Remove the sitting Führer from office
 /train - Start the supply train now
 /event - List world events. /event <id> starts one, /event stop ends the running one (also !stopevent)
 !seteconomy 50 - Set the economy bar (1-110)

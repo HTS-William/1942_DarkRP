@@ -27,6 +27,10 @@ RP1942.Events = {
                                               -- Make min and max different for a random gap.
                                               -- Admin-started events don't change this timer.
     minPlayers  = 4,                          -- no automatic events below this many players online
+    retryDelay  = 120,                        -- seconds: if nothing could run (too few players),
+                                              -- try again this soon instead of a whole interval. 0 = wait the interval.
+    -- All of these can also be changed in game with !eventsettings (saved in
+    -- data/rp1942/events.json, which then wins over the values here).
 
     -- Who may use /train, /event and rp1942_event when ULX isn't running
     -- (with ULX: per rank, ULX menu > Groups > 42Bros). IsAdmin() is true
@@ -39,6 +43,12 @@ DarkRP.declareChatCommand{
     description = "Admin: list world events, start one (/event train) or end it (/event stop)",
     delay       = 1.5,
     condition   = function(ply) return RP1942.staffCan(ply, "ulx event", RP1942.Events.adminCheck) end,
+}
+
+DarkRP.declareChatCommand{
+    command     = "eventsettings",
+    description = "Admin: world event settings (timer, player minimum, which events run)",
+    delay       = 1,
 }
 
 DarkRP.declareChatCommand{

@@ -36,6 +36,7 @@ local ACTIONS = {
     { title = "1942", items = {
         { "Make wanted", "makewanted", prompt = "Why are they wanted by the Reich?" },
         { "Clear wanted", "clearwanted" },
+        { "Make Führer", "setfuhrer", danger = true },
     } },
     { title = "Moderation", items = {
         { "Kick", "kick", prompt = "Reason for the kick", danger = true },
