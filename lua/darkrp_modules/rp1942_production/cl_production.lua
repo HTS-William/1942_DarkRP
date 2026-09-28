@@ -223,6 +223,7 @@ model's box so it works for any prop. RP1942.PanelSpots[class]:
     mount = "backguard"  standing up along the back edge of the top, facing
                          front, like a cooker's control panel (default)
             "face"       flat on one side of the box
+            "top"        lying flat on top, readable from the `face` side
     face  = "front" | "left" | "back" | "right"   which way it faces
     width = share of that side's width the panel takes (0.45)
     top   = "face" only: its top edge, as a share of the side's height (0.95)
@@ -244,10 +245,23 @@ local function spotPlacement(ent, spot, size)
         depth = math.max(depth, v:Dot(n)); halfW = math.max(halfW, math.abs(v:Dot(t)))
     end end
 
+    local nudge = spot.nudge or { 0, 0, 0 }
+
+    if spot.mount == "top" then
+        -- Lying on the top face: canvas x to the viewer's right, canvas y
+        -- towards the viewer (so its top edge is at the back). Fitted to the
+        -- top face (width share of both its sides), then scaled by size.
+        local share = spot.width or 0.9
+        local scale = math.min(2 * halfW * share / size.w, 2 * depth * share / size.h) * (spot.size or 1)
+        local pw, ph = size.w * scale, size.h * scale
+        local topCenter = Vector(c.x, c.y, maxs.z + 0.3)
+        local origin = topCenter - t * (pw / 2) - n * (ph / 2) + t * nudge[1] + n * nudge[3] + Vector(0, 0, nudge[2])
+        return ent:LocalToWorld(origin), ent:LocalToWorldAngles(Angle(0, yaw + 90, 0)), scale, true
+    end
+
     local pw = 2 * halfW * (spot.width or 0.45) * (spot.size or 1)
     local scale = pw / size.w
     local ph = size.h * scale
-    local nudge = spot.nudge or { 0, 0, 0 }
 
     local base
     if (spot.mount or "backguard") == "backguard" then
@@ -460,7 +474,7 @@ local function tune(fn)
 end
 
 concommand.Add("rp1942_panel_face", tune(function(spot, a) if FACE_YAW[a[1] or ""] then spot.face = a[1] end end))
-concommand.Add("rp1942_panel_mount", tune(function(spot, a) if a[1] == "face" or a[1] == "backguard" then spot.mount = a[1] end end))
+concommand.Add("rp1942_panel_mount", tune(function(spot, a) if a[1] == "face" or a[1] == "backguard" or a[1] == "top" then spot.mount = a[1] end end))
 concommand.Add("rp1942_panel_move", tune(function(spot, a)
     local n = spot.nudge or { 0, 0, 0 }
     spot.nudge = { n[1] + (tonumber(a[1]) or 0), n[2] + (tonumber(a[2]) or 0), n[3] + (tonumber(a[3]) or 0) }

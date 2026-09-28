@@ -148,6 +148,14 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 - Prices follow the economy, and one good is in demand each hour for a bonus. Arrows show how prices have moved. Sales are taxed like wages.
 - Every market sale helps the economy a little, and a better economy means higher wages for everyone. Selling privately to other players doesn't move the economy.
 
+# Money printers
+- Banking Printer (Banker only, legal): up to 3. Every print is split with the Reich treasury: 15% when the economy is normal (50), more when it's weak, less when it's strong, so a good economy lets the Banker keep more. A Reich member who destroys a Banking Printer pays R.M. 1,250 for it, into the treasury.
+- Money Printer (illegal): up to 3, for anyone outside the Reich except the Banker. It isn't tied to the economy. The Reich can SEIZE it from its panel, or shoot it, for a reward, and its owner is fined 1,250 R.M., paid to the Reich treasury.
+- Printers start at 1,000 R.M. a print. Money waits in the tray: COLLECT takes it, and anyone can, so guard your printers.
+- They heat up while they run and explode at 100 degrees, taking the money with them. Switch one OFF to let it cool, then back ON. At Cooling tier 5 it stays cool.
+- UPGRADES (5 tiers each, bought by the owner): Output (+40% a tier on the Banking Printer, +35% on the Money Printer), Speed (prints sooner), Cooling (heats slower) and Muffler (quieter, but never silent).
+- If you join the Reich or become the Banker, your illegal printers are dismantled. Leaving the Banker job returns the Banking Printers.
+
 # Supply train
 - About every 20 minutes a Reich supply train pulls into the station, waits briefly, then carries on down the line.
 - Anyone outside the Reich can hold E on it to rob a crate. The money goes into your wallet and any weapon into your pocket.
@@ -200,7 +208,7 @@ Recruits - Every Reich unit starts at Recruit. Specialisations appear in the job
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets and every good at any quality (into your pocket or at your crosshair). Also Finish its timer and Remove it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers and every good at any quality (into your pocket or at your crosshair). Also Finish its timer and Remove it for the machine you're looking at. Z undoes a spawn.
 /addmarket - Place a market where you're looking (saved for this map)
 /removemarket - Remove the market you're looking at
 /addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)

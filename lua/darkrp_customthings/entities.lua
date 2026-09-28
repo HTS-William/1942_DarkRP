@@ -75,3 +75,30 @@ DarkRP.createEntity("Factory Line", {
     allowed = { TEAM_FACTORY },
     category = "Production",
 })
+
+--[[---------------------------------------------------------------------------
+Money printers (rp1942_printers). 3 of each per player at most.
+Settings (print amount, heat, upgrades, treasury share): sh_printers.lua
+---------------------------------------------------------------------------]]
+DarkRP.createEntity("Banking Printer", {
+    ent = "rp1942_printer_bank",
+    model = "models/props_c17/consolebox01a.mdl",
+    price = 2500,
+    max = 3,
+    cmd = "buybankprinter",
+    allowed = { TEAM_BANKER },
+    category = "Printers",
+})
+
+DarkRP.createEntity("Money Printer", {
+    ent = "rp1942_printer_illegal",
+    model = "models/props_c17/consolebox01a.mdl",
+    price = 2000,
+    max = 3,
+    cmd = "buymoneyprinter",
+    category = "Printers",
+    -- Anyone outside the Reich, and not the Banker (who only has the legal one)
+    customCheck = function(ply) return RP1942.canOwnIllegalPrinter(ply) end,
+    CustomCheckFailMsg = "The Reich and the Banker can't own illegal printers.",
+})
+

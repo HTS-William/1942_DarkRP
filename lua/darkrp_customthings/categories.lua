@@ -40,3 +40,13 @@ DarkRP.createCategory{
     canSee = function() return true end,
     sortOrder = 10,
 }
+
+DarkRP.createCategory{
+    name = "Printers",
+    categorises = "entities",
+    startExpanded = true,
+    color = Color(90, 130, 70),
+    canSee = function() return true end,
+    sortOrder = 11,
+}
+

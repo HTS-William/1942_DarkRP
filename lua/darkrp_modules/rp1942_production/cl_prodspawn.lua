@@ -42,6 +42,8 @@ local MACHINES = {
     { class = "rp1942_factory",     name = "Factory Line", cfg = "factory" },
     { class = "rp1942_oil_rig",     name = "Oil Derrick",  cfg = "oil",    note = "bolted where you aim" },
     { class = "rp1942_market",      name = "Market",       cfg = "market", note = "not saved" },
+    { class = "rp1942_printer_bank",    name = "Banking Printer", model = "models/props_c17/consolebox01a.mdl", note = "legal" },
+    { class = "rp1942_printer_illegal", name = "Money Printer",   model = "models/props_c17/consolebox01a.mdl", note = "illegal" },
 }
 
 local frame
@@ -148,8 +150,8 @@ local function open()
     local mg = grid()
     local P = RP1942.Production
     for _, m in ipairs(MACHINES) do
-        local cfg = P[m.cfg]
-        card(mg, cfg and cfg.model, m.name, m.note, function() send("machine", m.class) end)
+        local cfg = m.cfg and P[m.cfg]
+        card(mg, m.model or (cfg and cfg.model), m.name, m.note, function() send("machine", m.class) end)
     end
 
     ---------------------------------------------------------------- goods
