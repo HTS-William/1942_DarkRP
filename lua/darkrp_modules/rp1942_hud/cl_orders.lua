@@ -15,18 +15,18 @@ Long orders wrap and are cut at maxLines. Players can hide it with
 The rectangle it uses each frame is left in RP1942.OrdersRect.
 ---------------------------------------------------------------------------]]
 local CFG = {
-    width    = 330,   -- at 1080p (scales with the screen)
-    maxLines = 5,
+    width    = 420,   -- at 1080p (scales with the screen)
+    maxLines = 6,
     top      = 0.018, -- share of the screen height from the top
 }
 
-local show = CreateClientConVar("rp1942_orders_hud", "1", true, false, "Show your faction's orders (agenda) in the top-right corner", 0, 1)
+local show = CreateClientConVar("rp1942_orders_hud", "1", true, false, "Show your faction's orders (agenda) in the top-left corner", 0, 1)
 
 local function fonts()
     local h = ScrH()
-    surface.CreateFont("RP1942_OrdersTitle", { font = "Roboto", size = math.max(13, math.floor(h * 0.0145)), weight = 900, extended = true })
-    surface.CreateFont("RP1942_OrdersText",  { font = "Roboto", size = math.max(13, math.floor(h * 0.0155)), weight = 500, extended = true })
-    surface.CreateFont("RP1942_OrdersSmall", { font = "Roboto", size = math.max(11, math.floor(h * 0.012)),  weight = 500, extended = true })
+    surface.CreateFont("RP1942_OrdersTitle", { font = "Roboto", size = math.max(15, math.floor(h * 0.018)), weight = 900, extended = true })
+    surface.CreateFont("RP1942_OrdersText",  { font = "Roboto", size = math.max(15, math.floor(h * 0.019)), weight = 500, extended = true })
+    surface.CreateFont("RP1942_OrdersSmall", { font = "Roboto", size = math.max(12, math.floor(h * 0.014)),  weight = 500, extended = true })
 end
 fonts()
 hook.Add("OnScreenSizeChanged", "RP1942_OrdersFonts", fonts)
@@ -82,7 +82,7 @@ hook.Add("HUDPaint", "RP1942_Orders", function()
 
     local s = ScrH() / 1080
     local w = math.floor(CFG.width * s)
-    local pad = math.floor(10 * s)
+    local pad = math.floor(13 * s)
     local x, y = math.floor(16 * s), math.floor(ScrH() * CFG.top)
 
     local raw = (lp:getDarkRPVar("agenda") or ""):gsub("//", "\n"):gsub("\\n", "\n")
