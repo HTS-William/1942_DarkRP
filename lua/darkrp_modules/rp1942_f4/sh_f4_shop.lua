@@ -4,8 +4,8 @@
 Two things are sold in the F4 Shop tab from here:
 
 1. AMMO, automatically. Every weapon the dealers sell (and every job's
-   weapons) is checked for the ammo it uses, and a box of each ammo type is
-   sold. A box holds `clipsPerBox` of the biggest magazine that uses it, and
+   weapons) is checked for the ammo it uses, and a box of each period ammo
+   type (rp1942_core/sh_ammo.lua) is sold. Half-Life 2 ammo isn't. A box holds `clipsPerBox` of the biggest magazine that uses it, and
    costs a share of that weapon's price (so rockets cost more than pistol
    rounds). Change any ammo type by hand in `overrides`.
 
@@ -29,41 +29,53 @@ RP1942 = RP1942 or {}
 
 RP1942.F4Shop = {
     ammo = {
-        enabled       = false,   -- off for now: the HL2 ammo below is sold instead.
-                                 -- true = sell ammo for the weapon pack automatically
+        enabled       = true,    -- sell a box of each period ammo type the weapons use
+        onlyListed    = true,    -- only the types in `overrides` (no Half-Life 2 ammo)
         category      = "Ammunition",
-        clipsPerBox   = 2,       -- a box = this many full magazines
+        clipsPerBox   = 2,       -- for a type without an amount below: this many full magazines
         maxPerBox     = 150,     -- but never more rounds than this
-        priceShare    = 0.08,    -- each magazine in the box costs 8% of the weapon's price
+        priceShare    = 0.08,    -- and each magazine costs 8% of the dearest weapon using it
         minPrice      = 20,
         model         = "models/Items/BoxMRounds.mdl",
-        extraWeapons  = {},      -- more weapon classes to sell ammo for, e.g. { "weapon_pistol" }
+        extraWeapons  = {},      -- more weapon classes to sell ammo for, e.g. { "mcv_luger" }
 
-        -- By ammo type (the weapon's SWEP.Primary.Ammo). Examples:
-        --   ["some_ammo_type"] = { name = "7.92mm Mauser", amount = 30, price = 90 },
-        --   ["some_ammo_type"] = { hidden = true },   -- don't sell this one
-        -- Type rp1942_listammo in console (server or client) to see every
-        -- ammo type the shop found and which weapons use it.
+        -- By ammo type (the weapon's SWEP.Primary.Ammo; the names come from
+        -- RP1942.AmmoTypes in rp1942_core/sh_ammo.lua). amount = rounds per
+        -- box, price = per box. { hidden = true } = don't sell it.
+        -- A type is only sold if at least one weapon on the server uses it.
+        -- Type rp1942_listammo in console to see every ammo type the shop
+        -- found and which weapons use it.
         overrides = {
+            -- German
+            ["792x33mmkurz"]        = { amount = 60, price = 180, model = "models/Items/BoxMRounds.mdl" },
+            ["792x57mm"]            = { amount = 30, price = 120, model = "models/Items/BoxMRounds.mdl" },
+            ["9mmluger"]            = { amount = 64, price = 120, model = "models/Items/BoxSRounds.mdl" },
+            ["380acp"]              = { amount = 36, price = 60,  model = "models/Items/BoxSRounds.mdl" },
+            ["763mauser"]           = { amount = 40, price = 90,  model = "models/Items/BoxSRounds.mdl" },
+            ["8mmnambu"]            = { amount = 32, price = 70,  model = "models/Items/BoxSRounds.mdl" },
+            ["145x114"]             = { amount = 10, price = 400, model = "models/Items/BoxMRounds.mdl" },
+            ["panzerschreckrocket"] = { amount = 1,  price = 900, model = "models/weapons/w_missile_closed.mdl" },
+            ["flarecartridge"]      = { amount = 4,  price = 100, model = "models/Items/BoxSRounds.mdl" },
+            -- American, British, French, Soviet
+            ["45acp"]               = { amount = 60, price = 120, model = "models/Items/BoxSRounds.mdl" },
+            ["30cal"]               = { amount = 40, price = 140, model = "models/Items/BoxMRounds.mdl" },
+            ["30carbine"]           = { amount = 60, price = 120, model = "models/Items/BoxMRounds.mdl" },
+            ["25acp"]               = { amount = 24, price = 40,  model = "models/Items/BoxSRounds.mdl" },
+            ["32acp"]               = { amount = 32, price = 50,  model = "models/Items/BoxSRounds.mdl" },
+            ["38special"]           = { amount = 24, price = 60,  model = "models/Items/357ammo.mdl" },
+            ["bazookarocket"]       = { amount = 1,  price = 900, model = "models/weapons/w_missile_closed.mdl" },
+            ["303brit"]             = { amount = 60, price = 150, model = "models/Items/BoxMRounds.mdl" },
+            ["765french"]           = { amount = 32, price = 60,  model = "models/Items/BoxSRounds.mdl" },
+            ["75french"]            = { amount = 50, price = 130, model = "models/Items/BoxMRounds.mdl" },
+            ["8mmfrench"]           = { amount = 18, price = 60,  model = "models/Items/357ammo.mdl" },
+            ["762tokarev"]          = { amount = 70, price = 120, model = "models/Items/BoxSRounds.mdl" },
+            ["762soviet"]           = { amount = 40, price = 140, model = "models/Items/BoxMRounds.mdl" },
+            ["762nagantr"]          = { amount = 28, price = 50,  model = "models/Items/357ammo.mdl" },
+            ["762x39"]              = { amount = 75, price = 140, model = "models/Items/BoxMRounds.mdl" },
         },
     },
 
     items = {
-        -- Vanilla Half-Life 2 ammo (the same boxes as the spawn menu's Ammo and Items)
-        { name = "Pistol Ammo Box",         type = "ammo", ammo = "Pistol",       amount = 20,  price = 40,  category = "Ammunition", model = "models/items/boxsrounds.mdl" },
-        { name = "Pistol Ammo Box (Large)", type = "ammo", ammo = "Pistol",       amount = 100, price = 180, category = "Ammunition", model = "models/items/boxsrounds.mdl" },
-        { name = ".357 Ammo Box",           type = "ammo", ammo = "357",          amount = 6,   price = 60,  category = "Ammunition", model = "models/items/357ammo.mdl" },
-        { name = ".357 Ammo Box (Large)",   type = "ammo", ammo = "357",          amount = 20,  price = 180, category = "Ammunition", model = "models/items/357ammo.mdl" },
-        { name = "SMG Ammo Box",            type = "ammo", ammo = "SMG1",         amount = 45,  price = 60,  category = "Ammunition", model = "models/items/boxmrounds.mdl" },
-        { name = "SMG Ammo Box (Large)",    type = "ammo", ammo = "SMG1",         amount = 225, price = 270, category = "Ammunition", model = "models/items/boxmrounds.mdl" },
-        { name = "AR2 Magazine",            type = "ammo", ammo = "AR2",          amount = 20,  price = 80,  category = "Ammunition", model = "models/items/combine_rifle_cartridge01.mdl" },
-        { name = "AR2 Magazine (Large)",    type = "ammo", ammo = "AR2",          amount = 100, price = 360, category = "Ammunition", model = "models/items/combine_rifle_cartridge01.mdl" },
-        { name = "Shotgun Ammo Box",        type = "ammo", ammo = "Buckshot",     amount = 20,  price = 80,  category = "Ammunition", model = "models/items/boxbuckshot.mdl" },
-        { name = "Crossbow Bolt Bundle",    type = "ammo", ammo = "XBowBolt",     amount = 6,   price = 120, category = "Ammunition", model = "models/items/crossbowrounds.mdl" },
-        { name = "SMG Grenade",             type = "ammo", ammo = "SMG1_Grenade", amount = 1,   price = 150, category = "Ammunition", model = "models/items/ar2_grenade.mdl" },
-        { name = "AR2 Energy Orb Ammo",     type = "ammo", ammo = "AR2AltFire",   amount = 1,   price = 200, category = "Ammunition", model = "models/items/combine_rifle_ammo01.mdl" },
-        { name = "RPG Rocket",              type = "ammo", ammo = "RPG_Round",    amount = 1,   price = 400, category = "Ammunition", model = "models/weapons/w_missile_closed.mdl" },
-
         -- More examples - remove the -- in front of a line to switch it on:
 
         -- { name = "Health Kit", type = "entity", class = "item_healthkit", price = 150,

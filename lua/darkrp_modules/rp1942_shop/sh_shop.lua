@@ -78,6 +78,7 @@ function RP1942.getShopItemAmmo(item)
     local wep = weapons.Get(item.class)
     local ammo = wep and wep.Primary and wep.Primary.Ammo
     if not ammo or ammo == "" or ammo == "none" then return nil end
+    if RP1942.ammoName and RP1942.ammoName(ammo) ~= ammo then return RP1942.ammoName(ammo) end   -- rp1942_core/sh_ammo.lua
     return (language and language.GetPhrase and language.GetPhrase(ammo .. "_ammo") ~= ammo .. "_ammo") and language.GetPhrase(ammo .. "_ammo") or ammo
 end
 

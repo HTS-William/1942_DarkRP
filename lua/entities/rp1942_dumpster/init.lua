@@ -234,6 +234,18 @@ end
 
 function ENT:SpawnEntity( ply )
 	local class = table.Random( CFG.Entities )
+
+	--> "ammo:<type>": a box of period ammo
+	local ammoType = string.match( class, "^ammo:(.+)$" )
+	if ammoType then
+		local shop = RP1942.F4Shop and RP1942.F4Shop.ammo and RP1942.F4Shop.ammo.overrides and RP1942.F4Shop.ammo.overrides[ ammoType ]
+		local amount = math.max( 1, math.floor( ( shop and shop.amount or 20 ) * ( CFG.AmmoShare or 0.5 ) ) )
+		local box = RP1942.makeAmmoBox and RP1942.makeAmmoBox( ammoType, amount, self:LootPos() )
+		if not IsValid( box ) then return end
+		local name, pocketed = self:GiveLoot( ply, box, "rp1942_ammo_box" )
+		return amount .. "x " .. ( RP1942.ammoName and RP1942.ammoName( ammoType ) or ammoType ) .. " ammo", pocketed
+	end
+
 	local ent = ents.Create( class )
 	if not IsValid( ent ) then
 		MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in rp1942_dumpsters_config.Entities isn't a valid entity class - check the spelling in config.lua.\n" )
@@ -599,8 +611,13 @@ player actually uses a dumpster and rolls that specific class.
 hook.Add( "InitPostEntity", "rp1942_dumpsters_sanity_check", function()
 	local function checkList( list, label )
 		for _, class in ipairs( list ) do
-			local e = ents.Create( class )
-			if IsValid( e ) then
+			local ammoType = string.match( class, "^ammo:(.+)$" )
+			local e = not ammoType and ents.Create( class )
+			if ammoType then
+				if game.GetAmmoID( ammoType ) == -1 then
+					MsgC( Color( 255, 170, 0 ), "[Dumpster] ammo type '", ammoType, "' in rp1942_dumpsters_config.", label, " isn't registered (rp1942_core/sh_ammo.lua).\n" )
+				end
+			elseif IsValid( e ) then
 				e:Remove()
 			else
 				MsgC( Color( 255, 170, 0 ), "[Dumpster] '", class, "' in rp1942_dumpsters_config.", label, " is not a valid class - it will silently fail to spawn in-game.\n" )

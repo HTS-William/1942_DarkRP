@@ -123,6 +123,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Arms dealers
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
+- Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Each dealer's menu shows which ammo a weapon takes.
 - Buying more than one (set the amount next to Buy, up to 20) brings a crate: press E on it to take one weapon out at a time. Shoot a crate to pieces and what's left inside is lost.
 - Black Market: anti-tank launchers, explosives and grenades, silenced guns, submachine guns and more. Cherkesov: Soviet and Allied rifles, machine guns, anti-tank rifles and more. Their prices are fixed: the economy doesn't change them.
 - German Supplier (Reich): German service weapons for the Reich. Its prices follow the economy: up to 40% cheaper when the economy is strong, up to 50% dearer when it's weak. The menu shows the current difference.

@@ -17,6 +17,7 @@ local function round10(n) return math.floor(n / 10 + 0.5) * 10 end
 
 -- "ammo_792x57_mauser" -> "Ammo 792x57 Mauser" unless the game has a proper name
 local function ammoName(ammo)
+    if RP1942.ammoName and RP1942.ammoName(ammo) ~= ammo then return RP1942.ammoName(ammo) end
     if CLIENT then
         local key = "#" .. ammo .. "_ammo"
         local phrase = language.GetPhrase(key)
@@ -26,21 +27,27 @@ local function ammoName(ammo)
     return (string.gsub(pretty, "(%a)([%w]*)", function(a, b) return string.upper(a) .. b end))
 end
 
--- Price of a weapon, as the dealers would sell it before their own markup
-local function basePrice(class)
-    local cats = {}
-    for _, c in ipairs(RP1942.ShopWeaponCategories or {}) do cats[c.name] = c.price end
-    for _, w in ipairs(RP1942.ShopWeapons or {}) do
-        if w.class == class then return w.price or cats[w.category] or 1000 end
+-- Every weapon class the dealers sell, with its base price (rp1942_shop)
+local function dealerWeapons()
+    local out = {}
+    for _, catalog in pairs(RP1942.ShopCatalogs or {}) do
+        for _, it in ipairs(catalog.items or {}) do
+            if it.type == "weapon" and it.class then out[it.class] = math.max(out[it.class] or 0, it.price or 0) end
+        end
     end
-    return 1000
+    return out
+end
+
+-- Price of a weapon, as the dealers sell it
+local function basePrice(class)
+    return dealerWeapons()[class] or 1000
 end
 
 -- ammo type -> { biggest magazine, most expensive weapon price, weapon names }
 local function scanAmmo(cfg)
     local classes, seen = {}, {}
     local function add(class) if class and not seen[class] then seen[class] = true; classes[#classes + 1] = class end end
-    for _, w in ipairs(RP1942.ShopWeapons or {}) do add(w.class) end
+    for class in SortedPairs(dealerWeapons()) do add(class) end
     for _, job in ipairs(RPExtraTeams or {}) do for _, c in ipairs(job.weapons or {}) do add(c) end end
     for _, c in ipairs(cfg.extraWeapons or {}) do add(c) end
 
@@ -78,8 +85,9 @@ local function build()
         local types = table.GetKeys(found)
         table.sort(types)
         for _, ammo in ipairs(types) do
-            local f, o = found[ammo], (cfg.overrides or {})[ammo] or {}
-            if not o.hidden then
+            local listed = (cfg.overrides or {})[ammo]
+            local f, o = found[ammo], listed or {}
+            if not o.hidden and (listed or not cfg.onlyListed) then
                 local amount = o.amount or math.min(f.clip * (cfg.clipsPerBox or 2), cfg.maxPerBox or 150)
                 local mags = amount / f.clip
                 local users = table.concat(f.users, ", ", 1, math.min(#f.users, 4))

@@ -78,21 +78,19 @@ rp1942_dumpsters_config.Weapons = { --> Random weapons that spawn
 	"mcv_vcpistol2",
 	"mcv_tt33",
 }
---> Random entities that spawn. Stock HL2 entities that always exist; swap in
---> your own once you have ammo pickups for the rp1942 weapons.
-rp1942_dumpsters_config.Entities = {
-	"item_ammo_pistol",
-	"item_ammo_smg1",
-	"item_ammo_ar2",
-	"item_box_buckshot",
+rp1942_dumpsters_config.Entities = { --> Random entities that spawn. "ammo:<type>" = a box of that period
+                                     --> ammo (rp1942_core/sh_ammo.lua), AmmoShare of an F4 Shop box
+	"ammo:9mmluger",
+	"ammo:792x57mm",
+	"ammo:762tokarev",
+	"ammo:45acp",
+	"ammo:762soviet",
+	"ammo:30carbine",
 	"item_healthkit",
 }
+rp1942_dumpsters_config.AmmoShare = 0.5 --> an ammo box in a dumpster holds half of what the F4 Shop box does
 --> Names shown in "Into your pocket: ..." for classes without a proper name
 rp1942_dumpsters_config.EntityNames = {
-	item_ammo_pistol  = "Pistol ammo",
-	item_ammo_smg1    = "SMG ammo",
-	item_ammo_ar2     = "Rifle ammo",
-	item_box_buckshot = "Shotgun shells",
 	item_healthkit    = "Medkit",
 	lockpick          = "Lockpick",
 }
