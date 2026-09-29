@@ -8,7 +8,7 @@ These are the ONLY staff commands: there are no /chat versions.
 
 Who may use each one is set per rank in the ULX menu (Groups tab, 42Bros).
 The code behind the "look at" commands is registered with
-RP1942.defineStaffCommand (rp1942_admin/sh_staffcommands.lua) and checks the
+RP1942.defineStaffCommand (lua/autorun/rp1942_staffcommands.lua) and checks the
 same ULX permission again (RP1942.staffCan, rp1942_core/sh_staff.lua).
 
 "Look at" commands act on what you're aiming at, so aim first, then open
@@ -21,7 +21,7 @@ local CATEGORY = "42Bros"
 
 -- Run one of our staff commands for ply (it does its own work and messages).
 -- Their code lives with what they work on (RP1942.defineStaffCommand,
--- rp1942_admin/sh_staffcommands.lua).
+-- lua/autorun/rp1942_staffcommands.lua).
 local function darkrpCommand(ply, name, args)
     if RP1942.runStaffCommand and RP1942.runStaffCommand(ply, name, args) then return true end
     ULib.tsayError(ply, "The " .. name .. " command isn't loaded on this server.", true)
