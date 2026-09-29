@@ -49,7 +49,7 @@ local cfg = {
     vignetteTime = 12.0,  -- vignette eases out, starting with the world fade
     vignetteMax  = 235,   -- darkness at the screen edge, 0-255
     vignetteSize = 0.35,  -- how far in from each edge (fraction of screen)
-    steps        = 32,    -- vignette smoothness
+    steps        = 32,    -- vignette smoothness (rings in the shade texture = 3x this)
 }
 
 -- Derived: black stays up until the card has faded out
@@ -137,8 +137,62 @@ end)
 
 --[[---------------------------------------------------------------------------
 Vignette: behind the HUD so health/notifications stay readable.
-Alpha strips instead of a gradient texture: identical on every client.
+
+A smooth elliptical shade: clear in the middle, darkening towards the edges
+and fully dark in the corners. It's drawn ONCE into a texture (many thin
+concentric rings, each a hair darker than the last, then bilinear-filtered
+on screen), so there are no visible steps and no cross-hatching where the
+old top/bottom and left/right bands overlapped. Every frame after that is a
+single textured quad whose alpha is the fade.
 ---------------------------------------------------------------------------]]
+local RT_SIZE = 512
+local vignetteMat
+
+local function buildVignette()
+    if vignetteMat then return vignetteMat end
+    local rt = GetRenderTargetEx("rp1942_intro_vignette", RT_SIZE, RT_SIZE, RT_SIZE_OFFSCREEN,
+        MATERIAL_RT_DEPTH_NONE, bit.bor(2, 256), 0, IMAGE_FORMAT_RGBA8888)
+    vignetteMat = CreateMaterial("rp1942_intro_vignette_mat", "UnlitGeneric", {
+        ["$basetexture"] = rt:GetName(), ["$translucent"] = 1, ["$vertexalpha"] = 1, ["$vertexcolor"] = 1,
+    })
+
+    -- Elliptical distance from the centre: 0 there, 1 at the middle of an
+    -- edge, ~1.41 in a corner. Clear inside `inner`, fully dark from `outer`.
+    local inner = math.Clamp(1 - cfg.vignetteSize * 1.6, 0.2, 0.95)
+    local outer = 1.38
+    local rings, segs = math.max(cfg.steps * 3, 64), 48
+    local c, r = RT_SIZE / 2, RT_SIZE / 2
+
+    local function point(d, a) return { x = c + r * d * math.cos(a), y = c + r * d * math.sin(a) } end
+    local function shade(d)   -- smoothstep from inner to outer
+        local t = math.Clamp((d - inner) / (outer - inner), 0, 1)
+        return t * t * (3 - 2 * t)
+    end
+
+    render.PushRenderTarget(rt)
+    render.OverrideAlphaWriteEnable(true, true)
+    render.Clear(0, 0, 0, 0, true, true)
+    cam.Start2D()
+        draw.NoTexture()
+        local step = (outer - inner) / rings
+        for i = 0, rings do
+            local d0 = inner + i * step
+            local d1 = (i == rings) and 1.6 or (d0 + step)   -- the last ring runs past the corners
+            local a = math.floor(255 * shade(d0 + step / 2) + 0.5)
+            if a > 0 then
+                surface.SetDrawColor(0, 0, 0, a)
+                for k = 0, segs - 1 do
+                    local a0, a1 = k / segs * math.pi * 2, (k + 1) / segs * math.pi * 2
+                    surface.DrawPoly({ point(d0, a0), point(d1, a0), point(d1, a1), point(d0, a1) })
+                end
+            end
+        end
+    cam.End2D()
+    render.OverrideAlphaWriteEnable(false)
+    render.PopRenderTarget()
+    return vignetteMat
+end
+
 hook.Add("HUDPaintBackground", "RP1942_IntroVignette", function()
     if not startTime then return end
     local elapsed = RealTime() - startTime
@@ -159,22 +213,9 @@ hook.Add("HUDPaintBackground", "RP1942_IntroVignette", function()
     local strength = cfg.vignetteMax * (1 - t) ^ 3
     if strength < 1 then return end
 
-    local w, h = ScrW(), ScrH()
-    local bandH = (h * cfg.vignetteSize) / cfg.steps
-    local bandW = (w * cfg.vignetteSize) / cfg.steps
-
-    for i = 0, cfg.steps - 1 do
-        local edge = 1 - i / cfg.steps              -- 1 at the screen edge, 0 inside
-        surface.SetDrawColor(0, 0, 0, strength * edge * edge)
-
-        local y, x = math.floor(i * bandH), math.floor(i * bandW)
-        local bh, bw = math.ceil(bandH), math.ceil(bandW)
-
-        surface.DrawRect(0, y, w, bh)               -- top
-        surface.DrawRect(0, h - y - bh, w, bh)      -- bottom
-        surface.DrawRect(x, 0, bw, h)               -- left
-        surface.DrawRect(w - x - bw, 0, bw, h)      -- right
-    end
+    surface.SetMaterial(buildVignette())
+    surface.SetDrawColor(255, 255, 255, strength)
+    surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 end)
 
 --[[---------------------------------------------------------------------------
