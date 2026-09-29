@@ -61,6 +61,13 @@ function RP1942.quietJoin(ply, teamNr)
         return false
     end
 
+    -- Joining the Reich from outside takes a vote (rp1942_reichjobs). The
+    -- vote doesn't name the job; when it passes, this runs again.
+    if not ply.RP1942_ReichVotePassed and RP1942.reichJobNeedsVote and RP1942.reichJobNeedsVote(ply, job.command) then
+        if RP1942.startReichVote then RP1942.startReichVote(ply, teamNr) end
+        return false
+    end
+
     ply.RP1942_QuietEnlist = true   -- lets the change through the hook below
     local ok = ply:changeTeam(teamNr, false, true) -- suppressNotification = true
     ply.RP1942_QuietEnlist = nil

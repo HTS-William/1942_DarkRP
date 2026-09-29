@@ -2,13 +2,17 @@
 1942 DarkRP - Reich jobs: joining by vote, and each unit's own music
 
 VOTE
-Joining the Reich from outside it (a Rifleman, the Supplier, the Scientist)
-takes a vote of the whole server (DarkRP's normal job vote, 20 seconds; it
+Joining the Reich from outside it (a Rifleman, the Supplier, the Scientist,
+the Gestapo) takes a vote of the whole server (DarkRP's normal job vote, 20 seconds; it
 passes by itself if you're alone on the server). Once you're in, moving up
 or across inside the Reich (Rifleman -> NCO, Medic, another unit) is
 instant. Leave the Reich and you need a vote again to come back.
-The F4 menu shows "Call a vote for ..." when a vote is needed; in chat it's
-/vote<command>, e.g. /votewehrrifleman.
+The vote reads "<name> would like to join the Reich": it never says which
+job, so the Gestapo can be voted in without being exposed (their join stays
+quiet, as before). The F4 menu shows "Call a vote for ..." when a vote is
+needed; in chat it's /vote<command>, e.g. /votewehrrifleman. The Gestapo's
+F4 button, /gestapo and /joingestapo start the vote on their own.
+The votes themselves: sv_reichjobs.lua.
 Wired into every job with faction = "reich" by job{} in jobs.lua.
 
 MUSIC
@@ -26,9 +30,14 @@ RP1942 = RP1942 or {}
 RP1942.ReichJobs = {
     vote = {
         enabled = true,
-        -- Jobs (by command) that never need a vote. The Führer is elected;
-        -- the Gestapo joins quietly (a vote would announce the agent).
-        exempt = { fuhrer = true, gestapo = true },
+        -- Jobs (by command) that never need a vote. The Führer is elected.
+        exempt = { fuhrer = true },
+        -- What the vote says. It never names the job, so voting in a
+        -- Gestapo agent doesn't blow their cover. %s = the player's name.
+        message     = "%s\nwould like to join the Reich",
+        failMessage = "%s was not allowed to join the Reich.",
+        time        = 20,   -- seconds
+        cooldown    = 80,   -- seconds before the same player can call another
     },
 
     musicVolume = 0.6,   -- also scaled by the player's music volume slider

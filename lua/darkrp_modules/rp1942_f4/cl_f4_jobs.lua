@@ -90,7 +90,11 @@ local function jobAction(job)
         return "Stand for election", function() UI.command(job.command) end
     end
     if job.quietJoin then
-        -- The server does this silently, with a civilian cover (rp1942_core/sv_disguise.lua)
+        -- The server does this silently, with a civilian cover (rp1942_core/sv_disguise.lua).
+        -- From outside the Reich it starts the vote to join first (it never names the job).
+        if RP1942.reichJobNeedsVote and RP1942.reichJobNeedsVote(LocalPlayer(), job.command) then
+            return "Call a vote to join the Reich (quietly)", function() UI.command(job.command) end
+        end
         return "Report for duty (quietly)", function() UI.command(job.command) end
     end
     if job.vote or (job.RequiresVote and job.RequiresVote(LocalPlayer(), job.team)) then
@@ -367,7 +371,8 @@ RP1942.F4Tabs.jobs = {
             if job.whitelisted then tags[#tags + 1] = "WHITELISTED" end
             if TEAM_FUHRER and job.team == TEAM_FUHRER then tags[#tags + 1] = "ELECTED" end
             if job.quietJoin then tags[#tags + 1] = "UNDERCOVER" end
-            if job.vote or (job.RequiresVote and job.RequiresVote(LocalPlayer(), job.team)) then tags[#tags + 1] = "VOTE" end
+            if job.vote or (job.RequiresVote and job.RequiresVote(LocalPlayer(), job.team))
+                or (job.quietJoin and RP1942.reichJobNeedsVote and RP1942.reichJobNeedsVote(LocalPlayer(), job.command)) then tags[#tags + 1] = "VOTE" end
             if #tags > 0 then addLabel(table.concat(tags, "  ·  "), "RP1942_F4Small", C.gold, 2) end
 
             if reason then addLabel(reason, "RP1942_F4Body", C.unavailable, gap) end
