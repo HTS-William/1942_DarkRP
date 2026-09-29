@@ -264,6 +264,46 @@ register("bankstatus", ulx.rp1942bankstatus, "!bankstatus", ULib.ACCESS_ADMIN,
     "Shows what the bank robbery system is doing: on/off, vaults, Reich online, the running robbery and its crew, the cooldown and the treasury.")
 
 --[[---------------------------------------------------------------------------
+Spreading fire (rp1942_fire)
+---------------------------------------------------------------------------]]
+function ulx.rp1942fire(ply, spots)
+    if not inGameOnly(ply) then return end
+    if darkrpCommand(ply, "fire", tostring(spots)) then
+        ulx.fancyLogAdmin(ply, true, "#A lit a fire (#i spots)", spots)
+    end
+end
+local fi = register("fire", ulx.rp1942fire, "!fire", ULib.ACCESS_SUPERADMIN,
+    "Lights a fire where you're looking, which spreads and burns like any other. Works even while the fire system is switched off.")
+fi:addParam{ type = ULib.cmds.NumArg, min = 1, max = 20, default = 3, hint = "spots", ULib.cmds.optional, ULib.cmds.round }
+
+lookAt("extinguish", ULib.ACCESS_ADMIN, "Puts out every fire within 400 units of where you're looking.")
+
+function ulx.rp1942extinguishall(ply)
+    if not RP1942.extinguishAll then return ULib.tsayError(ply, "The fire system isn't loaded.", true) end
+    local n = RP1942.extinguishAll()
+    ulx.fancyLogAdmin(ply, true, "#A put out every fire (#i)", n)
+end
+register("extinguishall", ulx.rp1942extinguishall, "!extinguishall", ULib.ACCESS_ADMIN,
+    "Puts out every fire on the map.")
+
+function ulx.rp1942firestatus(ply)
+    if not RP1942.fireStatus then return ULib.tsayError(ply, "The fire system isn't loaded.", true) end
+    for _, l in ipairs(RP1942.fireStatus()) do ULib.tsay(ply, "[Fire] " .. l, true) end
+end
+register("firestatus", ulx.rp1942firestatus, "!firestatus", ULib.ACCESS_ADMIN,
+    "How many fires are burning right now, and every fire setting.")
+
+function ulx.rp1942firesetting(ply, key, value)
+    if darkrpCommand(ply, "firesetting", key .. " " .. (value or "")) and value and value ~= "" then
+        ulx.fancyLogAdmin(ply, true, "#A set the fire setting #s to #s", key, value)
+    end
+end
+local fs = register("firesetting", ulx.rp1942firesetting, "!firesetting", ULib.ACCESS_SUPERADMIN,
+    "Changes a fire setting (saved in data/rp1942/fire.json): enabled 0/1, damagePerSecond, burnRadius, lifeMin/lifeMax, spreadChance, spreadDecay, maxGeneration, maxFires, maxPerCluster, molotovSpots, blastChance, blastMinDamage, extinguishRange and more. No value shows the current one; no key lists them.")
+fs:addParam{ type = ULib.cmds.StringArg, hint = "setting", default = "", ULib.cmds.optional, completes = RP1942.Fire and RP1942.Fire.keys or nil }
+fs:addParam{ type = ULib.cmds.StringArg, hint = "value", default = "", ULib.cmds.optional }
+
+--[[---------------------------------------------------------------------------
 Testing
 ---------------------------------------------------------------------------]]
 function ulx.rp1942prodspawn(ply)

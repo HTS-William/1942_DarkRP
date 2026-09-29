@@ -116,6 +116,11 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
 - Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
 
+# Fire
+- Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or derrick going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
+- Fire never starts in water, and each patch can only grow so far.
+- Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. Refill it by jumping into water.
+
 # Orders
 - Your faction's orders (Reich Orders, Resistance Plans) show in the top-left corner; Reich alerts appear below them. The Führer and the Reich officers set the Reich's; the Resistance Leader sets the Resistance's (/agenda). rp1942_orders_hud 0 in the console hides the panel.
 
@@ -270,6 +275,14 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 !removedumpster - Remove the dumpster you're looking at
 !getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
 !testexplosion <damage> <radius> - Set off a test explosion where you're aiming (it does real damage)
+
+#staff Staff: fire
+!fire [spots] - Light a fire where you're looking (it spreads like any other)
+!extinguish - Put out every fire within 400 units of where you're looking
+!extinguishall - Put out every fire on the map
+!firestatus - How many fires are burning, and every setting
+rp1942_fire 0/1, rp1942_fire_spreading 0/1 (server console or server.cfg) - The fire system on or off, and whether fire spreads or only burns where it was lit. Saved
+!firesetting <setting> [value] - Change a fire setting (enabled 0 turns the system off; spreading 0 stops it spreading; spreadChance, maxFires, damagePerSecond, blastChance, lifeMin/lifeMax...). Saved in data/rp1942/fire.json. No value shows the current one, no setting lists them
 ]] },
 
 }
