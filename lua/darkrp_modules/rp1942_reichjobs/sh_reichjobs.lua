@@ -45,7 +45,7 @@ RP1942.ReichJobs = {
     music = {
         wehrrifleman = "sounds/42wehrmacht.mp3",
         wssrifleman  = "sounds/42waffen.mp3",
-        lahrifleman  = "sounds/42leib.mp3",
+        leibstandarte = "sounds/42leib.mp3",
         -- Only the Riflemen (the way into each unit). sounds/42nco.mp3 and
         -- sounds/42officer.mp3 are unused for now.
     },

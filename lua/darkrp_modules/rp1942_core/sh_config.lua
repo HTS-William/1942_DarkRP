@@ -47,7 +47,7 @@ through; it is only used to tell players where to start.
 C.Branches = {
     wehrmacht = { name = "the Wehrmacht",     entry = "wehrrifleman" },
     waffen_ss = { name = "the Waffen-SS",     entry = "wssrifleman" },
-    leibstandarte = { name = "the Leibstandarte", entry = "lahrifleman" },
+    leibstandarte = { name = "the Leibstandarte", entry = "leibstandarte" },   -- the single "Leibstandarte" job
 }
 
 C.FactionNames = {

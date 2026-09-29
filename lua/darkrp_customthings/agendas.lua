@@ -6,7 +6,7 @@ A job can only be part of ONE agenda.
 ---------------------------------------------------------------------------]]
 -- The Reich Banker is listed with the Reich in F4 but deliberately left out here
 DarkRP.createAgenda("Reich Orders",
-    { TEAM_FUHRER, TEAM_WEHR_OFFIZIER, TEAM_WSS_OFFIZIER, TEAM_LAH_KOMMANDANT },
+    { TEAM_FUHRER, TEAM_WEHR_OFFIZIER, TEAM_WSS_OFFIZIER },
     {
         TEAM_WEHR_RIFLEMAN, TEAM_WEHR_MEDIC, TEAM_WEHR_ELITE,
         TEAM_WEHR_SHARPSHOOTER, TEAM_WEHR_DRIVER, TEAM_WEHR_NCO,

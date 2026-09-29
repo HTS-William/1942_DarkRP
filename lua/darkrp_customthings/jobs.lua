@@ -704,27 +704,29 @@ TEAM_WSS_OFFIZIER = job(whitelisted{
 })
 
 --[[===========================================================================
-LEIBSTANDARTE (in "Reich": Rifleman -> Kommandant)
+LEIBSTANDARTE (in "Reich": one job, taken from any Reich job)
 The Führer's bodyguard. Wehrmacht = police, Waffen-SS = special
 unit, Leibstandarte = the Führer's protection detail.
 ===========================================================================]]
 TEAM_LAH_RIFLEMAN = job{
-    name = "Leibstandarte Rifleman",
+    name = "Leibstandarte",
     color = Color(45, 45, 45),
     model = M.leibstandarte,
-    description = [[One of the Führer's bodyguards. Stay close to the Führer and keep him alive. Carries a Karabiner 98k.]],
-    weapons = { W.k98k, W.arrest, W.stun, W.unarrest },
-    command = "lahrifleman",
+    description = [[The Führer's personal bodyguard. Stay close to the Führer and keep him alive. Carries an StG 44 and a Walther P38.
+Only for those already serving the Reich: take it from any Reich job.]],
+    weapons = { W.stg44, W.p38, W.stun, W.arrest, W.unarrest },
+    command = "leibstandarte",   -- /leibstandarte
     max = 8,
     salary = SAL * 1.3,
     admin = 0,
     faction = "reich",
     arrests = true,
-    branch = "leibstandarte",   -- the way in: open to all (voted from outside the Reich)
+    branch = "leibstandarte", requires = { faction = "reich" },   -- must CURRENTLY hold a Reich job (so no vote)
     category = "Reich",
     sortOrder = 3,
 }
 
+--[=[ Commented out: the Leibstandarte is a single job now
 TEAM_LAH_KOMMANDANT = job(whitelisted{
     name = "Leibstandarte Kommandant",
     color = Color(30, 30, 30),
@@ -740,9 +742,10 @@ TEAM_LAH_KOMMANDANT = job(whitelisted{
     arrests = true,
     branch = "leibstandarte", requires = { branch = "leibstandarte" },
     category = "Reich",
-    subOf = "lahrifleman",   -- F4: shown once you are the base job; server-enforced
+    subOf = "leibstandarte",   -- F4: shown once you are the base job; server-enforced
     sortOrder = 200,
 })
+]=]
 
 -- In "Reich", visible to everyone so anyone can join from F4 (quietly: see
 -- quietJoin). F4 hides its player count from anyone outside the Reich, so

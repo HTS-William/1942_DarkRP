@@ -17,7 +17,7 @@ DarkRP.createDemoteGroup("Waffen-SS", {
 })
 
 DarkRP.createDemoteGroup("Leibstandarte", {
-    TEAM_LAH_RIFLEMAN, TEAM_LAH_KOMMANDANT,
+    TEAM_LAH_RIFLEMAN,   -- (Kommandant commented out)
 })
 
 DarkRP.createDemoteGroup("Gestapo", {
