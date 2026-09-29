@@ -4,6 +4,9 @@
     RP1942.getShopCatalog(key)          -> catalog table or nil
     RP1942.getShopItem(key, itemId)     -> item table or nil
     RP1942.getShopItemModel(item)       -> model path for pictures / pickups
+    RP1942.getShopPrice(key, item)      -> what it costs right now
+    RP1942.getShopEconomyFactor()       -> the economy's price factor (1 = base)
+    RP1942.getShopItemAmmo(item)        -> ammo text for the menu
 
 The server always prices and validates from its own copy of the catalog;
 the client's copy is only used to draw the menu.
@@ -27,6 +30,43 @@ function RP1942.getShopItem(key, itemId)
         end
     end
     return catalog._byId[itemId]
+end
+
+--[[---------------------------------------------------------------------------
+Economy pricing (catalogs with economy = true: the German Supplier).
+factor = 1 + (normal - economy) * perPoint, kept between min and max, so a
+strong economy makes weapons cheaper and a weak one dearer:
+    economy 110 -> x0.60     economy 75 -> x0.75     economy 50 -> x1.00
+    economy 25  -> x1.25     economy 1  -> x1.49
+Prices are rounded to the nearest `round`.
+---------------------------------------------------------------------------]]
+RP1942.ShopEconomyPricing = {
+    normal   = 50,
+    perPoint = 0.01,
+    min      = 0.60,
+    max      = 1.50,
+    round    = 10,
+}
+
+function RP1942.getShopEconomyFactor()
+    local c = RP1942.ShopEconomyPricing
+    local econ = RP1942.getEconomy and RP1942.getEconomy() or c.normal
+    return math.Clamp(1 + (c.normal - econ) * c.perPoint, c.min, c.max)
+end
+
+function RP1942.getShopPrice(key, item)
+    local catalog = RP1942.getShopCatalog(key)
+    if not (catalog and catalog.economy) then return item.price end
+    local r = RP1942.ShopEconomyPricing.round or 1
+    return math.max(r, math.floor(item.price * RP1942.getShopEconomyFactor() / r + 0.5) * r)
+end
+
+function RP1942.getShopItemAmmo(item)
+    if item.ammo then return item.ammo end
+    local wep = weapons.Get(item.class)
+    local ammo = wep and wep.Primary and wep.Primary.Ammo
+    if not ammo or ammo == "" or ammo == "none" then return nil end
+    return (language and language.GetPhrase and language.GetPhrase(ammo .. "_ammo") ~= ammo .. "_ammo") and language.GetPhrase(ammo .. "_ammo") or ammo
 end
 
 function RP1942.getShopItemModel(item)

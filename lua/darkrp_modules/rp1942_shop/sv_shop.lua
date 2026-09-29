@@ -59,8 +59,9 @@ function RP1942.buyShopItem(ply, itemId)
     local item = RP1942.getShopItem(key, itemId)
     if not item then return end   -- not in this job's catalog: ignore silently
 
-    if not ply:canAfford(item.price) then
-        DarkRP.notify(ply, 1, 4, "You can't afford " .. item.name .. " (" .. DarkRP.formatMoney(item.price) .. ").")
+    local price = RP1942.getShopPrice(key, item)   -- the Supplier's follows the economy
+    if not ply:canAfford(price) then
+        DarkRP.notify(ply, 1, 4, "You can't afford " .. item.name .. " (" .. DarkRP.formatMoney(price) .. ").")
         return
     end
 
@@ -71,7 +72,7 @@ function RP1942.buyShopItem(ply, itemId)
         return
     end
 
-    ply:addMoney(-item.price)
-    DarkRP.notify(ply, 0, 4, "You bought " .. item.name .. " for " .. DarkRP.formatMoney(item.price) .. ".")
+    ply:addMoney(-price)
+    DarkRP.notify(ply, 0, 4, "You bought " .. item.name .. " for " .. DarkRP.formatMoney(price) .. ".")
     hook.Run("RP1942_ShopPurchase", ply, item, ent)
 end

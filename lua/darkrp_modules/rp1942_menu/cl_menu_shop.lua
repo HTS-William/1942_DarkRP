@@ -22,7 +22,13 @@ end
 
 function PANEL:GetSubtitle()
     local catalog = self:GetCatalog()
-    return catalog and catalog.name or "Shop"
+    if not catalog then return "Shop" end
+    if catalog.economy and RP1942.getShopEconomyFactor then
+        local pct = math.Round((RP1942.getShopEconomyFactor() - 1) * 100)
+        local econ = RP1942.getEconomy and RP1942.getEconomy() or 50
+        return catalog.name .. "  ·  economy " .. econ .. ": " .. (pct == 0 and "base prices" or ((pct > 0 and "+" or "") .. pct .. "%"))
+    end
+    return catalog.name
 end
 
 function PANEL:GetMenuSize()
@@ -77,12 +83,16 @@ function PANEL:BuildRow(item)
     local price = side:Add("DLabel")
     price:Dock(TOP)
     price:SetFont("RP1942_MenuSection")
-    price:SetText(DarkRP.formatMoney(item.price))
+    local key = self.job and self.job.shop
+    local function cost() return RP1942.getShopPrice and RP1942.getShopPrice(key, item) or item.price end
+    price:SetText(DarkRP.formatMoney(cost()))
     price:SetContentAlignment(6)
     price:SetTall(28)
     price.Think = function(s)
+        local now = cost()   -- the Supplier's moves with the economy while the menu is open
+        if s.shown ~= now then s.shown = now s:SetText(DarkRP.formatMoney(now)) end
         local money = LocalPlayer():getDarkRPVar("money") or 0
-        s:SetTextColor(money >= item.price and theme.text or COLOR_CANT_AFFORD)
+        s:SetTextColor(money >= now and theme.text or COLOR_CANT_AFFORD)
     end
 
     local buy = self:AddButton("Buy", function() self:Request("buy", item.id) end)
@@ -107,7 +117,7 @@ function PANEL:BuildRow(item)
     ammo:Dock(TOP)
     ammo:SetFont("RP1942_MenuBody")
     ammo:SetTextColor(theme.sub)
-    ammo:SetText("Ammo: " .. (item.ammo or "-"))
+    ammo:SetText("Ammo: " .. ((RP1942.getShopItemAmmo and RP1942.getShopItemAmmo(item)) or "-"))
     ammo:SizeToContentsY()
 
     local desc = info:Add("DLabel")

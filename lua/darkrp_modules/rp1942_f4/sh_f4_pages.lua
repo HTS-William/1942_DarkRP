@@ -102,7 +102,7 @@ Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard.
 Riflemen - Every Reich unit starts at Rifleman. Its specialisations appear in the job menu once you hold it.
-Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The Führer is elected, and the Gestapo joins quietly, so neither is voted.
+Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The vote only says you'd like to join the Reich, never which job, so the Gestapo is voted in too without being exposed. The Führer is elected instead.
 Unit music - Each unit has its own music that plays for you (only you) when you join it as a Rifleman. Moving through its specialisations doesn't replay it. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
 
 # Wanted by the Reich
@@ -120,6 +120,11 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Führer can make a Reich payout: the same amount from the treasury to everyone in the factions he picks (F3, Reich payout).
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
 - The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped.
+
+# Arms dealers
+- The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
+- Black Market: anti-tank launchers, explosives and grenades, silenced guns, submachine guns and more. Cherkesov: Soviet and Allied rifles, machine guns, anti-tank rifles and more. Their prices are fixed: the economy doesn't change them.
+- German Supplier (Reich): German service weapons for the Reich. Its prices follow the economy: up to 40% cheaper when the economy is strong, up to 50% dearer when it's weak. The menu shows the current difference.
 
 # Production
 - Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.

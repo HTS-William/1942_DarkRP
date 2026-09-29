@@ -83,7 +83,9 @@ local function job(tbl)
 
     -- Reich jobs: joining the Reich from outside takes a vote; moves inside it don't
     -- (RP1942.reichJobNeedsVote and its exemptions: rp1942_reichjobs/sh_reichjobs.lua)
-    if tbl.faction == "reich" and not tbl.vote and not tbl.RequiresVote and RP1942.reichJobNeedsVote then
+    -- (quietJoin jobs, the Gestapo, are voted from RP1942.quietJoin instead, so
+    -- /gestapo still reaches it and the join stays silent)
+    if tbl.faction == "reich" and not tbl.quietJoin and not tbl.vote and not tbl.RequiresVote and RP1942.reichJobNeedsVote then
         local command = tbl.command
         tbl.RequiresVote = function(ply) return RP1942.reichJobNeedsVote(ply, command) end
     end
@@ -273,7 +275,7 @@ TEAM_BLACKMARKET = job{
     name = "Black Market Dealer",
     color = Color(70, 50, 40),
     model = M.dealer,
-    description = [[Deals pistols, shotguns, scoped rifles and melee weapons.]],
+    description = [[Buys weapons and explosives off the black market (F3) at fixed prices, whatever the economy, and sells them on. Anti-tank launchers, explosives, silenced guns and plenty more.]],
     weapons = {},
     command = "blackmarket",
     max = 3,
@@ -282,7 +284,7 @@ TEAM_BLACKMARKET = job{
     faction = "civilian",       -- a civilian trade: anyone can take it, no side required
     category = "Resistance",
     menu = "RP1942_ShopMenu",
-    shop = "example",
+    shop = "blackmarket",   -- rp1942_shop/sh_shop_catalogs.lua
 }
 --[=[
 TEAM_RUSTUNG = job{
@@ -303,7 +305,7 @@ TEAM_CHERKESOV = job{
     name = "Cherkesov Dealer",
     color = Color(120, 40, 30),
     model = M.dealer,
-    description = [[Deals almost everything on the server, including explosives otherwise only the German Supplier can get.]],
+    description = [[Buys Soviet and Allied weapons (F3) at fixed prices, whatever the economy, and sells them on: machine guns, anti-tank rifles, submachine guns and more.]],
     weapons = {},
     command = "cherkesov",
     max = 3,
@@ -311,6 +313,8 @@ TEAM_CHERKESOV = job{
     admin = 0,
     faction = "civilian",       -- a civilian trade: anyone can take it, no side required
     category = "Resistance",
+    menu = "RP1942_ShopMenu",
+    shop = "cherkesov",   -- rp1942_shop/sh_shop_catalogs.lua
 }
 
 TEAM_THIEF = job{
@@ -428,7 +432,7 @@ TEAM_SUPPLIER = job{
     name = "German Supplier",
     color = Color(80, 90, 70),
     model = M.merchant,
-    description = [[Supplies the Reich with weapons and explosives at a steep discount.]],
+    description = [[Buys German service weapons from the Reich armoury (F3) and supplies them to the Reich. Prices follow the economy: cheaper when it's strong, dearer when it's weak.]],
     weapons = {},
     command = "gersupplier",
     max = 1,
@@ -438,6 +442,8 @@ TEAM_SUPPLIER = job{
     branch = "supply",
     arrests = false,   -- a contractor, not police
     category = "Reich",
+    menu = "RP1942_ShopMenu",
+    shop = "supplier",   -- rp1942_shop/sh_shop_catalogs.lua
     sortOrder = 10,
 }
 
