@@ -43,11 +43,11 @@ RP1942.ReichJobs = {
     musicVolume = 0.6,   -- also scaled by the player's music volume slider
     -- Job command -> track. Jobs not listed play nothing.
     music = {
-        wehrrifleman = "sounds/42wehrmacht.mp3",
-        wssrifleman  = "sounds/42waffen.mp3",
-        leibstandarte = "sounds/42leib.mp3",
-        -- Only the Riflemen (the way into each unit). sounds/42nco.mp3 and
-        -- sounds/42officer.mp3 are unused for now.
+        wehrrifleman = "sound/42wehrmacht.mp3",
+        wssrifleman  = "sound/42waffen.mp3",
+        leibstandarte = "sound/42leib.mp3",
+        -- Only the Riflemen (the way into each unit). sound/42nco.mp3 and
+        -- sound/42officer.mp3 are unused for now.
     },
 }
 

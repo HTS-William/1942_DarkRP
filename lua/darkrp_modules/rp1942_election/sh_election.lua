@@ -34,7 +34,7 @@ RP1942.ElectionConfig = {
 
 --[[---------------------------------------------------------------------------
 Sounds. Two kinds of path work:
-    "sounds/anthem.mp3"            a file in this addon (path from the addon
+    "sound/anthem.mp3"            a file in this addon (path from the addon
                                    folder). Sent to players automatically;
                                    volume applies.
     "ambient/alarms/warningbell1.wav"   a stock game sound (under sound/).
@@ -45,13 +45,13 @@ sounds for themselves with:  rp1942_election_sounds 0
 RP1942.ElectionSounds = {
     voting       = "plats/elevbell1.wav",  -- when the ballot pops up to vote
     votingVolume = 0.8,
-    anthem       = "sounds/anthem.mp3",                -- when a Führer is elected
+    anthem       = "sound/anthem.mp3",                -- when a Führer is elected
     anthemVolume = 0.6,   -- also scaled by the player's music volume slider
     fuhrerKilled       = "buttons/lightswitch2.wav", -- when the Führer dies
     fuhrerKilledVolume = 0.9,
     broadcast          = "npc/overwatch/radiovoice/on1.wav", -- Führer's /broadcast
     broadcastVolume    = 0.9,
-    lockdown           = "sounds/42lockdown.mp3",  -- martial law (DarkRP's /lockdown)
+    lockdown           = "sound/42lockdown.mp3",  -- martial law (DarkRP's /lockdown)
     lockdownVolume     = 1,
 }
 

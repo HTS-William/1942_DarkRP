@@ -163,8 +163,19 @@ local function SendToSitStuck(ply)
     end
 end
 
+local SPAWN_MAP = "rp_42bros_v1r2"   -- the SPAWN_POINTS above are for this map
+
 local function SendToSpawn(ply)
-    local chosen = table.Random(SPAWN_POINTS)
+    local chosen
+    if game.GetMap() == SPAWN_MAP then
+        chosen = table.Random(SPAWN_POINTS)
+    else
+        -- Another map: one of its own spawn points
+        local spawns = ents.FindByClass("info_player_start")
+        local s = spawns[math.random(#spawns)]
+        if not IsValid(s) then ply:ChatPrint("[Spawn] No spawn point found on this map.") return end
+        chosen = { pos = s:GetPos(), ang = s:GetAngles() }
+    end
     SafeTeleport(ply, chosen.pos, chosen.ang)
     ply:ChatPrint("[Spawn] You have been sent to spawn.")
 end
@@ -173,11 +184,14 @@ hook.Add("PlayerSay", "AN_SitAnywhere_Helper_Commands", function(ply, text)
     local msg = string.lower(string.Trim(text or ""))
 
     if msg == "!sitstuck" or msg == "/sitstuck" then
+        -- 1942 DarkRP: no escaping jail, a wanted status, a robbery or a fight this way
+        if RP1942 and RP1942.canUseSitTeleport and not RP1942.canUseSitTeleport(ply, msg) then return "" end
         SendToSitStuck(ply)
         return ""
     end
 
     if msg == "!spawn" or msg == "/spawn" then
+        if RP1942 and RP1942.canUseSitTeleport and not RP1942.canUseSitTeleport(ply, msg) then return "" end
         SendToSpawn(ply)
         return ""
     end

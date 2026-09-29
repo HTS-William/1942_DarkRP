@@ -79,6 +79,7 @@ Raiding - Breaking into someone's property to take their valuables.
 /rpname First Last - Change your roleplay name later
 
 # Keys and menus
+- Sitting: press E on a bench, a chair, a wall or any plain prop to sit on it; press E again to get up. Alt + E sits on almost anything. Machines, dumpsters, crates and the like keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
 F4 - Jobs, the shop, commands and these pages
 F3 - Your job's own menu, if it has one (the wardrobe for undercover jobs, the Führer's office...)
 TAB - The scoreboard. Hold it to look; click a player to see their card (copy SteamID, Steam profile, mute their voice, send a message). Once you click, it stays open until you press TAB again.

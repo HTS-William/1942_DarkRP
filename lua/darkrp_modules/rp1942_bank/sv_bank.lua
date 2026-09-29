@@ -27,6 +27,11 @@ local function loadSettings()
     for k, v in pairs(saved) do
         if B.defaults[k] ~= nil and type(v) == type(B.defaults[k]) then B.settings[k] = v end
     end
+    -- The addon's sound folder moved from sounds/ to sound/: mend a saved path
+    local alarm = B.settings.alarm
+    if isstring(alarm) and string.find(alarm, "^sounds/") and not file.Exists(alarm, "GAME") then
+        B.settings.alarm = "sound/" .. string.sub(alarm, 8)
+    end
 end
 
 local function sendSettings(to)

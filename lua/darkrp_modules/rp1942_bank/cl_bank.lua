@@ -271,7 +271,7 @@ local FIELDS = {
     { "killReward", "Reward (R.M.)", "For the Reich member who kills or arrests the robber", "num" },
     { "LOOK AND SOUND" },
     { "model", "Vault model", "Any installed model path. Changes every vault now", "text" },
-    { "alarm", "Alarm sound", "A file in the addon, e.g. sounds/bankalarm.mp3", "text" },
+    { "alarm", "Alarm sound", "A file in the addon, e.g. sound/bankalarm.mp3", "text" },
     { "alarmVolume", "Alarm volume (0-1)", nil, "dec" },
     { "alarmRange", "Alarm range (units)", "How far the alarm carries", "num" },
 }

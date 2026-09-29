@@ -6,7 +6,7 @@
 if SERVER then
     AddCSLuaFile()
 
-    resource.AddFile("sound/an_sit/thesittingsoundeffect.ogg")
+    resource.AddFile("sound/rp1942_sit/thesittingsoundeffect.ogg")
 end
 
 if CLIENT then
@@ -23,7 +23,7 @@ if CLIENT then
                 if not IsValid(ent) or not IsValid(ply) then return end
 
                 if ply:GetVehicle() == ent then
-                    surface.PlaySound("an_sit/thesittingsoundeffect.ogg")
+                    surface.PlaySound("rp1942_sit/thesittingsoundeffect.ogg")
                 end
             end)
         end)
