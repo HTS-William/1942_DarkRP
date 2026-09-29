@@ -50,6 +50,7 @@ local MACHINES = {
     rp1942_factory = true, rp1942_oil_rig = true, rp1942_market = true,
     rp1942_printer_bank = true, rp1942_printer_illegal = true,
     rp1942_dumpster = true,
+    rp1942_bank_vault = true,   -- the Reichsbank (rp1942_bank): save it with /saveprod, or place it with /addvault
 }
 
 local function aim(ply)
@@ -91,7 +92,7 @@ local function spawnMachine(ply, class)
     if class == "rp1942_oil_rig" then
         ent:Anchor(ent:GetPos(), ent:GetAngles())   -- bolted down where it stands (no oil site used)
         ent:StartPump()
-    elseif class == "rp1942_market" or class == "rp1942_dumpster" then
+    elseif class == "rp1942_market" or class == "rp1942_dumpster" or class == "rp1942_bank_vault" then
         local phys = ent:GetPhysicsObject()
         if IsValid(phys) then phys:EnableMotion(false) end
     end

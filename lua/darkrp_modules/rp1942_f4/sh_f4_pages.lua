@@ -25,7 +25,7 @@ RP1942.F4StaffGroups = {
 }
 
 -- Also staff: anyone ULX lets use a 42Bros command (lua/ulx/modules/sh/42bros.lua)
-local ULX_STAFF = { "ulx train", "ulx event", "ulx makewanted", "ulx addmarket", "ulx factiondoor" }
+local ULX_STAFF = { "ulx train", "ulx event", "ulx makewanted", "ulx addmarket", "ulx factiondoor", "ulx banksettings" }
 
 function RP1942.isF4Staff(ply)
     if not IsValid(ply) then return false end
@@ -123,8 +123,15 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Arms dealers
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
+- Buying more than one (set the amount next to Buy, up to 20) brings a crate: press E on it to take one weapon out at a time. Shoot a crate to pieces and what's left inside is lost.
 - Black Market: anti-tank launchers, explosives and grenades, silenced guns, submachine guns and more. Cherkesov: Soviet and Allied rifles, machine guns, anti-tank rifles and more. Their prices are fixed: the economy doesn't change them.
 - German Supplier (Reich): German service weapons for the Reich. Its prices follow the economy: up to 40% cheaper when the economy is strong, up to 50% dearer when it's weak. The menu shows the current difference.
+
+# Bank robbery
+- The Reichsbank vault holds the Reich treasury. Anyone outside the Reich (except the Reich Banker) can press E on it to rob it, when at least 5 Reich officials are in the city and the bank isn't on alert (45 minutes after the last robbery).
+- The alarm sounds and everyone is told. The robber is WANTED. For the first 30 seconds, others can press E on the vault to ask to join; the robber decides who gets in.
+- Hold the bank for 10 minutes: the robber must stay alive, free and near the vault. If the robber dies, is arrested or leaves the bank, it fails, and the Reich member who stopped them gets a reward.
+- If the robber holds out, the WHOLE treasury is split evenly between the robber and the crew still alive and near the vault.
 
 # Production
 - Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.
@@ -222,7 +229,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
 /saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
 /saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 /unsaveprod - Look at a saved machine: remove it for good
@@ -233,6 +240,15 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 /removeoilsite - Remove the oil site nearest where you're looking, and its derrick
 /oilsites - Show every oil site on this map for a minute
 rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where a machine's panel sits, then print the line for the config
+
+#staff Staff: bank robbery
+/addvault - Place the Reichsbank vault where you're looking (saved for this map). /removevault removes the one you're looking at
+!banksettings - The bank robbery settings (length, cooldown, join window, Reich needed, crew size, bank radius, reward, vault model, alarm) with the status and debug buttons
+/bankstart [name] - Start a robbery now with that player (or you) as the robber, ignoring every requirement
+/bankstop - Call off the robbery (no payout, no cooldown)
+/bankfinish - End the timer now: the robbery succeeds and pays out
+/bankcooldown - Clear the cooldown
+/bankstatus - What the bank is doing right now
 
 #staff Staff: map setup
 /factiondoor - Look at a door and set its faction (reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)

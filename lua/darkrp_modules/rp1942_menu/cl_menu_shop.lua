@@ -12,7 +12,7 @@ and override GetSubtitle / BuildRow / etc.
 ---------------------------------------------------------------------------]]
 local PANEL = {}
 
-local ROW_H = 104
+local ROW_H = 116
 local ICON = 88
 local COLOR_CANT_AFFORD = Color(200, 90, 80)
 
@@ -42,14 +42,85 @@ function PANEL:Populate()
         return
     end
 
-    local lastCategory
+    self:AddSearch()
+    self.rows, self.sections = {}, {}
+    local lastCategory, section
     for _, item in ipairs(catalog.items or {}) do
         if item.category and item.category ~= lastCategory then
-            self:AddSection(item.category)
+            section = { label = self:AddSection(item.category), rows = {} }
+            self.sections[#self.sections + 1] = section
             lastCategory = item.category
         end
-        self:BuildRow(item)
+        local row = self:BuildRow(item)
+        -- What the search matches: name, category, ammo, class and description
+        row.searchText = string.lower(table.concat({ item.name or "", item.category or "", item.class or "",
+            (RP1942.getShopItemAmmo and RP1942.getShopItemAmmo(item)) or "", item.description or "" }, " "))
+        self.rows[#self.rows + 1] = row
+        if section then section.rows[#section.rows + 1] = row end
     end
+
+    self.noMatch = self:AddText("Nothing matches your search.")
+    self.noMatch:SetVisible(false)
+end
+
+--[[---------------------------------------------------------------------------
+Search bar: fixed above the list. Every word typed must appear in the item's
+name, category, ammo, class or description ("mp40", "smg 9mm", "sniper").
+---------------------------------------------------------------------------]]
+local SEARCH_H = 32
+
+function PANEL:AddSearch()
+    local theme = self.theme
+    local box = vgui.Create("DTextEntry", self)
+    box:SetFont("RP1942_MenuBody")
+    box:SetUpdateOnType(true)
+    box:SetPaintBackground(false)
+    box.Paint = function(e, w, h)
+        surface.SetDrawColor(theme.accent.r, theme.accent.g, theme.accent.b, 160)
+        surface.DrawRect(0, 0, w, h)
+        surface.SetDrawColor(e:HasFocus() and theme.text or theme.accentHover)
+        surface.DrawOutlinedRect(0, 0, w, h, 1)
+        e:DrawTextEntryText(theme.text, theme.accentHover, theme.text)
+        if e:GetValue() == "" and not e:HasFocus() then
+            draw.SimpleText("Search: name, type or ammo...", "RP1942_MenuBody", 8, h / 2, theme.sub, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        end
+    end
+    box.OnValueChange = function(_, v) self:ApplySearch(v) end
+    self.search = box
+    self.content:DockMargin(0, SEARCH_H + 8, 0, 0)   -- room for the bar above the list
+end
+
+function PANEL:PerformLayout(w, h)
+    local frame = baseclass.Get("DFrame")   -- the menu base is a DFrame
+    if frame and frame.PerformLayout then frame.PerformLayout(self, w, h) end
+    if IsValid(self.search) then
+        local l, t, r = self:GetDockPadding()
+        self.search:SetPos(l, t)
+        self.search:SetSize(w - l - r, SEARCH_H)
+    end
+end
+
+function PANEL:ApplySearch(text)
+    local words = {}
+    for word in string.gmatch(string.lower(text or ""), "%S+") do words[#words + 1] = word end
+    local any = false
+    for _, row in ipairs(self.rows or {}) do
+        local show = true
+        for _, word in ipairs(words) do
+            if not string.find(row.searchText, word, 1, true) then show = false break end
+        end
+        row:SetVisible(show)
+        any = any or show
+    end
+    for _, sec in ipairs(self.sections or {}) do
+        local visible = false
+        for _, row in ipairs(sec.rows) do if row:IsVisible() then visible = true break end end
+        if IsValid(sec.label) then sec.label:SetVisible(visible) end
+    end
+    if IsValid(self.noMatch) then self.noMatch:SetVisible(not any) end
+    self.content:GetCanvas():InvalidateLayout(true)
+    self.content:InvalidateLayout(true)
+    self.content:GetVBar():SetScroll(0)
 end
 
 -- One row: [picture] [name / ammo / description] [price / Buy]
@@ -73,10 +144,10 @@ function PANEL:BuildRow(item)
     icon:SetModel(RP1942.getShopItemModel(item))
     icon:SetTooltip(item.name)
 
-    -- Price + Buy (right side)
+    -- Price + amount + Buy (right side)
     local side = row:Add("DPanel")
     side:Dock(RIGHT)
-    side:SetWide(120)
+    side:SetWide(170)
     side:DockMargin(8, 8, 8, 8)
     side.Paint = nil
 
@@ -95,10 +166,58 @@ function PANEL:BuildRow(item)
         s:SetTextColor(money >= now and theme.text or COLOR_CANT_AFFORD)
     end
 
-    local buy = self:AddButton("Buy", function() self:Request("buy", item.id) end)
+    -- How many: 1 = a single weapon, more = a crate (RP1942.ShopShipments)
+    local maxAmount = (RP1942.ShopShipments and RP1942.ShopShipments.maxAmount) or 1
+    local amount = 1
+    local buy = self:AddButton("Buy", function() self:Request("buy", item.id .. ":" .. amount) end)
     buy:SetParent(side)
     buy:Dock(BOTTOM)
     buy:DockMargin(0, 0, 0, 0)
+    buy.Think = function(s)
+        local want = amount > 1 and ("Buy crate  ·  " .. DarkRP.formatMoney(cost() * amount)) or "Buy"
+        if s:GetText() ~= want then s:SetText(want) end
+    end
+
+    if item.type == "weapon" and maxAmount > 1 then
+        local qty = side:Add("DPanel")
+        qty:Dock(BOTTOM)
+        qty:DockMargin(0, 0, 0, 4)
+        qty:SetTall(24)
+        qty.Paint = nil
+        local function step(label, d)
+            local b = qty:Add("DButton")
+            b:Dock(d < 0 and LEFT or RIGHT)
+            b:SetWide(28)
+            b:SetText(label)
+            b:SetFont("RP1942_MenuBody")
+            b:SetTextColor(theme.text)
+            b.Paint = function(s, w, h)
+                surface.SetDrawColor(s:IsHovered() and theme.accentHover or theme.accent)
+                surface.DrawRect(0, 0, w, h)
+            end
+            b.DoClick = function()
+                amount = math.Clamp(amount + d * ((input.IsKeyDown(KEY_LSHIFT) and 5) or 1), 1, maxAmount)
+                surface.PlaySound("ui/buttonclick.wav")
+            end
+        end
+        step("-", -1)
+        step("+", 1)
+        local box = qty:Add("DTextEntry")
+        box:Dock(FILL)
+        box:DockMargin(4, 0, 4, 0)
+        box:SetNumeric(true)
+        box:SetFont("RP1942_MenuBody")
+        box:SetText("1")
+        box:SetUpdateOnType(true)
+        box.OnValueChange = function(s, v)
+            local n = tonumber(v)
+            if n then amount = math.Clamp(math.floor(n), 1, maxAmount) end
+        end
+        box.Think = function(s)
+            if not s:HasFocus() and s:GetValue() ~= tostring(amount) then s:SetText(tostring(amount)) end
+        end
+        box:SetTooltip("How many (1-" .. maxAmount .. "). More than 1 comes as a crate. Shift + / - steps by 5.")
+    end
 
     -- Text (middle)
     local info = row:Add("DPanel")

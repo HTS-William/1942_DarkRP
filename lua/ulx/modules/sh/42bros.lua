@@ -220,6 +220,51 @@ lookAt("removeoilsite", ULib.ACCESS_SUPERADMIN, "Look near an oil site: removes 
 lookAt("oilsites", ULib.ACCESS_SUPERADMIN, "Shows every oil site on this map on your screen for a minute, and whether each is free or taken.")
 
 --[[---------------------------------------------------------------------------
+Bank robbery (rp1942_bank)
+---------------------------------------------------------------------------]]
+lookAt("addvault", ULib.ACCESS_SUPERADMIN, "Look at the floor: places the Reichsbank vault there, facing you. Robbers press E on it. Saved for this map.")
+lookAt("removevault", ULib.ACCESS_SUPERADMIN, "Look at the Reichsbank vault: removes it, and from this map's save.")
+
+function ulx.rp1942banksettings(ply)
+    if not IsValid(ply) then return ULib.tsayError(ply, "Use this in game.", true) end
+    if not RP1942.openBankMenu then return ULib.tsayError(ply, "The bank isn't loaded.", true) end
+    RP1942.openBankMenu(ply)
+end
+register("banksettings", ulx.rp1942banksettings, "!banksettings", ULib.ACCESS_SUPERADMIN,
+    "Bank robbery settings: length, cooldown, join window, Reich needed, crew size, bank radius, reward, vault model, alarm. Also shows the status and has debug buttons (start / stop / finish / clear cooldown). Saved in data/rp1942/bank.json. This permission also covers every bank debug command.")
+
+function ulx.rp1942bankstart(ply, target)
+    if not RP1942.bankForceStart then return ULib.tsayError(ply, "The bank isn't loaded.", true) end
+    local ok, why = RP1942.bankForceStart(ply, target)
+    if not ok then return ULib.tsayError(ply, "Can't start: " .. tostring(why), true) end
+    ulx.fancyLogAdmin(ply, true, "#A started a bank robbery with #T as the robber", target)
+end
+local bs = register("bankstart", ulx.rp1942bankstart, "!bankstart", ULib.ACCESS_SUPERADMIN,
+    "Debug: start a bank robbery now with that player as the robber (yourself if left empty), at the vault nearest them. Ignores every requirement (Reich online, cooldown, job).")
+bs:addParam{ type = ULib.cmds.PlayerArg, ULib.cmds.optional }
+
+local function bankSimple(name, fnName, okText, help)
+    ulx["rp1942" .. name] = function(ply)
+        local fn = RP1942[fnName]
+        if not fn then return ULib.tsayError(ply, "The bank isn't loaded.", true) end
+        local ok, why = fn(ply)
+        if not ok then return ULib.tsayError(ply, tostring(why), true) end
+        ulx.fancyLogAdmin(ply, true, "#A " .. okText)
+    end
+    register(name, ulx["rp1942" .. name], "!" .. name, ULib.ACCESS_SUPERADMIN, help)
+end
+bankSimple("bankstop", "bankStop", "called off the bank robbery", "Debug: call off the running bank robbery. Nobody is paid and there's no cooldown.")
+bankSimple("bankfinish", "bankFinishNow", "ended the bank robbery (it succeeded)", "Debug: end the bank robbery timer now. It succeeds: the treasury is split between the crew.")
+bankSimple("bankcooldown", "bankResetCooldown", "cleared the bank cooldown", "Debug: clear the bank's cooldown so it can be robbed again right away.")
+
+function ulx.rp1942bankstatus(ply)
+    if not RP1942.bankStatus then return ULib.tsayError(ply, "The bank isn't loaded.", true) end
+    for _, l in ipairs(RP1942.bankStatus()) do ULib.tsay(ply, "[Bank] " .. l, true) end
+end
+register("bankstatus", ulx.rp1942bankstatus, "!bankstatus", ULib.ACCESS_ADMIN,
+    "Shows what the bank robbery system is doing: on/off, vaults, Reich online, the running robbery and its crew, the cooldown and the treasury.")
+
+--[[---------------------------------------------------------------------------
 Testing
 ---------------------------------------------------------------------------]]
 function ulx.rp1942prodspawn(ply)

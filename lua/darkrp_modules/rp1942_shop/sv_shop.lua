@@ -1,7 +1,8 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - shop purchases (server)
 
-    RP1942.buyShopItem(ply, itemId)
+    RP1942.buyShopItem(ply, itemId, amount)
+    amount 1 = one weapon; more = a crate of them (RP1942.ShopShipments)
 
 Order of checks: the player's CURRENT job has a catalog -> the item is in
 THAT catalog -> they can afford it -> it spawns -> only THEN is money taken.
@@ -48,7 +49,24 @@ local function spawnItem(ply, item)
     return ent
 end
 
-function RP1942.buyShopItem(ply, itemId)
+-- A crate holding `amount` of a weapon
+local function spawnCrate(ply, item, amount)
+    local probe = ents.Create(item.class)   -- the class must exist
+    if not IsValid(probe) then return nil end
+    probe:Remove()
+    local crate = ents.Create("rp1942_weapon_crate")
+    if not IsValid(crate) then return nil end
+    crate:SetPos(spawnPos(ply) + Vector(0, 0, 10))
+    crate:Spawn()
+    crate:Activate()
+    crate:SetWeaponClass(item.class)
+    crate:SetWeaponName(item.name)
+    crate:SetCount(amount)
+    if crate.CPPISetOwner then crate:CPPISetOwner(ply) end
+    return crate
+end
+
+function RP1942.buyShopItem(ply, itemId, amount)
     local job = ply:getJobTable()
     local key = job and job.shop
     if not RP1942.getShopCatalog(key) then
@@ -59,13 +77,16 @@ function RP1942.buyShopItem(ply, itemId)
     local item = RP1942.getShopItem(key, itemId)
     if not item then return end   -- not in this job's catalog: ignore silently
 
-    local price = RP1942.getShopPrice(key, item)   -- the Supplier's follows the economy
+    amount = math.Clamp(math.floor(tonumber(amount) or 1), 1, (RP1942.ShopShipments and RP1942.ShopShipments.maxAmount) or 1)
+    if item.type ~= "weapon" then amount = 1 end
+    local unit = RP1942.getShopPrice(key, item)   -- the Supplier's follows the economy
+    local price = unit * amount
     if not ply:canAfford(price) then
-        DarkRP.notify(ply, 1, 4, "You can't afford " .. item.name .. " (" .. DarkRP.formatMoney(price) .. ").")
+        DarkRP.notify(ply, 1, 4, "You can't afford " .. (amount > 1 and (amount .. "x ") or "") .. item.name .. " (" .. DarkRP.formatMoney(price) .. ").")
         return
     end
 
-    local ent = spawnItem(ply, item)
+    local ent = amount > 1 and spawnCrate(ply, item, amount) or spawnItem(ply, item)
     if not IsValid(ent) then
         DarkRP.notify(ply, 1, 5, item.name .. " isn't available on this server yet. You were not charged.")
         MsgC(Color(255, 170, 0), "[1942] Shop '", key, "' item '", item.id, "': class '", item.class, "' does not exist.\n")
@@ -73,6 +94,6 @@ function RP1942.buyShopItem(ply, itemId)
     end
 
     ply:addMoney(-price)
-    DarkRP.notify(ply, 0, 4, "You bought " .. item.name .. " for " .. DarkRP.formatMoney(price) .. ".")
+    DarkRP.notify(ply, 0, 4, "You bought " .. (amount > 1 and ("a crate of " .. amount .. "x ") or "") .. item.name .. " for " .. DarkRP.formatMoney(price) .. ".")
     hook.Run("RP1942_ShopPurchase", ply, item, ent)
 end

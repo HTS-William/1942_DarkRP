@@ -33,6 +33,18 @@ function RP1942.getShopItem(key, itemId)
 end
 
 --[[---------------------------------------------------------------------------
+Shipments: a dealer can buy any amount of a weapon at once, from 1 to
+maxAmount. One comes as a single weapon; more come in a crate
+(rp1942_weapon_crate) that hands one out per press of E. The price is the
+single price times the amount.
+---------------------------------------------------------------------------]]
+RP1942.ShopShipments = {
+    maxAmount = 20,
+    model     = "models/Items/item_item_crate.mdl",
+    health    = 200,   -- a crate shot to pieces loses what's left in it
+}
+
+--[[---------------------------------------------------------------------------
 Economy pricing (catalogs with economy = true: the German Supplier).
 factor = 1 + (normal - economy) * perPoint, kept between min and max, so a
 strong economy makes weapons cheaper and a weak one dearer:
