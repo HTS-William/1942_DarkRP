@@ -50,16 +50,38 @@ local function textSize(font, text)
     surface.SetFont(font)
     return surface.GetTextSize(text)
 end
-local function fontH(font) local _, h = textSize(font, "Ag") return h end
+-- Font heights don't change until the fonts are rebuilt (resolution change)
+local fontHeights = {}
+local function fontH(font)
+    local h = fontHeights[font]
+    if not h then
+        local _, hh = textSize(font, "Ag")
+        h = hh
+        fontHeights[font] = h
+    end
+    return h
+end
+hook.Add("OnScreenSizeChanged", "RP1942_HudFontHeights", function() fontHeights = {} end)
 
+-- Fitting text is the dear part of the HUD (a GetTextSize per trimmed
+-- character), so results are remembered per text/font/width
+local fitCache, fitCount = {}, 0
 local function fit(text, font, maxW)
     if maxW <= 0 then return "" end
-    if textSize(font, text) <= maxW then return text end
-    while #text > 0 and textSize(font, text .. "...") > maxW do
-        local last = utf8.offset(text, -1)
-        text = string.sub(text, 1, (last or #text) - 1)
+    local key = font .. "\1" .. maxW .. "\1" .. text
+    local hit = fitCache[key]
+    if hit then return hit end
+    local out = text
+    if textSize(font, text) > maxW then
+        while #out > 0 and textSize(font, out .. "...") > maxW do
+            local last = utf8.offset(out, -1)
+            out = string.sub(out, 1, (last or #out) - 1)
+        end
+        out = out .. "..."
     end
-    return text .. "..."
+    if fitCount > 300 then fitCache, fitCount = {}, 0 end   -- never grows without bound
+    fitCache[key], fitCount = out, fitCount + 1
+    return out
 end
 
 --[[---------------------------------------------------------------------------
@@ -99,7 +121,13 @@ end
 --[[---------------------------------------------------------------------------
 Status tags: { text, colour } for whatever applies right now
 ---------------------------------------------------------------------------]]
+-- Rebuilt ten times a second, not every frame (the strings and tables are
+-- the cost, not the drawing); the injury tag's pulse is applied when drawn
+local tagCache, tagCacheAt = {}, 0
 local function statusTags(lp)
+    local now = RealTime()
+    if now - tagCacheAt < 0.1 then return tagCache end
+    tagCacheAt = now
     local tags = {}
 
     -- Pain system: a leg shot stops sprinting and jumping for a while
@@ -109,8 +137,7 @@ local function statusTags(lp)
         if untilT < 1e8 then
             text = text .. "  ·  " .. string.FormattedTime(math.max(0, math.ceil(untilT - CurTime())), "%01i:%02i")
         end
-        local pulse = 0.75 + 0.25 * math.sin(CurTime() * 4)
-        tags[#tags + 1] = { text, alpha(HC.injury, 255 * pulse) }
+        tags[#tags + 1] = { text, HC.injury, pulse = true }
     end
 
     if lp:getDarkRPVar("wanted") then
@@ -128,7 +155,22 @@ local function statusTags(lp)
     if lp:getDarkRPVar("HasGunlicense") then
         tags[#tags + 1] = { "LICENSED", HC.licence }
     end
+    tagCache = tags
     return tags
+end
+
+-- The "job · money · +salary" line, rebuilt only when one of them changes
+local line2Cache = {}
+local function moneyLine(lp, job)
+    local title = lp:getDarkRPVar("job") or (job and job.name) or ""
+    local money, salary = lp:getDarkRPVar("money") or 0, lp:getDarkRPVar("salary") or 0
+    local c = line2Cache
+    if c.title ~= title or c.money ~= money or c.salary ~= salary then
+        local text = title .. "  ·  " .. DarkRP.formatMoney(money)
+        if CFG.showSalary and salary > 0 then text = text .. "  ·  +" .. DarkRP.formatMoney(salary) end
+        c.title, c.money, c.salary, c.text = title, money, salary, text
+    end
+    return c.text
 end
 
 --[[---------------------------------------------------------------------------
@@ -167,10 +209,7 @@ local function drawPlayerPanel(lp, m)
     local showArmour = armour > 0 or shownArmour > 0.5
 
     local job = RPExtraTeams[lp:Team()]
-    local title = lp:getDarkRPVar("job") or (job and job.name) or ""
-    local line2 = title .. "  ·  " .. DarkRP.formatMoney(lp:getDarkRPVar("money") or 0)
-    local salary = lp:getDarkRPVar("salary")
-    if CFG.showSalary and salary and salary > 0 then line2 = line2 .. "  ·  +" .. DarkRP.formatMoney(salary) end
+    local line2 = moneyLine(lp, job)
 
     -- Status tags, wrapped onto as many rows as they need
     local tags = statusTags(lp)
@@ -180,7 +219,7 @@ local function drawPlayerPanel(lp, m)
         local text = fit(tag[1], "RP1942_HudSmall", innerW - tagPadX * 2)
         local tw = textSize("RP1942_HudSmall", text) + tagPadX * 2
         if tx > 0 and tx + tw > innerW then tx, ty = 0, ty + tagH + math.floor(4 * s) end
-        placed[#placed + 1] = { text = text, color = tag[2], x = tx, y = ty, w = tw }
+        placed[#placed + 1] = { text = text, color = tag[2], pulse = tag.pulse, x = tx, y = ty, w = tw }
         tx = tx + tw + math.floor(4 * s)
     end
     local tagsH = #placed > 0 and (ty + tagH) or 0
@@ -219,7 +258,9 @@ local function drawPlayerPanel(lp, m)
     if tagsH > 0 then
         cy = cy + gap
         for _, t in ipairs(placed) do
-            draw.RoundedBox(3, x + innerX + t.x, cy + t.y, t.w, tagH, t.color)
+            local col = t.color
+            if t.pulse then col = alpha(col, 255 * (0.75 + 0.25 * math.sin(CurTime() * 4))) end
+            draw.RoundedBox(3, x + innerX + t.x, cy + t.y, t.w, tagH, col)
             draw.SimpleText(t.text, "RP1942_HudSmall", x + innerX + t.x + tagPadX, cy + t.y + tagH / 2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         end
     end

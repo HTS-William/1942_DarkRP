@@ -326,19 +326,52 @@ local function blendOn()
 end
 local function blendOff() render.OverrideBlend(false) end
 
-local textures = {}   -- "index_WxH" -> { rt =, mat = }
+--[[---------------------------------------------------------------------------
+Textures are pooled by SIZE, not owned by an entity for good: a render target
+can never be freed, so one per machine ever seen would keep growing. A panel
+that hasn't been drawn for a few seconds (out of range, behind you, removed)
+gives its texture back, and the next panel of that size takes it. So the
+pool only ever holds as many textures as panels on screen at once.
+---------------------------------------------------------------------------]]
+local pools = {}          -- "WxH" -> list of { rt =, mat =, owner =, used = }
+local RELEASE_AFTER = 4   -- seconds unseen before a texture may be reused
+
 local function panelTexture(ent, w, h)
-    local key = ent:EntIndex() .. "_" .. w .. "x" .. h
-    local t = textures[key]
-    if t then return t end
-    local rt = GetRenderTargetEx("rp1942_panel_" .. key, w, h, RT_SIZE_OFFSCREEN, MATERIAL_RT_DEPTH_NONE,
-        bit.bor(4, 8, 256), 0, IMAGE_FORMAT_RGBA8888)   -- clamp S/T, no mipmaps
-    local mat = CreateMaterial("rp1942_panelmat_" .. key, "UnlitGeneric", {
-        ["$basetexture"] = rt:GetName(), ["$translucent"] = "1", ["$vertexalpha"] = "1", ["$vertexcolor"] = "1",
-    })
-    t = { rt = rt, mat = mat }
-    textures[key] = t
+    local key = w .. "x" .. h
+    local pool = pools[key]
+    if not pool then pool = {} pools[key] = pool end
+    local now = RealTime()
+    local free
+    for _, t in ipairs(pool) do
+        if t.owner == ent then t.used = now return t end
+        if not free and (not IsValid(t.owner) or now - t.used > RELEASE_AFTER) then free = t end
+    end
+    local t = free
+    if not t then
+        local id = key .. "_" .. (#pool + 1)
+        local rt = GetRenderTargetEx("rp1942_panel_" .. id, w, h, RT_SIZE_OFFSCREEN, MATERIAL_RT_DEPTH_NONE,
+            bit.bor(4, 8, 256), 0, IMAGE_FORMAT_RGBA8888)   -- clamp S/T, no mipmaps
+        local mat = CreateMaterial("rp1942_panelmat_" .. id, "UnlitGeneric", {
+            ["$basetexture"] = rt:GetName(), ["$translucent"] = "1", ["$vertexalpha"] = "1", ["$vertexcolor"] = "1",
+        })
+        t = { rt = rt, mat = mat }
+        pool[#pool + 1] = t
+    end
+    t.owner, t.used = ent, now
+    ent._panelPainted = nil   -- a texture that was someone else's: paint before showing
     return t
+end
+
+-- Hidden behind a wall (or a prop)? Checked a few times a second, not every
+-- frame: ENT:Draw only culls what's outside the view, not what's behind
+-- something, so without this a panel in the next room still repaints.
+local function occluded(ent, eye, pos)
+    local now = RealTime()
+    local o = ent._panelOcc
+    if o and now - o.t < 0.3 then return o.hidden end
+    local tr = util.TraceLine({ start = eye, endpos = pos, filter = { LocalPlayer(), ent }, mask = MASK_OPAQUE })
+    ent._panelOcc = { t = now, hidden = tr.Hit and tr.Fraction < 0.98 }
+    return ent._panelOcc.hidden
 end
 
 local function paint(ent, P, w, h)
@@ -367,6 +400,7 @@ function RP1942.drawPanel(ent)
     local alpha = math.Clamp((maxDist - dist) / 80, 0, 1)
     local w, h = ent.PanelSize.w, ent.PanelSize.h
     local cx, cy = cursor(pos, ang, scale, w, h)
+    if not cx and occluded(ent, eye, pos) then return end
 
     if not cacheCvar:GetBool() then
         -- The old way: paint it all, every frame
@@ -380,7 +414,17 @@ function RP1942.drawPanel(ent)
     else
         -- Repaint the texture when it's due
         local now = RealTime()
-        local fps = cx and LOOK_FPS or ((ent.PanelFast and ent:PanelFast()) and FAST_FPS or idleCvar:GetFloat())
+        -- Looked at: smooth. Otherwise the idle rate, and slower still the
+        -- further away it is (a panel across the room at 2 fps is plenty)
+        local fps
+        if cx then
+            fps = LOOK_FPS
+        elseif ent.PanelFast and ent:PanelFast() then
+            fps = FAST_FPS
+        else
+            local far = math.Clamp((dist - maxDist * 0.4) / (maxDist * 0.6), 0, 1)
+            fps = math.max(2, idleCvar:GetFloat() * (1 - far * 0.75))
+        end
         local tex = panelTexture(ent, w, h)
         if not ent._panelPainted or now - ent._panelPainted >= 1 / fps or ent._panelTex ~= tex then
             ent._panelPainted, ent._panelTex = now, tex

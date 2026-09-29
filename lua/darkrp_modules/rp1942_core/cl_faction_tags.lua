@@ -46,7 +46,14 @@ local function drawTag(cfg, lp, shootPos, ply)
     local head = ply:EyePos()
     local dist = shootPos:Distance(head)
     if dist > maxDist then return end
-    if head.isInSight and not head:isInSight({ lp, ply }) then return end
+    -- The line-of-sight trace is the dear part: redone ten times a second per player
+    local now = RealTime()
+    local seen = ply.RP1942_TagSight
+    if not seen or now - seen.t > 0.1 then
+        seen = { t = now, ok = not (head.isInSight and not head:isInSight({ lp, ply })) }
+        ply.RP1942_TagSight = seen
+    end
+    if not seen.ok then return end
 
     head.z = head.z + 10   -- same anchor DarkRP uses for names
     local pos = head:ToScreen()

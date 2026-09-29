@@ -11,14 +11,17 @@ local function fmt(sec)
     return string.format("%d:%02d", math.floor(sec / 60), sec % 60)
 end
 
+local colorCache
 local function colors()
+    if colorCache then return colorCache end
     local c = RP1942.F4Config and RP1942.F4Config.colors or {}
-    return {
+    colorCache = {
         bg = c.bg or Color(20, 19, 17, 248), bar = c.titleBar or Color(14, 13, 12),
         card = c.card or Color(38, 35, 31), gold = c.gold or Color(201, 168, 92),
         text = c.text or Color(236, 228, 212), sub = c.sub or Color(160, 152, 136),
         red = Color(200, 60, 50), redD = Color(128, 18, 16), green = Color(90, 170, 90), well = Color(46, 43, 39),
     }
+    return colorCache
 end
 
 local function fonts()
