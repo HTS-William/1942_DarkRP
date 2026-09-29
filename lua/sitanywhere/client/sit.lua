@@ -124,10 +124,14 @@ hook.Add("KeyPress", TAG .. "KeyPress", function(ply, key)
 
 	if currSit then return end
 
-	-- New DarkRP-friendly control:
-	-- Hold USE/E, move your mouse to choose sit direction, release USE/E to sit.
-	-- No ALT/WALK key required.
+	-- Walk + E: hold your walk key (whatever +walk is bound to, Alt by
+	-- default), press E, move the mouse to pick a direction, release E to
+	-- sit. Plain E keeps doing what it does in the gamemode (doors, machines,
+	-- dumpsters...). The server can waive the walk key with
+	-- sitting_force_no_walk 1; a player can with sitting_use_walk 0.
 	if key ~= IN_USE then return end
+	local needWalk = not SittingNoAltServer:GetBool() and useAlt:GetBool()
+	if needWalk and not ply:KeyDown(IN_WALK) and not (forceBinds:GetBool() and input.IsKeyDown(KEY_LALT)) then return end
 
 	local shouldSit = ShouldSit(ply)
 	if shouldSit == false then return end
