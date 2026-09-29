@@ -242,7 +242,7 @@ function RP1942.sellPocketGoods(ply, onlyId, onlyQ)
 end
 
 --[[---------------------------------------------------------------------------
-Markets: placed in game with /addmarket, saved per map in
+Markets: placed in game with !addmarket, saved per map in
 data/rp1942/markets_<map>.json
 ---------------------------------------------------------------------------]]
 local SAVE_DIR = "rp1942"
@@ -282,7 +282,7 @@ local function allowed(ply, access)
     return false
 end
 
-DarkRP.defineChatCommand("addmarket", function(ply)
+RP1942.defineStaffCommand("addmarket", function(ply)
     if not allowed(ply, "ulx addmarket") then return "" end
     local tr = ply:GetEyeTrace()
     if not tr.Hit or tr.HitPos:Distance(ply:EyePos()) > 400 then
@@ -305,7 +305,7 @@ DarkRP.defineChatCommand("addmarket", function(ply)
     return ""
 end)
 
-DarkRP.defineChatCommand("removemarket", function(ply)
+RP1942.defineStaffCommand("removemarket", function(ply)
     if not allowed(ply, "ulx removemarket") then return "" end
     local tr = ply:GetEyeTrace()
     local m = tr.Entity
@@ -337,6 +337,6 @@ hook.Add("InitPostEntity", "RP1942_ProductionCheck", function()
     check(CFG.oven.model, "oven"); check(CFG.flour.model, "flour"); check(CFG.wine.model, "wine barrel"); check(CFG.market.model, "market")
     check(CFG.oil.model, "oil derrick"); check(CFG.factory.model, "factory")
     if #table.GetKeys(loadSaved()) == 0 then
-        MsgC(Color(255, 180, 60), "[1942] Production: no markets on this map yet. Place some with /addmarket.\n")
+        MsgC(Color(255, 180, 60), "[1942] Production: no markets on this map yet. Place some with !addmarket.\n")
     end
 end)

@@ -96,15 +96,15 @@ rp1942_dumpsters_config.EntityNames = {
 }
 
 --> Placing dumpsters in game (saved per map in data/rp1942/dumpsters_<map>.json):
--->     /adddumpster      places one where you're looking, facing you
--->     /removedumpster   removes the one you're looking at (and from the save)
+-->     !adddumpster      places one where you're looking, facing you
+-->     !removedumpster   removes the one you're looking at (and from the save)
 --> Who may use those commands:
--->     or spawn one from !prodspawn and save it with /saveprod (like any machine)
+-->     or spawn one from !prodspawn and save it with !saveprod (like any machine)
 rp1942_dumpsters_config.AdminCheck = function( ply ) return ply:IsSuperAdmin() end   --> without ULX; with ULX it's set per rank (Groups > 42Bros)
 
 --> Fixed spawn positions, spawned on every map load. map = "..." limits an
 --> entry to that map; without it, it spawns on every map. Dumpsters placed
---> with /adddumpster don't need to be listed here, but /getdumpsterpos turns
+--> with !adddumpster don't need to be listed here, but !getdumpsterpos turns
 --> all of this map's dumpsters into this table (copied to your clipboard):
 --> paste it over the table below. Saved dumpsters that are hardcoded here
 --> won't spawn twice.

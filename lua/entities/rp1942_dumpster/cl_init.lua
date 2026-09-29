@@ -15,7 +15,7 @@ the dumpster still draws, just without a label.
 ---------------------------------------------------------------------------]]
 local DumpsterLabel
 
---> /getdumpsterpos: the code for config.lua, onto the clipboard
+--> !getdumpsterpos: the code for config.lua, onto the clipboard
 net.Receive( "rp1942_dumpsters_clipboard", function()
 	SetClipboardText( net.ReadString() )
 end )

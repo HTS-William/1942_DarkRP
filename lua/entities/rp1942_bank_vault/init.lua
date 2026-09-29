@@ -26,7 +26,7 @@ function ENT:Use(ply)
     if IsValid(ply) and ply:IsPlayer() and RP1942.bankUse then RP1942.bankUse(ply, self) end
 end
 
--- Nobody damages, moves or tools the bank (move it with /removevault + /addvault)
+-- Nobody damages, moves or tools the bank (move it with !removevault + !addvault)
 function ENT:OnTakeDamage() end
 function ENT:CanTool() return false end
 hook.Add("PhysgunPickup", "RP1942_BankVault", function(_, ent)

@@ -8,8 +8,3 @@ RP1942.ESP = {
     boxes       = true,    -- a box around each player you can see on screen
 }
 
-DarkRP.declareChatCommand{
-    command     = "esp",
-    description = "Staff: toggle ESP (see every player's name, job, health and distance through walls)",
-    delay       = 1,
-}

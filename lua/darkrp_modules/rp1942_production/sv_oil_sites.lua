@@ -5,9 +5,9 @@ Oil derricks aren't placed by hand. Admins mark OIL SITES on the map, and a
 bought derrick is built on the free site nearest the buyer, bolted down.
 One derrick per site; the site frees up when its derrick is removed.
 
-    /addoilsite     mark a site where you're looking (the derrick faces you)
-    /removeoilsite  remove the site nearest where you're looking (and its derrick)
-    /oilsites       show every site on this map for a minute
+    !addoilsite     mark a site where you're looking (the derrick faces you)
+    !removeoilsite  remove the site nearest where you're looking (and its derrick)
+    !oilsites       show every site on this map for a minute
 
 Saved per map in data/rp1942/oilsites_<map>.json.
 The F4 Shop only offers a derrick while a site is free (GetGlobal2Int
@@ -49,7 +49,7 @@ hook.Add("InitPostEntity", "RP1942_OilSites", function()
     sites = loadSites()
     RP1942.updateOilSites()
     if table.Count(sites) == 0 then
-        MsgC(Color(255, 180, 60), "[1942] Production: no oil sites on this map yet. Mark some with /addoilsite, or Petroleum Producers can't buy derricks.\n")
+        MsgC(Color(255, 180, 60), "[1942] Production: no oil sites on this map yet. Mark some with !addoilsite, or Petroleum Producers can't buy derricks.\n")
     end
 end)
 hook.Add("PostCleanupMap", "RP1942_OilSites", function() timer.Simple(0, RP1942.updateOilSites) end)
@@ -141,7 +141,7 @@ local function showAll(ply)
     return #list
 end
 
-DarkRP.defineChatCommand("addoilsite", function(ply)
+RP1942.defineStaffCommand("addoilsite", function(ply)
     if not allowed(ply, "ulx addoilsite") then return "" end
     local tr = ply:GetEyeTrace()
     if not tr.Hit or tr.HitPos:Distance(ply:EyePos()) > 1000 then
@@ -159,7 +159,7 @@ DarkRP.defineChatCommand("addoilsite", function(ply)
     return ""
 end)
 
-DarkRP.defineChatCommand("removeoilsite", function(ply)
+RP1942.defineStaffCommand("removeoilsite", function(ply)
     if not allowed(ply, "ulx removeoilsite") then return "" end
     local at = ply:GetEyeTrace().HitPos
     local best, bestDist = nil, 200 * 200
@@ -168,7 +168,7 @@ DarkRP.defineChatCommand("removeoilsite", function(ply)
         if d < bestDist then best, bestDist = id, d end
     end
     if not best then
-        DarkRP.notify(ply, 1, 4, "No oil site near where you're looking. /oilsites shows them.")
+        DarkRP.notify(ply, 1, 4, "No oil site near where you're looking. !oilsites shows them.")
         return ""
     end
     local rig = taken()[best]
@@ -181,9 +181,9 @@ DarkRP.defineChatCommand("removeoilsite", function(ply)
     return ""
 end)
 
-DarkRP.defineChatCommand("oilsites", function(ply)
+RP1942.defineStaffCommand("oilsites", function(ply)
     if not allowed(ply, "ulx oilsites") then return "" end
     local n = showAll(ply)
-    DarkRP.notify(ply, 0, 5, n == 0 and "No oil sites on this map yet. /addoilsite marks one." or ("Showing " .. n .. " oil sites for a minute."))
+    DarkRP.notify(ply, 0, 5, n == 0 and "No oil sites on this map yet. !addoilsite marks one." or ("Showing " .. n .. " oil sites for a minute."))
     return ""
 end)

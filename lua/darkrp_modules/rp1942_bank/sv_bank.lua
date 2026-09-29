@@ -95,7 +95,7 @@ hook.Add("PlayerInitialSpawn", "RP1942_BankSettings", function(ply)
 end)
 
 --[[---------------------------------------------------------------------------
-The vault: placed with /addvault, saved per map in data/rp1942/bankvault_<map>.json
+The vault: placed with !addvault, saved per map in data/rp1942/bankvault_<map>.json
 ---------------------------------------------------------------------------]]
 local function vaultFile() return SAVE_DIR .. "/bankvault_" .. game.GetMap() .. ".json" end
 local function loadVaults() return util.JSONToTable(file.Read(vaultFile(), "DATA") or "") or {} end
@@ -124,7 +124,7 @@ local function staff(ply, access)
     return RP1942.staffCan(ply, access or "ulx banksettings", function(p) return p:IsSuperAdmin() end)
 end
 
-DarkRP.defineChatCommand("addvault", function(ply)
+RP1942.defineStaffCommand("addvault", function(ply)
     if not staff(ply, "ulx addvault") then DarkRP.notify(ply, 1, 4, "You aren't allowed to place the vault.") return "" end
     local tr = ply:GetEyeTrace()
     if not tr.Hit or tr.HitPos:Distance(ply:EyePos()) > 500 then
@@ -146,7 +146,7 @@ DarkRP.defineChatCommand("addvault", function(ply)
     return ""
 end)
 
-DarkRP.defineChatCommand("removevault", function(ply)
+RP1942.defineStaffCommand("removevault", function(ply)
     if not staff(ply, "ulx addvault") then DarkRP.notify(ply, 1, 4, "You aren't allowed to remove the vault.") return "" end
     local tr = ply:GetEyeTrace()
     local v = tr.Entity
@@ -316,7 +316,7 @@ function RP1942.bankStart(ply, vault, forced)
         local why = RP1942.bankBlocked(ply)
         if why then return false, why end
     end
-    if not IsValid(vault) then return false, "There's no vault. Place one with /addvault." end
+    if not IsValid(vault) then return false, "There's no vault. Place one with !addvault." end
 
     local now = CurTime()
     R.active, R.initiator, R.vault = true, ply, vault
@@ -504,7 +504,7 @@ function RP1942.bankStatus()
     return lines
 end
 
--- /bankstart [name]
+-- !bankstart [name]
 function RP1942.bankForceStart(admin, target)
     target = IsValid(target) and target or admin
     if not IsValid(target) then return false, "Nobody to start it with." end
@@ -535,41 +535,6 @@ local function say(ply, ok, why, okText)
     if IsValid(ply) then DarkRP.notify(ply, ok and 0 or 1, 5, ok and okText or tostring(why)) end
 end
 
-local function guarded(fn)
-    return function(ply, args)
-        if not staff(ply) then DarkRP.notify(ply, 1, 4, "You aren't allowed to do that.") return "" end
-        fn(ply, args)
-        return ""
-    end
-end
-
-DarkRP.defineChatCommand("bankstart", guarded(function(ply, args)
-    local target = ply
-    if args and string.Trim(args) ~= "" then
-        target = DarkRP.findPlayer(string.Trim(args))
-        if not IsValid(target) then return DarkRP.notify(ply, 1, 4, "No player called '" .. args .. "'.") end
-    end
-    local ok, why = RP1942.bankForceStart(ply, target)
-    say(ply, ok, why, "Bank robbery started with " .. target:Nick() .. " as the robber.")
-end))
-DarkRP.defineChatCommand("bankstop", guarded(function(ply)
-    local ok, why = RP1942.bankStop(ply)
-    say(ply, ok, why, "Bank robbery called off.")
-end))
-DarkRP.defineChatCommand("bankfinish", guarded(function(ply)
-    local ok, why = RP1942.bankFinishNow()
-    say(ply, ok, why, "Bank robbery ended: it succeeded.")
-end))
-DarkRP.defineChatCommand("bankcooldown", guarded(function(ply)
-    RP1942.bankResetCooldown()
-    say(ply, true, nil, "Bank cooldown cleared.")
-end))
-DarkRP.defineChatCommand("bankstatus", guarded(function(ply)
-    for i, l in ipairs(RP1942.bankStatus()) do
-        DarkRP.notify(ply, 0, 8 + i, l)
-        ply:PrintMessage(HUD_PRINTCONSOLE, "[Bank] " .. l)
-    end
-end))
 
 function RP1942.openBankMenu(ply)
     if not IsValid(ply) then return end
@@ -581,7 +546,6 @@ function RP1942.openBankMenu(ply)
     net.WriteString(util.TableToJSON(t))
     net.Send(ply)
 end
-DarkRP.defineChatCommand("banksettings", function(ply) RP1942.openBankMenu(ply) return "" end)
 
 net.Receive("RP1942_BankMenuSave", function(_, ply)
     if not staff(ply) then return end

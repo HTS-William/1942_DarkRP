@@ -6,9 +6,9 @@ RP1942.staffCan(ply, access, fallback)
     fallback  function(ply) used when ULX isn't running (e.g. IsSuperAdmin)
 
 With ULX (and our lua/ulx/modules/sh/42bros.lua loaded), the answer comes
-from ULX: give or take a command per rank in the ULX menu (Groups tab), and
-the chat command (/addmarket) and the ULX one (ulx addmarket, the 42Bros
-category) follow the same rule. Without ULX, the fallback decides.
+from ULX: give or take a command per rank in the ULX menu (Groups tab,
+42Bros). Staff commands are ULX commands only (!addmarket, ulx addmarket).
+Without ULX, the fallback decides.
 The server console may always.
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}

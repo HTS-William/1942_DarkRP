@@ -127,7 +127,6 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Economy and taxes
 - The economy bar at the bottom of the screen shows how the economy is doing. A better economy means higher wages.
 - The Führer sets the tax rates. Taxes come out of your wages and go to the Reich treasury.
-- The Führer can make a Reich payout: the same amount from the treasury to everyone in the factions he picks (F3, Reich payout).
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
 - The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped.
 
@@ -224,19 +223,19 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 #staff Staff: where to find things
 - Scoreboard (TAB): click a player for Go to, Bring, Return, Spectate, Freeze, Jail, Strip, Slay, God, Cloak, Gag, Mute, Make/Clear wanted, Kick and Ban. Only the ones your rank may use are shown.
-- ULX menu (!menu > Cmds > 42Bros): every server command below, with descriptions. They also work as !commands (!train). The /chat versions work too.
-- Who may use each one is set per rank in the ULX menu (Groups tab, 42Bros). The chat versions follow the same ticks.
+- ULX menu (!menu > Cmds > 42Bros): every server command below, with descriptions. Type them with ! in chat (!train) or ulx in console (ulx train). There are no / versions.
+- Who may use each one is set per rank in the ULX menu (Groups tab, 42Bros).
 - A player's undercover job shows on the scoreboard for staff, marked UNDERCOVER.
 - Staff tools (keypad checker, ram, batons, weapon checker) only come with the Staff on Duty job, at the bottom of the job list (only staff see it). Go on duty to handle a sit; in any other job you spawn like everyone else.
-- Law boards: spawn one from !prodspawn (Law Board) and /saveprod it to keep it after restarts.
+- Law boards: spawn one from !prodspawn (Law Board) and !saveprod it to keep it after restarts.
 
 #staff Staff: events, economy and players
 !esp - Toggle ESP: every player through walls, anywhere on the map, with name, real job (and cover), rank, health and distance
 !eventsettings - World event settings: minutes between events, player minimum, retry when too few are on, each event on/off, start/stop
 !setfuhrer <player> - Make someone Führer now, without an election (cancels a running one, replaces the sitting Führer)
 !removefuhrer - Remove the sitting Führer from office
-/train - Start the supply train now
-/event - List world events. /event <id> starts one, /event stop ends the running one (also !stopevent)
+!train - Start the supply train now
+!event <id> - Start a world event (train). !stopevent ends the running one
 !seteconomy 50 - Set the economy bar (1-110)
 !treasury 5000 - Add money to the Reich treasury (a negative amount takes it away)
 !makewanted <player> <reason> - Make someone wanted by the Reich
@@ -244,31 +243,31 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 #staff Staff: production
 !prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
-/saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
-/saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
-/unsaveprod - Look at a saved machine: remove it for good
-/prodsaves - Count the saved machines on this map and highlight them for a minute
-/addmarket - Place a market where you're looking (saved for this map)
-/removemarket - Remove the market you're looking at
-/addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)
-/removeoilsite - Remove the oil site nearest where you're looking, and its derrick
-/oilsites - Show every oil site on this map for a minute
+!saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
+!saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
+!unsaveprod - Look at a saved machine: remove it for good
+!prodsaves - Count the saved machines on this map and highlight them for a minute
+!addmarket - Place a market where you're looking (saved for this map)
+!removemarket - Remove the market you're looking at
+!addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)
+!removeoilsite - Remove the oil site nearest where you're looking, and its derrick
+!oilsites - Show every oil site on this map for a minute
 rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where a machine's panel sits, then print the line for the config
 
 #staff Staff: bank robbery
-/addvault - Place the Reichsbank vault where you're looking (saved for this map). /removevault removes the one you're looking at
+!addvault - Place the Reichsbank vault where you're looking (saved for this map). !removevault removes the one you're looking at
 !banksettings - The bank robbery settings (length, cooldown, join window, Reich needed, crew size, bank radius, reward, vault model, alarm) with the status and debug buttons
-/bankstart [name] - Start a robbery now with that player (or you) as the robber, ignoring every requirement
-/bankstop - Call off the robbery (no payout, no cooldown)
-/bankfinish - End the timer now: the robbery succeeds and pays out
-/bankcooldown - Clear the cooldown
-/bankstatus - What the bank is doing right now
+!bankstart [name] - Start a robbery now with that player (or you) as the robber, ignoring every requirement
+!bankstop - Call off the robbery (no payout, no cooldown)
+!bankfinish - End the timer now: the robbery succeeds and pays out
+!bankcooldown - Clear the cooldown
+!bankstatus - What the bank is doing right now
 
 #staff Staff: map setup
-/factiondoor - Look at a door and set its faction (reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)
-/adddumpster - Place a dumpster where you're looking (saved for this map)
-/removedumpster - Remove the dumpster you're looking at
-/getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
+!factiondoor - Look at a door and set its faction (reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)
+!adddumpster - Place a dumpster where you're looking (saved for this map)
+!removedumpster - Remove the dumpster you're looking at
+!getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
 !testexplosion <damage> <radius> - Set off a test explosion where you're aiming (it does real damage)
 ]] },
 

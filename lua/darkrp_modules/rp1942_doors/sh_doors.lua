@@ -7,12 +7,12 @@ shows on the door.
 
 Setting a door (admins with DarkRP's door-settings permission, the same one
 /toggleownable uses; superadmins by default). Look at the door, then:
-    /factiondoor reich            Reich only
-    /factiondoor resistance       Resistance only
-    /factiondoor civilian         Civilians only
-    /factiondoor wehrmacht        a Reich unit only (also: waffen_ss, leibstandarte)
-    /factiondoor none             back to a normal door
-    /factiondoor                  shows these options and what the door is now
+    !factiondoor reich            Reich only
+    !factiondoor resistance       Resistance only
+    !factiondoor civilian         Civilians only
+    !factiondoor wehrmacht        a Reich unit only (also: waffen_ss, leibstandarte)
+    !factiondoor none             back to a normal door
+    !factiondoor                  shows these options and what the door is now
 It's saved per map, like every DarkRP door setting. The groups also appear
 in DarkRP's own admin door menu (F2 on a door -> set door group).
 
@@ -23,7 +23,7 @@ without touching this file.
 RP1942 = RP1942 or {}
 
 RP1942.FactionDoors = {
-    -- id: what you type after /factiondoor
+    -- id: what you type after !factiondoor
     -- name: shown on the door. Doors are saved by this name, so renaming a
     --       group later means setting its doors again.
     -- faction / branch: which jobs are in it (the fields in jobs.lua)
@@ -41,11 +41,6 @@ RP1942.FactionDoors = {
     reichUnitsAlsoAllow = { "fuhrer" },
 }
 
-DarkRP.declareChatCommand{
-    command     = "factiondoor",
-    description = "Admin: make the door you're looking at a faction door (/factiondoor reich, resistance, civilian, wehrmacht, waffen_ss, leibstandarte or none)",
-    delay       = 1,
-}
 
 -- Called from darkrp_customthings/doorgroups.lua, which runs after jobs.lua
 function RP1942.createFactionDoorGroups()

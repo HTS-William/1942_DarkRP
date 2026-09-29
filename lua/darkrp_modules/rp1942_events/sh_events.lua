@@ -5,10 +5,10 @@ Random events that happen on their own every so often. The scheduler picks
 one at random (by weight) from the events that are allowed to run right now.
 
 Admins can also run one by hand (who counts as an admin: adminCheck below):
-    /train                    start the supply train now
-    /event                    list events and whether one is running
-    /event train              same as /train
-    /event stop               end the running event
+    !train                    start the supply train now
+    !event                    list events and whether one is running
+    !event train              same as !train
+    !stopevent               end the running event
     rp1942_event [id | stop]  the same from the console (also the server console)
 
 Files:
@@ -32,31 +32,14 @@ RP1942.Events = {
     -- All of these can also be changed in game with !eventsettings (saved in
     -- data/rp1942/events.json, which then wins over the values here).
 
-    -- Who may use /train, /event and rp1942_event when ULX isn't running
+    -- Who may use !train, !event and rp1942_event when ULX isn't running
     -- (with ULX: per rank, ULX menu > Groups > 42Bros). IsAdmin() is true
     -- for admins and superadmins; use ply:IsSuperAdmin() to tighten it.
     adminCheck  = function(ply) return ply:IsAdmin() end,
 }
 
-DarkRP.declareChatCommand{
-    command     = "event",
-    description = "Admin: list world events, start one (/event train) or end it (/event stop)",
-    delay       = 1.5,
-    condition   = function(ply) return RP1942.staffCan(ply, "ulx event", RP1942.Events.adminCheck) end,
-}
 
-DarkRP.declareChatCommand{
-    command     = "eventsettings",
-    description = "Admin: world event settings (timer, player minimum, which events run)",
-    delay       = 1,
-}
 
-DarkRP.declareChatCommand{
-    command     = "train",
-    description = "Admin: start the supply train event now",
-    delay       = 1.5,
-    condition   = function(ply) return RP1942.staffCan(ply, "ulx train", RP1942.Events.adminCheck) end,
-}
 
 --[[---------------------------------------------------------------------------
 Supply train

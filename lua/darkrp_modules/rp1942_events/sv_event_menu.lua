@@ -1,7 +1,7 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - world event settings menu (server)
 
-    !eventsettings  (ULX 42Bros)  or  /eventsettings
+    !eventsettings  (ULX 42Bros)  or  !eventsettings
 Opens a menu to change the automatic event timer, the player minimum and
 each event's on/off, start or stop an event, and see when the next one is
 due. Saved in data/rp1942/events.json. Who may: "ulx eventsettings" in ULX
@@ -37,10 +37,6 @@ function RP1942.openEventMenu(ply)
     net.Send(ply)
 end
 
-DarkRP.defineChatCommand("eventsettings", function(ply)
-    RP1942.openEventMenu(ply)
-    return ""
-end)
 
 net.Receive("RP1942_EventMenuSave", function(_, ply)
     if not allowed(ply) then return end

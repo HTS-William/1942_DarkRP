@@ -5,7 +5,7 @@ A debug menu to spawn production things without buying them or working for
 them: machines, flour, markets and every good at any quality, plus tools for
 the machine you're looking at (finish its timer, remove it).
 
-    Open it:  ULX menu > Cmds > 42Bros > prodspawn, !prodspawn, or /prodspawn
+    Open it:  ULX menu > Cmds > 42Bros > prodspawn, !prodspawn, or !prodspawn
     Who:      with ULX, whoever has "ulx prodspawn" (Groups tab); without
               ULX, superadmins
 
@@ -15,10 +15,10 @@ Derricks spawned here stand where you aim, not on an oil site.
 Making placed machines permanent (saved per map in
 data/rp1942/prodsaves_<map>.json, respawned on every map start and cleanup,
 frozen in place and owned by nobody, so any player can use them):
-    /saveprod      the machine you're looking at
-    /saveprodall   every machine you placed from this menu and haven't saved
-    /unsaveprod    the saved machine you're looking at: removed, and from the save
-    /prodsaves     how many are saved on this map (and highlights them for a minute)
+    !saveprod      the machine you're looking at
+    !saveprodall   every machine you placed from this menu and haven't saved
+    !unsaveprod    the saved machine you're looking at: removed, and from the save
+    !prodsaves     how many are saved on this map (and highlights them for a minute)
 The menu's TOOLS row has buttons for the first three.
 The client half is cl_prodspawn.lua.
 ---------------------------------------------------------------------------]]
@@ -39,10 +39,6 @@ function RP1942.openProdSpawn(ply)
     net.Send(ply)
 end
 
-DarkRP.defineChatCommand("prodspawn", function(ply)
-    RP1942.openProdSpawn(ply)
-    return ""
-end)
 
 -- What the menu may spawn as a whole entity
 local MACHINES = {
@@ -51,7 +47,7 @@ local MACHINES = {
     rp1942_printer_bank = true, rp1942_printer_illegal = true,
     rp1942_dumpster = true,
     rp1942_bank_vault = true,
-    darkrp_laws = true,         -- a law board (the Führer's laws); save it with /saveprod   -- the Reichsbank (rp1942_bank): save it with /saveprod, or place it with /addvault
+    darkrp_laws = true,         -- a law board (the Führer's laws); save it with !saveprod   -- the Reichsbank (rp1942_bank): save it with !saveprod, or place it with !addvault
 }
 
 local function aim(ply)
@@ -154,7 +150,7 @@ local function remove(ply)
     if IsValid(ent) and (MACHINES[ent:GetClass()] or ent:GetClass() == "rp1942_good") then
         ServerLog(string.format("[1942] %s removed %s (production spawner)\n", ply:Nick(), ent:GetClass()))
         if ent.RP1942_SaveId then
-            DarkRP.notify(ply, 0, 5, "That one was saved: it's gone for now but comes back on restart. Use /unsaveprod to remove it for good.")
+            DarkRP.notify(ply, 0, 5, "That one was saved: it's gone for now but comes back on restart. Use !unsaveprod to remove it for good.")
         end
         ent:Remove()
     else
@@ -186,7 +182,7 @@ end
 local function spawnSaved(id, v)
     if not MACHINES[v.class] then return end
     -- Already one there (e.g. a dumpster also hardcoded in its config, or
-    -- placed with /adddumpster / /addmarket): don't stack a second
+    -- placed with !adddumpster / !addmarket): don't stack a second
     local here = Vector(v.x, v.y, v.z)
     for _, other in ipairs(ents.FindInSphere(here, 32)) do
         if other:GetClass() == v.class then
@@ -252,7 +248,7 @@ function RP1942.prodSave(ply)
     local list = loadSaves()
     if not saveOne(ent, list) then return DarkRP.notify(ply, 1, 4, "That " .. (ent.PrintName or "machine") .. " is already saved.") end
     writeSaves(list)
-    DarkRP.notify(ply, 0, 5, (ent.PrintName or "Machine") .. " saved: it will be here after every restart. (/unsaveprod to undo)")
+    DarkRP.notify(ply, 0, 5, (ent.PrintName or "Machine") .. " saved: it will be here after every restart. (!unsaveprod to undo)")
     ServerLog(string.format("[1942] %s saved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
 end
 
@@ -291,7 +287,7 @@ function RP1942.prodSaves(ply)
         total = total + 1
         spots[#spots + 1] = Vector(v.x, v.y, v.z)
     end
-    if total == 0 then return DarkRP.notify(ply, 0, 5, "No saved machines on this map yet. Look at one and use /saveprod.") end
+    if total == 0 then return DarkRP.notify(ply, 0, 5, "No saved machines on this map yet. Look at one and use !saveprod.") end
     local parts = {}
     for class, n in SortedPairs(counts) do
         local stored = scripted_ents.GetStored(class)
@@ -304,10 +300,10 @@ function RP1942.prodSaves(ply)
     net.Send(ply)
 end
 
-DarkRP.defineChatCommand("saveprod", function(ply) RP1942.prodSave(ply) return "" end)
-DarkRP.defineChatCommand("saveprodall", function(ply) RP1942.prodSaveAll(ply) return "" end)
-DarkRP.defineChatCommand("unsaveprod", function(ply) RP1942.prodUnsave(ply) return "" end)
-DarkRP.defineChatCommand("prodsaves", function(ply) RP1942.prodSaves(ply) return "" end)
+RP1942.defineStaffCommand("saveprod", function(ply) RP1942.prodSave(ply) return "" end)
+RP1942.defineStaffCommand("saveprodall", function(ply) RP1942.prodSaveAll(ply) return "" end)
+RP1942.defineStaffCommand("unsaveprod", function(ply) RP1942.prodUnsave(ply) return "" end)
+RP1942.defineStaffCommand("prodsaves", function(ply) RP1942.prodSaves(ply) return "" end)
 
 net.Receive("RP1942_ProdSpawn", function(_, ply)
     if not canSpawn(ply) then return end

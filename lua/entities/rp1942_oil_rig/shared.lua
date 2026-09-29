@@ -3,7 +3,7 @@
 (rp1942_production/sh_production.lua).
 
     Bought in the F4 Shop, but not placed by hand: it's built on a free oil
-    site (admins mark them with /addoilsite; rp1942_production/sv_oil_sites.lua)
+    site (admins mark them with !addoilsite; rp1942_production/sv_oil_sites.lua)
     and it's bolted down: no physgun, gravity gun, pocket or tools.
 
     It pumps on its own. With the valve shut the well pressure climbs; turn

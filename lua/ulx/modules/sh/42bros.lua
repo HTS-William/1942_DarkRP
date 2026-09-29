@@ -4,11 +4,12 @@
 ULX loads this file by itself (it loads every lua/ulx/modules/sh/*.lua). Find
 them in the ULX menu (!menu) under Cmds > 42Bros, each with its description,
 or type them: in chat with ! (!train), in console with ulx (ulx train).
+These are the ONLY staff commands: there are no /chat versions.
 
 Who may use each one is set per rank in the ULX menu (Groups tab, 42Bros).
-The defaults below match what the chat commands allowed before. The chat
-versions (/train, /addmarket, ...) follow the same ULX permissions
-(RP1942.staffCan, rp1942_core/sh_staff.lua).
+The code behind the "look at" commands is registered with
+RP1942.defineStaffCommand (rp1942_admin/sh_staffcommands.lua) and checks the
+same ULX permission again (RP1942.staffCan, rp1942_core/sh_staff.lua).
 
 "Look at" commands act on what you're aiming at, so aim first, then open
 the menu or type the command.
@@ -18,15 +19,13 @@ RP1942.ULX42 = true   -- tells RP1942.staffCan to ask ULX
 
 local CATEGORY = "42Bros"
 
--- Run one of our DarkRP chat commands for ply (it does its own work and messages)
+-- Run one of our staff commands for ply (it does its own work and messages).
+-- Their code lives with what they work on (RP1942.defineStaffCommand,
+-- rp1942_admin/sh_staffcommands.lua).
 local function darkrpCommand(ply, name, args)
-    local cmd = DarkRP and DarkRP.getChatCommand and DarkRP.getChatCommand(name)
-    if not (cmd and cmd.callback) then
-        ULib.tsayError(ply, "The /" .. name .. " command isn't loaded on this server.", true)
-        return false
-    end
-    cmd.callback(ply, args or "")
-    return true
+    if RP1942.runStaffCommand and RP1942.runStaffCommand(ply, name, args) then return true end
+    ULib.tsayError(ply, "The " .. name .. " command isn't loaded on this server.", true)
+    return false
 end
 
 local function inGameOnly(ply)

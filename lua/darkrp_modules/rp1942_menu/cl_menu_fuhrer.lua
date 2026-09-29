@@ -125,7 +125,7 @@ Laws: the laws on every law board (DarkRP's /addlaw, /removelaw, /resetlaws,
 /placelaws, which the Führer can use as DarkRP's mayor). The first laws are
 the fixed ones from settings.lua (GM.Config.DefaultLaws) and can't be removed.
 Server side: "law_*" in sv_menu_fuhrer.lua. Law boards placed by staff and
-saved with /saveprod stay after restarts.
+saved with !saveprod stay after restarts.
 ---------------------------------------------------------------------------]]
 local LAW_ROW = 30
 

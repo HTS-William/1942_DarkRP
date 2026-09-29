@@ -217,12 +217,12 @@ local function open()
     note:SetAutoStretchVertical(true)
     note:SetText("Finish ends the bake / ferment / tank / run right away, with the grade it had earned so far (and switches it on if it was off). "
         .. "Save makes a machine permanent for this map: it comes back frozen in place and owned by nobody after every restart (anyone can use it; "
-        .. "nobody can upgrade a saved printer). Unsave removes it for good. /prodsaves shows them all. Derricks spawned here don't use an oil site.")
+        .. "nobody can upgrade a saved printer). Unsave removes it for good. !prodsaves shows them all. Derricks spawned here don't use an oil site.")
 end
 
 net.Receive("RP1942_ProdSpawnOpen", open)
 
--- /prodsaves: highlight every saved machine for a minute
+-- !prodsaves: highlight every saved machine for a minute
 local savedSpots, savedUntil = {}, 0
 net.Receive("RP1942_ProdSaves", function()
     savedSpots = {}

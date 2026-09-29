@@ -23,21 +23,6 @@ end
 --> Chat commands (declared on both sides so DarkRP's help lists them)
 if DarkRP and DarkRP.declareChatCommand then
 	DarkRP.declareChatCommand{
-		command = "adddumpster",
-		description = "Admin: place a dumpster where you're looking (saved for this map)",
-		delay = 1,
-	}
-	DarkRP.declareChatCommand{
-		command = "removedumpster",
-		description = "Admin: remove the dumpster you're looking at (and from the save)",
-		delay = 1,
-	}
-	DarkRP.declareChatCommand{
-		command = "getdumpsterpos",
-		description = "Admin: copy every dumpster on this map as code for config.lua (AddSpawnPos)",
-		delay = 2,
-	}
-	DarkRP.declareChatCommand{
 		command = "deaddrop",
 		description = "Resistance: hide money (/deaddrop 500) or your weapon (/deaddrop weapon) in the dumpster you're looking at",
 		delay = 1.5,

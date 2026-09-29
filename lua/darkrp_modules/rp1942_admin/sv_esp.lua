@@ -1,7 +1,7 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - admin ESP (server)
 
-    !esp  (ULX 42Bros, or /esp)   toggles it for yourself
+    !esp  (ULX 42Bros, or !esp)   toggles it for yourself
 Who may: "ulx esp" in ULX Groups (admins by default; without ULX, admins).
 
 Players far away aren't sent to your game normally, so while ESP is on the
@@ -30,10 +30,6 @@ function RP1942.toggleESP(ply, on)
     ServerLog(string.format("[1942] %s turned ESP %s\n", ply:Nick(), on and "on" or "off"))
 end
 
-DarkRP.defineChatCommand("esp", function(ply)
-    RP1942.toggleESP(ply)
-    return ""
-end)
 
 timer.Create("RP1942_ESPData", 0.5, 0, function()
     local viewers = {}

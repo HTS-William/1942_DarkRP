@@ -425,7 +425,7 @@ DarkRP.defineChatCommand( "deaddrop", deadDrop )
 
 --[[---------------------------------------------------------------------------
 Placing dumpsters: fixed ones from config.lua, plus ones placed in game with
-/adddumpster, saved per map in data/rp1942/dumpsters_<map>.json
+!adddumpster, saved per map in data/rp1942/dumpsters_<map>.json
 ---------------------------------------------------------------------------]]
 local SAVE_DIR = "rp1942"
 local function saveFile() return SAVE_DIR .. "/dumpsters_" .. game.GetMap() .. ".json" end
@@ -454,7 +454,7 @@ local function spawnDumpster( pos, ang, saveId )
 end
 
 --> Is pos next to one of the fixed dumpsters for this map? (so a saved one
---> that was later hardcoded with /getdumpsterpos doesn't spawn twice)
+--> that was later hardcoded with !getdumpsterpos doesn't spawn twice)
 local function nearFixed( pos, fixed )
 	for _, f in ipairs( fixed ) do
 		if math.abs( f.x - pos.x ) < 32 and math.abs( f.y - pos.y ) < 32 and math.abs( f.z - pos.z ) < 64 then return true end
@@ -484,7 +484,7 @@ function spawn_rp1942_dumpsters()
 end
 
 --[[---------------------------------------------------------------------------
-/getdumpsterpos: every dumpster on this map as code for config.lua's
+!getdumpsterpos: every dumpster on this map as code for config.lua's
 AddSpawnPos, copied to your clipboard and printed in your console. The
 table it writes keeps the entries for other maps as they are, and lists
 this map's dumpsters with map = "<this map>". Paste it over the old
@@ -505,7 +505,7 @@ function rp1942_dumpsters_positionsCode()
 		end
 	end
 	--> Every dumpster standing on this map now
-	lines[ #lines + 1 ] = "\t-- " .. map .. " (/getdumpsterpos, " .. os.date( "%Y-%m-%d" ) .. ")"
+	lines[ #lines + 1 ] = "\t-- " .. map .. " (!getdumpsterpos, " .. os.date( "%Y-%m-%d" ) .. ")"
 	for _, d in ipairs( ents.FindByClass( "rp1942_dumpster" ) ) do
 		local pos, ang = d:GetPos(), d:GetAngles()
 		if not nearFixed( pos, kept ) then   --> already listed as an every-map entry
@@ -531,7 +531,7 @@ local function allowed( ply, access )
 	return false
 end
 
-DarkRP.defineChatCommand( "adddumpster", function( ply )
+RP1942.defineStaffCommand("adddumpster", function( ply )
 	if not allowed( ply, "ulx adddumpster" ) then return "" end
 	local tr = ply:GetEyeTrace()
 	if not tr.Hit or tr.HitPos:Distance( ply:EyePos() ) > 400 then
@@ -558,7 +558,7 @@ DarkRP.defineChatCommand( "adddumpster", function( ply )
 	return ""
 end )
 
-DarkRP.defineChatCommand( "removedumpster", function( ply )
+RP1942.defineStaffCommand("removedumpster", function( ply )
 	if not allowed( ply, "ulx removedumpster" ) then return "" end
 	local d = lookedAtDumpster( ply, 400 )
 	if not d then
@@ -579,7 +579,7 @@ DarkRP.defineChatCommand( "removedumpster", function( ply )
 	return ""
 end )
 
-DarkRP.defineChatCommand( "getdumpsterpos", function( ply )
+RP1942.defineStaffCommand("getdumpsterpos", function( ply )
 	if not allowed( ply, "ulx getdumpsterpos" ) then return "" end
 	local code, count = rp1942_dumpsters_positionsCode()
 	for line in string.gmatch( code .. "\n", "(.-)\n" ) do ply:PrintMessage( HUD_PRINTCONSOLE, line ) end

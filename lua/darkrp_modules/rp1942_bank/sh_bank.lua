@@ -22,20 +22,20 @@ The bank is the vault entity (rp1942_bank_vault), not an area: "inside the
 bank" means within holdRadius of it. Its model is a setting.
 
 STAFF (ULX 42Bros, or chat with /)
-    /addvault        place the vault where you're looking (saved per map)
-    /removevault     remove the vault you're looking at (and from the save)
-    /banksettings    settings menu: every value below, plus status and the
+    !addvault        place the vault where you're looking (saved per map)
+    !removevault     remove the vault you're looking at (and from the save)
+    !banksettings    settings menu: every value below, plus status and the
                      debug buttons (start / stop / finish / reset cooldown)
-    /bankstart [name]   start a robbery now with that player (or you) as the
+    !bankstart [name]   start a robbery now with that player (or you) as the
                      initiator, ignoring every requirement
-    /bankstop        call off the robbery: no payout, no cooldown
-    /bankfinish      end the timer now: the robbery succeeds and pays out
-    /bankcooldown    clear the cooldown
-    /bankstatus      what the bank is doing right now
+    !bankstop        call off the robbery: no payout, no cooldown
+    !bankfinish      end the timer now: the robbery succeeds and pays out
+    !bankcooldown    clear the cooldown
+    !bankstatus      what the bank is doing right now
 Who may: "ulx banksettings" (and "ulx addvault") in ULX Groups; without ULX,
 superadmins.
 
-The settings below are the defaults. Changes made in /banksettings are saved
+The settings below are the defaults. Changes made in !banksettings are saved
 in data/rp1942/bank.json and win over these.
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
@@ -109,15 +109,3 @@ function RP1942.bankIsCrew(ply)
     return IsValid(ply) and ply:GetNW2Bool("RP1942_BankCrew", false)
 end
 
-for _, c in ipairs({
-    { "addvault",     "Staff: place the Reichsbank vault where you're looking (saved for this map)" },
-    { "removevault",  "Staff: remove the Reichsbank vault you're looking at (and from the save)" },
-    { "banksettings", "Staff: the bank robbery settings and debug menu" },
-    { "bankstart",    "Staff: start a bank robbery now, with a player (or you) as the robber, ignoring the requirements" },
-    { "bankstop",     "Staff: call off the bank robbery (no payout, no cooldown)" },
-    { "bankfinish",   "Staff: end the bank robbery timer now (it succeeds and pays out)" },
-    { "bankcooldown", "Staff: clear the bank robbery cooldown" },
-    { "bankstatus",   "Staff: show what the bank robbery system is doing" },
-}) do
-    DarkRP.declareChatCommand{ command = c[1], description = c[2], delay = 1 }
-end

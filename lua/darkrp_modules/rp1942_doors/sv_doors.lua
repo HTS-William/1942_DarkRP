@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - faction doors (server): the /factiondoor command
+1942 DarkRP - faction doors (server): the !factiondoor command
 Does exactly what DarkRP's own "set door group" does, with friendlier names.
 ---------------------------------------------------------------------------]]
 local function lookedAtDoor(ply)
@@ -23,7 +23,7 @@ local function setFactionDoor(ply, args)
     local ent = lookedAtDoor(ply)
 
     if args == "" then
-        DarkRP.notify(ply, 0, 8, "Usage: /factiondoor <" .. optionList() .. ">")
+        DarkRP.notify(ply, 0, 8, "Usage: !factiondoor <" .. optionList() .. ">")
         if ent then
             DarkRP.notify(ply, 0, 8, "This door: " .. (ent:getKeysDoorGroup() or "not a faction door"))
         end
@@ -57,5 +57,4 @@ local function setFactionDoor(ply, args)
     return ""
 end
 
-DarkRP.definePrivilegedChatCommand("factiondoor", "DarkRP_ChangeDoorSettings", setFactionDoor)
 RP1942.setFactionDoor = setFactionDoor   -- for ulx factiondoor (lua/ulx/modules/sh/42bros.lua)

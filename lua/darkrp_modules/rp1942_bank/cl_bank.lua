@@ -244,7 +244,7 @@ net.Receive("RP1942_BankJoinAsk", function()
 end)
 
 --[[---------------------------------------------------------------------------
-Staff: /banksettings
+Staff: !banksettings
 ---------------------------------------------------------------------------]]
 local frame
 local FIELDS = {

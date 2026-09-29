@@ -129,65 +129,8 @@ hook.Add("InitPostEntity", "RP1942_WorldEvents", function()
 end)
 
 --[[---------------------------------------------------------------------------
-Admin commands. Who may: with ULX, per rank in its menu (Groups > 42Bros:
-ulx train / ulx event / ulx stopevent); without ULX, RP1942.Events.adminCheck.
-    Chat:     /train              start the supply train
-              /event              list events and what's running
-              /event <id>         start an event
-              /event stop         end the running event
-    Console:  rp1942_event [<id> | stop]   (same as /event; also works from the server console)
+Staff commands: !train, !event <id>, !stopevent, !eventsettings (ULX 42Bros,
+lua/ulx/modules/sh/42bros.lua; in the server console: ulx event train).
 ---------------------------------------------------------------------------]]
-local function runEventCommand(ply, arg, say, access)
-    access = access or (string.lower(arg or "") == "stop" and "ulx stopevent" or "ulx event")
-    if IsValid(ply) and not RP1942.staffCan(ply, access, CFG.adminCheck) then return say("You aren't allowed to run events.") end
 
-    arg = string.lower(arg or "")
-    if arg == "" then
-        local active = RP1942.activeEvent()
-        say("Running: " .. (active and active.id or "none"))
-        local left = timer.TimeLeft(TIMER)
-        if left then say(string.format("Next automatic event in %d:%02d", math.floor(left / 60), math.floor(left % 60))) end
-        for id, ev in SortedPairs(RP1942.EventList) do
-            local ok, why = RP1942.canStartEvent(ev, true)
-            say(string.format("  %s - %s%s", id, ev.name or id, ok and "" or ("  (" .. why .. ")")))
-        end
-        return say("Usage: /event <id> | stop")
-    end
 
-    if arg == "stop" then
-        local active = RP1942.activeEvent()
-        if not active then return say("No event is running.") end
-        if active.stop then active.stop() end
-        ServerLog("[1942] " .. (IsValid(ply) and ply:Nick() or "Console") .. " stopped world event " .. active.id .. "\n")
-        return say("Stopped " .. active.id .. ".")
-    end
-
-    local ok, why = RP1942.startEvent(arg, true)   -- admins ignore the player minimum
-    if ok then ServerLog("[1942] " .. (IsValid(ply) and ply:Nick() or "Console") .. " started world event " .. arg .. "\n") end
-    say(ok and ("Started " .. arg .. ".") or ("Can't start " .. arg .. ": " .. why))
-end
-
-concommand.Add("rp1942_event", function(ply, _, args)
-    runEventCommand(ply, args[1], function(msg)
-        if IsValid(ply) then ply:PrintMessage(HUD_PRINTCONSOLE, msg) else print(msg) end
-    end)
-end)
-
--- Chat replies: the first line as a notification, the full list in the console
-local function chatSay(ply)
-    local first = true
-    return function(msg)
-        if first then DarkRP.notify(ply, 0, 5, msg) first = false end
-        ply:PrintMessage(HUD_PRINTCONSOLE, msg)
-    end
-end
-
-DarkRP.defineChatCommand("event", function(ply, args)
-    runEventCommand(ply, string.Explode(" ", string.Trim(args or ""))[1], chatSay(ply))
-    return ""
-end)
-
-DarkRP.defineChatCommand("train", function(ply)
-    runEventCommand(ply, "train", chatSay(ply), "ulx train")
-    return ""
-end)

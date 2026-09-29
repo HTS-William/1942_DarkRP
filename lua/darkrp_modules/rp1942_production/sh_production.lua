@@ -16,7 +16,7 @@ the panel and press E.
                 barrel calls for stirring a few times: STIR before the timer
                 runs out. Every stir it gets raises the vintage. Then BOTTLE.
     Petroleum   buys an oil derrick. It isn't placed by hand: it's built on a
-    Producer    free OIL SITE (placed by admins with /addoilsite) and can't be
+    Producer    free OIL SITE (placed by admins with !addoilsite) and can't be
                 moved. It pumps on its own. With the valve shut the pressure
                 climbs; turn the wheel to open it and the pressure falls. Keep
                 it in the green: more time there = more canisters of crude and
@@ -27,7 +27,7 @@ the panel and press E.
                 better the odds of rare goods (clocks, radios). COLLECT.
 
 Selling:
-    - At a MARKET (placed by admins with /addmarket). Its board shows today's
+    - At a MARKET (placed by admins with !addmarket). Its board shows today's
       prices, with trend arrows and one good "in demand" for a bonus. SELL a
       kind of good from your pocket, SELL EVERYTHING, or push goods into it.
       Prices are scaled by the economy and quality, taxed like wages, and every
@@ -39,9 +39,9 @@ Eating / drinking: hold Shift and press E on a good. E alone picks it up.
 
 Files:
     sh_production.lua     this config
-    sv_production.lua     selling, quality, demand, the economy nudge, markets (/addmarket)
+    sv_production.lua     selling, quality, demand, the economy nudge, markets (!addmarket)
     cl_production.lua     the interactive panels, labels and the drunk effect
-    sv_oil_sites.lua      oil sites (/addoilsite) and building derricks on them
+    sv_oil_sites.lua      oil sites (!addoilsite) and building derricks on them
     sv/cl_prodspawn.lua   the staff production spawner (!prodspawn)
     lua/entities/rp1942_good, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
         rp1942_oil_rig, rp1942_factory
@@ -181,7 +181,7 @@ RP1942.Production = {
         blowout   = { warnAfter = 15, explodeAfter = 40, damage = 180, radius = 350 },
         -- Share of the pumping spent in the green -> canisters (and stars)
         grades    = { { share = 0.8, count = 3 }, { share = 0.5, count = 2 }, { share = 0, count = 1 } },
-        siteAdmin = function(ply) return ply:IsSuperAdmin() end,   -- who may /addoilsite etc. without ULX (with ULX: its Groups tab)
+        siteAdmin = function(ply) return ply:IsSuperAdmin() end,   -- who may !addoilsite etc. without ULX (with ULX: its Groups tab)
     },
 
     -- Factory Owner
@@ -209,7 +209,7 @@ RP1942.Production = {
         model       = "models/props_junk/wood_crate002a.mdl",
         demandBonus = 0.20,           -- the good in demand sells for 20% more
         demandEvery = 3600,           -- seconds between new "in demand" picks (and trend resets)
-        -- Who may place markets with /addmarket and /removemarket when ULX
+        -- Who may place markets with !addmarket and !removemarket when ULX
         -- isn't running (with ULX: per rank, ULX menu > Groups > 42Bros)
         adminCheck  = function(ply) return ply:IsSuperAdmin() end,
     },
@@ -276,56 +276,6 @@ RP1942.FactoryFaults = {
     { id = "fuse",   lamp = "FUSE",   button = "REPLACE FUSE" },
 }
 
-DarkRP.declareChatCommand{
-    command     = "prodspawn",
-    description = "Staff: open the production spawner (machines, flour, goods at any quality)",
-    delay       = 1,
-}
 
-DarkRP.declareChatCommand{
-    command     = "saveprod",
-    description = "Staff: save the production machine you're looking at, permanently for this map",
-    delay       = 1,
-}
-DarkRP.declareChatCommand{
-    command     = "saveprodall",
-    description = "Staff: save every machine you placed from the production spawner, permanently for this map",
-    delay       = 1,
-}
-DarkRP.declareChatCommand{
-    command     = "unsaveprod",
-    description = "Staff: remove the saved machine you're looking at, and from the save",
-    delay       = 1,
-}
-DarkRP.declareChatCommand{
-    command     = "prodsaves",
-    description = "Staff: count and highlight the saved machines on this map",
-    delay       = 1,
-}
 
-DarkRP.declareChatCommand{
-    command     = "addoilsite",
-    description = "Admin: mark an oil site where you're looking (derricks are built there; saved for this map)",
-    delay       = 1,
-}
-DarkRP.declareChatCommand{
-    command     = "removeoilsite",
-    description = "Admin: remove the oil site nearest where you're looking",
-    delay       = 1,
-}
-DarkRP.declareChatCommand{
-    command     = "oilsites",
-    description = "Admin: show every oil site on this map for a minute",
-    delay       = 1,
-}
 
-DarkRP.declareChatCommand{
-    command     = "addmarket",
-    description = "Admin: place a market where you're looking (saved for this map)",
-    delay       = 1,
-}
-DarkRP.declareChatCommand{
-    command     = "removemarket",
-    description = "Admin: remove the market you're looking at (and from the save)",
-    delay       = 1,
-}
