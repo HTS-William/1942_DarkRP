@@ -45,6 +45,7 @@ local MACHINES = {
     { class = "rp1942_printer_bank",    name = "Banking Printer", model = "models/props_c17/consolebox01a.mdl", note = "legal" },
     { class = "rp1942_printer_illegal", name = "Money Printer",   model = "models/props_c17/consolebox01a.mdl", note = "illegal" },
     { class = "rp1942_dumpster",        name = "Dumpster",        model = "models/props_junk/trashdumpster01a.mdl", note = "frozen" },
+    { class = "darkrp_laws",            name = "Law Board",       model = "models/props/cs_assault/Billboard.mdl", note = "the laws" },
     { class = "rp1942_bank_vault",      name = "Bank Vault",      model = "models/props_wasteland/controlroom_storagecloset001a.mdl", note = "Reichsbank" },
 }
 

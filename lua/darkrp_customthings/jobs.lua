@@ -16,8 +16,16 @@ Reich enlistment:
        (requires = { branch = ... } below).
 Leave the branch and you have to enlist (and be voted in) again.
 
-Weapons and models come from RP1942.Weapons / RP1942.Models in
-darkrp_modules/rp1942_core/sh_config.lua. Edit them there, not here.
+WEAPONS: a job's `weapons = { ... }` list is exactly what it spawns with,
+nothing is added behind the scenes. The W.something names are short names
+from RP1942.Weapons in darkrp_modules/rp1942_core/sh_config.lua, each one a
+real weapon class (W.k98k = "mcv_kar98", W.stun = "stunstick"...).
+    - Give ONE job a gun: add W.name to its list, or the class itself in
+      quotes, e.g. weapons = { W.k98k, "mcv_mp40", W.stun, W.arrest, W.unarrest }
+    - Swap a gun for EVERY job that uses a short name: change the class in
+      sh_config.lua (e.g. k98k = "mcv_kar98_prewar").
+    - Every Reich job lists W.stun, W.arrest, W.unarrest (the batons).
+Models come from RP1942.Models in the same file.
 
 Caps: max = 0 is unlimited, whole numbers are hard caps. Fractions (0.25 =
 25% of the server) are deliberately NOT used: at low population they block
@@ -66,10 +74,25 @@ job{} wraps DarkRP.createJob:
     customCheck, with a CustomCheckFailMsg that says which rule failed
     (see RP1942.jobGateFailure in rp1942_core/sh_factions.lua)
   - makes joining the Reich from outside take a vote (rp1942_reichjobs)
+  - ends every description with RAID = YES / RAID = NO (RAID_JOBS below)
 ---------------------------------------------------------------------------]]
+-- Who may raid. RAID = YES: every Reich job except NO_RAID_REICH, and the
+-- jobs in RAID_JOBS. Everyone else: RAID = NO.
+local RAID_JOBS = {
+    civilian = true, doctor = true,
+    thief = true, prothief = true,
+    resistance = true, resmedic = true, resoperative = true, resleader = true,
+}
+local NO_RAID_REICH = { gersupplier = true, scientist = true, fuhrer = true }   -- (the Reich Banker is a civilian job: NO)
+
+
 local function job(tbl)
     local name = tbl.name
     tbl.name = nil
+
+    -- RAID = YES / NO at the end of the description (and job.canRaid for other code)
+    tbl.canRaid = RAID_JOBS[tbl.command] == true or (tbl.faction == "reich" and not NO_RAID_REICH[tbl.command])
+    tbl.description = string.TrimRight(tbl.description or "") .. "\n\nRAID = " .. (tbl.canRaid and "YES" or "NO")
 
     -- A job's own customCheck becomes the last gate
     if tbl.customCheck then
@@ -433,14 +456,14 @@ TEAM_SUPPLIER = job{
     color = Color(80, 90, 70),
     model = M.merchant,
     description = [[Buys German service weapons from the Reich armoury (F3) and supplies them to the Reich. Prices follow the economy: cheaper when it's strong, dearer when it's weak.]],
-    weapons = {},
+    weapons = { W.stun, W.arrest, W.unarrest },
     command = "gersupplier",
     max = 1,
     salary = SAL,
     admin = 0,
     faction = "reich",
     branch = "supply",
-    arrests = false,   -- a contractor, not police
+    arrests = true,    -- every Reich job carries the batons, so every one can arrest
     category = "Reich",
     menu = "RP1942_ShopMenu",
     shop = "supplier",   -- rp1942_shop/sh_shop_catalogs.lua
@@ -453,14 +476,14 @@ TEAM_SCIENTIST = job{
     model = M.scientist,
     -- TODO: role undefined in the design doc. No police powers until decided.
     description = [[Conducts research for the Reich.]],
-    weapons = {},
+    weapons = { W.stun, W.arrest, W.unarrest },
     command = "scientist",
     max = 1,
     salary = SAL * 1.5,
     admin = 0,
     faction = "reich",
     branch = "staff",
-    arrests = false,
+    arrests = true,
     category = "Reich",
     sortOrder = 11,
     demoteOnDeath = true,
@@ -474,7 +497,7 @@ TEAM_WEHR_RIFLEMAN = job{
     color = Color(93, 101, 82),
     model = M.wehrmacht,
     description = [[The backbone of the garrison. Carries a Karabiner 98k.]],
-    weapons = { W.k98k, W.arrest },
+    weapons = { W.k98k, W.arrest, W.stun, W.unarrest },
     command = "wehrrifleman",
     max = 8,
     salary = SAL * 1.1,
@@ -491,7 +514,7 @@ TEAM_WEHR_MEDIC = job{
     color = Color(100, 108, 90),
     model = M.wehrmacht,
     description = [[Rifleman's kit plus a medkit.]],
-    weapons = { W.k98k, W.arrest, W.medkit },
+    weapons = { W.k98k, W.arrest, W.medkit, W.stun, W.unarrest },
     command = "wehrmedic",
     max = 2,
     salary = SAL * 1.1,
@@ -508,7 +531,7 @@ TEAM_WEHR_ELITE = job(vip{
     color = Color(85, 95, 75),
     model = M.wehrmacht,
     description = [[Carries a Gewehr 43.]],
-    weapons = { W.g43, W.arrest },
+    weapons = { W.g43, W.arrest, W.stun, W.unarrest },
     command = "wehrelite",
     max = 3,
     salary = SAL * 1.2,
@@ -525,7 +548,7 @@ TEAM_WEHR_SHARPSHOOTER = job(vip{
     color = Color(80, 90, 70),
     model = M.wehrmacht,
     description = [[Carries a scoped Karabiner 98k.]],
-    weapons = { W.k98k_scoped, W.arrest },
+    weapons = { W.k98k_scoped, W.arrest, W.stun, W.unarrest },
     command = "wehrsharpshooter",
     max = 2,
     salary = SAL * 1.2,
@@ -542,7 +565,7 @@ TEAM_WEHR_DRIVER = job{
     color = Color(75, 85, 70),
     model = M.wehrmacht,
     description = [[Drives the armoured personnel carrier funded by the Führer.]],
-    weapons = { W.k98k, W.arrest },
+    weapons = { W.k98k, W.arrest, W.stun, W.unarrest },
     command = "wehrdriver",
     max = 1,
     salary = SAL * 1.2,
@@ -559,7 +582,7 @@ TEAM_WEHR_NCO = job{
     color = Color(70, 80, 60),
     model = M.wehrmacht,
     description = [[Commands the Wehrmacht enlisted ranks. Can search for weapons and breach doors with a warrant.]],
-    weapons = { W.k98k, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    weapons = { W.k98k, W.p38, W.arrest, W.unarrest, W.checker, W.ram, W.stun },
     command = "wehrnco",
     max = 2,
     salary = SAL * 1.4,
@@ -576,7 +599,7 @@ TEAM_WEHR_OFFIZIER = job(whitelisted{
     color = Color(60, 70, 55),
     model = M.officer,
     description = [[Commands all of the Wehrmacht. Sets jail positions and issues orders.]],
-    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram, W.stun },
     command = "wehroffizier",
     max = 1,
     salary = SAL * 1.8,
@@ -598,7 +621,7 @@ TEAM_WSS_RIFLEMAN = job{
     color = Color(60, 64, 50),
     model = M.waffen_ss,
     description = [[Carries a Gewehr 43.]],
-    weapons = { W.g43, W.arrest },
+    weapons = { W.g43, W.arrest, W.stun, W.unarrest },
     command = "wssrifleman",
     max = 8,
     salary = SAL * 1.2,
@@ -615,7 +638,7 @@ TEAM_WSS_MEDIC = job{
     color = Color(66, 70, 56),
     model = M.waffen_ss,
     description = [[Carries a Gewehr 43 and a medkit.]],
-    weapons = { W.g43, W.arrest, W.medkit },
+    weapons = { W.g43, W.arrest, W.medkit, W.stun, W.unarrest },
     command = "wssmedic",
     max = 1,
     salary = SAL * 1.2,
@@ -631,8 +654,8 @@ TEAM_WSS_MG = job{
     name = "Waffen-SS Machinegunner",
     color = Color(55, 60, 45),
     model = M.waffen_ss,
-    description = [[Carries an MG 42.]],
-    weapons = { W.mg42, W.arrest },
+    description = [[Carries an MG-34 on a belt.]],
+    weapons = { W.mg34, W.arrest, W.stun, W.unarrest },
     command = "wssmg",
     max = 2,
     salary = SAL * 1.3,
@@ -649,7 +672,7 @@ TEAM_WSS_NCO = job(vip{
     color = Color(50, 55, 40),
     model = M.waffen_ss,
     description = [[Commands the Waffen-SS enlisted ranks. Carries an StG 44.]],
-    weapons = { W.stg44, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    weapons = { W.stg44, W.p38, W.arrest, W.unarrest, W.checker, W.ram, W.stun },
     command = "wssnco",
     max = 1,
     salary = SAL * 1.5,
@@ -666,7 +689,7 @@ TEAM_WSS_OFFIZIER = job(whitelisted{
     color = Color(40, 44, 34),
     model = M.officer,
     description = [[Commands all of the Waffen-SS.]],
-    weapons = { W.stg44, W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    weapons = { W.stg44, W.p38, W.arrest, W.unarrest, W.checker, W.ram, W.stun },
     command = "wssoffizier",
     max = 1,
     salary = SAL * 1.8,
@@ -689,8 +712,8 @@ TEAM_LAH_RIFLEMAN = job{
     name = "Leibstandarte Rifleman",
     color = Color(45, 45, 45),
     model = M.leibstandarte,
-    description = [[One of the Führer's bodyguards. Stay close to the Führer and keep him alive. Carries an StG 44.]],
-    weapons = { W.stg44, W.arrest },
+    description = [[One of the Führer's bodyguards. Stay close to the Führer and keep him alive. Carries a Karabiner 98k.]],
+    weapons = { W.k98k, W.arrest, W.stun, W.unarrest },
     command = "lahrifleman",
     max = 8,
     salary = SAL * 1.3,
@@ -707,7 +730,7 @@ TEAM_LAH_KOMMANDANT = job(whitelisted{
     color = Color(30, 30, 30),
     model = M.officer,
     description = [[Commands the Leibstandarte and is responsible for the Führer's safety.]],
-    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram },
+    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.ram, W.stun },
     command = "lahkommandant",
     max = 1,
     salary = SAL * 1.8,
@@ -732,7 +755,7 @@ TEAM_GESTAPO = job{
 Joining is never announced, and you start under a civilian cover.
 Press F3 for your wardrobe of disguises. Change your cover title with "Set a custom
 job title" in the F4 Commands tab: for you, nobody is told.]],
-    weapons = { W.p38, W.arrest, W.unarrest, W.checker },
+    weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.stun },
     command = "gestapo",
     max = 2,
     salary = SAL * 1.5,
@@ -756,7 +779,7 @@ TEAM_FUHRER = job(whitelisted{
     color = Color(120, 20, 20),
     model = M.fuhrer,
     description = [[Chancellor of the Reich. Sets the laws, calls curfews and funds the war effort.]],
-    weapons = { W.luger },
+    weapons = { W.luger, W.stun, W.arrest, W.unarrest },
     command = "fuhrer",
     max = 1,
     salary = SAL * 2.5,
@@ -774,6 +797,32 @@ TEAM_FUHRER = job(whitelisted{
     menu = "RP1942_FuhrerMenu",
     demoteOnDeath = true,
 })
+--[[###########################################################################
+                                   STAFF
+###########################################################################]]
+-- Staff on duty: the only job that gets the admin tools (GM.Config.AdminWeapons
+-- and the admin cop weapons are switched off in settings.lua, so staff in any
+-- other job spawn like everyone else). Only staff see it or can take it:
+-- RP1942.isF4Staff (operator, moderator, admin, superadmin, or ULX 42Bros access).
+TEAM_STAFF = job{
+    name = "Staff on Duty",
+    color = Color(40, 110, 160),
+    model = M.staff or M.civilian,
+    description = [[On duty as staff. Carries the admin tools. Handle reports, sits and events; don't roleplay in this job.]],
+    weapons = { "weapon_keypadchecker", "door_ram", "arrest_stick", "unarrest_stick", "stunstick", "weaponchecker" },
+    command = "staffduty",
+    max = 0,
+    salary = 0,
+    admin = 0,
+    faction = "staff",
+    candemote = false,
+    ignoreBalance = true,
+    category = "Staff",
+    sortOrder = 1,
+    customCheck = function(ply) return RP1942.isF4Staff and RP1942.isF4Staff(ply) end,
+    CustomCheckFailMsg = "Only staff can go on duty.",
+}
+
 --[[---------------------------------------------------------------------------
 Civil Protection = every Reich job unless it sets arrests = false.
 Gives warrants, wanted, arrest and the other police powers.

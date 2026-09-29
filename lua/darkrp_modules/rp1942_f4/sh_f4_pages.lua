@@ -50,7 +50,10 @@ RP1942.F4Pages = {
 - Fill these in with your server's rules.
 
 # Raiding
-- Who can raid, when, and how often.
+- Every job's description ends with RAID = YES or RAID = NO.
+- RAID = YES: Civilian, Doctor, Thief, Pro Thief, every Resistance job, and the Reich (except the ones below).
+- RAID = NO: Hobos, the producers (Baker, Winemaker, Petroleum Producer, Factory Owner), the dealers (Black Market, Cherkesov, German Supplier), the Reich Banker, the Reich Scientist and the Führer.
+- When, and how often: fill this in with your server's rules.
 
 # Punishments
 - What happens when rules are broken.
@@ -101,6 +104,7 @@ Reich - The occupying authority, made up of the units below.
 Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard.
+Batons - Every Reich job carries the stun, arrest and unarrest batons.
 Riflemen - Every Reich unit starts at Rifleman. Its specialisations appear in the job menu once you hold it.
 Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The vote only says you'd like to join the Reich, never which job, so the Gestapo is voted in too without being exposed. The Führer is elected instead.
 Unit music - Each unit has its own music that plays for you (only you) when you join it as a Rifleman. Moving through its specialisations doesn't replay it. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
@@ -110,6 +114,12 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Robbing the supply train also makes you wanted.
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
 - Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
+
+# Orders
+- Your faction's orders (Reich Orders, Resistance Plans) show in the top-left corner; Reich alerts appear below them. The Führer and the Reich officers set the Reich's; the Resistance Leader sets the Resistance's (/agenda). rp1942_orders_hud 0 in the console hides the panel.
+
+# Laws
+- The Führer makes the laws from his menu (F3, Laws): add, remove, reset, or place a law board. Every law board shows them. The first laws are fixed and can't be removed.
 
 # Martial law
 - The Führer can declare martial law (/lockdown). A siren sounds and a banner orders everyone to stay in their homes; anyone found outside may be arrested. /unlockdown lifts it.
@@ -217,6 +227,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - ULX menu (!menu > Cmds > 42Bros): every server command below, with descriptions. They also work as !commands (!train). The /chat versions work too.
 - Who may use each one is set per rank in the ULX menu (Groups tab, 42Bros). The chat versions follow the same ticks.
 - A player's undercover job shows on the scoreboard for staff, marked UNDERCOVER.
+- Staff tools (keypad checker, ram, batons, weapon checker) only come with the Staff on Duty job, at the bottom of the job list (only staff see it). Go on duty to handle a sit; in any other job you spawn like everyone else.
+- Law boards: spawn one from !prodspawn (Law Board) and /saveprod it to keep it after restarts.
 
 #staff Staff: events, economy and players
 !esp - Toggle ESP: every player through walls, anywhere on the map, with name, real job (and cover), rank, health and distance

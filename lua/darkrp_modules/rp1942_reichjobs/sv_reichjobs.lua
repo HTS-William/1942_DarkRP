@@ -77,9 +77,22 @@ function RP1942.startReichVote(ply, teamNr)
     return true
 end
 
--- DarkRP's /vote<command> for every Reich job that can need a vote
+-- DarkRP's /<command> and /vote<command> for every Reich job that can need a vote.
+-- /<command> (and the F4 button) starts the vote when one is needed, instead of
+-- DarkRP's "you need a vote" refusal, and never lets anyone skip it: DarkRP lets
+-- admins take a vote job without one, which is how Riflemen got in unvoted.
 local function takeOverVoteCommands()
     for teamNr, job in pairs(RPExtraTeams or {}) do
+        if job.faction == "reich" and job.RequiresVote and DarkRP.getChatCommand and DarkRP.getChatCommand(job.command) then
+            DarkRP.defineChatCommand(job.command, function(ply)
+                if RP1942.reichJobNeedsVote(ply, job.command) then
+                    RP1942.startReichVote(ply, teamNr)
+                else
+                    ply:changeTeam(teamNr)
+                end
+                return ""
+            end)
+        end
         if job.faction == "reich" and job.RequiresVote and DarkRP.getChatCommand and DarkRP.getChatCommand("vote" .. job.command) then
             DarkRP.defineChatCommand("vote" .. job.command, function(ply)
                 if not RP1942.reichJobNeedsVote(ply, job.command) then

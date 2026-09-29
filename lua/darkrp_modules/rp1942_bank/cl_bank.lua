@@ -95,6 +95,8 @@ hook.Add("HUDPaint", "RP1942_Bank", function()
 
     local w = math.floor(math.Clamp(ScrW() * 0.17, 250, 380))
     local x, y = ScrW() - w - 20, math.floor(ScrH() * 0.22)
+    local orders = RP1942.OrdersRect   -- the Orders panel (rp1942_hud/cl_orders.lua) sits above it
+    if orders and orders.x > ScrW() / 2 then y = math.max(y, orders.y + orders.h + 12) end
     local lines = {}
     local ini = st.initiator
     lines[#lines + 1] = { "Robber: " .. (IsValid(ini) and ini:Nick() or "?"), C.text }

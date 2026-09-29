@@ -55,6 +55,9 @@ RP1942.ReichJobs = {
 function RP1942.reichJobNeedsVote(ply, command)
     local v = RP1942.ReichJobs.vote
     if not v.enabled or v.exempt[command] then return false end
+    -- Only Reich jobs are voted (the Resistance Operative joins quietly too, but isn't Reich)
+    local job = RP1942.getJobByCommand and RP1942.getJobByCommand(command)
+    if job and job.faction ~= "reich" then return false end
     if not IsValid(ply) or not RP1942.getFaction then return false end
     return RP1942.getFaction(ply) ~= "reich"
 end

@@ -122,6 +122,9 @@ hook.Add("HUDPaint", "RP1942_ReichAlerts", function()
     local y = margin
     if CFG.alertPosition == "topcenter" then y = math.floor(sh * 0.019) + math.floor(60 * s) end
     if CFG.alertPosition == CFG.selfPosition and indicatorH > 0 then y = y + indicatorH + gap end
+    -- Below the Orders panel when it's in the same corner (rp1942_hud/cl_orders.lua)
+    local orders = RP1942.OrdersRect
+    if orders and CFG.alertPosition == "topleft" and orders.x < sw / 2 then y = math.max(y, orders.y + orders.h + gap) end
 
     local now = RealTime()
     for i = #alerts, 1, -1 do

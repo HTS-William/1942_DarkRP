@@ -2,22 +2,23 @@
 Server handlers for RP1942_FuhrerMenu.
 Only reachable by a player whose CURRENT job has menu = "RP1942_FuhrerMenu".
 ---------------------------------------------------------------------------]]
-local ECONOMY_STEP = 10
 local MAX_TAX_STEP = 25   -- largest single change a request may make
+-- (The economy is changed by staff only now: !seteconomy)
 
---[[ Economy ]]---------------------------------------------------------------------
-local function changeEconomy(ply, delta)
-    if not RP1942.addEconomy then
-        DarkRP.notify(ply, 1, 4, "The economy module is not loaded.")
-        return
+--[[ Laws ]]-----------------------------------------------------------------------------
+-- DarkRP's own law commands do the work (the Führer is DarkRP's mayor), so the
+-- same rules, limits and messages apply as typing /addlaw etc.
+local function lawCommand(ply, name, arg)
+    local cmd = DarkRP.getChatCommand and DarkRP.getChatCommand(name)
+    if not (cmd and cmd.callback) then
+        return DarkRP.notify(ply, 1, 4, "Law boards aren't available on this server.")
     end
-
-    local value = RP1942.addEconomy(delta, "Führer debug menu (" .. ply:Nick() .. ")")
-    DarkRP.notify(ply, 0, 4, string.format("Economy is now %d: %s", value, RP1942.getEconomyTier(value).text))
+    cmd.callback(ply, arg or "")
 end
-
-RP1942.addMenuHandler("RP1942_FuhrerMenu", "economy_up",   function(ply) changeEconomy(ply,  ECONOMY_STEP) end)
-RP1942.addMenuHandler("RP1942_FuhrerMenu", "economy_down", function(ply) changeEconomy(ply, -ECONOMY_STEP) end)
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_add",    function(ply, text) lawCommand(ply, "addlaw", string.Trim(text or "")) end)
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_remove", function(ply, i) if tonumber(i) then lawCommand(ply, "removelaw", tostring(math.floor(tonumber(i)))) end end)
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_reset",  function(ply) lawCommand(ply, "resetlaws") end)
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_place",  function(ply) lawCommand(ply, "placelaws") end)
 
 --[[ Taxes ]]---------------------------------------------------------------------------
 -- Requests arrive as "key:delta", e.g. "reich:5" or "baker:-5"

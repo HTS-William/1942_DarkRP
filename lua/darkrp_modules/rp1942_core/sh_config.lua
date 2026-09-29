@@ -51,6 +51,7 @@ C.Branches = {
 }
 
 C.FactionNames = {
+    staff      = "staff duty",
     reich      = "the Reich",
     resistance = "the Resistance",
     civilian   = "civilian life",
@@ -136,13 +137,15 @@ RP1942.Weapons = {
     k98k        = "mcv_kar98",           -- Karabiner-98K
     k98k_scoped = "mcv_kar98_s",         -- Sniper Karabiner-98K
     g43         = "mcv_g43",             -- Gewehr 43
-    mg42        = "mcv_mg43b",           -- MG-34 Belt (the pack has no MG-42)
+    mg34        = "mcv_mg43b",           -- MG-34 Belt (the Waffen-SS Machinegunner)
+    mg42        = "mcv_mg43b",           -- (old name for the same gun)
     stg44       = "mcv_stg44",           -- StG-44
     p38         = "mcv_p38",             -- Walther P38, officer sidearm
     ppk         = "mcv_ppk",             -- Suppressed Walther PPK
     luger       = "mcv_luger",           -- Luger P08, Führer sidearm
 
     -- DarkRP built-ins (these exist already)
+    stun        = "stunstick",           -- every Reich job carries stun + arrest + unarrest
     arrest      = "arrest_stick",
     unarrest    = "unarrest_stick",
     checker     = "weaponchecker",
@@ -172,6 +175,7 @@ RP1942.Models = {
     merchant     = { "models/player/monk.mdl" },
     doctor       = { "models/player/kleiner.mdl" },
     banker       = { "models/player/gman_high.mdl" },
+    staff        = { "models/player/breen.mdl" },   -- Staff on Duty
     labourer     = { "models/player/group02/male_02.mdl", "models/player/group02/male_06.mdl" },
     resistance   = { "models/player/group03/male_01.mdl", "models/player/group03/male_05.mdl", "models/player/group03/female_02.mdl" },
     -- The Resistance Operative's normal model ("Standard issue" in its wardrobe).

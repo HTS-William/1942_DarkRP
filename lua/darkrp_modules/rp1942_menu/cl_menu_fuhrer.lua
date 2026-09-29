@@ -61,24 +61,6 @@ function PANEL:TaxRow(getText, buttons)
 end
 
 function PANEL:Populate()
-    -- Economy ------------------------------------------------------------------
-    self:AddSection("Economy")
-
-    local status = self:AddText("")
-    local baseThink = status.Think
-    status.Think = function(s)
-        if baseThink then baseThink(s) end
-        local value = RP1942.getEconomy and RP1942.getEconomy()
-        local text = value
-            and string.format("%s  (%d / %d, wages x%.2f)", RP1942.getEconomyTier(value).text,
-                value, RP1942.Economy.MAX, RP1942.getEconomyMultiplier(value))
-            or "Economy module not loaded."
-        if s:GetText() ~= text then s:SetText(text) end
-    end
-
-    self:AddButton("Make economy gooder (+10)", function() self:Request("economy_up") end)
-    self:AddButton("Make economy worser (-10)", function() self:Request("economy_down") end)
-
     -- Treasury -----------------------------------------------------------------
     self:AddSection("Reich treasury")
     local treasury = self:AddText("")
@@ -91,6 +73,7 @@ function PANEL:Populate()
         if s:GetText() ~= text then s:SetText(text) end
     end
 
+    self:AddLaws()
     self:AddPayout()
 
     if not RP1942.getTaxRate then
@@ -134,6 +117,96 @@ function PANEL:Populate()
                 )
             end
         end
+    end
+end
+
+--[[---------------------------------------------------------------------------
+Laws: the laws on every law board (DarkRP's /addlaw, /removelaw, /resetlaws,
+/placelaws, which the Führer can use as DarkRP's mayor). The first laws are
+the fixed ones from settings.lua (GM.Config.DefaultLaws) and can't be removed.
+Server side: "law_*" in sv_menu_fuhrer.lua. Law boards placed by staff and
+saved with /saveprod stay after restarts.
+---------------------------------------------------------------------------]]
+local LAW_ROW = 30
+
+function PANEL:AddLaws()
+    local theme = self.theme
+    self:AddSection("Laws")
+    self:AddText("Every law board in the city shows these. The first " .. #(GAMEMODE.Config.DefaultLaws or {})
+        .. " are the fixed laws of the Reich and can't be removed. At most 12 laws.")
+
+    local list = self.content:Add("DPanel")
+    list:Dock(TOP)
+    list:DockMargin(0, 0, 0, 4)
+    list.Paint = nil
+
+    local function rebuild()
+        if not IsValid(list) then return end
+        list:Clear()
+        local laws = DarkRP.getLaws and DarkRP.getLaws() or {}
+        local fixed = #(GAMEMODE.Config.DefaultLaws or {})
+        for i, law in ipairs(laws) do
+            local row = list:Add("DPanel")
+            row:Dock(TOP)
+            row:DockMargin(0, 0, 0, 3)
+            row:SetTall(LAW_ROW)
+            row.Paint = function(_, w, h)
+                surface.SetDrawColor(theme.accent.r, theme.accent.g, theme.accent.b, i <= fixed and 60 or 110)
+                surface.DrawRect(0, 0, w, h)
+            end
+            if i > fixed then
+                local b = self:RowButton(row, "Remove", function() self:Request("law_remove", tostring(i)) end)
+                b:SetWide(72)
+            end
+            local lbl = row:Add("DLabel")
+            lbl:Dock(FILL)
+            lbl:DockMargin(8, 0, 4, 0)
+            lbl:SetFont("RP1942_MenuBody")
+            lbl:SetTextColor(i <= fixed and theme.sub or theme.text)
+            lbl:SetText(i .. ".  " .. string.gsub(law, "\n", " "))
+            lbl:SetTooltip(law)
+        end
+        list:SetTall(#laws * (LAW_ROW + 3))
+    end
+    rebuild()
+
+    -- New law: text + Add
+    local add = self.content:Add("DPanel")
+    add:Dock(TOP)
+    add:DockMargin(0, 2, 0, 4)
+    add:SetTall(32)
+    add.Paint = nil
+    local entry
+    local addBtn = self:RowButton(add, "Add law", function()
+        local text = string.Trim(entry:GetValue() or "")
+        if #text < 3 then return end
+        self:Request("law_add", string.sub(text, 1, 180))
+        entry:SetText("")
+    end)
+    addBtn:SetWide(90)
+    entry = add:Add("DTextEntry")
+    entry:Dock(FILL)
+    entry:DockMargin(0, 4, 0, 4)
+    entry:SetFont("RP1942_MenuBody")
+    entry:SetPlaceholderText("A new law, e.g. \"Curfew from sundown: stay indoors.\"")
+    entry.OnEnter = function() addBtn:DoClick() end
+
+    local tools = self.content:Add("DPanel")
+    tools:Dock(TOP)
+    tools:DockMargin(0, 0, 0, 6)
+    tools:SetTall(32)
+    tools.Paint = nil
+    self:RowButton(tools, "Reset laws", function() self:Request("law_reset") end):SetWide(110)
+    self:RowButton(tools, "Place a law board", function() self:Request("law_place") end):SetWide(150)
+
+    -- Stay in step with the boards (DarkRP's client law hooks)
+    local id = "RP1942_FuhrerLaws" .. tostring(self)
+    local function later() timer.Simple(0.1, rebuild) end
+    hook.Add("addLaw", id, later)
+    hook.Add("removeLaw", id, later)
+    hook.Add("resetLaws", id, later)
+    list.OnRemove = function()
+        hook.Remove("addLaw", id) hook.Remove("removeLaw", id) hook.Remove("resetLaws", id)
     end
 end
 
