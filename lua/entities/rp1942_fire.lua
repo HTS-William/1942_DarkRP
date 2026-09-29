@@ -57,7 +57,8 @@ function ENT:Initialize()
     self.NextTick = CurTime() + 0.1
     self.NextSpread = CurTime() + S("spreadInterval") * math.Rand(0.8, 1.6)
 
-    local size = math.random(64, 96)
+    local base = S("flameSize") or 100
+    local size = math.random(math.floor(base * 0.8), math.floor(base * 1.2))
     local fire = ents.Create("env_fire")
     if IsValid(fire) then
         fire:SetPos(self:GetPos())
@@ -73,6 +74,12 @@ function ENT:Initialize()
         fire:Activate()
         fire:Fire("StartFire", "", 0)
         self.EnvFire = fire
+    end
+
+    local snd = S("sound")
+    if snd and snd ~= "" then
+        self.LoopSound = snd
+        self:EmitSound(snd, S("soundLevel") or 70, math.random(90, 110), 0.8, CHAN_STATIC)
     end
 
     if RP1942.Fire and RP1942.Fire.register then RP1942.Fire.register(self) end
@@ -163,11 +170,13 @@ function ENT:TrySpread()
     })
 end
 
--- Putting it out -------------------------------------------------------------
-function ENT:Extinguish()
+-- Putting it out. `by` is the player with the extinguisher (rewarded), or
+-- nothing when it's staff / code.
+function ENT:Extinguish(by)
     if self.PutOut then return end
     self.PutOut = true
     local pos = self:GetPos()
+    if IsValid(by) and by:IsPlayer() and RP1942.Fire.reward then RP1942.Fire.reward(by, self) end
     if IsValid(self.EnvFire) then self.EnvFire:Fire("Extinguish", "", 0) end
     -- a puff of steam and a hiss
     local ed = EffectData()
@@ -190,6 +199,7 @@ function ENT:AcceptInput(name, activator, caller, data)
 end
 
 function ENT:OnRemove()
+    if self.LoopSound then self:StopSound(self.LoopSound) end
     if IsValid(self.EnvFire) then self.EnvFire:Remove() end
     if RP1942.Fire and RP1942.Fire.unregister then RP1942.Fire.unregister(self) end
 end

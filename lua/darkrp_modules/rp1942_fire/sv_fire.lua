@@ -303,12 +303,43 @@ local function isExtinguisher(wep)
     return false
 end
 
+-- The reward for putting a fire out: extinguishReward RM per fire, never
+-- for a fire you lit yourself (so nobody farms their own molotovs)
+function F.reward(ply, node)
+    local amount = S("extinguishReward") or 0
+    if amount <= 0 or not IsValid(ply) or not ply.addMoney then return end
+    if node.Arsonist == ply then return end
+    ply:addMoney(amount)
+    ply.RP1942_FireRewarded = (ply.RP1942_FireRewarded or 0) + amount
+    -- one message for a burst of fires, not one per fire
+    if not timer.Exists("RP1942_FireReward_" .. ply:EntIndex()) then
+        timer.Create("RP1942_FireReward_" .. ply:EntIndex(), 1.5, 1, function()
+            if not IsValid(ply) then return end
+            local total = ply.RP1942_FireRewarded or 0
+            ply.RP1942_FireRewarded = 0
+            if total > 0 then DarkRP.notify(ply, 0, 4, "You put out a fire: +" .. DarkRP.formatMoney(total)) end
+        end)
+    end
+end
+
+-- The player spraying at a fire (the nearest one firing an extinguisher)
+local function sprayer(pos)
+    local best, bestDist = nil, 400 * 400
+    for _, ply in ipairs(player.GetAll()) do
+        if ply:Alive() and ply:KeyDown(IN_ATTACK) and isExtinguisher(ply:GetActiveWeapon()) then
+            local d = ply:EyePos():DistToSqr(pos)
+            if d < bestDist then best, bestDist = ply, d end
+        end
+    end
+    return best
+end
+
 -- Rubat's Fire Extinguisher (Workshop 104607228, class weapon_extinguisher)
 -- asks this hook before it puts something out: our fires go out for it
 -- outright (no coin toss), and it leaves them to us.
 hook.Add("ExtinguisherDoExtinguish", "RP1942_Fire", function(ent)
     if IsValid(ent) and ent:GetClass() == "rp1942_fire" then
-        ent:Extinguish()
+        ent:Extinguish(sprayer(ent:GetPos()))
         return true
     end
 end)
@@ -336,7 +367,7 @@ hook.Add("Think", "RP1942_FireExtinguisher", function()
             local tr = util.TraceLine({ start = eye, endpos = eye + to, filter = { ply, ent }, mask = MASK_SOLID_BRUSHONLY })
             if tr.Hit and tr.Fraction < 0.95 then continue end
             if isNode then
-                ent:Extinguish()
+                ent:Extinguish(ply)
             else
                 ent:Extinguish()
                 if MCV and MCV.Extinguish then MCV.Extinguish(ent) end

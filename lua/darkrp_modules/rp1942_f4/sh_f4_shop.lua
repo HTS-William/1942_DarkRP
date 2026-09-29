@@ -88,11 +88,11 @@ RP1942.F4Shop = {
     items = {
         -- Fire extinguisher (Workshop "Fire Extinguisher" by Rubat, id 104607228,
         -- mounted on the server). Puts out the spreading fire from molotovs
-        -- and explosions (rp1942_fire). 500 sprays, refilled by standing in
-        -- water. (weapon_extinguisher_infinite is its admin-only version.)
-        { name = "Fire Extinguisher", type = "weapon", class = "weapon_extinguisher", price = 400,
+        -- and explosions (rp1942_fire). This is the never-empty version;
+        -- weapon_extinguisher is the one with 500 sprays that refills in water.
+        { name = "Fire Extinguisher", type = "weapon", class = "weapon_extinguisher_infinite", price = 1500,
           category = "Tools", model = "models/weapons/w_fire_extinguisher.mdl",
-          description = "Puts out fires. Spray at the flames; refill it in water." },
+          description = "Puts out fires. Spray at the flames. Never runs out. Each fire you put out pays a small reward." },
 
         -- More examples - remove the -- in front of a line to switch it on:
 

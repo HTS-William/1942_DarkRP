@@ -119,7 +119,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Fire
 - Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or derrick going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
 - Fire never starts in water, and each patch can only grow so far.
-- Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. Refill it by jumping into water.
+- Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. It never runs out. Every fire you put out pays 100 RM, unless you lit it yourself.
 
 # Orders
 - Your faction's orders (Reich Orders, Resistance Plans) show in the top-left corner; Reich alerts appear below them. The Führer and the Reich officers set the Reich's; the Resistance Leader sets the Resistance's (/agenda). rp1942_orders_hud 0 in the console hides the panel.
