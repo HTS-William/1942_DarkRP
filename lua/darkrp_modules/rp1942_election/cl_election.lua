@@ -505,6 +505,8 @@ hook.Add("HUDPaint", "RP1942_ElectionHUD", function()
     local tw, th = surface.GetTextSize(text)
     local w, h = tw + 32, th + 12
     local x, y = ScrW() / 2 - w / 2, math.floor(ScrH() * 0.019) + 20
+    -- Below any banner up at the moment (broadcast, martial law, bank robbery)
+    if RP1942.BannerBottom then y = math.max(y, RP1942.BannerBottom + 8) end
 
     draw.RoundedBox(h / 2, x, y, w, h, Color(COL.header.r, COL.header.g, COL.header.b, 235))
     local pulse = 0.5 + 0.5 * math.sin(CurTime() * 4)
@@ -687,7 +689,12 @@ local function drawBanner(banner, y0)
     return (h + math.floor(10 * s)) * fade
 end
 
+-- The bottom edge of the banner stack this frame (nil = no banners), so other
+-- HUD parts at the top of the screen can keep clear of it
+RP1942.BannerBottom = nil
+
 hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
+    RP1942.BannerBottom = nil
     if #banners == 0 then return end
     local now = RealTime()
     for i = #banners, 1, -1 do
@@ -706,6 +713,7 @@ hook.Add("HUDPaint", "RP1942_FuhrerAlert", function()
     for _, b in ipairs(banners) do
         y = y + drawBanner(b, y)
     end
+    RP1942.BannerBottom = y
 end)
 
 -- Martial law (DarkRP's lockdown): a red banner that stays at the top until

@@ -94,8 +94,12 @@ hook.Add("HUDPaint", "RP1942_Bank", function()
     local reich = isReich()
 
     local w = math.floor(math.Clamp(ScrW() * 0.17, 250, 380))
-    local x, y = ScrW() - w - 20, math.floor(ScrH() * 0.22)
-    local orders = RP1942.OrdersRect   -- the Orders panel (rp1942_hud/cl_orders.lua) sits above it
+    -- Top-right, below the kill feed (which starts at 4% and grows down) and
+    -- below any banner across the top. DarkRP's notifications rise from 80%
+    -- of the screen, so they stay clear of it too.
+    local x, y = ScrW() - w - 20, math.floor(ScrH() * 0.28)
+    if RP1942.BannerBottom then y = math.max(y, RP1942.BannerBottom + 12) end
+    local orders = RP1942.OrdersRect   -- (only if the Orders panel is ever put on the right)
     if orders and orders.x > ScrW() / 2 then y = math.max(y, orders.y + orders.h + 12) end
     local lines = {}
     local ini = st.initiator

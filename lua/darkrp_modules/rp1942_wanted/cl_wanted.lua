@@ -131,6 +131,14 @@ hook.Add("HUDPaint", "RP1942_ReichAlerts", function()
         if now - alerts[i].start > CFG.alertSeconds then table.remove(alerts, i) end
     end
 
+    -- Only as many as fit above the chat (EasyChat sits at the left, centred:
+    -- its top is ScrH/2 - 160). The oldest go first.
+    if CFG.alertPosition == "topleft" then
+        local limit = math.floor(sh / 2) - 160 - gap
+        local fit = math.max(1, math.floor((limit - y) / (boxH + gap)))
+        while #alerts > fit do table.remove(alerts) end
+    end
+
     for _, a in ipairs(alerts) do
         local t = now - a.start
         local slide = math.Clamp(t / 0.3, 0, 1)
