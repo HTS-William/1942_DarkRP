@@ -71,7 +71,7 @@ rp1942_dumpsters_config.Props = { --> Random junk that spawns (removed after Pro
 rp1942_dumpsters_config.Weapons = { --> Random weapons that spawn
 	"lockpick",
 	"mcv_vz24",
-	"mcv_kar98q",
+	"mcv_kar98",
 	"mcv_wrench",
 	"mcv_babybrowning",
 	"mcv_vcpistol",
