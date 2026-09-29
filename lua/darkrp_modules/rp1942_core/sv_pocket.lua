@@ -26,9 +26,9 @@ function RP1942.makeSpawnedWeapon(class, pos, clip)
     ent:SetModel((stored and stored.WorldModel ~= "" and stored.WorldModel) or "models/weapons/w_pistol.mdl")
     ent:SetWeaponClass(class)
     ent:SetPos(pos)
-    local primary = stored and stored.Primary
-    ent.clip1 = clip or (primary and primary.ClipSize)
-    ent.ammoadd = 0
+    local clip1, ammoadd = RP1942.weaponStartAmmo(class)   -- sh_ammo.lua: a magazine, or the grenade itself
+    ent.clip1 = clip or clip1
+    ent.ammoadd = ammoadd
     ent.nodupe = true
     ent:Spawn()
     return ent

@@ -107,7 +107,7 @@ SWEP.CrosshairDeltaDistance = 4
 
 SWEP.WeaponWeight = 12
 
-SWEP.Primary.Ammo = "ar2"
+SWEP.Primary.Ammo = "792x57mm"   -- was HL2 "ar2"
 SWEP.Primary.ClipSize = 250
 SWEP.Primary.Chamber = 0
 SWEP.Primary.DefaultClip = 250

@@ -37,6 +37,8 @@ local function spawnItem(ply, item)
         ent:SetModel(RP1942.getShopItemModel(item))
         ent:SetWeaponClass(item.class)
         ent.nodupe = true
+        -- Comes loaded: a full magazine, or the grenade / mine / charge itself
+        ent.clip1, ent.ammoadd = RP1942.weaponStartAmmo(item.class)
     else
         ent = ents.Create(item.class)
         if not IsValid(ent) then return nil end

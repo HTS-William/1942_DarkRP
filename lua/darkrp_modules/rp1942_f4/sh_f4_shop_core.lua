@@ -56,10 +56,10 @@ local function scanAmmo(cfg)
         local wep = weapons.Get(class)
         local p = wep and wep.Primary
         local ammo, clip = p and p.Ammo, p and tonumber(p.ClipSize) or -1
-        -- clip <= 0: melee and throwables (grenades are bought as weapons, not ammo)
-        if ammo and ammo ~= "" and string.lower(ammo) ~= "none" and clip > 0 then
+        -- clip <= 0: throwables, placeables, the flamethrower (counted as 1 per "magazine")
+        if ammo and ammo ~= "" and string.lower(ammo) ~= "none" then
             local f = found[ammo] or { clip = 0, price = 0, users = {} }
-            f.clip = math.max(f.clip, clip)
+            f.clip = math.max(f.clip, clip > 0 and clip or 1)
             f.price = math.max(f.price, basePrice(class))
             f.users[#f.users + 1] = (wep.PrintName and wep.PrintName ~= "") and wep.PrintName or class
             found[ammo] = f
@@ -82,6 +82,10 @@ local function build()
     local cfg = shop.ammo
     if cfg and cfg.enabled then
         local found = scanAmmo(cfg)
+        -- always = true: sold even when no weapon on sale uses it
+        for ammo, o in pairs(cfg.overrides or {}) do
+            if o.always and not found[ammo] then found[ammo] = { clip = 1, price = 0, users = {} } end
+        end
         local types = table.GetKeys(found)
         table.sort(types)
         for _, ammo in ipairs(types) do
@@ -90,7 +94,7 @@ local function build()
             if not o.hidden and (listed or not cfg.onlyListed) then
                 local amount = o.amount or math.min(f.clip * (cfg.clipsPerBox or 2), cfg.maxPerBox or 150)
                 local mags = amount / f.clip
-                local users = table.concat(f.users, ", ", 1, math.min(#f.users, 4))
+                local users = #f.users > 0 and table.concat(f.users, ", ", 1, math.min(#f.users, 4)) or "equipment"
                 if #f.users > 4 then users = users .. " and " .. (#f.users - 4) .. " more" end
                 list[#list + 1] = {
                     id = "ammo:" .. ammo, type = "ammo", ammo = ammo, amount = amount,

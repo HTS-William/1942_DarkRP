@@ -18,7 +18,7 @@ ENT.ImpactFuse = false
 ENT.Damage = 55
 ENT.HeadMultiplier = 4
 ENT.ChestMultiplier = 3
-ENT.PickupAmmo = "XBowBolt"
+ENT.PickupAmmo = "mcv_crossbowbolt"   -- was HL2 "XBowBolt" (matches mcv_crossbow)
 ENT.Lifetime = 60
 
 // In the compiled idle pose the tip is 20.03 units along local +X.

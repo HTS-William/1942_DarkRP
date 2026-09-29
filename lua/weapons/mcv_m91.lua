@@ -97,7 +97,7 @@ SWEP.CrosshairDeltaDistance = 4
 
 SWEP.WeaponWeight = 3.4
 
-SWEP.Primary.Ammo = "762soviet_ammo"
+SWEP.Primary.Ammo = "762soviet"   -- was "762soviet_ammo" (not a registered type)
 SWEP.Primary.ClipSize = 5
 SWEP.Primary.Chamber = 0
 SWEP.Primary.DefaultClip = 40

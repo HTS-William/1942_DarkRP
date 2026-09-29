@@ -40,7 +40,47 @@ RP1942.AmmoTypes = {
     { id = "762soviet",           name = "7.62×54mmR" },
     { id = "762nagantr",          name = "7.62×38mmR Nagant" },
     { id = "762x39",              name = "7.62×39mm" },
+    { id = "buckshot",            name = "12-Gauge Buckshot" },   -- the shotguns (Half-Life 2's type, kept)
+    -- Equipment (registered by the weapon pack itself)
+    { id = "mcv_grenade",           name = "Hand Grenade" },
+    { id = "mcv_molotov",           name = "Molotov Cocktail" },
+    { id = "mcv_mine",              name = "Mine" },
+    { id = "mcv_explosive_charge",  name = "Explosive Charge" },
+    { id = "mcv_flamethrower_fuel", name = "Flamethrower Fuel" },
+    { id = "mcv_crossbowbolt",      name = "Crossbow Bolt" },
+    { id = "mcv_flareround",        name = "Flare Round" },
 }
+
+--[[---------------------------------------------------------------------------
+Ammo that comes WITH a weapon when it's bought, found or taken from a crate.
+    Guns: a full magazine.
+    Throwables and placeables (grenades, molotovs, dynamite, mines): `each`
+    of their ammo, so the one you bought can be thrown / placed.
+    Anything else without a magazine (the flamethrower): its DefaultClip.
+    byClass overrides any weapon, e.g. mcv_mk2 = 2 for two grenades.
+---------------------------------------------------------------------------]]
+RP1942.WeaponStartAmmo = {
+    each    = 1,
+    bases   = { mcv_throwable = true, mcv_placeable = true },
+    byClass = {},
+}
+
+-- How to fill a spawned_weapon for class: returns clip1, ammoadd
+function RP1942.weaponStartAmmo(class)
+    local stored = weapons.GetStored(class)
+    local p = stored and stored.Primary
+    if not p then return nil, 0 end
+    local cfg = RP1942.WeaponStartAmmo
+    local clip = tonumber(p.ClipSize) or -1
+    if cfg.byClass[class] then
+        return (clip > 0) and math.min(clip, cfg.byClass[class]) or nil, (clip > 0) and 0 or cfg.byClass[class]
+    end
+    if clip > 0 then return clip, 0 end                         -- a gun: a full magazine
+    local ammo = p.Ammo
+    if not ammo or ammo == "" or string.lower(ammo) == "none" then return nil, 0 end
+    if cfg.bases[stored.Base] then return nil, cfg.each end     -- a grenade, molotov, charge, mine
+    return nil, math.max(tonumber(p.DefaultClip) or 0, 0)       -- e.g. flamethrower fuel
+end
 
 local names = {}
 for _, a in ipairs(RP1942.AmmoTypes) do names[a.id] = a.name end
