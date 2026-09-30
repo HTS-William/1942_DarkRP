@@ -104,7 +104,7 @@ Resistance - Fighters working against the Reich from the shadows. The Black Mark
 Reich - The occupying authority, made up of the units below.
 Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
-Leibstandarte - The Führer's personal bodyguard (StG 44 and P38). Only for those already in the Reich: switch to it from any Reich job, no vote.
+Leibstandarte - The Führer's personal bodyguard (StG 44 and P38). Only for those already in the Reich: switch to it from any Reich job, no vote. Pick any of its three uniforms in F4.
 Batons - Every Reich job carries the stun, arrest and unarrest batons.
 Riflemen - The Wehrmacht and Waffen-SS start at Rifleman. Its specialisations appear in the job menu once you hold it.
 Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The vote only says you'd like to join the Reich, never which job, so the Gestapo is voted in too without being exposed. The Führer is elected instead.

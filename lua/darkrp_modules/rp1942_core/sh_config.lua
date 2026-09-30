@@ -183,10 +183,20 @@ RP1942.Models = {
     resoperative = { "models/player/group03/male_01.mdl", "models/player/group03/male_05.mdl", "models/player/group03/female_02.mdl" },
     res_leader   = { "models/player/odessa.mdl" },
     dealer       = { "models/player/eli.mdl" },
-    wehrmacht    = { "models/player/combine_soldier.mdl" },
-    waffen_ss    = { "models/player/combine_soldier_prisonguard.mdl" },
-    leibstandarte = { "models/player/police.mdl" },   -- the Führer's bodyguard
-    officer      = { "models/player/combine_super_soldier.mdl" },
+    -- The Reich (models/d42rp/player): grunt = riflemen and the other ranks,
+    -- nco = the NCO, kommandant = the Offizier. The Leibstandarte may pick any of its three.
+    wehrmacht         = { "models/d42rp/player/wehrmacht_grunt.mdl" },
+    wehrmacht_nco     = { "models/d42rp/player/wehrmacht_nco.mdl" },
+    wehrmacht_officer = { "models/d42rp/player/wehrmacht_kommandant.mdl" },
+    waffen_ss         = { "models/d42rp/player/waffen_grunt.mdl" },
+    waffen_nco        = { "models/d42rp/player/waffen_nco.mdl" },
+    waffen_officer    = { "models/d42rp/player/waffen_kommandant.mdl" },
+    leibstandarte     = {   -- the Führer's bodyguard: a choice of all three
+        "models/d42rp/player/leibstandarte_grunt.mdl",
+        "models/d42rp/player/leibstandarte_nco.mdl",
+        "models/d42rp/player/leibstandarte_kommandant.mdl",
+    },
+    officer      = { "models/d42rp/player/wehrmacht_kommandant.mdl" },   -- (old shared key, kept for anything still using it)
     scientist    = { "models/player/magnusson.mdl" },
     fuhrer       = { "models/player/breen.mdl" },
 }
