@@ -105,7 +105,7 @@ Reich - The occupying authority, made up of the units below.
 Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard (StG 44 and P38). Only for those already in the Reich: switch to it from any Reich job, no vote. Pick any of its three uniforms in F4.
-Batons - Every Reich job carries the stun, arrest and unarrest batons.
+Batons - Every Reich job carries the stun, arrest and unarrest batons. Reich jobs that can raid (RAID = YES) also carry a battering ram.
 Riflemen - The Wehrmacht and Waffen-SS start at Rifleman. Its specialisations appear in the job menu once you hold it.
 Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The vote only says you'd like to join the Reich, never which job, so the Gestapo is voted in too without being exposed. The Führer is elected instead.
 Unit music - Each unit has its own music that plays for you (only you) when you join it (as a Rifleman, or the Leibstandarte). Moving through its specialisations doesn't replay it. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.

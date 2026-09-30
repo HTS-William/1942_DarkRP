@@ -75,6 +75,7 @@ job{} wraps DarkRP.createJob:
     (see RP1942.jobGateFailure in rp1942_core/sh_factions.lua)
   - makes joining the Reich from outside take a vote (rp1942_reichjobs)
   - ends every description with RAID = YES / RAID = NO (RAID_JOBS below)
+  - gives every Reich job that can raid the battering ram (noRam = true skips it)
 ---------------------------------------------------------------------------]]
 -- Who may raid. RAID = YES: every Reich job except NO_RAID_REICH, and the
 -- jobs in RAID_JOBS. Everyone else: RAID = NO.
@@ -93,6 +94,12 @@ local function job(tbl)
     -- RAID = YES / NO at the end of the description (and job.canRaid for other code)
     tbl.canRaid = RAID_JOBS[tbl.command] == true or (tbl.faction == "reich" and not NO_RAID_REICH[tbl.command])
     tbl.description = string.TrimRight(tbl.description or "") .. "\n\nRAID = " .. (tbl.canRaid and "YES" or "NO")
+
+    -- Every Reich job that can raid carries the battering ram (door_ram)
+    if tbl.canRaid and tbl.faction == "reich" and not tbl.noRam then
+        tbl.weapons = tbl.weapons or {}
+        if not table.HasValue(tbl.weapons, W.ram) then table.insert(tbl.weapons, W.ram) end
+    end
 
     -- A job's own customCheck becomes the last gate
     if tbl.customCheck then
