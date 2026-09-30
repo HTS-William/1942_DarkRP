@@ -44,6 +44,7 @@ R.settings = {
 -- The stations in the menu. name / url (a direct stream link).
 R.stations = {
     { name = "Radio 1942", url = "https://das-edge13-live365-dal02.cdnstream.com/a21441" },
+    { name = "1940s Radio", url = "https://uk3.internet-radio.com/proxy/1940sradio/stream" },
     -- { name = "Another station", url = "http://your.stream.here:8000/stream" },
 }
 

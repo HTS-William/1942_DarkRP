@@ -374,8 +374,11 @@ end
 
 --[[---------------------------------------------------------------------------
 Hovering the economy bar (with the cursor out: C, F3, chat, a job menu...)
-opens a panel above it with the Reich treasury and every tax rate. It's drawn
-on top of menus, and job menus open clear of the HUD (cl_menu_base.lua).
+opens a panel above it with the economy as a percentage, the Reich treasury
+and every tax rate. It's drawn on top of menus, and job menus open clear of
+the HUD (cl_menu_base.lua).
+    ECONOMY
+    63%                     AVERAGE
     REICH TREASURY
     RM 12,500
     TAX RATES
@@ -430,8 +433,9 @@ local function drawEconomyDetails(lp, m, bar)
     local rowsH = 0
     for _, r in ipairs(rows) do rowsH = rowsH + (r.heading and headingH or rowH) end
     local w = bar.w
-    local h = pad + smallH + math.floor(2 * s) + nameH + gap + math.max(1, math.floor(s)) + gap
-        + smallH + math.floor(4 * s) + rowsH + pad
+    local lineH = math.max(1, math.floor(s))
+    local blockH = smallH + math.floor(2 * s) + nameH + gap + lineH + gap   -- a label, a big value, a rule
+    local h = pad + blockH + blockH + smallH + math.floor(4 * s) + rowsH + pad
     local x = bar.x
     local y = math.max(m.margin, bar.y - gap - h)
 
@@ -440,6 +444,22 @@ local function drawEconomyDetails(lp, m, bar)
     surface.DrawRect(x, y + math.floor(6 * s), math.max(2, math.floor(3 * s)), h - math.floor(12 * s))
 
     local cx, cy, innerW = x + pad, y + pad, w - pad * 2
+
+    -- The economy, as a percentage (the bar's value, 1-110), in its tier's colour
+    local value = RP1942.getEconomy and RP1942.getEconomy() or 0
+    local tier = RP1942.getEconomyTier and RP1942.getEconomyTier(value)
+    local tierColor = (tier and HC.economy and HC.economy[tier.id]) or C("gold")
+    draw.SimpleText("ECONOMY", "RP1942_HudSmall", cx, cy, C("sub"))
+    cy = cy + smallH + math.floor(2 * s)
+    draw.SimpleText(value .. "%", "RP1942_HudName", cx, cy, tierColor)
+    if tier then
+        draw.SimpleText(string.upper(tier.id), "RP1942_HudSmall", cx + innerW, cy + nameH / 2, tierColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    end
+    cy = cy + nameH + gap
+    surface.SetDrawColor(alpha(C("sub"), 60))
+    surface.DrawRect(cx, cy, innerW, lineH)
+    cy = cy + lineH + gap
+
     draw.SimpleText("REICH TREASURY", "RP1942_HudSmall", cx, cy, C("sub"))
     cy = cy + smallH + math.floor(2 * s)
     local balance = RP1942.getTreasury and RP1942.getTreasury() or 0
@@ -447,8 +467,8 @@ local function drawEconomyDetails(lp, m, bar)
     cy = cy + nameH + gap
 
     surface.SetDrawColor(alpha(C("sub"), 60))
-    surface.DrawRect(cx, cy, innerW, math.max(1, math.floor(s)))
-    cy = cy + math.max(1, math.floor(s)) + gap
+    surface.DrawRect(cx, cy, innerW, lineH)
+    cy = cy + lineH + gap
 
     draw.SimpleText("TAX RATES", "RP1942_HudSmall", cx, cy, C("sub"))
     cy = cy + smallH + math.floor(4 * s)
