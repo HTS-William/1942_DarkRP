@@ -3,9 +3,9 @@
 
 Fire that catches, spreads along the ground, burns people, and dies down on
 its own unless it's put out. It's made of "fire nodes"
-(lua/entities/rp1942_fire.lua): each one shows the molotov's ground fire
-(its particle and its sound) with our own damage and spreading around it.
-The "look" setting swaps that for the engine's env_fire flames.
+(lua/entities/rp1942_fire.lua): each one is an engine fire (env_fire) with
+the molotov's fire sound, and our own damage and spreading around it. The
+"look" setting can swap the flames for the molotov's ground fire particle.
 
 WHAT STARTS A FIRE
     Molotovs and WP grenades   their burning pool (mcv_firepool) lights a
@@ -35,9 +35,9 @@ HOW IT'S PUT OUT
       contains "extinguish", or one listed in extinguisherClasses): spraying
       at a fire within extinguishRange puts it out. That works whatever the
       SWEP does inside: while it's fired, we put out the fires it points at.
-      Each fire put out pays extinguishReward, unless you lit it yourself.
-      Fires also answer the usual ways an addon might try: Extinguish() on
-      the node, the env_fire's "Extinguish" input, or on-fire checks.
+      Each fire put out pays extinguishReward, unless you lit it yourself
+      (with a molotov or the like; fires lit by staff with !fire do pay).
+      Fires also answer the env_fire "Extinguish" input addons send.
     * Water: fires never start in water
     * Staff: !extinguish (the patch you're looking at), !extinguishall
 
@@ -69,41 +69,40 @@ F.defaults = {
 
     -- Burning
     damagePerSecond  = 12,     -- to players and NPCs standing in a fire
-    burnRadius       = 110,    -- units from a fire's centre that burn you (~52 units = 1 m)
+    burnRadius       = 70,     -- units from a fire's centre that burn you (~52 units = 1 m)
     afterburn        = 3,      -- seconds you keep burning after stepping out
     ignitePropsFor   = 8,      -- seconds nearby props are set alight (0 = never)
     lifeMin          = 45,     -- seconds a fire burns before dying on its own
     lifeMax          = 80,
 
     -- Looks and sound
-    look             = "molotov",  -- "molotov": the molotov's ground fire particle at each fire
-                                   -- "engine":  the engine's env_fire (smaller flames, needs no content)
+    look             = "engine",   -- "engine":  the engine's env_fire flames
+                                   -- "molotov": the molotov's ground fire particle at each fire (big)
     particle         = "Molotov_GroundFire",   -- the particle for the "molotov" look (the pack's pcf)
     flameSize        = 100,    -- "engine" look only: height of each flame in units
     sound            = "ambient/fire/fire_med_loop1.wav",   -- loops at each fire (the molotov pool's; "" = silent)
     soundLevel       = 75,     -- how far it carries (dB-ish: 60 quiet, 80 loud)
 
     -- Spreading
-    spreadInterval   = 0.8,    -- seconds between each fire's attempts to spread
-    spreadChance     = 0.65,   -- chance per attempt for a fresh fire (0-1)
+    spreadInterval   = 1.6,    -- seconds between each fire's attempts to spread
+    spreadChance     = 0.5,    -- chance per attempt for a fresh fire (0-1)
     spreadDecay      = 0.75,   -- multiplied into the chance for each generation
-    maxGeneration    = 5,      -- a fire this many steps from the start never spreads
-    spreadDistMin    = 90,     -- units: how far a new fire appears from its parent
-    spreadDistMax    = 170,    -- (the molotov particle is about 200 units across, so
-                               --  fires this far apart still touch)
-    minSpacing       = 80,     -- units: no two fires closer than this
-    maxFires         = 40,     -- hard cap on fires on the map at once
-    maxPerCluster    = 16,     -- hard cap per patch (one molotov = one patch)
+    maxGeneration    = 7,      -- a fire this many steps from the start never spreads
+    spreadDistMin    = 35,     -- units: how far a new fire appears from its parent
+    spreadDistMax    = 85,     -- (with the "molotov" look use about 90-170: its particle is ~200 across)
+    minSpacing       = 22,     -- units: no two fires closer than this
+    maxFires         = 90,     -- hard cap on fires on the map at once
+    maxPerCluster    = 36,     -- hard cap per patch (one molotov = one patch)
 
     -- Starting from weapons
-    molotovSpots     = 3,      -- fires lit by a molotov / WP pool (within its radius)
+    molotovSpots     = 7,      -- fires lit by a molotov / WP pool (within its radius)
     blastChance      = 0.15,   -- chance an explosion leaves fire behind (0-1)
     blastMinDamage   = 40,     -- explosions weaker than this never start fires
     blastMaxSpots    = 2,      -- most fires one explosion can start
     flamethrowerChance = 0.05, -- chance per flame tick (10 a second) that the ground it lands on catches
 
     -- Putting out
-    extinguishReward = 100,    -- RM paid to a player for each fire they put out (not their own)
+    extinguishReward = 20,     -- RM paid to a player for each fire they put out (not their own)
     extinguishRange  = 220,    -- units an extinguisher reaches
     extinguishAngle  = 35,     -- degrees either side of the crosshair it covers
     extinguishClasses = "weapon_extinguisher",   -- extra SWEP classes, comma separated

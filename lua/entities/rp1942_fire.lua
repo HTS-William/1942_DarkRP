@@ -4,17 +4,19 @@
 Made by rp1942_fire/sv_fire.lua (RP1942.startFire) or by another fire
 spreading. Don't spawn it by hand; use !fire.
 
-Each node shows the molotov's ground fire particle (the "look" setting;
-"engine" uses an env_fire instead), loops the molotov's fire sound, and
+Each node is an engine fire (env_fire; the "look" setting can swap it for
+the molotov's ground fire particle), loops the molotov's fire sound, and
 does its own work around it: burning whoever stands in it
 (with the arsonist getting the kill), setting nearby props alight, and
 spreading. When the env_fire is gone (burnt out, or an addon sent it the
 Extinguish input) the node goes with it.
 
 Putting it out, any of these work:
-    node:Extinguish()                 (also what an extinguisher SWEP may call)
+    node:PutOut(ply)                  (ply, if any, gets the reward)
     node:Fire("Extinguish")           (input, same as env_fire's)
-    node:IsOnFire() is true, so "put out everything on fire" addons find it
+    the env_fire's own Extinguish input (what extinguisher addons send)
+(Entity:Extinguish and Entity:IsOnFire are engine functions and can't be
+replaced from Lua, so they do nothing to a node: use PutOut.)
 ---------------------------------------------------------------------------]]
 AddCSLuaFile()
 
@@ -30,6 +32,7 @@ ENT.Cluster    = 0        -- patch id, for the per-patch cap
 ENT.Life       = nil      -- seconds; nil = random between lifeMin and lifeMax
 ENT.Arsonist   = nil      -- player who gets the kills
 ENT.Inflictor  = nil
+ENT.StaffLit   = nil      -- lit with !fire: putting it out pays even the one who lit it
 
 -- env_fire spawnflags
 local SF_START_ON  = 4
@@ -177,6 +180,7 @@ function ENT:TrySpread()
     F.spawnNode(ground, {
         generation = self.Generation + 1,
         cluster    = self.Cluster,
+        staff      = self.StaffLit,
         attacker   = self.Arsonist,
         inflictor  = self.Inflictor,
     })
@@ -184,9 +188,9 @@ end
 
 -- Putting it out. `by` is the player with the extinguisher (rewarded), or
 -- nothing when it's staff / code.
-function ENT:Extinguish(by)
-    if self.PutOut then return end
-    self.PutOut = true
+function ENT:PutOut(by)
+    if self.IsPutOut then return end
+    self.IsPutOut = true
     local pos = self:GetPos()
     if IsValid(by) and by:IsPlayer() and RP1942.Fire.reward then RP1942.Fire.reward(by, self) end
     if IsValid(self.EnvFire) then self.EnvFire:Fire("Extinguish", "", 0) end
@@ -199,13 +203,10 @@ function ENT:Extinguish(by)
     self:Remove()
 end
 
--- "put everything out" addons look for entities on fire
-function ENT:IsOnFire() return not self.PutOut end
-
 function ENT:AcceptInput(name, activator, caller, data)
     name = string.lower(name)
     if name == "extinguish" or name == "extinguishtemporary" or name == "kill" then
-        self:Extinguish()
+        self:PutOut()
         return true
     end
 end

@@ -172,6 +172,7 @@ function F.spawnNode(pos, opts)
     node.Arsonist   = IsValid(opts.attacker) and opts.attacker or nil
     node.Inflictor  = IsValid(opts.inflictor) and opts.inflictor or nil
     node.Life       = opts.life
+    node.StaffLit   = opts.staff or nil
     node:SetPos(pos)
     node:Spawn()
     hook.Run("RP1942_FireNode", node)
@@ -200,7 +201,7 @@ function RP1942.startFire(pos, opts)
         end
         local ground = F.findGround(at)
         if ground and F.spawnNode(ground, {
-            generation = 0, cluster = cluster,
+            generation = 0, cluster = cluster, staff = opts.staff,
             attacker = opts.attacker, inflictor = opts.inflictor, life = opts.life,
         }) then
             lit = lit + 1
@@ -212,7 +213,7 @@ end
 function RP1942.extinguishAll()
     local n = 0
     for node in pairs(nodes) do
-        if IsValid(node) then node:Extinguish() n = n + 1 end
+        if IsValid(node) then node:PutOut() n = n + 1 end
     end
     nodes = {}
     clusters = {}
@@ -224,7 +225,7 @@ function RP1942.extinguishNear(pos, radius)
     local r2 = radius * radius
     for node in pairs(nodes) do
         if IsValid(node) and node:GetPos():DistToSqr(pos) <= r2 then
-            node:Extinguish()
+            node:PutOut()
             n = n + 1
         end
     end
@@ -308,8 +309,15 @@ end
 function F.reward(ply, node)
     local amount = S("extinguishReward") or 0
     if amount <= 0 or not IsValid(ply) or not ply.addMoney then return end
-    if node.Arsonist == ply then return end
+    if node.Arsonist == ply and not node.StaffLit then
+        if (ply.RP1942_FireOwnWarned or 0) < CurTime() then
+            ply.RP1942_FireOwnWarned = CurTime() + 10
+            DarkRP.notify(ply, 1, 5, "No reward: you started this fire yourself.")
+        end
+        return
+    end
     ply:addMoney(amount)
+    ServerLog(string.format("[1942] %s put out a fire: +%d\n", ply:Nick(), amount))
     ply.RP1942_FireRewarded = (ply.RP1942_FireRewarded or 0) + amount
     -- one message for a burst of fires, not one per fire
     if not timer.Exists("RP1942_FireReward_" .. ply:EntIndex()) then
@@ -337,11 +345,19 @@ end
 -- Rubat's Fire Extinguisher (Workshop 104607228, class weapon_extinguisher)
 -- asks this hook before it puts something out: our fires go out for it
 -- outright (no coin toss), and it leaves them to us.
+-- (It finds both the node and its env_fire, so the env_fire is routed to
+-- its node: otherwise the flames would vanish without the reward.)
 hook.Add("ExtinguisherDoExtinguish", "RP1942_Fire", function(ent)
-    if IsValid(ent) and ent:GetClass() == "rp1942_fire" then
-        ent:Extinguish(sprayer(ent:GetPos()))
-        return true
+    if not IsValid(ent) then return end
+    local node
+    if ent:GetClass() == "rp1942_fire" then
+        node = ent
+    elseif ent:GetClass() == "env_fire" and IsValid(ent:GetParent()) and ent:GetParent():GetClass() == "rp1942_fire" then
+        node = ent:GetParent()
     end
+    if not node then return end
+    node:PutOut(sprayer(node:GetPos()))
+    return true
 end)
 
 local nextSpray = 0
@@ -367,7 +383,7 @@ hook.Add("Think", "RP1942_FireExtinguisher", function()
             local tr = util.TraceLine({ start = eye, endpos = eye + to, filter = { ply, ent }, mask = MASK_SOLID_BRUSHONLY })
             if tr.Hit and tr.Fraction < 0.95 then continue end
             if isNode then
-                ent:Extinguish(ply)
+                ent:PutOut(ply)
             else
                 ent:Extinguish()
                 if MCV and MCV.Extinguish then MCV.Extinguish(ent) end
@@ -406,7 +422,7 @@ RP1942.defineStaffCommand("fire", function(ply, args)
     local spots = tonumber(args) or 3
     local was = S("enabled")
     F.settings.enabled = true   -- staff may light one even while the system is off
-    local n = RP1942.startFire(tr.HitPos, { spots = spots, radius = 60 + spots * 15, attacker = ply })
+    local n = RP1942.startFire(tr.HitPos, { spots = spots, radius = 60 + spots * 15, attacker = ply, staff = true })
     F.settings.enabled = was
     say(ply, n > 0 and (n .. " fire(s) lit.") or "No fire would take there (water, a slope, or the cap is reached).")
     ServerLog(string.format("[1942] %s lit %d fire(s) at %s\n", ply:Nick(), n, tostring(tr.HitPos)))
