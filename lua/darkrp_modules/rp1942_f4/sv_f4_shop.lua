@@ -17,10 +17,11 @@ local function spawnPos(ply)
     return tr.HitPos + tr.HitNormal * 12
 end
 
-local function owned(ply, class)
+local function owned(ply, item)
     local n = 0
+    local class = item.type == "good" and "rp1942_good" or item.class
     for _, e in ipairs(ents.FindByClass(class)) do
-        if e.RP1942_ShopOwner == ply then n = n + 1 end
+        if e.RP1942_ShopOwner == ply and (item.type ~= "good" or e:GetGood() == item.good) then n = n + 1 end
     end
     return n
 end
@@ -33,7 +34,13 @@ local function deliver(ply, item)
     end
 
     local ent
-    if item.type == "weapon" then
+    if item.type == "good" then
+        ent = RP1942.spawnGood and RP1942.spawnGood(item.good, spawnPos(ply), nil, item.quality or 3)
+        if not IsValid(ent) then return false end
+        ent.RP1942_Holder = ply
+        ent.RP1942_ShopOwner = ply
+        return true
+    elseif item.type == "weapon" then
         local probe = ents.Create(item.class)   -- is the weapon installed?
         if not IsValid(probe) then return false end
         probe:Remove()
@@ -69,11 +76,12 @@ net.Receive("RP1942_F4Buy", function(_, ply)
     local ok, why = RP1942.canBuyF4Item(ply, item)
     if not ok then return DarkRP.notify(ply, 1, 4, why) end
 
-    if item.type == "entity" and item.max and owned(ply, item.class) >= item.max then
+    if (item.type == "entity" or item.type == "good") and item.max and owned(ply, item) >= item.max then
         return DarkRP.notify(ply, 1, 4, "You can't have more than " .. item.max .. " of " .. item.name .. ".")
     end
-    if not ply:canAfford(item.price) then
-        return DarkRP.notify(ply, 1, 4, "You can't afford " .. item.name .. " (" .. DarkRP.formatMoney(item.price) .. ").")
+    local price = RP1942.f4ItemPrice(item)
+    if not ply:canAfford(price) then
+        return DarkRP.notify(ply, 1, 4, "You can't afford " .. item.name .. " (" .. DarkRP.formatMoney(price) .. ").")
     end
 
     if not deliver(ply, item) then
@@ -82,8 +90,8 @@ net.Receive("RP1942_F4Buy", function(_, ply)
         return
     end
 
-    ply:addMoney(-item.price)
+    ply:addMoney(-price)
     local what = item.type == "ammo" and (item.amount .. " x " .. item.name) or item.name
-    DarkRP.notify(ply, 0, 4, "You bought " .. what .. " for " .. DarkRP.formatMoney(item.price) .. ".")
+    DarkRP.notify(ply, 0, 4, "You bought " .. what .. " for " .. DarkRP.formatMoney(price) .. ".")
     hook.Run("RP1942_F4ShopPurchase", ply, item)
 end)

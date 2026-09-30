@@ -126,6 +126,15 @@ function RP1942.getF4ShopItem(id)
     return byId and byId[id] or nil
 end
 
+-- What an item costs right now (goods follow the market, the rest is fixed)
+function RP1942.f4ItemPrice(item)
+    if item.type == "good" and RP1942.marketPrice then
+        local market = RP1942.marketPrice(item.good, item.quality or 3)
+        return math.max(item.price or 0, math.ceil(market * (item.markup or 1.5) / 10) * 10)
+    end
+    return item.price or 0
+end
+
 function RP1942.canBuyF4Item(ply, item)
     if item.jobs then
         local job = RPExtraTeams[ply:Team()]

@@ -11,7 +11,22 @@ function ENT:LabelInfo()
     if good.eat then
         lines[#lines + 1] = "E carry  ·  Shift+E " .. (good.eat.verb or "eat")
     end
+    if self:IsRadio() then
+        local st = self:GetStation()
+        lines[#lines + 1] = (st ~= "" and (st .. "  ·  ") or "") .. RP1942.radioStatus(self)
+        lines[#lines + 1] = "E tune  ·  Shift+E carry"
+    end
     return { title = string.upper(good.name), lines = lines }
+end
+
+function ENT:Think()
+    if self:IsRadio() then RP1942.radioThink(self) end
+    self:SetNextClientThink(CurTime() + 0.1)
+    return true
+end
+
+function ENT:OnRemove()
+    RP1942.radioStop(self)
 end
 
 function ENT:Draw()

@@ -24,7 +24,7 @@ net.Receive("RP1942_RadioTune", function(_, ply)
     local url = net.ReadString()
     local name = net.ReadString()
     local volume = net.ReadFloat()
-    if not IsValid(radio) or radio:GetClass() ~= "rp1942_radio" then return end
+    if not RP1942.isRadio(radio) then return end
     if radio:GetPos():DistToSqr(ply:GetPos()) > 300 * 300 then return end
     if not RP1942.radioCanTune(ply, radio) then return DarkRP.notify(ply, 1, 4, "That isn't your radio.") end
     if radio.Broken then return DarkRP.notify(ply, 1, 4, "That radio is broken.") end

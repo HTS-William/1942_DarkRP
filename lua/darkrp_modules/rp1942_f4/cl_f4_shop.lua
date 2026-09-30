@@ -44,7 +44,7 @@ local function collectSections(ply)
     for _, item in ipairs(RP1942.getF4ShopItems and RP1942.getF4ShopItems() or {}) do
         if RP1942.canBuyF4Item(ply, item) then
             table.insert(section(item.category).entries, {
-                name = item.name, model = item.model, price = item.price,
+                name = item.name, model = item.model, price = RP1942.f4ItemPrice(item),
                 amount = item.type == "ammo" and item.amount or nil, tip = item.description,
                 buy = function()
                     net.Start("RP1942_F4Buy")

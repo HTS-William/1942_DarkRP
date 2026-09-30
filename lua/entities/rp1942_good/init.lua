@@ -11,6 +11,7 @@ function ENT:Initialize()
     for _, m in ipairs(models) do if string.lower(m) == current then keep = true end end
     if not keep then self:SetModel(models[math.random(#models)]) end
     if self:GetQuality() < 1 then self:SetQuality(2) end
+    if self:IsRadio() and self:GetVolume() <= 0 then self:SetVolume(1) end
     self:PhysicsInit(SOLID_VPHYSICS)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -40,9 +41,26 @@ function ENT:Use(ply)
         return
     end
 
+    -- A radio: E tunes it, Shift + E carries it
+    if self:IsRadio() and not ply:KeyDown(IN_SPEED) then
+        if RP1942.radioOpenMenu then RP1942.radioOpenMenu(ply, self) end
+        return
+    end
+
     -- E: carry it
     self.RP1942_Holder = ply
     ply:PickupObject(self)
+end
+
+-- Radio Set: tune it (server side; validated). Same as rp1942_radio's.
+function ENT:Tune(url, name, volume)
+    if not self:IsRadio() then return false end
+    url = string.Trim(url or "")
+    if url ~= "" and not RP1942.radioValidUrl(url) then return false end
+    self:SetURL(url)
+    self:SetStation(url == "" and "" or (name and name ~= "" and name or "Custom station"))
+    if volume then self:SetVolume(math.Clamp(tonumber(volume) or 1, 0, 1)) end
+    return true
 end
 
 -- Pushed into a market: sold (a tick later, never inside the physics callback)

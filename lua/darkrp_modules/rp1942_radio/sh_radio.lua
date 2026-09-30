@@ -12,10 +12,14 @@ WHO MAY TUNE IT
     * anyone, if it has no owner (placed with !prodspawn and saved), or if
       `anyoneCanTune` is on
 
-PLACING
-    !prodspawn -> Radio (frozen where you aim). !saveprod keeps it (and the
-    station it's tuned to) across restarts. Players can buy one in the F4
-    shop (sh_f4_shop.lua; the item is there, commented out).
+TWO KINDS OF RADIO
+    rp1942_radio      the fixed wireless set staff place with !prodspawn
+                      (frozen; !saveprod keeps it and its station)
+    Radio Set good    the factory's "very rare" product (rp1942_good, radio):
+                      a working radio too. E tunes it, Shift+E carries it.
+                      Sold at the market like any good, pocketed, or bought
+                      in the F4 shop, where it always costs more than the
+                      market pays for it (sh_f4_shop.lua: markup).
 
 LINKS
     Only direct stream links work (they end in the stream, not a web page):
@@ -55,9 +59,17 @@ function RP1942.radioValidUrl(url)
     return true
 end
 
+-- Any entity that's a radio: the wireless set, or the factory's Radio Set good
+function RP1942.isRadio(ent)
+    if not IsValid(ent) then return false end
+    local class = ent:GetClass()
+    return class == "rp1942_radio" or (class == "rp1942_good" and ent.IsRadio and ent:IsRadio())
+end
+
 function RP1942.radioCanTune(ply, radio)
     if not IsValid(ply) or not IsValid(radio) then return false end
     if R.settings.anyoneCanTune then return true end
+    if radio:GetClass() == "rp1942_good" then return true end   -- a Radio Set good: whoever has it in hand
     if radio.RP1942_SaveId or radio.RP1942_ProdSpawnedBy then return true end   -- placed by staff: a public set
     local owner = radio.RP1942_ShopOwner
     if not IsValid(owner) and radio.CPPIGetOwner then owner = radio:CPPIGetOwner() end

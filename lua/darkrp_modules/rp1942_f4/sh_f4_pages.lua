@@ -123,7 +123,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Radios
 - Press E on a radio to tune it: pick a station or paste a direct stream link (http:// or https://, straight to the stream, not a web page). It plays for everyone nearby, from the set itself.
-- Your own radio (from the shop) is yours to tune; public sets placed by staff can be tuned by anyone. Radios can be broken.
+- The Radio Set the factory makes is a working radio: E tunes it, Shift+E carries it, and it sells at the market like any other good. The F4 shop sells one too, always for more than the market pays for it. Fixed sets placed by staff can be tuned by anyone.
 - rp1942_radio_volume 0-1 (console) sets how loud radios are for you; rp1942_radio 0 silences them all.
 
 # Orders

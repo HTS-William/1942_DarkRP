@@ -11,7 +11,10 @@ Two things are sold in the F4 Shop tab from here:
 
 2. ITEMS you list below. Each item:
     name         shown on the card                                   required
-    type         "entity", "weapon" or "ammo"                        required
+    type         "entity", "weapon", "ammo" or "good"                required
+    good         (good) the good's id from rp1942_production, e.g. "radio";
+                 quality 1-3 (default 3), markup x the market price (the
+                 price is then never below `price`)
     class        the entity / weapon class        (entity, weapon)   required
     ammo         the ammo type, e.g. "pistol"     (ammo)             required
     amount       rounds given                     (ammo)             required
@@ -94,11 +97,13 @@ RP1942.F4Shop = {
           category = "Tools", model = "models/weapons/w_fire_extinguisher.mdl",
           description = "Puts out fires. Spray at the flames. Never runs out. Each fire you put out pays a small reward." },
 
-        -- A radio players can own (rp1942_radio; the owner tunes it, E on it).
-        -- Remove the -- to sell it:
-        -- { name = "Radio", type = "entity", class = "rp1942_radio", price = 600, max = 1,
-        --   category = "Supplies", model = "models/props_lab/citizenradio.mdl",
-        --   description = "A wireless set. Press E on it to tune in a station or any stream link." },
+        -- The factory's Radio Set, as a working radio (E tunes it, Shift+E carries
+        -- it, sells at the market like any good). Its price follows the market:
+        -- markup x what the market pays for an excellent one right now, never
+        -- below `price`. So buying one to sell it always loses money.
+        { name = "Radio Set", type = "good", good = "radio", quality = 3, markup = 1.5, price = 600, max = 1,
+          category = "Supplies", model = "models/props_lab/citizenradio.mdl",
+          description = "A wireless set. Press E on it to tune in a station or any stream link; Shift+E to carry it." },
 
         -- More examples - remove the -- in front of a line to switch it on:
 

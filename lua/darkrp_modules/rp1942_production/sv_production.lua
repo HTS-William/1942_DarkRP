@@ -66,7 +66,7 @@ function RP1942.spawnGood(goodId, pos, ang, quality)
     ent:SetAngles(ang or Angle(0, math.random(0, 359), 0))
     ent:Spawn()
 
-    if (CFG.goodsLifetime or 0) > 0 then
+    if (CFG.goodsLifetime or 0) > 0 and not RP1942.Goods[goodId].noExpire then
         ent.RP1942_Expires = CurTime() + CFG.goodsLifetime
     end
     return ent
@@ -96,7 +96,8 @@ end
 local function holder(ply, ent)
     if RP1942.goodOf(ent) and IsValid(ply) and ply:IsPlayer() then
         ent.RP1942_Holder = ply
-        ent.RP1942_Expires = CFG.goodsLifetime > 0 and (CurTime() + CFG.goodsLifetime) or nil
+        local good = RP1942.Goods[ent:GetGood()]
+        ent.RP1942_Expires = (CFG.goodsLifetime > 0 and not (good and good.noExpire)) and (CurTime() + CFG.goodsLifetime) or nil
     end
 end
 hook.Add("GravGunOnPickedUp", "RP1942_GoodsHolder", holder)

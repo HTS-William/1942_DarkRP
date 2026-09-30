@@ -130,6 +130,8 @@ RP1942.Goods = {
         value   = 450,
         economy = 0.30,
         rarity  = "very rare",
+        radio   = true,     -- a working radio: E tunes it (rp1942_radio module), Shift+E carries it
+        noExpire = true,    -- never vanishes when left lying around
     },
 }
 
