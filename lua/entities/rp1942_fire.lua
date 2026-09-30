@@ -4,8 +4,9 @@
 Made by rp1942_fire/sv_fire.lua (RP1942.startFire) or by another fire
 spreading. Don't spawn it by hand; use !fire.
 
-Each node owns a real engine fire (env_fire) for the flames, light, smoke
-and sound, and does its own work around it: burning whoever stands in it
+Each node shows the molotov's ground fire particle (the "look" setting;
+"engine" uses an env_fire instead), loops the molotov's fire sound, and
+does its own work around it: burning whoever stands in it
 (with the arsonist getting the kill), setting nearby props alight, and
 spreading. When the env_fire is gone (burnt out, or an addon sent it the
 Extinguish input) the node goes with it.
@@ -57,23 +58,34 @@ function ENT:Initialize()
     self.NextTick = CurTime() + 0.1
     self.NextSpread = CurTime() + S("spreadInterval") * math.Rand(0.8, 1.6)
 
-    local base = S("flameSize") or 100
-    local size = math.random(math.floor(base * 0.8), math.floor(base * 1.2))
-    local fire = ents.Create("env_fire")
-    if IsValid(fire) then
-        fire:SetPos(self:GetPos())
-        fire:SetKeyValue("health", tostring(math.ceil(life)))
-        fire:SetKeyValue("firesize", tostring(size))
-        fire:SetKeyValue("fireattack", "1")
-        fire:SetKeyValue("damagescale", "0")       -- we do the damage ourselves
-        fire:SetKeyValue("ignitionpoint", "32")
-        fire:SetKeyValue("firetype", "0")
-        fire:SetKeyValue("spawnflags", tostring(SF_START_ON + SF_DONT_DROP + SF_DIE_PERMANENT + (self.Generation > 0 and 0 or SF_START_FULL)))
-        fire:SetParent(self)
-        fire:Spawn()
-        fire:Activate()
-        fire:Fire("StartFire", "", 0)
-        self.EnvFire = fire
+    if S("look") == "engine" then
+        -- the engine's own fire (env_fire): flames, light, smoke, answers the
+        -- Extinguish input
+        local base = S("flameSize") or 100
+        local size = math.random(math.floor(base * 0.8), math.floor(base * 1.2))
+        local fire = ents.Create("env_fire")
+        if IsValid(fire) then
+            fire:SetPos(self:GetPos())
+            fire:SetKeyValue("health", tostring(math.ceil(life)))
+            fire:SetKeyValue("firesize", tostring(size))
+            fire:SetKeyValue("fireattack", "1")
+            fire:SetKeyValue("damagescale", "0")       -- we do the damage ourselves
+            fire:SetKeyValue("ignitionpoint", "32")
+            fire:SetKeyValue("firetype", "0")
+            fire:SetKeyValue("spawnflags", tostring(SF_START_ON + SF_DONT_DROP + SF_DIE_PERMANENT + (self.Generation > 0 and 0 or SF_START_FULL)))
+            fire:SetParent(self)
+            fire:Spawn()
+            fire:Activate()
+            fire:Fire("StartFire", "", 0)
+            self.EnvFire = fire
+        end
+    else
+        -- the molotov's ground fire particle (mcv_firepool uses the same one)
+        local particle = S("particle")
+        if particle and particle ~= "" then
+            self.Particle = particle
+            ParticleEffect(particle, self:GetPos(), Angle(0, math.random(0, 359), 0), self)
+        end
     end
 
     local snd = S("sound")
@@ -87,7 +99,7 @@ function ENT:Initialize()
 end
 
 function ENT:Think()
-    if CurTime() > self.DieAt or not IsValid(self.EnvFire) then
+    if CurTime() > self.DieAt or (self.EnvFire ~= nil and not IsValid(self.EnvFire)) then
         self:Remove()
         return
     end
@@ -199,6 +211,7 @@ function ENT:AcceptInput(name, activator, caller, data)
 end
 
 function ENT:OnRemove()
+    if self.Particle then self:StopParticles() end
     if self.LoopSound then self:StopSound(self.LoopSound) end
     if IsValid(self.EnvFire) then self.EnvFire:Remove() end
     if RP1942.Fire and RP1942.Fire.unregister then RP1942.Fire.unregister(self) end

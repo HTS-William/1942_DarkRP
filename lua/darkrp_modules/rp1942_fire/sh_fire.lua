@@ -2,9 +2,10 @@
 1942 DarkRP - Spreading fire (shared: the settings)
 
 Fire that catches, spreads along the ground, burns people, and dies down on
-its own unless it's put out. It's made of small "fire nodes"
-(lua/entities/rp1942_fire.lua): each one is a real engine fire (env_fire)
-with our own damage and spreading around it.
+its own unless it's put out. It's made of "fire nodes"
+(lua/entities/rp1942_fire.lua): each one shows the molotov's ground fire
+(its particle and its sound) with our own damage and spreading around it.
+The "look" setting swaps that for the engine's env_fire flames.
 
 WHAT STARTS A FIRE
     Molotovs and WP grenades   their burning pool (mcv_firepool) lights a
@@ -68,28 +69,34 @@ F.defaults = {
 
     -- Burning
     damagePerSecond  = 12,     -- to players and NPCs standing in a fire
-    burnRadius       = 70,     -- units from a fire's centre that burn you (~52 units = 1 m)
+    burnRadius       = 110,    -- units from a fire's centre that burn you (~52 units = 1 m)
     afterburn        = 3,      -- seconds you keep burning after stepping out
     ignitePropsFor   = 8,      -- seconds nearby props are set alight (0 = never)
     lifeMin          = 45,     -- seconds a fire burns before dying on its own
     lifeMax          = 80,
-    flameSize        = 100,    -- height of each flame in units (bigger = fuller patches)
-    sound            = "ambient/fire/fire_small_loop1.wav",   -- loops at each fire ("" = silent)
-    soundLevel       = 70,     -- how far it carries (dB-ish: 60 quiet, 75 loud)
+
+    -- Looks and sound
+    look             = "molotov",  -- "molotov": the molotov's ground fire particle at each fire
+                                   -- "engine":  the engine's env_fire (smaller flames, needs no content)
+    particle         = "Molotov_GroundFire",   -- the particle for the "molotov" look (the pack's pcf)
+    flameSize        = 100,    -- "engine" look only: height of each flame in units
+    sound            = "ambient/fire/fire_med_loop1.wav",   -- loops at each fire (the molotov pool's; "" = silent)
+    soundLevel       = 75,     -- how far it carries (dB-ish: 60 quiet, 80 loud)
 
     -- Spreading
     spreadInterval   = 0.8,    -- seconds between each fire's attempts to spread
     spreadChance     = 0.65,   -- chance per attempt for a fresh fire (0-1)
     spreadDecay      = 0.75,   -- multiplied into the chance for each generation
-    maxGeneration    = 7,      -- a fire this many steps from the start never spreads
-    spreadDistMin    = 35,     -- units: how far a new fire appears from its parent
-    spreadDistMax    = 85,
-    minSpacing       = 22,     -- units: no two fires closer than this
-    maxFires         = 90,     -- hard cap on fires on the map at once
-    maxPerCluster    = 36,     -- hard cap per patch (one molotov = one patch)
+    maxGeneration    = 5,      -- a fire this many steps from the start never spreads
+    spreadDistMin    = 90,     -- units: how far a new fire appears from its parent
+    spreadDistMax    = 170,    -- (the molotov particle is about 200 units across, so
+                               --  fires this far apart still touch)
+    minSpacing       = 80,     -- units: no two fires closer than this
+    maxFires         = 40,     -- hard cap on fires on the map at once
+    maxPerCluster    = 16,     -- hard cap per patch (one molotov = one patch)
 
     -- Starting from weapons
-    molotovSpots     = 7,      -- fires lit by a molotov / WP pool (within its radius)
+    molotovSpots     = 3,      -- fires lit by a molotov / WP pool (within its radius)
     blastChance      = 0.15,   -- chance an explosion leaves fire behind (0-1)
     blastMinDamage   = 40,     -- explosions weaker than this never start fires
     blastMaxSpots    = 2,      -- most fires one explosion can start
