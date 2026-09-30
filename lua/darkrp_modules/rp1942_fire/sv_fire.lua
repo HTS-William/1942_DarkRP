@@ -234,9 +234,12 @@ end
 
 --[[ What lights fires --------------------------------------------------------]]
 -- Molotov and WP pools
+-- The pool itself (the pack's 12-second ground fire) can't be put out, so
+-- with replacePool it's removed as soon as it appears and our fires take
+-- its place: the whole blaze is then extinguishable.
 hook.Add("OnEntityCreated", "RP1942_FirePool", function(ent)
     if not IsValid(ent) or ent:GetClass() ~= "mcv_firepool" then return end
-    timer.Simple(0.1, function()
+    timer.Simple(0, function()
         if not IsValid(ent) or not S("enabled") then return end
         RP1942.startFire(ent:GetPos(), {
             spots = S("molotovSpots"),
@@ -244,6 +247,10 @@ hook.Add("OnEntityCreated", "RP1942_FirePool", function(ent)
             attacker = ent.Attacker,
             inflictor = ent.Inflictor,
         })
+        if S("replacePool") then
+            ent:StopParticles()
+            ent:Remove()
+        end
     end)
 end)
 

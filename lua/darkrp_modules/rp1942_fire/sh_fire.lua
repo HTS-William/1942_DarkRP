@@ -8,8 +8,9 @@ the molotov's fire sound, and our own damage and spreading around it. The
 "look" setting can swap the flames for the molotov's ground fire particle.
 
 WHAT STARTS A FIRE
-    Molotovs and WP grenades   their burning pool (mcv_firepool) lights a
-                               cluster of fires around it
+    Molotovs and WP grenades   a cluster of fires where the pool would
+                               burn (the pool itself is replaced, since it
+                               can't be put out: replacePool)
     The flamethrower           where its stream lands on the ground
     Every explosion            grenades, dynamite, rockets, rifle grenades,
                                the flamethrower's tank, printers, derricks,
@@ -95,6 +96,8 @@ F.defaults = {
     maxPerCluster    = 36,     -- hard cap per patch (one molotov = one patch)
 
     -- Starting from weapons
+    replacePool      = true,   -- the molotov / WP pool (unextinguishable, 12 s) is removed and
+                               -- our fires take its place; false keeps it under them
     molotovSpots     = 7,      -- fires lit by a molotov / WP pool (within its radius)
     blastChance      = 0.15,   -- chance an explosion leaves fire behind (0-1)
     blastMinDamage   = 40,     -- explosions weaker than this never start fires

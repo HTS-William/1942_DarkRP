@@ -194,11 +194,7 @@ function ENT:PutOut(by)
     local pos = self:GetPos()
     if IsValid(by) and by:IsPlayer() and RP1942.Fire.reward then RP1942.Fire.reward(by, self) end
     if IsValid(self.EnvFire) then self.EnvFire:Fire("Extinguish", "", 0) end
-    -- a puff of steam and a hiss
-    local ed = EffectData()
-    ed:SetOrigin(pos + Vector(0, 0, 16))
-    ed:SetScale(1)
-    util.Effect("WaterSplash", ed, true, true)
+    -- a hiss
     sound.Play("ambient/water/water_spray" .. math.random(1, 3) .. ".wav", pos, 70, math.random(90, 110), 0.7)
     self:Remove()
 end
