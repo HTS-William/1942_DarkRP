@@ -121,6 +121,11 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Fire never starts in water, and each patch can only grow so far.
 - Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. It never runs out. Every fire you put out pays 20 RM, unless you lit it yourself.
 
+# Radios
+- Press E on a radio to tune it: pick a station or paste a direct stream link (http:// or https://, straight to the stream, not a web page). It plays for everyone nearby, from the set itself.
+- Your own radio (from the shop) is yours to tune; public sets placed by staff can be tuned by anyone. Radios can be broken.
+- rp1942_radio_volume 0-1 (console) sets how loud radios are for you; rp1942_radio 0 silences them all.
+
 # Orders
 - Your faction's orders (Reich Orders, Resistance Plans) show in the top-left corner; Reich alerts appear below them. The Führer and the Reich officers set the Reich's; the Resistance Leader sets the Resistance's (/agenda). rp1942_orders_hud 0 in the console hides the panel.
 
@@ -248,7 +253,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
 !saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
 !saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 !unsaveprod - Look at a saved machine: remove it for good

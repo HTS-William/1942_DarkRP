@@ -94,6 +94,12 @@ RP1942.F4Shop = {
           category = "Tools", model = "models/weapons/w_fire_extinguisher.mdl",
           description = "Puts out fires. Spray at the flames. Never runs out. Each fire you put out pays a small reward." },
 
+        -- A radio players can own (rp1942_radio; the owner tunes it, E on it).
+        -- Remove the -- to sell it:
+        -- { name = "Radio", type = "entity", class = "rp1942_radio", price = 600, max = 1,
+        --   category = "Supplies", model = "models/props_lab/citizenradio.mdl",
+        --   description = "A wireless set. Press E on it to tune in a station or any stream link." },
+
         -- More examples - remove the -- in front of a line to switch it on:
 
         -- { name = "Health Kit", type = "entity", class = "item_healthkit", price = 150,

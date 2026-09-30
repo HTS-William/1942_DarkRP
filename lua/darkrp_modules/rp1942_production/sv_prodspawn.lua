@@ -47,6 +47,7 @@ local MACHINES = {
     rp1942_printer_bank = true, rp1942_printer_illegal = true,
     rp1942_dumpster = true,
     rp1942_bank_vault = true,
+    rp1942_radio = true,        -- a wireless set (rp1942_radio); saved with the station it's tuned to
     darkrp_laws = true,         -- a law board (the Führer's laws); save it with !saveprod   -- the Reichsbank (rp1942_bank): save it with !saveprod, or place it with !addvault
 }
 
@@ -89,7 +90,7 @@ local function spawnMachine(ply, class)
     if class == "rp1942_oil_rig" then
         ent:Anchor(ent:GetPos(), ent:GetAngles())   -- bolted down where it stands (no oil site used)
         ent:StartPump()
-    elseif class == "rp1942_market" or class == "rp1942_dumpster" or class == "rp1942_bank_vault" or class == "darkrp_laws" then
+    elseif class == "rp1942_market" or class == "rp1942_dumpster" or class == "rp1942_bank_vault" or class == "darkrp_laws" or class == "rp1942_radio" then
         local phys = ent:GetPhysicsObject()
         if IsValid(phys) then phys:EnableMotion(false) end
     end
@@ -198,6 +199,7 @@ local function spawnSaved(id, v)
     ent:Spawn()
     ent:Activate()
     ent.RP1942_SaveId = id
+    if v.data and ent.RP1942_LoadData then ent:RP1942_LoadData(v.data) end
     if v.class == "rp1942_oil_rig" then
         ent:Anchor(pos, ang)
         ent:StartPump()
@@ -222,11 +224,22 @@ local function saveOne(ent, list)
     if ent.RP1942_SaveId and list[ent.RP1942_SaveId] then return false end
     local id = tostring(os.time()) .. "_" .. ent:EntIndex() .. "_" .. math.random(1000, 9999)
     local pos, ang = ent:GetPos(), ent:GetAngles()
-    list[id] = { class = ent:GetClass(), x = pos.x, y = pos.y, z = pos.z, p = ang.p, yaw = ang.y, r = ang.r }
+    list[id] = { class = ent:GetClass(), x = pos.x, y = pos.y, z = pos.z, p = ang.p, yaw = ang.y, r = ang.r,
+        data = ent.RP1942_SaveData and ent:RP1942_SaveData() or nil }
     ent.RP1942_SaveId = id
     ent.RP1942_ProdSpawnedBy = nil
     if ent:GetClass() == "rp1942_oil_rig" then ent:Anchor(pos, ang) else freeze(ent) end
     return true
+end
+
+-- A saved machine's own data changed (a radio was retuned): store it again
+function RP1942.prodUpdateSave(ent)
+    if not IsValid(ent) or not ent.RP1942_SaveId or not ent.RP1942_SaveData then return end
+    local list = loadSaves()
+    local v = list[ent.RP1942_SaveId]
+    if not v then return end
+    v.data = ent:RP1942_SaveData()
+    writeSaves(list)
 end
 
 local function saveCan(ply)
@@ -238,7 +251,7 @@ end
 local function lookedAtMachine(ply)
     local ent = aim(ply).Entity
     if IsValid(ent) and MACHINES[ent:GetClass()] then return ent end
-    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, barrel, factory line, derrick, market, printer, dumpster, bank vault or law board).")
+    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, barrel, factory line, derrick, market, printer, dumpster, bank vault, radio or law board).")
 end
 
 function RP1942.prodSave(ply)
