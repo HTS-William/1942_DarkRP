@@ -307,7 +307,9 @@ hook.Add("ShowSpare1", "RP1942_F3", function()
         setCursor(false)
     else
         local job = RPExtraTeams[LocalPlayer():Team()]
-        if job and job.menu then
+        if job and job.menu and LocalPlayer():isArrested() then
+            DarkRP.notify(LocalPlayer(), 1, 4, "You can't use your job's menu while you're under arrest.")
+        elseif job and job.menu then
             RP1942.openJobMenu()
         else
             setCursor(true)
@@ -316,3 +318,10 @@ hook.Add("ShowSpare1", "RP1942_F3", function()
     return true   -- handled: skip DarkRP's own F3
 end)
 
+
+-- Being arrested closes any open job menu (so a dealer can't keep buying from the cell)
+hook.Add("DarkRPVarChanged", "RP1942_MenuArrest", function(ply, var, _, new)
+    if ply == LocalPlayer() and var == "Arrested" and new and IsValid(RP1942.ActiveMenu) then
+        RP1942.ActiveMenu:Close()
+    end
+end)

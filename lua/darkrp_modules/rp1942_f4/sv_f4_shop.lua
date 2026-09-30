@@ -64,6 +64,7 @@ net.Receive("RP1942_F4Buy", function(_, ply)
 
     local item = RP1942.getF4ShopItem(net.ReadString())
     if not item then return end
+    if ply:isArrested() then return DarkRP.notify(ply, 1, 4, "You can't buy anything while you're under arrest.") end
 
     local ok, why = RP1942.canBuyF4Item(ply, item)
     if not ok then return DarkRP.notify(ply, 1, 4, why) end

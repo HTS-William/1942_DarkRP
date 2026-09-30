@@ -7,6 +7,10 @@ private message, and for staff (only) every ULX command they're allowed to
 use on that player (teleport, freeze, jail, gag, kick, ban, wanted...). Clicking
 anything pins the board open; press TAB again to close it.
 
+The RICHEST section at the top lists the LEADERBOARD_SIZE fullest wallets
+(cash on hand, what DarkRP shows in the HUD; it updates live). rp1942_
+scoreboard_richest 0 hides it.
+
 Undercover agents (Gestapo, Resistance Operative) show as their cover: the
 job title they chose, in that job's colour and faction. Staff, the agent
 themself and their own side (who already see the faction tag) see the truth,
@@ -16,6 +20,8 @@ ULX commands are only shown when ULX is installed and you have access to
 them (ULX menu > Groups). They're run exactly like typing them in console.
 ---------------------------------------------------------------------------]]
 local UI, C
+local LEADERBOARD_SIZE = 5
+local showRichest = CreateClientConVar("rp1942_scoreboard_richest", "1", true, false, "Show the richest players at the top of the scoreboard", 0, 1)
 
 -- The staff actions, in sections. { label, ulx command, extra }
 --   prompt = "..."   asks for text first (the reason / message)
@@ -240,7 +246,25 @@ function PANEL:Think()
         parts[#parts + 1] = p:UserID() .. faction .. title .. p:GetUserGroup() .. p:Nick()
     end
     local sig = table.concat(parts, "|")
-    if sig ~= self.signature then self:Rebuild() end
+    if sig ~= self.signature then self:Rebuild() return end
+    -- the leaderboard is redrawn from live values, but its order changes
+    local order = self:RichestOrder()
+    if order ~= self.richestOrder then self:Rebuild() end
+end
+
+-- "userid,userid,..." of the richest, in order (a short signature)
+function PANEL:RichestOrder()
+    if not showRichest:GetBool() then return "" end
+    local list = {}
+    for _, p in ipairs(player.GetAll()) do list[#list + 1] = p end
+    table.sort(list, function(a, b)
+        local ma, mb = a:getDarkRPVar("money") or 0, b:getDarkRPVar("money") or 0
+        if ma ~= mb then return ma > mb end
+        return a:UserID() < b:UserID()
+    end)
+    local ids = {}
+    for i = 1, math.min(LEADERBOARD_SIZE, #list) do ids[i] = list[i]:UserID() end
+    return table.concat(ids, ",")
 end
 
 function PANEL:Rebuild()
@@ -261,6 +285,30 @@ function PANEL:Rebuild()
     table.sort(list, function(a, b) return string.lower(a.ply:Nick()) < string.lower(b.ply:Nick()) end)
 
     local rowH = math.floor(40 * s)
+
+    -- The richest, at the top
+    self.richestOrder = self:RichestOrder()
+    if self.richestOrder ~= "" then
+        local byId = {}
+        for _, entry in ipairs(list) do byId[entry.ply:UserID()] = entry end
+        local bar = UI.categoryBar(self.list, "RICHEST", "cash on hand", C.tab)
+        bar:Dock(TOP)
+        bar:DockMargin(0, 0, 0, 3)
+        bar:SetTall(math.floor(28 * s))
+        local rank = 0
+        for id in string.gmatch(self.richestOrder, "[^,]+") do
+            local entry = byId[tonumber(id)]
+            if entry then
+                rank = rank + 1
+                self:AddMoneyRow(entry, rank, rowH)
+            end
+        end
+        local all = UI.categoryBar(self.list, "EVERYONE", nil, C.tab)
+        all:Dock(TOP)
+        all:DockMargin(0, gap, 0, 3)
+        all:SetTall(math.floor(28 * s))
+    end
+
     for _, entry in ipairs(list) do self:AddRow(entry, rowH) end
 
     if not IsValid(self.selected) then self:Select(lp) else self:Select(self.selected) end
@@ -322,6 +370,49 @@ function PANEL:AddRow(entry, rowH)
         -- ping
         local ping = ply:Ping()
         draw.SimpleText(ply:IsBot() and "BOT" or tostring(ping), "RP1942_F4Small", w - 10, h / 2, pingColor(ping), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    end
+end
+
+-- A leaderboard row: rank, name, job, money (live)
+function PANEL:AddMoneyRow(entry, rank, rowH)
+    local s = UI.scale()
+    local ply = entry.ply
+    local row = self.list:Add("DButton")
+    row:Dock(TOP)
+    row:DockMargin(0, 0, 0, 3)
+    row:SetTall(rowH)
+    row:SetText("")
+    row.hover = 0
+    row.DoClick = function()
+        surface.PlaySound("ui/buttonclick.wav")
+        self.pinned = true
+        self:Select(ply)
+    end
+
+    local avatar = vgui.Create("AvatarImage", row)
+    avatar:SetSize(rowH - 8, rowH - 8)
+    avatar:SetPos(math.floor(34 * s), 4)
+    avatar:SetPlayer(ply, 64)
+    avatar:SetMouseInputEnabled(false)
+
+    local RANK_COL = { C.gold, Color(200, 200, 200), Color(196, 132, 84) }
+    row.Paint = function(r, w, h)
+        if not IsValid(ply) then return end
+        r.hover = Lerp(FrameTime() * 12, r.hover, r:IsHovered() and 1 or 0)
+        local selected = self.selected == ply
+        draw.RoundedBox(4, 0, 0, w, h, selected and C.cardSelected or UI.mix(C.card, C.cardHover, r.hover))
+        surface.SetDrawColor(entry.color)
+        surface.DrawRect(0, 0, 4, h)
+
+        draw.SimpleText("#" .. rank, "RP1942_F4Head", math.floor(18 * s), h / 2, RANK_COL[rank] or C.sub, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+        local x = math.floor(34 * s) + rowH + 2
+        local nameW = math.floor(w * 0.38)
+        draw.SimpleText(UI.fit(ply:Nick(), "RP1942_F4Head", nameW - 10), "RP1942_F4Head", x, h / 2, C.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText(UI.fit(entry.title, "RP1942_F4Body", math.floor(w * 0.25)), "RP1942_F4Body", x + nameW, h / 2, readable(entry.color), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
+        local money = ply:getDarkRPVar("money") or 0
+        draw.SimpleText(DarkRP.formatMoney(money), "RP1942_F4Head", w - 10, h / 2, C.gold, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
     end
 end
 

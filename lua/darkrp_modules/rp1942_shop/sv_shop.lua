@@ -69,6 +69,11 @@ local function spawnCrate(ply, item, amount)
 end
 
 function RP1942.buyShopItem(ply, itemId, amount)
+    if not IsValid(ply) or not ply:Alive() then return end
+    if ply:isArrested() then
+        DarkRP.notify(ply, 1, 4, "You can't trade while you're under arrest.")
+        return
+    end
     local job = ply:getJobTable()
     local key = job and job.shop
     if not RP1942.getShopCatalog(key) then
