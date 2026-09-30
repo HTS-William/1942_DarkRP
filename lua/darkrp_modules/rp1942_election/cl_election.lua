@@ -544,6 +544,15 @@ local STYLES = {
         bg = Color(96, 16, 14), rule = Color(60, 8, 8), titleCol = Color(250, 238, 220), titleFont = "RP1942_ElAlertSub",
         pulse = Color(255, 210, 190), bodyCol = Color(245, 225, 210), bodyFont = "RP1942_ElAlertMsg",
     },
+    -- The Führer's decisions (rp1942_decisions): chose wisely / poorly
+    decisionGood = {
+        rule = COL.gold, titleCol = COL.gold, titleFont = "RP1942_ElAlertSub",
+        pulse = Color(255, 226, 150), bodyCol = COL.text, bodyFont = "RP1942_ElAlertMsg",
+    },
+    decisionBad = {
+        rule = COL.red, titleCol = Color(230, 110, 96), titleFont = "RP1942_ElAlertSub",
+        pulse = Color(255, 170, 150), bodyCol = COL.text, bodyFont = "RP1942_ElAlertMsg",
+    },
 }
 
 -- Banners showing, newest at the bottom. Several can be up at once (a
@@ -555,7 +564,7 @@ local MAX_BANNERS = 3
 -- stay (optional): a function; the banner stays up while it returns true,
 -- then fades (seconds is ignored)
 local function showBanner(style, title, body, seconds, footer, stay)
-    banners[#banners + 1] = { style = STYLES[style], title = title, body = body, footer = footer,
+    banners[#banners + 1] = { style = STYLES[style] or STYLES.broadcast, title = title, body = body, footer = footer,
                seconds = seconds, start = RealTime(), stay = stay }
     while #banners > MAX_BANNERS do table.remove(banners, 1) end
 end

@@ -116,6 +116,12 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
 - Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
 
+# The Führer's decisions
+- While a Führer is in office, every 3 to 5 minutes a matter of state lands on his desk: one situation, three answers. Each answer is marked LOW, MODERATE or HIGH IMPACT.
+- Low impact: 70-90% odds, the economy moves 5-10 points. Moderate: 40-70%, 10-15 points. High: 20-50%, 15-25 points. Success raises the economy, failure lowers it.
+- The Führer reads what came of his choice; everyone else hears whether he chose wisely or poorly, and by how much the economy moved.
+- He has 90 seconds to answer. Decide later closes the window; /decision opens it again. If he doesn't decide in time, the economy drops 10 points and everyone hears about it.
+
 # Fire
 - Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or derrick going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
 - Fire never starts in water, and each patch can only grow so far.
@@ -280,6 +286,9 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 !removedumpster - Remove the dumpster you're looking at
 !getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
 !testexplosion <damage> <radius> - Set off a test explosion where you're aiming (it does real damage)
+
+#staff Staff: the Führer's decisions
+!fuhrerquestion [number] - Send the Führer a decision now (to you, if nobody is in office, to test it). A number picks that question; empty = the next from the deck. Answering it really moves the economy
 
 #staff Staff: fire
 !fire [spots] - Light a fire where you're looking (it spreads like any other)

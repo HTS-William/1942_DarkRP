@@ -264,6 +264,23 @@ register("bankstatus", ulx.rp1942bankstatus, "!bankstatus", ULib.ACCESS_ADMIN,
     "Shows what the bank robbery system is doing: on/off, vaults, Reich online, the running robbery and its crew, the cooldown and the treasury.")
 
 --[[---------------------------------------------------------------------------
+The Führer's decisions (rp1942_decisions)
+---------------------------------------------------------------------------]]
+function ulx.rp1942fuhrerquestion(ply, number)
+    if not RP1942.decisionForce then return ULib.tsayError(ply, "The Führer's decisions aren't loaded.", true) end
+    local ok, target, test, index = RP1942.decisionForce(ply, number)
+    if not ok then return ULib.tsayError(ply, tostring(target), true) end
+    if test then
+        ulx.fancyLogAdmin(ply, true, "#A sent themself Führer decision ##i to test (nobody is in office)", index)
+    else
+        ulx.fancyLogAdmin(ply, true, "#A sent Führer decision ##i to #T", index, target)
+    end
+end
+local fq = register("fuhrerquestion", ulx.rp1942fuhrerquestion, "!fuhrerquestion", ULib.ACCESS_SUPERADMIN,
+    "Debug: send the Führer a decision now (question and three answers). With nobody in office it comes to you instead, to test it. A number picks that question (1 = the first in sh_decisions_questions.lua); 0 or empty = the next from the shuffled deck. Answering it really changes the economy.")
+fq:addParam{ type = ULib.cmds.NumArg, min = 0, max = 255, default = 0, hint = "question number", ULib.cmds.optional, ULib.cmds.round }
+
+--[[---------------------------------------------------------------------------
 Spreading fire (rp1942_fire)
 ---------------------------------------------------------------------------]]
 function ulx.rp1942fire(ply, spots)
