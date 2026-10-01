@@ -132,7 +132,7 @@ function ENT:PaintPanel(P, w, h)
     -- "Your pocket: 3x Loaf of Bread, 3x Bottle of Wine"
     local summary = {}
     for id, n in SortedPairs(perGood) do summary[#summary + 1] = n .. "x " .. RP1942.Goods[id].name end
-    local pocketText = count > 0 and ("Your pocket: " .. table.concat(summary, ", ")) or "Your pocket has no goods. Pocket some, or push them into the crate."
+    local pocketText = count > 0 and ("Your pocket: " .. table.concat(summary, ", ")) or "Your pocket has no goods. Pocket some, or push them into the mailbox."
     surface.SetFont("RP1942_PanelSmall")
     if surface.GetTextSize(pocketText) > iw then pocketText = "Your pocket: " .. count .. " goods, " .. table.Count(perGood) .. " kinds" end
     P:Text(pocketText, "RP1942_PanelSmall", x, y, C.dim)

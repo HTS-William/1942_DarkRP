@@ -8,11 +8,16 @@ function ENT:Initialize()
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     self:SetUseType(SIMPLE_USE)
+    -- a model without its own collision still gets a solid box, so goods can touch it
+    if not IsValid(self:GetPhysicsObject()) then
+        self:PhysicsInitBox(self:OBBMins(), self:OBBMaxs())
+        self:SetSolid(SOLID_VPHYSICS)
+    end
     local phys = self:GetPhysicsObject()
     if IsValid(phys) then phys:EnableMotion(false) end
 end
 
--- E on the crate itself: sell everything in your pocket
+-- E on the mailbox itself: sell everything in your pocket
 function ENT:Use(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return end
     if (ply.RP1942_NextMarket or 0) > CurTime() then return end

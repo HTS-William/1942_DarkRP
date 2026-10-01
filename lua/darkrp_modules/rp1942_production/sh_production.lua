@@ -81,8 +81,8 @@ RP1942.Goods = {
 
     -- Petroleum Producer
     oil = {
-        name    = "Canister of Crude Oil",
-        model   = "models/props_junk/gascan001a.mdl",
+        name    = "Barrel of Crude Oil",
+        model   = "models/props_c17/oildrum001.mdl",
         value   = 1000,   -- the derrick needs tending the whole time (not AFK-able)
         economy = 0.15,
     },
@@ -105,14 +105,14 @@ RP1942.Goods = {
     },
     pot = {
         name    = "Cooking Pot",
-        model   = "models/props_interiors/pot01a.mdl",
+        model   = "models/props_interiors/pot02a.mdl",
         value   = 120,
         economy = 0.12,
         rarity  = "uncommon",
     },
     kettle = {
         name    = "Kettle",
-        model   = "models/props_interiors/pot02a.mdl",
+        model   = "models/props_interiors/pot01a.mdl",
         value   = 130,
         economy = 0.12,
         rarity  = "uncommon",
@@ -208,7 +208,7 @@ RP1942.Production = {
     useDistance   = 120,              -- and can be used (look + E) up to this close
 
     market = {
-        model       = "models/props_junk/wood_crate002a.mdl",
+        model       = "models/props_furniture/inn_mailbox1.mdl",   -- the market's mailbox
         demandBonus = 0.20,           -- the good in demand sells for 20% more
         demandEvery = 3600,           -- seconds between new "in demand" picks (and trend resets)
         -- Who may place markets with !addmarket and !removemarket when ULX

@@ -206,7 +206,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The less downtime, the better the run, and the better the odds of rare goods: common (rations, boots), uncommon (pots, kettles), rare (clocks) and very rare (radios). COLLECT when the run is done.
 
 # Markets
-- Sell goods at a market: SELL one kind of good from your pocket, SELL EVERYTHING, or push goods into the crate.
+- Sell goods at a market: SELL one kind of good from your pocket, SELL EVERYTHING, or push goods into the mailbox.
 - Scroll the price board with its arrows or your mouse wheel. Goods you carry are listed first.
 - Prices follow the economy, and one good is in demand each hour for a bonus. Arrows show how prices have moved. Sales are taxed like wages.
 - Every market sale helps the economy a little, and a better economy means higher wages for everyone. Selling privately to other players doesn't move the economy.
