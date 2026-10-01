@@ -50,8 +50,12 @@ local function sendMarkers(ply, list, seconds, tag) RP1942.showMarkers(ply, list
 
 --[[---------------------------------------------------------------------------
 Building a rig (the F4 Shop's spawn function, entities.lua). Picks the
-free site nearest the buyer. Returns the entity; DarkRP makes the buyer
-its owner.
+free site nearest the buyer. Returns the entity.
+
+It must set the owner itself: DarkRP only does that in its own default
+spawn. Without an owner, DarkRP can't count the rig off the buyer when it's
+removed (a job change, the remover, a blowout), so the buyer stayed "at the
+limit" and couldn't buy another until a restart.
 ---------------------------------------------------------------------------]]
 function RP1942.buildOilRig(ply)
     local used, best, bestDist = taken(), nil, math.huge
@@ -63,6 +67,8 @@ function RP1942.buildOilRig(ply)
     end
 
     local rig = ents.Create("rp1942_oil_rig")
+    rig:Setowning_ent(ply)
+    rig.SID = ply.SID
     if not best then
         -- No free site (someone got the last one this very moment): build
         -- nothing useful; remove it next tick. customCheck makes this rare.

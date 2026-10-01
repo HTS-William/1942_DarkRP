@@ -6,8 +6,8 @@
     site (admins mark them with !addoilsite; rp1942_production/sv_oil_sites.lua)
     and it's bolted down: no physgun, gravity gun, pocket or tools.
 
-    It pumps on its own. With the valve shut the well pressure climbs; open
-    the valve (on the panel) and it falls (steam hisses while it's open).
+    It pumps on its own. With the valve shut the well pressure climbs; turn
+    the wheel to open the valve and it falls (steam hisses while it's open).
     Time spent in the green decides the tank: more barrels and more stars.
     When the tank is full, FILL BARRELS and it starts pumping again.
     The POWER lever switches it off (everything pauses). If the pressure ever
@@ -27,7 +27,7 @@ ENT.m_tblToolsAllowed  = { "remover" }
 ENT.DisableDuplicator  = true
 
 function ENT:SetupDataTables()
-    self:NetworkVar("Entity", 0, "owning_ent")   -- set by DarkRP when bought
+    self:NetworkVar("Entity", 0, "owning_ent")   -- the buyer (set in RP1942.buildOilRig, or by the spawner)
     self:NetworkVar("Int",    0, "Ready")        -- barrels in the full tank (0 = pumping)
     self:NetworkVar("Int",    1, "ReadyQuality")
     self:NetworkVar("Bool",   0, "ValveOpen")
