@@ -1,7 +1,10 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - production spawner for staff (client)
-The window the server opens (sv_prodspawn.lua). Aim first, then open it:
-everything spawns at your crosshair.
+Two ways in, the same spawner:
+    !prodspawn      its own window (the server opens it, sv_prodspawn.lua)
+    F4 > Spawner    a tab in the F4 menu, only for staff allowed !prodspawn
+Aim first, then open it: everything spawns at your crosshair. The server
+checks the permission again on every click.
 ---------------------------------------------------------------------------]]
 local function colors()   -- the shared palette (rp1942_core/cl_theme.lua)
     local C = RP1942.col
@@ -43,32 +46,16 @@ local MACHINES = {
     { class = "rp1942_radio",           name = "Radio",           model = "models/props_lab/citizenradio.mdl", note = "E to tune" },
 }
 
-local frame
-
-local function open()
-    if IsValid(frame) then frame:Remove() end
+-- The spawner's contents, in any panel: its own window (!prodspawn) or the
+-- F4 menu's Spawner tab. w = the width it has, for sizing the cards.
+local function build(parent, w)
     local C = colors()
-    local w, h = math.Clamp(ScrW() * 0.5, 640, 900), math.Clamp(ScrH() * 0.72, 480, 760)
-    local pad = 12
-
-    frame = vgui.Create("DFrame")
-    frame:SetSize(w, h)
-    frame:Center()
-    frame:SetTitle("")
-    frame:MakePopup()
-    frame:DockPadding(pad, 64, pad, pad)
-    frame.Paint = function(_, fw, fh)
-        draw.RoundedBox(6, 0, 0, fw, fh, C.bg)
-        draw.RoundedBoxEx(6, 0, 0, fw, 54, C.bar, true, true, false, false)
-        draw.SimpleText("PRODUCTION SPAWNER", "RP1942_PSTitle", pad + 2, 8, C.gold)
-        draw.SimpleText("Staff debug  ·  aim first: things spawn at your crosshair, owned by you  ·  Z undoes", "RP1942_PSBody", pad + 2, 34, C.sub)
-    end
-
     -- Settings for goods
     local quality, amount, pocket = 3, 1, true
 
-    local scroll = vgui.Create("DScrollPanel", frame)
+    local scroll = vgui.Create("DScrollPanel", parent)
     scroll:Dock(FILL)
+    if RP1942.F4UI then RP1942.F4UI.styleScroll(scroll) end
 
     local function header(text)
         local bar = scroll:Add("DPanel")
@@ -214,7 +201,53 @@ local function open()
         .. "nobody can upgrade a saved printer). Unsave removes it for good. !prodsaves shows them all. Derricks spawned here don't use an oil site.")
 end
 
+local frame
+
+-- Its own window (!prodspawn)
+local function open()
+    if IsValid(frame) then frame:Remove() end
+    local C = colors()
+    local w, h = math.Clamp(ScrW() * 0.5, 640, 900), math.Clamp(ScrH() * 0.72, 480, 760)
+    local pad = 12
+
+    frame = vgui.Create("DFrame")
+    frame:SetSize(w, h)
+    frame:Center()
+    frame:SetTitle("")
+    frame:MakePopup()
+    frame:DockPadding(pad, 64, pad, pad)
+    frame.Paint = function(_, fw, fh)
+        draw.RoundedBox(6, 0, 0, fw, fh, C.bg)
+        draw.RoundedBoxEx(6, 0, 0, fw, 54, C.bar, true, true, false, false)
+        draw.SimpleText("PRODUCTION SPAWNER", "RP1942_PSTitle", pad + 2, 8, C.gold)
+        draw.SimpleText("Staff debug  ·  aim first: things spawn at your crosshair, owned by you  ·  Z undoes", "RP1942_PSBody", pad + 2, 34, C.sub)
+    end
+
+    build(frame, w)
+end
+
 net.Receive("RP1942_ProdSpawnOpen", open)
+
+-- The F4 menu's Spawner tab (rp1942_f4/cl_f4.lua shows it only when canSee says so)
+RP1942.F4Tabs = RP1942.F4Tabs or {}
+RP1942.F4Tabs.spawner = {
+    name = "Spawner",
+    icon = "icon16/brick_add.png",
+    canSee = function(ply)
+        return RP1942.staffCan(ply, "ulx prodspawn", function(p) return p:IsSuperAdmin() end)
+    end,
+    build = function(page)
+        local C = colors()
+        local intro = vgui.Create("DLabel", page)
+        intro:Dock(TOP)
+        intro:DockMargin(2, 0, 0, 6)
+        intro:SetFont("RP1942_PSBody")
+        intro:SetTextColor(C.sub)
+        intro:SetText("Staff  ·  aim before opening F4: things spawn at your crosshair, owned by you  ·  Z undoes  ·  also !prodspawn")
+        intro:SizeToContentsY(4)
+        build(page, math.max(page:GetWide(), ScrW() * 0.6))
+    end,
+}
 
 -- !prodsaves: highlight every saved machine for a minute
 -- (!prodsaves markers: rp1942_core/cl_markers.lua)

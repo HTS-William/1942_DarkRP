@@ -23,7 +23,9 @@ RP1942.F4Config = {
 
     -- Tabs, left to right. Remove a name to hide that tab.
     -- "pages" = every page in sh_f4_pages.lua, each as its own tab.
-    tabs = { "commands", "jobs", "shop", "pages" },
+    -- "spawner" = the production spawner (rp1942_production/cl_prodspawn.lua),
+    --             only shown to staff allowed !prodspawn.
+    tabs = { "commands", "jobs", "shop", "pages", "spawner" },
 
     -- Jobs tab
     showLockedJobs = true,      -- show jobs you can't take (dimmed, with the reason)

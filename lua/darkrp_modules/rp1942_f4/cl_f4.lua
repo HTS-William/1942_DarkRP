@@ -3,7 +3,8 @@
 
 Tabs register themselves (any load order):
     RP1942.F4Tabs.jobs = { name = "Jobs", icon = "icon16/group.png", build = function(page) ... end }
-and appear in the order of RP1942.F4Config.tabs.
+and appear in the order of RP1942.F4Config.tabs. Optional canSee(ply): the tab
+only shows when it returns true (the staff Spawner tab uses it).
 
 Shared look for every tab: RP1942.F4UI (fonts, colours, buttons, category bars).
 ---------------------------------------------------------------------------]]
@@ -164,7 +165,9 @@ function PANEL:Init()
                 self:AddTab("page:" .. pid, def)
             end
         elseif RP1942.F4Tabs[id] then
-            self:AddTab(id, RP1942.F4Tabs[id])
+            local def = RP1942.F4Tabs[id]
+            -- canSee: a tab only some players get (the staff Spawner)
+            if not def.canSee or def.canSee(LocalPlayer()) then self:AddTab(id, def) end
         end
     end
     self:SelectTab(RP1942.F4LastTab and self.tabButtons[RP1942.F4LastTab] and RP1942.F4LastTab or CFG.tabs[1])

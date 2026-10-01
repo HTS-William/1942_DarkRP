@@ -273,7 +273,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner: ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
 !saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
 !saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 !unsaveprod - Look at a saved machine: remove it for good
