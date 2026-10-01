@@ -12,7 +12,13 @@ resource.AddFile("models/weapons/spy/w_handcuffs.mdl")
 resource.AddFile("materials/models/spy/handcuffs/handcuffs.vmt")
 resource.AddSingleFile("materials/models/spy/handcuffs/nodraw.vmt")
 
-local active = {}   -- arrester -> { target, finish }
+local active = {}   -- arrester -> { target, finish, nextSound }
+
+-- The same sound as DarkRP's lockpick while it works: a click every second
+local CLICKS = { 1, 3, 4 }
+local function click(arrester)
+    arrester:EmitSound("weapons/357/357_reload" .. CLICKS[math.random(#CLICKS)] .. ".wav", 50, 100)
+end
 
 local function setBar(ply, start, finish, text)
     if not IsValid(ply) then return end
@@ -58,18 +64,17 @@ function RP1942.handcuffStart(arrester, target)
 
     if target:InVehicle() then target:ExitVehicle() end
     local now = CurTime()
-    active[arrester] = { target = target, finish = now + CFG.time }
+    active[arrester] = { target = target, finish = now + CFG.time, nextSound = now + 1 }
     target:SetNW2Entity("RP1942_CuffedBy", arrester)
     setBar(arrester, now, now + CFG.time, "Handcuffing " .. target:Nick() .. "...")
     setBar(target, now, now + CFG.time, arrester:Nick() .. " is handcuffing you...")
-    target:EmitSound("physics/metal/chain_impact_soft" .. math.random(1, 3) .. ".wav", 70)
+    click(arrester)
     return true
 end
 
 local function finish(arrester, target)
     stop(arrester)
     if not canArrest(arrester, target) then return end   -- asked again: things may have changed
-    target:EmitSound("doors/door_latch3.wav", 65)
     target:arrest(nil, arrester)
     DarkRP.notify(target, 0, 20, DarkRP.getPhrase("youre_arrested_by", arrester:Nick()))
     if arrester.SteamName then
@@ -97,6 +102,9 @@ hook.Add("Think", "RP1942_Handcuffs", function()
             stop(arrester, why or nil)
         elseif now >= c.finish then
             finish(arrester, c.target)
+        elseif now >= c.nextSound then
+            c.nextSound = now + 1
+            click(arrester)
         end
     end
 end)
