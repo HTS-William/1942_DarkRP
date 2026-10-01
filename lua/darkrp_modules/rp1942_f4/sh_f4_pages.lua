@@ -128,6 +128,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Führer reads what came of his choice; everyone else hears whether he chose wisely or poorly, and by how much the economy moved.
 - He has 90 seconds to answer. Decide later closes the window; /decision opens it again. If he doesn't decide in time, the economy drops 10 points and everyone hears about it.
 
+# The lottery
+- The Führer starts one with /lottery <price> (from RM 30 up to RM 250,000 a ticket).
+- Everyone gets a LOTTERY card on the left of the screen: Buy a ticket or No thanks (F3 frees the cursor to click). The winner takes the whole pot.
+
 # Padlocks (doors for your base)
 - Buy a Padlock in the F4 shop (Tools), look at a prop you own and left click: the prop becomes a door. You can have 2.
 - E opens it for 5 seconds, then it closes by itself (never on someone standing in it). Anyone you haven't let in knocks instead, and you're told.

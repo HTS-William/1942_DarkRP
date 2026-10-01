@@ -231,7 +231,7 @@ GM.Config.maxlawboards                  = 2
 -- maxletters - Sets max letters.
 GM.Config.maxletters                    = 10
 -- maxlotterycost - Maximum payment the mayor can set to join a lottery.
-GM.Config.maxlotterycost                = 250
+GM.Config.maxlotterycost                = 250000
 -- maxvehicles - Sets how many vehicles one can buy.
 GM.Config.maxvehicles                   = 5
 -- microwavefoodcost - Sets the sale price of Microwave Food.
