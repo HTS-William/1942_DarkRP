@@ -4,6 +4,14 @@
 local CFG = RP1942.HandcuffsConfig
 local CUFFS = "rp1942_handcuffs"
 
+-- Players download the handcuff models (this addon's models/weapons/spy and
+-- materials/models/spy/handcuffs). AddFile on a .mdl brings its .vvd, .vtx
+-- and .phy along; on a .vmt, its texture.
+resource.AddFile("models/weapons/spy/handcuffs.mdl")
+resource.AddFile("models/weapons/spy/w_handcuffs.mdl")
+resource.AddFile("materials/models/spy/handcuffs/handcuffs.vmt")
+resource.AddSingleFile("materials/models/spy/handcuffs/nodraw.vmt")
+
 local active = {}   -- arrester -> { target, finish }
 
 local function setBar(ply, start, finish, text)
@@ -40,6 +48,7 @@ local function canArrest(arrester, target)
     return true
 end
 
+-- true when the grab worked (the weapon then plays its animation)
 function RP1942.handcuffStart(arrester, target)
     if active[arrester] or RP1942.isBeingCuffed(arrester) then return end
     if not (IsValid(target) and target:IsPlayer() and target:Alive()) or target == arrester then return end
@@ -54,6 +63,7 @@ function RP1942.handcuffStart(arrester, target)
     setBar(arrester, now, now + CFG.time, "Handcuffing " .. target:Nick() .. "...")
     setBar(target, now, now + CFG.time, arrester:Nick() .. " is handcuffing you...")
     target:EmitSound("physics/metal/chain_impact_soft" .. math.random(1, 3) .. ".wav", 70)
+    return true
 end
 
 local function finish(arrester, target)
