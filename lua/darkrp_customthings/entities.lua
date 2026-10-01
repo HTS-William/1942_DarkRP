@@ -53,12 +53,12 @@ DarkRP.createEntity("Wine Barrel", {
 
 -- Not placed where you look: built on the nearest free oil site (admins mark
 -- them with /addoilsite) and bolted down. Only offered while a site is free.
-DarkRP.createEntity("Oil Derrick", {
+DarkRP.createEntity("Oil Rig", {
     ent = "rp1942_oil_rig",
-    model = "models/props_c17/FurnitureBoiler001a.mdl",
+    model = "models/props_mining/oiltank01.mdl",
     price = 1500,
     max = 1,
-    cmd = "buyoilderrick",
+    cmd = "buyoilrig",
     allowed = { TEAM_PETROLEUM },
     category = "Production",
     customCheck = function(ply) return GetGlobal2Int("RP1942_OilSitesFree", 0) > 0 end,

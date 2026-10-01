@@ -1,7 +1,7 @@
 include("shared.lua")
 
 --[[---------------------------------------------------------------------------
-The derrick's control plate, in brass & enamel (like the oven's). Where it
+The rig's control plate, in brass & enamel (like the oven's). Where it
 sits on the prop: RP1942.PanelSpots.rp1942_oil_rig in sh_production.lua
 (fine-tune it in game with the rp1942_panel_* console commands).
 ---------------------------------------------------------------------------]]
@@ -14,6 +14,7 @@ local ENAMEL = Color(34, 34, 36)
 local LOW, RIGHT, HIGH = Color(70, 90, 150), Color(60, 140, 70), Color(190, 50, 40)
 local OIL = Color(200, 150, 50)
 local AMBER_BTN = Color(170, 120, 30)
+local DIAL_FACE = Color(150, 140, 118)   -- aged, like the factory's: a white face glows on dark maps
 local IRON, IRON_LIGHT = Color(128, 36, 28), Color(176, 64, 48)
 
 -- The valve wheel: an iron hand-wheel with five spokes, turning a full turn
@@ -65,12 +66,12 @@ function ENT:PaintPanel(P, w, h)
     local off = self:GetOff()
 
     B.Plate(w, h, ENAMEL)
-    B.Plaque(w / 2, 24, 480, 46, "BOHRTURM  ·  OIL DERRICK")
+    B.Plaque(w / 2, 24, 480, 46, "BOHRANLAGE  ·  OIL RIG")
 
     -- The well: the needle is the pressure, the bands its zones
     local p = pumping and self:Pressure() or 0
     local pc = c.pressure
-    B.Dial(170, 222, 108, p, { { 0, pc.low, LOW }, { pc.low, pc.high, RIGHT }, { pc.high, 100, HIGH } }, "DRUCK / PRESSURE", pumping)
+    B.Dial(170, 222, 108, p, { { 0, pc.low, LOW }, { pc.low, pc.high, RIGHT }, { pc.high, 100, HIGH } }, "DRUCK / PRESSURE", pumping, DIAL_FACE)
 
     -- Which way it's heading: a small arrow beside the dial
     if pumping then
@@ -94,7 +95,7 @@ function ENT:PaintPanel(P, w, h)
         msg, col = "DANGER! OPEN THE VALVE  ·  " .. RP1942.clock(left), flashOn and Color(255, 70, 50) or Color(255, 200, 120)
     elseif self:GetStalled() then msg, col = "STALLED  -  SWITCH IT BACK ON", Color(255, 130, 110)
     elseif off then msg, col = "SWITCHED OFF", Color(170, 166, 150)
-    elseif ready > 0 then msg, col = "TANK FULL  -  FILL CANISTERS", B.LIGHT
+    elseif ready > 0 then msg, col = "TANK FULL  -  FILL BARRELS", B.LIGHT
     elseif not pumping then msg, col = "STARTING...", Color(170, 166, 150)
     elseif zone == "low" then msg, col = self:GetValveOpen() and "PRESSURE LOW - CLOSE THE VALVE" or "PRESSURE LOW - BUILDING UP", Color(150, 180, 255)
     elseif zone == "high" then msg, col = self:GetValveOpen() and "PRESSURE HIGH - BLEEDING OFF" or "PRESSURE HIGH - OPEN THE VALVE", Color(255, 130, 110)
@@ -115,7 +116,7 @@ function ENT:PaintPanel(P, w, h)
 
     draw.SimpleText("GRADE", "RP1942_BrassSmall", rx, 276, B.LIGHT)
     B.Stars(rx, 298, ready > 0 and self:GetReadyQuality() or cans, 26)
-    draw.SimpleText(cans .. (cans == 1 and " CANISTER" or " CANISTERS"), "RP1942_BrassSmall", rx, 334, B.WHITE)
+    draw.SimpleText(cans .. (cans == 1 and " BARREL" or " BARRELS"), "RP1942_BrassSmall", rx, 334, B.WHITE)
 
     -- The valve wheel, the valve's lamp, and FILL
     local open = self:GetValveOpen()
@@ -125,30 +126,21 @@ function ENT:PaintPanel(P, w, h)
     draw.SimpleText("VALVE", "RP1942_BrassSmall", 262, 472, B.LIGHT, TEXT_ALIGN_CENTER)
     draw.SimpleText(open and "OPEN" or "SHUT", "RP1942_BrassSmall", 262, 492, open and B.WHITE or Color(170, 166, 150), TEXT_ALIGN_CENTER)
 
-    B.PushButton(P, "fill", 400, 446, 40, AMBER_BTN, ready > 0 and ("FILL (" .. ready .. ")") or "FILL CANISTERS", ready > 0)
+    B.PushButton(P, "fill", 400, 446, 40, AMBER_BTN, ready > 0 and ("FILL (" .. ready .. ")") or "FILL BARRELS", ready > 0)
     B.Toggle(P, "power", 548, 440, not off, true)
 
     local hint = "LOOK AT THE WHEEL OR A BUTTON  ·  PRESS E"
     if P.hover == "wheel" then
         hint = (open and "CLOSE THE VALVE  (PRESSURE RISES)" or "OPEN THE VALVE  (PRESSURE FALLS)") .. "  ·  PRESS E"
     elseif P.hover == "fill" then
-        hint = "FILL CANISTERS  ·  PRESS E"
+        hint = "FILL BARRELS  ·  PRESS E"
     elseif P.hover == "power" then
         hint = (off and "SWITCH ON" or "SWITCH OFF  (PAUSES PUMPING)") .. "  ·  PRESS E"
     end
     draw.SimpleText(hint, "RP1942_BrassSmall", w / 2, h - 28, P.hover and B.WHITE or B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
--- A flashing red warning light on top while the alarm is going
-local GLOW = Material("sprites/light_glow02_add")
-
 function ENT:Draw()
     self:DrawModel()
     if RP1942.drawPanel then RP1942.drawPanel(self) end
-    if not self:GetOff() and self:Alarming() and math.floor(RealTime() * 4) % 2 == 0 then
-        local top = self:LocalToWorld(Vector(self:OBBCenter().x, self:OBBCenter().y, self:OBBMaxs().z + 6))
-        render.SetMaterial(GLOW)
-        render.DrawSprite(top, 64, 64, Color(255, 40, 20))
-        render.DrawSprite(top, 24, 24, Color(255, 200, 180))
-    end
 end

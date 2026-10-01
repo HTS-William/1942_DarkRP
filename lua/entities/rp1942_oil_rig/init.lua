@@ -3,8 +3,12 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-    self:SetModel(self:Config().model)
-    self:PhysicsInit(SOLID_VPHYSICS)
+    local c = self:Config()
+    self:SetModel(c.model)
+    -- The model's own physics, or a box round it if it has none
+    if not self:PhysicsInit(SOLID_VPHYSICS) or not IsValid(self:GetPhysicsObject()) then
+        self:PhysicsInitBox(self:OBBMins(), self:OBBMaxs())
+    end
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     self:SetUseType(SIMPLE_USE)
@@ -58,9 +62,9 @@ function ENT:Blowout()
     local top = self:LocalToWorld(Vector(self:OBBCenter().x, self:OBBCenter().y, self:OBBMaxs().z))
     timer.Simple(0.35, function() RP1942.explode(top, { damage = 0, shake = false }) end)
     if IsValid(owner) then
-        DarkRP.notify(owner, 1, 8, "Your oil derrick was left in the red too long and exploded.")
+        DarkRP.notify(owner, 1, 8, "Your oil rig was left in the red too long and exploded.")
     end
-    ServerLog(string.format("[1942] An oil derrick (owner: %s) exploded at %s\n", IsValid(owner) and owner:Nick() or "none", tostring(pos)))
+    ServerLog(string.format("[1942] An oil rig (owner: %s) exploded at %s\n", IsValid(owner) and owner:Nick() or "none", tostring(pos)))
     SafeRemoveEntity(self)
 end
 
@@ -136,7 +140,7 @@ function ENT:Stall()
     self:EmitSound("ambient/machines/thumper_shutdown1.wav", 75, 90)
     local owner = self.Getowning_ent and self:Getowning_ent()
     if IsValid(owner) then
-        DarkRP.notify(owner, 1, 6, "Your oil derrick lost all its pressure and stalled. Switch it back on at its panel.")
+        DarkRP.notify(owner, 1, 6, "Your oil rig lost all its pressure and stalled. Switch it back on at its panel.")
     end
 end
 
@@ -173,7 +177,7 @@ function ENT:Think()
                 self:Alarm(true)
                 local owner = self.Getowning_ent and self:Getowning_ent()
                 if IsValid(owner) then
-                    DarkRP.notify(owner, 1, 8, "DANGER: your oil derrick's pressure is in the red! Open the valve, or it will explode.")
+                    DarkRP.notify(owner, 1, 8, "DANGER: your oil rig's pressure is in the red! Open the valve, or it will explode.")
                 end
             end
         elseif self:GetRedSince() > 0 then
@@ -225,11 +229,11 @@ function ENT:OnPanelPress(ply, id)
         self:SetReady(0)
         local top = self:LocalToWorld(Vector(self:OBBCenter().x, self:OBBCenter().y, self:OBBMaxs().z + 8))
         local pocketed, dropped = RP1942.giveGoods(ply, c.good, q, cans, top)
-        local what = cans .. (cans == 1 and " canister" or " canisters") .. " of " .. RP1942.qualityName(q) .. " crude oil"
+        local what = cans .. (cans == 1 and " barrel" or " barrels") .. " of " .. RP1942.qualityName(q) .. " crude oil"
         if dropped == 0 then
             DarkRP.notify(ply, 0, 4, "Filled " .. what .. " into your pocket.")
         else
-            DarkRP.notify(ply, 0, 5, "Filled " .. what .. ". Your pocket is full: " .. dropped .. " left on top of the derrick.")
+            DarkRP.notify(ply, 0, 5, "Filled " .. what .. ". Your pocket is full: " .. dropped .. " left on top of the rig.")
         end
         self:EmitSound("ambient/water/water_splash2.wav", 60)
         self:StartPump()
@@ -238,7 +242,7 @@ end
 
 function ENT:Use(ply)
     if IsValid(ply) and ply:IsPlayer() then
-        DarkRP.notify(ply, 0, 3, "Look at the valve wheel on the derrick's panel and press E.")
+        DarkRP.notify(ply, 0, 3, "Look at a button on the rig's panel and press E.")
     end
 end
 

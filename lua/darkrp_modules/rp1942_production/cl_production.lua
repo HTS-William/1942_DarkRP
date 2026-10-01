@@ -142,6 +142,7 @@ RP1942.PanelColors = COL
 
 local Painter = {}
 Painter.__index = Painter
+RP1942._Painter = Painter   -- (for the offline preview tools)
 
 function Painter:Title(text, accent)
     self.accent = accent or COL.gold
@@ -229,9 +230,21 @@ model's box so it works for any prop. RP1942.PanelSpots[class]:
     top   = "face" only: its top edge, as a share of the side's height (0.95)
     nudge = { right, up, out } in units, from the tuning commands
     size  = extra size multiplier, from the tuning commands
+    pos = Vector, ang = Angle, scale = units per pixel
+                         instead of a mount: the panel's top-left corner at an
+                         exact place on the entity.
+                         nudge and size still apply.
 No spot for a class: the panel floats above the prop, turned towards you.
 ---------------------------------------------------------------------------]]
 local function spotPlacement(ent, spot, size)
+    if spot.pos then
+        local ang = spot.ang or Angle(0, 90, 90)
+        local scale = (spot.scale or ent.PanelScale or 0.045) * (spot.size or 1)
+        local nudge = spot.nudge or { 0, 0, 0 }
+        -- canvas x runs along ang:Forward(), canvas y down ang:Right(), ang:Up() faces the viewer
+        local origin = spot.pos + ang:Forward() * nudge[1] - ang:Right() * nudge[2] + ang:Up() * nudge[3]
+        return ent:LocalToWorld(origin), ent:LocalToWorldAngles(ang), scale, true
+    end
     local mins, maxs = ent:OBBMins(), ent:OBBMaxs()
     local c = (mins + maxs) / 2
     local yaw = FACE_YAW[spot.face or "front"] or 0
@@ -310,14 +323,21 @@ painted every frame: each panel is painted into its own texture (a render
 target) a few times a second, and every frame just shows that texture
 (one quad). It repaints quickly while you're looking at it, so buttons still
 react at once, and slowly otherwise. ENT:PanelFast() returning true (e.g. a
-wheel turning) makes it repaint quickly too.
+wheel turning) makes it repaint quickly too; returning a number repaints at
+that many frames a second (the flames, bubbles, a rig's pressure: a gentle
+rate that rp1942_panel_anim 0 switches off for slow machines).
 
     rp1942_panel_cache 0     paint every frame instead (to compare)
     rp1942_panel_idlefps 8   repaints per second when nobody's looking at it
+    rp1942_panel_anim 0      no moving pictures on the panels (still works)
 ---------------------------------------------------------------------------]]
 local cacheCvar = CreateClientConVar("rp1942_panel_cache", "1", true, false, "Cache production panels in textures (faster)")
 local idleCvar = CreateClientConVar("rp1942_panel_idlefps", "8", true, false, "Production panel repaints per second when not looked at", 1, 30)
+local animCvar = CreateClientConVar("rp1942_panel_anim", "1", true, false, "Animate the production panels (flames, bubbles, moving gauges)")
 local LOOK_FPS, FAST_FPS = 30, 20
+
+-- Is the panel's moving picture on? (entities ask before drawing one)
+function RP1942.panelAnim() return animCvar:GetBool() end
 
 -- Coverage-correct alpha while painting into a texture (so see-through
 -- touches like the brass sheen don't punch holes in the panel)
@@ -422,10 +442,13 @@ function RP1942.drawPanel(ent)
         -- Looked at: smooth. Otherwise the idle rate, and slower still the
         -- further away it is (a panel across the room at 2 fps is plenty)
         local fps
+        local fast = ent.PanelFast and ent:PanelFast()
         if cx then
             fps = LOOK_FPS
-        elseif ent.PanelFast and ent:PanelFast() then
+        elseif fast == true then
             fps = FAST_FPS
+        elseif isnumber(fast) and animCvar:GetBool() then
+            fps = math.Clamp(fast, 1, FAST_FPS)
         else
             local far = math.Clamp((dist - maxDist * 0.4) / (maxDist * 0.6), 0, 1)
             fps = math.max(2, idleCvar:GetFloat() * (1 - far * 0.75))
@@ -540,6 +563,12 @@ concommand.Add("rp1942_panel_print", function()
     local s = RP1942.PanelSpots[class]
     if not s then print("RP1942.PanelSpots." .. class .. " = nil   -- floats") return end
     local n = s.nudge or { 0, 0, 0 }
+    if s.pos then
+        local a = s.ang or Angle(0, 90, 90)
+        print(string.format('RP1942.PanelSpots.%s = { pos = Vector(%.1f, %.1f, %.1f), ang = Angle(%.0f, %.0f, %.0f), scale = %.3f, size = %.2f, nudge = { %.1f, %.1f, %.1f } }',
+            class, s.pos.x, s.pos.y, s.pos.z, a.p, a.y, a.r, s.scale or 0.045, s.size or 1, n[1], n[2], n[3]))
+        return
+    end
     print(string.format('RP1942.PanelSpots.%s = { mount = "%s", face = "%s", width = %.2f, top = %.2f, size = %.2f, nudge = { %.1f, %.1f, %.1f } }',
         class, s.mount or "backguard", s.face or "front", s.width or 0.45, s.top or 0.95, s.size or 1, n[1], n[2], n[3]))
 end)
@@ -750,6 +779,107 @@ function B.Toggle(P, id, cx, cy, on, enabled)
     draw.RoundedBox(6, cx - 50, cy + 50, 100, 30, B.BRASS)
     draw.SimpleText(on and "POWER  ON" or "POWER  OFF", "RP1942_BrassSmall", cx, cy + 65, B.INK, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     return hot
+end
+
+--[[---------------------------------------------------------------------------
+More fittings, shared by the oven, the barrel and the rig:
+    B.Window(x, y, w, h, arch)             an iron-framed dark window (a firebox
+                                           door, a sight-glass): returns the
+                                           inside x, y, w, h
+    B.Sheen(x, y, w, h, radius)            glass reflections over a window
+    B.Tag(cx, y, text, font)               a small brass tag, sized to its text
+    B.Strip(x, y, w, h)                    a riveted steel strip
+    B.Ring(cx, cy, r1, r2, frac, col, bg)  a progress ring, clockwise from the top
+    B.Flick(t, k)                          0-1 flicker noise (k picks a different one)
+    B.Flames(x, baseY, w, maxH, heat, t, style)   fire in a window. heat 0-1,
+                                           style "cold" / "right" / "hot"
+---------------------------------------------------------------------------]]
+B.IRON, B.IRON_LIGHT, B.IRON_DARK = Color(46, 46, 50), Color(84, 84, 90), Color(22, 22, 26)
+
+function B.Window(x, y, w, h, arch)
+    local r = arch and math.floor(w * 0.42) or 8
+    draw.RoundedBoxEx(r, x - 10, y - 10, w + 20, h + 20, B.IRON_DARK, true, true, false, false)
+    draw.RoundedBoxEx(r, x - 8, y - 8, w + 16, h + 16, B.IRON, true, true, false, false)
+    draw.RoundedBoxEx(r, x - 4, y - 4, w + 8, h + 8, B.IRON_DARK, true, true, false, false)
+    draw.RoundedBoxEx(math.max(r - 6, 4), x, y, w, h, Color(10, 9, 9), true, true, false, false)
+    for _, p in ipairs({ { x - 2, y + h + 2 }, { x + w + 2, y + h + 2 } }) do B.Rivet(p[1], p[2]) end
+    return x, y, w, h
+end
+
+function B.Sheen(x, y, w, h, radius)
+    radius = radius or 6
+    for i = 0, 12 do
+        surface.SetDrawColor(255, 255, 255, 14 - i)
+        surface.DrawRect(x + 6, y + 6 + i * 3, w - 12, 3)
+    end
+    draw.RoundedBox(radius, x + 10, y + 8, math.floor(w * 0.18), math.floor(h * 0.55), Color(255, 255, 255, 12))
+end
+
+function B.Tag(cx, y, text, font)
+    font = font or "RP1942_BrassSmall"
+    surface.SetFont(font)
+    local tw = select(1, surface.GetTextSize(text))
+    local w, h = tw + 28, (font == "RP1942_BrassSmall") and 26 or 32
+    draw.RoundedBox(5, cx - w / 2, y, w, h, B.DARK)
+    draw.RoundedBox(5, cx - w / 2 + 2, y + 2, w - 4, h - 4, B.BRASS)
+    surface.SetDrawColor(B.LIGHT)
+    surface.DrawRect(cx - w / 2 + 5, y + 3, w - 10, 2)
+    draw.SimpleText(text, font, cx, y + h / 2, B.INK, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    return w, h
+end
+
+function B.Strip(x, y, w, h)
+    draw.RoundedBox(4, x, y, w, h, B.IRON_DARK)
+    draw.RoundedBox(4, x + 2, y + 2, w - 4, h - 4, B.IRON)
+    local step = 34
+    for rx = x + 14, x + w - 14, step do
+        B.Circle(rx, y + h / 2, 4, B.IRON_DARK)
+        B.Circle(rx, y + h / 2, 3, B.IRON_LIGHT)
+    end
+end
+
+function B.Ring(cx, cy, r1, r2, frac, col, bg)
+    if bg then B.Arc(cx, cy, r1, r2, 0, 360, bg) end
+    frac = math.Clamp(frac or 0, 0, 1)
+    if frac > 0.002 then B.Arc(cx, cy, r1, r2, -90, -90 + 360 * frac, col) end
+end
+
+function B.Flick(t, k)
+    k = k or 0
+    return 0.5 + 0.5 * math.sin(t * (3.1 + k * 0.37) + k * 1.7) * math.sin(t * (5.3 + k * 0.61) + k * 0.9)
+end
+
+-- Fire: a row of tongues, each three layers (orange, yellow, white core)
+local FIRE = {
+    cold  = { Color(150, 60, 20, 235), Color(90, 110, 220, 200), Color(200, 220, 255, 150) },
+    right = { Color(236, 100, 22, 240), Color(255, 190, 50, 230), Color(255, 240, 190, 210) },
+    hot   = { Color(255, 150, 40, 245), Color(255, 230, 110, 235), Color(255, 255, 240, 230) },
+}
+function B.Flames(x, baseY, w, maxH, heat, t, style)
+    local cols = FIRE[style or "right"] or FIRE.right
+    local n = math.max(3, math.floor(w / 34))
+    local tw = w / n
+    draw.NoTexture()
+    for layer = 1, 3 do
+        local col = cols[layer]
+        local hs, ws = ({ 1, 0.68, 0.38 })[layer], ({ 1, 0.68, 0.4 })[layer]
+        for i = 0, n - 1 do
+            local k = i * 7 + layer * 3
+            local f = B.Flick(t * 1.4, k)
+            local hh = maxH * heat * (0.55 + 0.45 * f) * hs
+            if hh > 3 then
+                local cx = x + tw * (i + 0.5)
+                local half = tw * 0.62 * ws
+                local tipx = cx + (B.Flick(t * 2.2, k + 1) - 0.5) * tw * 0.5
+                local midx = cx + (B.Flick(t * 1.8, k + 2) - 0.5) * tw * 0.3
+                surface.SetDrawColor(col)
+                B.Poly({
+                    { x = cx - half, y = baseY }, { x = midx - half * 0.55, y = baseY - hh * 0.5 },
+                    { x = tipx, y = baseY - hh }, { x = midx + half * 0.55, y = baseY - hh * 0.5 }, { x = cx + half, y = baseY },
+                })
+            end
+        end
+    end
 end
 
 -- (Markers on the screen moved to rp1942_core/cl_markers.lua)

@@ -15,12 +15,12 @@ the panel and press E.
     Winemaker   buys a wine barrel and presses START. While it ferments, the
                 barrel calls for stirring a few times: STIR before the timer
                 runs out. Every stir it gets raises the vintage. Then BOTTLE.
-    Petroleum   buys an oil derrick. It isn't placed by hand: it's built on a
+    Petroleum   buys an oil rig. It isn't placed by hand: it's built on a
     Producer    free OIL SITE (placed by admins with !addoilsite) and can't be
                 moved. It pumps on its own. With the valve shut the pressure
                 climbs; turn the wheel to open it and the pressure falls. Keep
-                it in the green: more time there = more canisters of crude and
-                more stars. FILL CANISTERS when the tank is full.
+                it in the green: more time there = more barrels of crude and
+                more stars. FILL BARRELS when the tank is full.
     Factory     buys a factory line. It runs on scrap metal, and now and then
     Owner       halts with a fault (BELT, BOILER or FUSE): press the matching
                 repair button. The less downtime, the better the run, and the
@@ -41,7 +41,7 @@ Files:
     sh_production.lua     this config
     sv_production.lua     selling, quality, demand, the economy nudge, markets (!addmarket)
     cl_production.lua     the interactive panels, labels and the drunk effect
-    sv_oil_sites.lua      oil sites (!addoilsite) and building derricks on them
+    sv_oil_sites.lua      oil sites (!addoilsite) and building rigs on them
     sv/cl_prodspawn.lua   the staff production spawner (!prodspawn)
     lua/entities/rp1942_good, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
         rp1942_oil_rig, rp1942_factory, rp1942_scrap
@@ -83,7 +83,7 @@ RP1942.Goods = {
     oil = {
         name    = "Barrel of Crude Oil",
         model   = "models/props_c17/oildrum001.mdl",
-        value   = 1000,   -- the derrick needs tending the whole time (not AFK-able)
+        value   = 1000,   -- the rig needs tending the whole time (not AFK-able)
         economy = 0.15,
     },
 
@@ -162,7 +162,7 @@ RP1942.Production = {
     },
     wine = {
         model     = "models/props_c17/woodbarrel001.mdl",
-        time      = 240,              -- seconds to ferment
+        time      = 210,              -- seconds to ferment
         bottles   = 3,
         good      = "wine",
         stirs     = { 2, 4 },         -- times it calls for stirring: a random number in this range per barrel (kept secret)
@@ -170,10 +170,11 @@ RP1942.Production = {
         -- calls missed -> stars: none 3, one 2, more 1
     },
 
-    -- Petroleum Producer. The derrick is built on a free oil site and can't be moved.
+    -- Petroleum Producer. The rig is built on a free oil site and can't be moved.
     oil = {
-        model     = "models/props_c17/FurnitureBoiler001a.mdl",   -- placeholder until the real prop
-        pumpTime  = 360,              -- seconds to fill the tank
+        model     = "models/props_mining/oiltank01.mdl",
+        icon      = "models/props_mining/oiltank01.mdl",          -- its picture in the F4 shop / spawner
+        pumpTime  = 300,              -- seconds to fill the tank
         good      = "oil",
         -- Well pressure 0-100. With the valve closed it climbs (rise per
         -- second); turning the wheel opens the valve and it falls (fall per
@@ -184,7 +185,7 @@ RP1942.Production = {
         -- alarm sounds; after explodeAfter it blows up (and is gone).
         -- Switching it off pauses the count. damage/radius: the blast.
         blowout   = { warnAfter = 15, explodeAfter = 40, damage = 180, radius = 350 },
-        -- Share of the pumping spent in the green -> canisters (and stars)
+        -- Share of the pumping spent in the green -> barrels (and stars)
         grades    = { { share = 0.8, count = 3 }, { share = 0.5, count = 2 }, { share = 0, count = 1 } },
         siteAdmin = function(ply) return ply:IsSuperAdmin() end,   -- who may !addoilsite etc. without ULX (with ULX: its Groups tab)
     },
@@ -193,7 +194,7 @@ RP1942.Production = {
     factory = {
         model     = "models/props_mining/elevator_winch_empty.mdl",
         hopper    = 4,                -- loads of scrap it holds waiting
-        runTime   = 300,              -- seconds of running per run (halts don't count)
+        runTime   = 240,              -- seconds of running per run (halts don't count)
         items     = 3,                -- goods per run (one load of scrap)
         halts     = { 1, 3 },         -- faults per run: a random number in this range, at random times (kept secret)
         wrongFix  = 10,               -- seconds of downtime added for pressing the wrong repair
@@ -232,8 +233,8 @@ RP1942.PanelSpots = RP1942.PanelSpots or {}
 RP1942.PanelSpots.rp1942_oven = { mount = "face", face = "front", width = 0.46, top = 0.95, size = 0.86, nudge = { 17.5, 0.0, 0.0 } }
 -- The factory line's control desk, flat on the side of the winch (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_factory = { mount = "face", face = "right", width = 0.80, top = 0.80, size = 0.56, nudge = { 0.0, 15.0, 0.0 } }
--- The oil derrick's plate (tuned in game with rp1942_panel_*)
-RP1942.PanelSpots.rp1942_oil_rig = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.33, nudge = { -9.0, -41.0, 29.0 } }
+-- The oil rig's brass plate, on the front of the tank (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_oil_rig = { mount = "face", face = "front", width = 0.70, top = 0.75, size = 0.55, nudge = { 0.0, -85.0, 0.0 } }
 -- The market's board, on its mailbox (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_market = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { 0.0, -50.0, 12.0 } }
 

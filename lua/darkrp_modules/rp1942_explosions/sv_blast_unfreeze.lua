@@ -1,12 +1,12 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - explosions unfreeze props (server)
 
-A frozen prop caught in an explosion (grenades, rockets, the oil derrick
+A frozen prop caught in an explosion (grenades, rockets, the oil rig
 blowing up, RP1942.explode...) is knocked loose: it unfreezes and gets
 pushed away from the blast. So barricades and prop walls can be blown open.
 
 Only players' props (owned through prop protection) are affected: props
-that came with the map, and our bolted-down things (markets, derricks,
+that came with the map, and our bolted-down things (markets, rigs,
 dumpsters), stay put.
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}

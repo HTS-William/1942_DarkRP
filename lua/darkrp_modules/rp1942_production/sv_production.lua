@@ -28,7 +28,7 @@ net.Receive("RP1942_PanelPress", function(_, ply)
 end)
 
 --[[---------------------------------------------------------------------------
-Machine power (ovens, derricks, factory lines). Switching off pauses the
+Machine power (ovens, rigs, factory lines). Switching off pauses the
 machine: its clocks stop where they are (ENT:Now() returns the moment it was
 switched off). Switching on moves the listed timestamps on by however long
 it was off, so it carries on as if nothing happened.
@@ -328,7 +328,7 @@ hook.Add("InitPostEntity", "RP1942_ProductionCheck", function()
         for _, m in ipairs(istable(g.model) and g.model or { g.model }) do check(m, id) end
     end
     check(CFG.oven.model, "oven"); check(CFG.flour.model, "flour"); check(CFG.wine.model, "wine barrel"); check(CFG.market.model, "market")
-    check(CFG.oil.model, "oil derrick"); check(CFG.factory.model, "factory")
+    check(CFG.oil.model, "oil rig"); check(CFG.factory.model, "factory")
     if #table.GetKeys(loadSaved()) == 0 then
         MsgC(Color(255, 180, 60), "[1942] Production: no markets on this map yet. Place some with !addmarket.\n")
     end

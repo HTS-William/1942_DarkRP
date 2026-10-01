@@ -1,16 +1,16 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - oil sites (server)
 
-Oil derricks aren't placed by hand. Admins mark OIL SITES on the map, and a
-bought derrick is built on the free site nearest the buyer, bolted down.
-One derrick per site; the site frees up when its derrick is removed.
+Oil rigs aren't placed by hand. Admins mark OIL SITES on the map, and a
+bought rig is built on the free site nearest the buyer, bolted down.
+One rig per site; the site frees up when its rig is removed.
 
-    !addoilsite     mark a site where you're looking (the derrick faces you)
-    !removeoilsite  remove the site nearest where you're looking (and its derrick)
+    !addoilsite     mark a site where you're looking (the rig faces you)
+    !removeoilsite  remove the site nearest where you're looking (and its rig)
     !oilsites       show every site on this map for a minute
 
 Saved per map in data/rp1942/oilsites_<map>.json.
-The F4 Shop only offers a derrick while a site is free (GetGlobal2Int
+The F4 Shop only offers a rig while a site is free (GetGlobal2Int
 "RP1942_OilSitesFree", used by its customCheck in entities.lua).
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.Production.oil
@@ -21,7 +21,7 @@ local loadSites, saveSites = store.load, store.save
 local sites = {}
 local function sitePos(s) return Vector(s.x, s.y, s.z) end
 
--- Site id -> the derrick on it
+-- Site id -> the rig on it
 local function taken()
     local used = {}
     for _, rig in ipairs(ents.FindByClass("rp1942_oil_rig")) do
@@ -40,7 +40,7 @@ hook.Add("InitPostEntity", "RP1942_OilSites", function()
     sites = loadSites()
     RP1942.updateOilSites()
     if table.Count(sites) == 0 then
-        MsgC(Color(255, 180, 60), "[1942] Production: no oil sites on this map yet. Mark some with !addoilsite, or Petroleum Producers can't buy derricks.\n")
+        MsgC(Color(255, 180, 60), "[1942] Production: no oil sites on this map yet. Mark some with !addoilsite, or Petroleum Producers can't buy rigs.\n")
     end
 end)
 hook.Add("PostCleanupMap", "RP1942_OilSites", function() timer.Simple(0, RP1942.updateOilSites) end)
@@ -49,7 +49,7 @@ hook.Add("PostCleanupMap", "RP1942_OilSites", function() timer.Simple(0, RP1942.
 local function sendMarkers(ply, list, seconds, tag) RP1942.showMarkers(ply, list, seconds, tag) end
 
 --[[---------------------------------------------------------------------------
-Building a derrick (the F4 Shop's spawn function, entities.lua). Picks the
+Building a rig (the F4 Shop's spawn function, entities.lua). Picks the
 free site nearest the buyer. Returns the entity; DarkRP makes the buyer
 its owner.
 ---------------------------------------------------------------------------]]
@@ -85,13 +85,13 @@ function RP1942.buildOilRig(ply)
     rig:StartPump()
 
     RP1942.updateOilSites()
-    DarkRP.notify(ply, 0, 6, "Your oil derrick has been built at the nearest free oil site. It's marked on your screen.")
-    sendMarkers(ply, { { pos = pos + Vector(0, 0, rig:OBBMaxs().z + 20), text = "YOUR OIL DERRICK" } }, 45)
+    DarkRP.notify(ply, 0, 6, "Your oil rig has been built at the nearest free oil site. It's marked on your screen.")
+    sendMarkers(ply, { { pos = pos + Vector(0, 0, rig:OBBMaxs().z + 20), text = "YOUR OIL RIG" } }, 45)
     return rig
 end
 
 --[[---------------------------------------------------------------------------
-Bolted down: nobody moves, pockets, freezes or tools a derrick (only the
+Bolted down: nobody moves, pockets, freezes or tools a rig (only the
 remover, which DarkRP lets the owner use on bought things)
 ---------------------------------------------------------------------------]]
 local function isRig(ent) return IsValid(ent) and ent:GetClass() == "rp1942_oil_rig" end
@@ -127,11 +127,11 @@ RP1942.defineStaffCommand("addoilsite", function(ply)
     if not allowed(ply, "ulx addoilsite") then return "" end
     local tr = ply:GetEyeTrace()
     if not tr.Hit or tr.HitPos:Distance(ply:EyePos()) > 1000 then
-        DarkRP.notify(ply, 1, 4, "Look at the ground (or platform) where a derrick should stand.")
+        DarkRP.notify(ply, 1, 4, "Look at the ground (or platform) where a rig should stand.")
         return ""
     end
     local id = tostring(os.time()) .. "_" .. math.random(1000, 9999)
-    local yaw = math.Round(ply:EyeAngles().y + 180)   -- the derrick's front faces you
+    local yaw = math.Round(ply:EyeAngles().y + 180)   -- the rig's front faces you
     sites[id] = { x = tr.HitPos.x, y = tr.HitPos.y, z = tr.HitPos.z, yaw = yaw }
     saveSites(sites)
     RP1942.updateOilSites()
@@ -159,7 +159,7 @@ RP1942.defineStaffCommand("removeoilsite", function(ply)
     sites[best] = nil
     saveSites(sites)
     RP1942.updateOilSites()
-    DarkRP.notify(ply, 0, 5, "Oil site removed" .. (IsValid(rig) and " (and its derrick)." or "."))
+    DarkRP.notify(ply, 0, 5, "Oil site removed" .. (IsValid(rig) and " (and its rig)." or "."))
     return ""
 end)
 

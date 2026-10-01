@@ -1,15 +1,15 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - oil derrick (Petroleum Producer). Settings: RP1942.Production.oil
+1942 DarkRP - oil rig (Petroleum Producer). Settings: RP1942.Production.oil
 (rp1942_production/sh_production.lua).
 
     Bought in the F4 Shop, but not placed by hand: it's built on a free oil
     site (admins mark them with !addoilsite; rp1942_production/sv_oil_sites.lua)
     and it's bolted down: no physgun, gravity gun, pocket or tools.
 
-    It pumps on its own. With the valve shut the well pressure climbs; turn
-    the wheel to open the valve and it falls (steam hisses while it's open).
-    Time spent in the green decides the tank: more canisters and more stars.
-    When the tank is full, FILL CANISTERS and it starts pumping again.
+    It pumps on its own. With the valve shut the well pressure climbs; open
+    the valve (on the panel) and it falls (steam hisses while it's open).
+    Time spent in the green decides the tank: more barrels and more stars.
+    When the tank is full, FILL BARRELS and it starts pumping again.
     The POWER lever switches it off (everything pauses). If the pressure ever
     drops to nothing, the pump stalls and switches itself off: shut valve,
     and someone has to switch it back on (the pressure then builds from 0).
@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"
 ENT.Base      = "base_anim"
-ENT.PrintName = "Oil Derrick"
+ENT.PrintName = "Oil Rig"
 ENT.Author    = "Claude & William"
 ENT.Spawnable = false
 
@@ -28,7 +28,7 @@ ENT.DisableDuplicator  = true
 
 function ENT:SetupDataTables()
     self:NetworkVar("Entity", 0, "owning_ent")   -- set by DarkRP when bought
-    self:NetworkVar("Int",    0, "Ready")        -- canisters in the full tank (0 = pumping)
+    self:NetworkVar("Int",    0, "Ready")        -- barrels in the full tank (0 = pumping)
     self:NetworkVar("Int",    1, "ReadyQuality")
     self:NetworkVar("Bool",   0, "ValveOpen")
     self:NetworkVar("Float",  0, "DoneAt")       -- 0 = not pumping
@@ -55,7 +55,7 @@ function ENT:Alarming()
     return self:RedTime() >= self:Config().blowout.warnAfter
 end
 
--- The derrick's clock: stands still while it's switched off
+-- The rig's clock: stands still while it's switched off
 function ENT:Now() return self:GetOff() and self:GetPausedAt() or CurTime() end
 
 function ENT:Config() return RP1942.Production.oil end
@@ -81,7 +81,7 @@ function ENT:WheelTurning()
     return CurTime() - self:GetWheelTurnedAt() < (self:Config().wheelTime or 1.2)
 end
 
--- Canisters (= stars) for a share of the pumping spent in the green
+-- Barrels (= stars) for a share of the pumping spent in the green
 function ENT:Grade(share)
     for _, g in ipairs(self:Config().grades) do
         if share >= g.share then return g.count end

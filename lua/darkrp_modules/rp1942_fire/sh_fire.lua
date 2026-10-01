@@ -13,7 +13,7 @@ WHAT STARTS A FIRE
                                can't be put out: replacePool)
     The flamethrower           where its stream lands on the ground
     Every explosion            grenades, dynamite, rockets, rifle grenades,
-                               the flamethrower's tank, printers, derricks,
+                               the flamethrower's tank, printers, rigs,
                                RP1942.explode: anything that deals blast
                                damage above blastMinDamage has a
                                blastChance of leaving fires behind

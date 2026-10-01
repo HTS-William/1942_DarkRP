@@ -78,10 +78,13 @@ RP1942.F4Shop = {
             ["buckshot"]            = { amount = 16, price = 80,  model = "models/Items/BoxBuckshot.mdl" },
             -- Equipment. always = sold even if no weapon on sale uses it.
             -- One mcv_grenade refills ANY grenade (frag, HE, smoke, stick).
-            ["mcv_grenade"]           = { amount = 1,   price = 400,  always = true, model = "models/weapons/w_grenade.mdl" },
-            ["mcv_molotov"]           = { amount = 1,   price = 350,  always = true, model = "models/props_junk/GlassBottle01a.mdl" },
-            ["mcv_mine"]              = { amount = 1,   price = 1300, always = true, model = "models/Items/BoxMRounds.mdl" },
-            ["mcv_explosive_charge"]  = { amount = 1,   price = 1000, always = true, model = "models/Items/BoxMRounds.mdl" },
+            -- Refills cost what the explosive itself costs at the dealers, so
+            -- they can't be used to stock up cheaply. (Smoke grenades are
+            -- cheaper bought new.)
+            ["mcv_grenade"]           = { amount = 1,   price = 2500,  always = true, model = "models/weapons/w_grenade.mdl" },
+            ["mcv_molotov"]           = { amount = 1,   price = 2000,  always = true, model = "models/props_junk/GlassBottle01a.mdl" },
+            ["mcv_mine"]              = { amount = 1,   price = 4500, always = true, model = "models/Items/BoxMRounds.mdl" },
+            ["mcv_explosive_charge"]  = { amount = 1,   price = 4000, always = true, model = "models/Items/BoxMRounds.mdl" },
             ["mcv_flamethrower_fuel"] = { amount = 100, price = 1500, always = true, model = "models/props_junk/gascan001a.mdl" },
             ["mcv_crossbowbolt"]      = { amount = 6,   price = 120,  always = true, model = "models/Items/CrossbowRounds.mdl" },
             ["mcv_flareround"]        = { amount = 4,   price = 100,  always = true, model = "models/Items/BoxSRounds.mdl" },

@@ -18,7 +18,7 @@ RP1942.PropGhost = {
     recheck = 0.5,          -- seconds between "is anyone inside it?" checks after letting go
 
     -- Never ghosted: these classes, and any class starting with these prefixes.
-    -- (Bolted-down things like markets and derricks can't be picked up anyway.)
+    -- (Bolted-down things like markets and rigs can't be picked up anyway.)
     exclude = {
         player = true, rp1942_market = true, rp1942_oil_rig = true, rp1942_dumpster = true,
     },

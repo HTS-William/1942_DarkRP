@@ -10,7 +10,7 @@ the machine you're looking at (finish its timer, remove it).
               ULX, superadmins
 
 Everything spawns at your crosshair, owned by you, and can be undone with Z.
-Derricks spawned here stand where you aim, not on an oil site.
+Rigs spawned here stand where you aim, not on an oil site.
 
 Making placed machines permanent (saved per map in
 data/rp1942/prodsaves_<map>.json, respawned on every map start and cleanup,
@@ -125,7 +125,7 @@ end
 -- Finish the timer of the machine you're looking at
 local function finish(ply)
     local ent = aim(ply).Entity
-    if not IsValid(ent) then return DarkRP.notify(ply, 1, 4, "Look at an oven, wine barrel, derrick or factory line.") end
+    if not IsValid(ent) then return DarkRP.notify(ply, 1, 4, "Look at an oven, wine barrel, oil rig or factory line.") end
     local class = ent:GetClass()
     if ent.GetOff and ent:GetOff() and ent.SetPower then ent:SetPower(true) end
 
@@ -142,7 +142,7 @@ local function finish(ply)
         if ent:GetState() == ent.STATE_IDLE then return DarkRP.notify(ply, 1, 4, "It has no scrap to work on: push scrap metal in first.") end
         ent:Finish()
     else
-        return DarkRP.notify(ply, 1, 4, "Look at an oven, wine barrel, derrick or factory line.")
+        return DarkRP.notify(ply, 1, 4, "Look at an oven, wine barrel, oil rig or factory line.")
     end
     DarkRP.notify(ply, 0, 4, "Finished. (The grade is whatever it had earned so far.)")
 end
@@ -243,7 +243,7 @@ end
 local function lookedAtMachine(ply)
     local ent = aim(ply).Entity
     if IsValid(ent) and MACHINES[ent:GetClass()] then return ent end
-    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, barrel, factory line, derrick, market, printer, dumpster, bank vault, radio or law board).")
+    DarkRP.notify(ply, 1, 4, "Look at a production machine (oven, flour, wine barrel, factory line, oil rig, market, printer, dumpster, bank vault, radio or law board).")
 end
 
 function RP1942.prodSave(ply)

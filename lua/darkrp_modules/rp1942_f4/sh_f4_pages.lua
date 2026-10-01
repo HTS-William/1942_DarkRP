@@ -141,7 +141,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Base rules: one entrance per base, no maze or one-way bases, no doors blocking streets or other players' doors.
 
 # Fire
-- Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or derrick going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
+- Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or rig going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
 - Fire never starts in water, and each patch can only grow so far.
 - Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. It never runs out. Every fire you put out pays 20 RM, unless you lit it yourself.
 
@@ -184,7 +184,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Production
 - Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.
 - Machines have brass control panels: look at a button, lever or wheel and press E.
-- Ovens, oil derricks and factory lines have a POWER lever. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
+- Ovens, oil rigs and factory lines have a POWER lever. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
 - Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
 - Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
 - E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).
@@ -200,11 +200,11 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Every call you miss lowers the vintage. BOTTLE when it's done for 3 bottles. The barrel is used up.
 
 # Petroleum Producer
-- Buy an Oil Derrick. It isn't placed by hand: it's built on the nearest free oil site and bolted down, and it's marked on your screen once built. If every site is taken, it isn't for sale until one frees up.
+- Buy an Oil Rig. It isn't placed by hand: it's built on the nearest free oil site and bolted down, and it's marked on your screen once built. If every site is taken, it isn't for sale until one frees up.
 - It pumps on its own. With the valve shut the pressure climbs; turn the red valve wheel to open it and the pressure falls, then turn it again to shut it. Keep the needle in the green.
-- More time in the green means more canisters of crude (up to 3, around R.M. 1,000 each at a market) and a better grade. FILL CANISTERS when the tank is full, and it starts pumping again.
+- More time in the green means more barrels of crude (up to 3, around R.M. 1,000 each at a market) and a better grade. FILL BARRELS when the tank is full, and it starts pumping again.
 - If the pressure drops to nothing with the valve open, the pump stalls and switches itself off. Switch it back on: the pressure builds up again from zero.
-- Don't leave it in the red. After a while an alarm sounds and a red light flashes; if the pressure still isn't brought down, the derrick explodes, and it's gone.
+- Don't leave it in the red. After a while an alarm sounds; if the pressure still isn't brought down, the rig explodes, and it's gone.
 
 # Factory Owner
 - Buy a Factory Line and Scrap Metal in the F4 Shop. Push scrap into the line: it holds 4 loads, and each run uses one and makes 3 goods. With the hopper empty the line stands idle until you load more.
@@ -279,15 +279,15 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, barrels, factory lines, scrap metal, derricks, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, wine barrels, factory lines, scrap metal, oil rigs, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
 !saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
 !saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 !unsaveprod - Look at a saved machine: remove it for good
 !prodsaves - Count the saved machines on this map and highlight them for a minute
 !addmarket - Place a market where you're looking (saved for this map)
 !removemarket - Remove the market you're looking at
-!addoilsite - Mark an oil site where you're looking; a bought derrick is built on the nearest free one, facing where you stood (saved for this map)
-!removeoilsite - Remove the oil site nearest where you're looking, and its derrick
+!addoilsite - Mark an oil site where you're looking; a bought rig is built on the nearest free one, facing where you stood (saved for this map)
+!removeoilsite - Remove the oil site nearest where you're looking, and its rig
 !oilsites - Show every oil site on this map for a minute
 rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where a machine's panel sits, then print the line for the config
 

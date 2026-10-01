@@ -37,7 +37,7 @@ local MACHINES = {
     { class = "rp1942_wine_barrel", name = "Wine Barrel",  cfg = "wine" },
     { class = "rp1942_factory",     name = "Factory Line", cfg = "factory" },
     { class = "rp1942_scrap",       name = "Scrap Metal",  cfg = "scrap" },
-    { class = "rp1942_oil_rig",     name = "Oil Derrick",  cfg = "oil",    note = "bolted where you aim" },
+    { class = "rp1942_oil_rig",     name = "Oil Rig",      cfg = "oil",    note = "bolted where you aim", model = "models/props_mining/oiltank01.mdl" },
     { class = "rp1942_market",      name = "Market",       cfg = "market", note = "not saved" },
     { class = "rp1942_printer_bank",    name = "Banking Printer", model = "models/props_c17/consolebox01a.mdl", note = "legal" },
     { class = "rp1942_printer_illegal", name = "Money Printer",   model = "models/props_c17/consolebox01a.mdl", note = "illegal" },
@@ -199,7 +199,7 @@ local function build(parent, w)
     note:SetAutoStretchVertical(true)
     note:SetText("Finish ends the bake / ferment / tank / run right away, with the grade it had earned so far (and switches it on if it was off). "
         .. "Save makes a machine permanent for this map: it comes back frozen in place and owned by nobody after every restart (anyone can use it; "
-        .. "nobody can upgrade a saved printer). Unsave removes it for good. !prodsaves shows them all. Derricks spawned here don't use an oil site.")
+        .. "nobody can upgrade a saved printer). Unsave removes it for good. !prodsaves shows them all. Rigs spawned here don't use an oil site.")
 end
 
 local frame
