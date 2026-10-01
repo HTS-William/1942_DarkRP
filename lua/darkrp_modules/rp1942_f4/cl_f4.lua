@@ -118,15 +118,9 @@ function UI.styleScroll(scroll)
     bar.btnGrip.Paint = function(_, w, h) draw.RoundedBox(3, 0, 0, w, h, C.sub) end
 end
 
--- Shortens text with "..." until it fits (UTF-8 safe)
+-- Shortens text with "..." until it fits (rp1942_core/cl_text.lua, remembered)
 function UI.fit(text, font, maxW)
-    surface.SetFont(font)
-    if surface.GetTextSize(text) <= maxW then return text end
-    while #text > 0 and surface.GetTextSize(text .. "...") > maxW do
-        local last = utf8.offset(text, -1)
-        text = string.sub(text, 1, (last or #text) - 1)
-    end
-    return text .. "..."
+    return RP1942.fitText(text, font, maxW)
 end
 
 -- Runs a DarkRP chat command, like typing /command args in chat

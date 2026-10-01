@@ -242,8 +242,8 @@ function RP1942.prodUpdateSave(ent)
     writeSaves(list)
 end
 
-local function saveCan(ply)
-    if RP1942.staffCan(ply, "ulx saveprod", function(p) return p:IsSuperAdmin() end) then return true end
+local function saveCan(ply, cmd)   -- cmd: the ULX command being used (each has its own permission)
+    if RP1942.staffCan(ply, "ulx " .. (cmd or "saveprod"), function(p) return p:IsSuperAdmin() end) then return true end
     DarkRP.notify(ply, 1, 4, "You aren't allowed to save production machines.")
     return false
 end
@@ -266,7 +266,7 @@ function RP1942.prodSave(ply)
 end
 
 function RP1942.prodSaveAll(ply)
-    if not saveCan(ply) then return end
+    if not saveCan(ply, "saveprodall") then return end
     local list, n = loadSaves(), 0
     for _, ent in ipairs(ents.GetAll()) do
         if ent.RP1942_ProdSpawnedBy == ply and MACHINES[ent:GetClass()] and saveOne(ent, list) then n = n + 1 end
@@ -278,7 +278,7 @@ function RP1942.prodSaveAll(ply)
 end
 
 function RP1942.prodUnsave(ply)
-    if not saveCan(ply) then return end
+    if not saveCan(ply, "unsaveprod") then return end
     local ent = lookedAtMachine(ply)
     if not ent then return end
     local list = loadSaves()
@@ -293,7 +293,7 @@ function RP1942.prodUnsave(ply)
 end
 
 function RP1942.prodSaves(ply)
-    if not saveCan(ply) then return end
+    if not saveCan(ply, "prodsaves") then return end
     local counts, total, spots = {}, 0, {}
     for _, v in pairs(loadSaves()) do
         counts[v.class] = (counts[v.class] or 0) + 1

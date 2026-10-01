@@ -63,25 +63,9 @@ local function fontH(font)
 end
 hook.Add("OnScreenSizeChanged", "RP1942_HudFontHeights", function() fontHeights = {} end)
 
--- Fitting text is the dear part of the HUD (a GetTextSize per trimmed
--- character), so results are remembered per text/font/width
-local fitCache, fitCount = {}, 0
+-- Fitting text with "..." (rp1942_core/cl_text.lua: results are remembered)
 local function fit(text, font, maxW)
-    if maxW <= 0 then return "" end
-    local key = font .. "\1" .. maxW .. "\1" .. text
-    local hit = fitCache[key]
-    if hit then return hit end
-    local out = text
-    if textSize(font, text) > maxW then
-        while #out > 0 and textSize(font, out .. "...") > maxW do
-            local last = utf8.offset(out, -1)
-            out = string.sub(out, 1, (last or #out) - 1)
-        end
-        out = out .. "..."
-    end
-    if fitCount > 300 then fitCache, fitCount = {}, 0 end   -- never grows without bound
-    fitCache[key], fitCount = out, fitCount + 1
-    return out
+    return RP1942.fitText(text, font, maxW)
 end
 
 --[[---------------------------------------------------------------------------

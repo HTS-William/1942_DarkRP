@@ -38,7 +38,7 @@ R.settings = {
     nearRange     = 150,     -- full volume this close; fades out to `range`
     anyoneCanTune = false,   -- true: anyone can change any radio
     maxUrlLength  = 300,
-    price         = 600,     -- if sold in the F4 shop
+    -- (its price in the F4 shop: rp1942_f4/sh_f4_shop.lua, "Radio Set")
 }
 
 -- The stations in the menu. name / url (a direct stream link).

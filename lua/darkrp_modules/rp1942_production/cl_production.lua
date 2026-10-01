@@ -391,10 +391,13 @@ end
 
 function RP1942.drawPanel(ent)
     if not ent.PanelSize or not ent.PaintPanel then return end
-    local pos, ang, scale, mounted = placement(ent)
     local eye = LocalPlayer():EyePos()
-    if mounted and (eye - pos):Dot(ang:Up()) <= 0 then return end   -- behind a mounted panel
     local maxDist = RP1942.Production.labelDistance or 350
+    -- far away: skip before working out where the panel sits
+    local reach = maxDist + ent:BoundingRadius() + 60   -- the panel can sit a little above / off the prop
+    if eye:DistToSqr(ent:GetPos()) > reach * reach then return end
+    local pos, ang, scale, mounted = placement(ent)
+    if mounted and (eye - pos):Dot(ang:Up()) <= 0 then return end   -- behind a mounted panel
     local dist = eye:Distance(pos)
     if dist > maxDist then return end
     local alpha = math.Clamp((maxDist - dist) / 80, 0, 1)

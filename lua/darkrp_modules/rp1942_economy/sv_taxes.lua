@@ -5,8 +5,7 @@
     RP1942.setFactionTax(faction, rate)
     RP1942.setJobTax(jobCommand, rate)       rate = nil removes the override
 
-Collected tax currently leaves the economy (like DarkRP's own taxes).
-Socket for a future Reich treasury:
+Collected tax goes to the Reich treasury (sv_treasury.lua listens to):
     hook "RP1942_TaxCollected" (ply, tax, rate, source)
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_TaxRates")

@@ -107,35 +107,41 @@ syncConvars()
 hook.Add("InitPostEntity", "RP1942_FireCvars", syncConvars)
 
 --[[ The nodes ---------------------------------------------------------------]]
-local nodes = {}          -- node entity -> true
+local nodes = {}          -- node entity -> its cluster id
+local count = 0           -- how many are in nodes (kept, so the caps don't recount)
 local clusters = {}       -- cluster id -> count
 local nextCluster = 1
 
 function F.register(node)
-    nodes[node] = true
-    clusters[node.Cluster] = (clusters[node.Cluster] or 0) + 1
+    if nodes[node] then return end
+    local cluster = node.Cluster
+    nodes[node] = cluster
+    count = count + 1
+    clusters[cluster] = (clusters[cluster] or 0) + 1
 end
 
 function F.unregister(node)
-    if not nodes[node] then return end
+    local cluster = nodes[node]
+    if not cluster then return end
     nodes[node] = nil
-    if clusters[node.Cluster] then
-        clusters[node.Cluster] = clusters[node.Cluster] - 1
-        if clusters[node.Cluster] <= 0 then clusters[node.Cluster] = nil end
+    count = count - 1
+    if clusters[cluster] then
+        clusters[cluster] = clusters[cluster] - 1
+        if clusters[cluster] <= 0 then clusters[cluster] = nil end
     end
 end
 
+-- Exact count (drops anything removed without unregistering); for the status
 function RP1942.fireCount()
-    local n = 0
     for node in pairs(nodes) do
-        if IsValid(node) then n = n + 1 else nodes[node] = nil end
+        if not IsValid(node) then F.unregister(node) end
     end
-    return n
+    return count
 end
 
 function F.canSpawn(cluster)
     if not S("enabled") then return false end
-    if RP1942.fireCount() >= S("maxFires") then return false end
+    if count >= S("maxFires") then return false end
     if cluster and (clusters[cluster] or 0) >= S("maxPerCluster") then return false end
     return true
 end
@@ -443,21 +449,6 @@ RP1942.defineStaffCommand("extinguish", function(ply)
     return ""
 end)
 
-RP1942.defineStaffCommand("extinguishall", function(ply)
-    if not allowed(ply, "ulx extinguishall") then return "" end
-    local n = RP1942.extinguishAll()
-    say(ply, n .. " fire(s) put out.")
-    return ""
-end)
-
-RP1942.defineStaffCommand("firestatus", function(ply)
-    if not allowed(ply, "ulx firestatus") then return "" end
-    for _, l in ipairs(RP1942.fireStatus()) do
-        if IsValid(ply) then ply:ChatPrint("[Fire] " .. l) else print("[Fire] " .. l) end
-    end
-    return ""
-end)
-
 RP1942.defineStaffCommand("firesetting", function(ply, args)
     if not allowed(ply, "ulx firesetting") then return "" end
     local key, value = string.match(tostring(args or ""), "^%s*(%S+)%s*(.-)%s*$")
@@ -472,11 +463,4 @@ RP1942.defineStaffCommand("firesetting", function(ply, args)
     say(ply, msg)
     if ok then ServerLog(string.format("[1942] %s set fire setting %s\n", IsValid(ply) and ply:Nick() or "console", msg)) end
     return ""
-end)
-
--- Console (server or superadmin): rp1942_fire_test [spots]
-concommand.Add("rp1942_fire_test", function(ply, _, args)
-    if IsValid(ply) and not ply:IsSuperAdmin() then return end
-    if not IsValid(ply) then return print("Use this in game.") end
-    RP1942.runStaffCommand(ply, "fire", args[1])
 end)

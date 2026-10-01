@@ -26,8 +26,10 @@ local function savesFile() return DATA_DIR .. "/padlocks_" .. game.GetMap() .. "
 
 local locks = {}   -- every padlock: ent -> true
 
-local function isStaff(ply)
-    return RP1942.staffCan(ply, "ulx removelock", function(p) return p:IsSuperAdmin() end)
+-- Staff: "ulx removelock" also covers staff locks' menus and moving staff
+-- doors. Each ! command checks its own permission (cmd).
+local function isStaff(ply, cmd)
+    return RP1942.staffCan(ply, "ulx " .. (cmd or "removelock"), function(p) return p:IsSuperAdmin() end)
 end
 
 -- Who gets a lock's menu: a player's lock is its owner's alone (staff take
@@ -187,7 +189,7 @@ end
 function RP1942.padlockFit(ply, tr, staffKit)
     local door = tr and tr.Entity
     local function no(msg) DarkRP.notify(ply, 1, 5, msg) return false end
-    if staffKit and not isStaff(ply) then staffKit = false end
+    if staffKit and not isStaff(ply, "padlock") then staffKit = false end
 
     if not IsValid(door) or door:GetClass() ~= "prop_physics" then return no("Look at a prop to turn into a door.") end
     if tr.HitPos:DistToSqr(ply:EyePos()) > 120 * 120 then return no("Get closer to it.") end
@@ -219,14 +221,7 @@ local function giveKit(ply)
     if not ply:HasWeapon(P.KIT) then
         ply:Give(P.KIT)
     else
-        local item = ents.Create("spawned_weapon")
-        if IsValid(item) then
-            item:SetModel(P.MODEL)
-            item:SetWeaponClass(P.KIT)
-            item:SetPos(ply:GetPos() + ply:GetForward() * 30 + Vector(0, 0, 20))
-            item:Spawn()
-            item.nodupe = true
-        end
+        RP1942.makeSpawnedWeapon(P.KIT, ply:GetPos() + ply:GetForward() * 30 + Vector(0, 0, 20), nil, P.MODEL)
     end
     DarkRP.notify(ply, 0, 5, "You took the padlock off. It's back with you, ready to fit again.")
 end
@@ -536,7 +531,7 @@ local function lookedAtLock(ply)
 end
 
 RP1942.defineStaffCommand("padlock", function(ply)
-    if not isStaff(ply) then return say(ply, "You aren't allowed to do that.", true) end
+    if not isStaff(ply, "padlock") then return say(ply, "You aren't allowed to do that.", true) end
     local wep = ply:GetWeapon(P.KIT)
     if not IsValid(wep) then wep = ply:Give(P.KIT) end
     if IsValid(wep) then
@@ -547,7 +542,7 @@ RP1942.defineStaffCommand("padlock", function(ply)
 end)
 
 RP1942.defineStaffCommand("savelock", function(ply)
-    if not isStaff(ply) then return say(ply, "You aren't allowed to do that.", true) end
+    if not isStaff(ply, "savelock") then return say(ply, "You aren't allowed to do that.", true) end
     local lock = lookedAtLock(ply)
     if not lock then return end
     if not lock:GetStaff() then return say(ply, "Only staff locks (fitted with !padlock) can be saved. Players' locks belong to them.", true) end
@@ -579,7 +574,7 @@ RP1942.defineStaffCommand("removelock", function(ply)
 end)
 
 RP1942.defineStaffCommand("doorlocks", function(ply)
-    if not isStaff(ply) then return say(ply, "You aren't allowed to do that.", true) end
+    if not isStaff(ply, "doorlocks") then return say(ply, "You aren't allowed to do that.", true) end
     local list = {}
     for lock in pairs(locks) do
         if IsValid(lock) then
@@ -598,7 +593,7 @@ RP1942.defineStaffCommand("doorlocks", function(ply)
 end)
 
 RP1942.defineStaffCommand("locksettings", function(ply, args)
-    if not isStaff(ply) then return say(ply, "You aren't allowed to do that.", true) end
+    if not isStaff(ply, "locksettings") then return say(ply, "You aren't allowed to do that.", true) end
     local key, value = string.match(tostring(args or ""), "^%s*(%S*)%s*(.-)%s*$")
     if key == "" then
         local parts = {}

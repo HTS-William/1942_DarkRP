@@ -2,6 +2,7 @@
 1942 DarkRP - prop ghosting (server). Settings: sh_propghost.lua
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.PropGhost
+local held = setmetatable({}, { __mode = "k" })   -- props someone is holding right now
 
 local function ghostable(ent)
     if not IsValid(ent) or ent:IsPlayer() or ent:IsVehicle() or ent:IsNPC() then return false end
@@ -71,6 +72,7 @@ end
 hook.Add("OnPhysgunPickup", "RP1942_PropGhost", function(ply, ent)
     if not CFG.enabled or not ghostable(ent) then return end
     ent.RP1942_Held = ply
+    held[ent] = true
     timer.Remove("RP1942_PropGhost_" .. ent:EntIndex())
     ghost(ent)
 end)
@@ -78,17 +80,21 @@ end)
 hook.Add("PhysgunDrop", "RP1942_PropGhost", function(ply, ent)
     if not IsValid(ent) or not ent.RP1942_Held then return end
     ent.RP1942_Held = nil
+    held[ent] = nil
     settle(ent)
 end)
 
 -- A player who dies or leaves while holding something (in case the physgun
--- didn't report the drop)
+-- didn't report the drop). Only the held props are looked at, not the map.
 local function releaseAll()
     timer.Simple(0, function()
-        for _, ent in ipairs(ents.GetAll()) do
-            local holder = ent.RP1942_Held
-            if holder and (not IsValid(holder) or not holder:Alive()) then
+        for ent in pairs(held) do
+            local holder = IsValid(ent) and ent.RP1942_Held
+            if not holder then
+                held[ent] = nil
+            elseif not IsValid(holder) or not holder:Alive() then
                 ent.RP1942_Held = nil
+                held[ent] = nil
                 settle(ent)
             end
         end
@@ -98,5 +104,6 @@ hook.Add("PlayerDeath", "RP1942_PropGhost", releaseAll)
 hook.Add("PlayerDisconnected", "RP1942_PropGhost", releaseAll)
 
 hook.Add("EntityRemoved", "RP1942_PropGhost", function(ent)
+    held[ent] = nil
     if ent.RP1942_Ghost then timer.Remove("RP1942_PropGhost_" .. ent:EntIndex()) end
 end)

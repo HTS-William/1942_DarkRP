@@ -4,16 +4,15 @@
 Random events that happen on their own every so often. The scheduler picks
 one at random (by weight) from the events that are allowed to run right now.
 
-Admins can also run one by hand (who counts as an admin: adminCheck below):
+Staff can also run one by hand (ULX 42Bros; who may: ULX menu > Groups):
     !train                    start the supply train now
-    !event                    list events and whether one is running
-    !event train              same as !train
-    !stopevent               end the running event
-    rp1942_event [id | stop]  the same from the console (also the server console)
+    !event train              the same, by the event's id
+    !stopevent                end the running event
+    !eventsettings            the settings menu (timer, player minimum, each event on/off)
 
 Files:
     sh_events.lua        this config
-    sv_events.lua        the scheduler and the console command
+    sv_events.lua        the scheduler
     sv_event_train.lua   the supply train event
     (the "hold E" progress bar is rp1942_core/cl_holdbar.lua)
     lua/entities/rp1942_supply_train/   the train itself
@@ -31,11 +30,6 @@ RP1942.Events = {
                                               -- try again this soon instead of a whole interval. 0 = wait the interval.
     -- All of these can also be changed in game with !eventsettings (saved in
     -- data/rp1942/events.json, which then wins over the values here).
-
-    -- Who may use !train, !event and rp1942_event when ULX isn't running
-    -- (with ULX: per rank, ULX menu > Groups > 42Bros). IsAdmin() is true
-    -- for admins and superadmins; use ply:IsSuperAdmin() to tighten it.
-    adminCheck  = function(ply) return ply:IsAdmin() end,
 }
 
 

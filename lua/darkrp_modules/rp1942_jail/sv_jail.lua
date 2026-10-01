@@ -1,9 +1,11 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - release from jail
 
-When someone is unarrested (by a baton, an admin, or their jail time running
-out) they are properly RESPAWNED, not just teleported: they appear at a spawn
-point with fresh health and their job's loadout, the same as after dying.
+OFF at the moment (RESPAWN_ON_RELEASE below): released players get DarkRP's
+plain teleport out of jail. Switched on, someone unarrested (by a baton, an
+admin, or their jail time running out) is properly RESPAWNED instead: they
+appear at a spawn point with fresh health and their job's loadout, the same
+as after dying.
 
 Which spawn point is used follows the normal spawn rules:
     - the job's own spawns, if any were set with /addspawn or /setspawn

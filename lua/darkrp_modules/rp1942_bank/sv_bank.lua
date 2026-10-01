@@ -152,7 +152,7 @@ RP1942.defineStaffCommand("addvault", function(ply)
 end)
 
 RP1942.defineStaffCommand("removevault", function(ply)
-    if not staff(ply, "ulx addvault") then DarkRP.notify(ply, 1, 4, "You aren't allowed to remove the vault.") return "" end
+    if not staff(ply, "ulx removevault") then DarkRP.notify(ply, 1, 4, "You aren't allowed to remove the vault.") return "" end
     local tr = ply:GetEyeTrace()
     local v = tr.Entity
     if not IsValid(v) or v:GetClass() ~= "rp1942_bank_vault" then

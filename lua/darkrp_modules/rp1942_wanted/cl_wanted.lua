@@ -55,11 +55,11 @@ function plyMeta:drawWantedInfo()
     if dist > CFG.tagMaxDistance then return end
     -- Full strength up close, fading out over the last quarter of the range
     local alpha = math.Clamp((CFG.tagMaxDistance - dist) / (CFG.tagMaxDistance * 0.25), 0, 1)
-    if head.isInSight and not head:isInSight({ lp, self }) then return end
 
-    head.z = head.z + 10
-    local pos = head:ToScreen()
+    -- On screen first (cheap), then the line-of-sight trace (dear)
+    local pos = (head + Vector(0, 0, 10)):ToScreen()
     if not pos.visible then return end
+    if head.isInSight and not head:isInSight({ lp, self }) then return end
     local x, y = pos.x, pos.y
 
     -- Name, where DarkRP puts it

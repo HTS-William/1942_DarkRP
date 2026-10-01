@@ -115,15 +115,9 @@ top on open and back up on close; closes by itself when an election ends.
 ---------------------------------------------------------------------------]]
 local PANEL = {}
 
--- Shortens text with "..." until it fits (UTF-8 safe, so names like Jörg work)
+-- Shortens text with "..." until it fits (rp1942_core/cl_text.lua)
 local function fit(text, font, maxW)
-    surface.SetFont(font)
-    if surface.GetTextSize(text) <= maxW then return text end
-    while #text > 0 and surface.GetTextSize(text .. "...") > maxW do
-        local last = utf8.offset(text, -1)
-        text = string.sub(text, 1, (last or #text) - 1)
-    end
-    return text .. "..."
+    return RP1942.fitText(text, font, maxW)
 end
 
 function PANEL:Init()
@@ -734,7 +728,7 @@ local function showMartialLaw(name)
     local m = RP1942.MartialLaw or {}
     martialShown = true
     local shownAt = RealTime()
-    showBanner("lockdown", m.title or "MARTIAL LAW : STAY IN YOUR HOMES!", m.body or "", 10,
+    showBanner("lockdown", m.title or "MARTIAL LAW : STAY IN YOUR HOMES!", m.body or "", m.seconds or 10,
         (name and name ~= "") and ("- Führer " .. name) or nil,
         function()
             -- (the lockdown flag can reach us a moment after the message)

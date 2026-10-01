@@ -138,7 +138,6 @@ RP1942.Weapons = {
     k98k_scoped = "mcv_kar98_s",         -- Sniper Karabiner-98K
     g43         = "mcv_g43",             -- Gewehr 43
     mg34        = "mcv_mg43b",           -- MG-34 Belt (the Waffen-SS Machinegunner)
-    mg42        = "mcv_mg43b",           -- (old name for the same gun)
     stg44       = "mcv_stg44",           -- StG-44
     mp40        = "mcv_mp40",            -- MP 40 (the Wehrmacht NCO)
     p38         = "mcv_p38",             -- Walther P38, officer sidearm

@@ -117,7 +117,8 @@ function ENT:Think()
         self:TrySpread()
     end
 
-    self:NextThink(now + 0.05)
+    -- sleep until the next thing is due (burn ticks are every 0.25 s)
+    self:NextThink(math.min(self.NextTick, self.NextSpread, self.DieAt))
     return true
 end
 

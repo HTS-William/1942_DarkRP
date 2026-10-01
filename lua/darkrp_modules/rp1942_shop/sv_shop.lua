@@ -10,16 +10,7 @@ Money is DarkRP's wallet: ply:canAfford / ply:addMoney.
 
 Hook for other systems:  RP1942_ShopPurchase(ply, item, ent)
 ---------------------------------------------------------------------------]]
-local SPAWN_DIST = 85   -- units in front of the player
-
-local function spawnPos(ply)
-    local tr = util.TraceLine({
-        start = ply:EyePos(),
-        endpos = ply:EyePos() + ply:GetAimVector() * SPAWN_DIST,
-        filter = ply,
-    })
-    return tr.HitPos + tr.HitNormal * 12
-end
+local function spawnPos(ply) return RP1942.spawnInFront(ply, 85) end   -- rp1942_core/sv_pocket.lua
 
 -- Returns the spawned entity, or nil if the class doesn't exist
 local function spawnItem(ply, item)
@@ -27,25 +18,17 @@ local function spawnItem(ply, item)
     local ent
 
     if item.type == "weapon" then
-        -- Probe the class first: spawned_weapon happily accepts a bad class
-        -- and only fails when someone tries to pick it up
-        local probe = ents.Create(item.class)
-        if not IsValid(probe) then return nil end
-        probe:Remove()
-
-        ent = ents.Create("spawned_weapon")
-        ent:SetModel(RP1942.getShopItemModel(item))
-        ent:SetWeaponClass(item.class)
-        ent.nodupe = true
-        -- Comes loaded: a full magazine, or the grenade / mine / charge itself
-        ent.clip1, ent.ammoadd = RP1942.weaponStartAmmo(item.class)
+        -- comes loaded: a full magazine, or the grenade / mine / charge itself
+        if not RP1942.weaponExists(item.class) then return nil end
+        ent = RP1942.makeSpawnedWeapon(item.class, pos, nil, RP1942.getShopItemModel(item))
+        if not IsValid(ent) then return nil end
     else
         ent = ents.Create(item.class)
         if not IsValid(ent) then return nil end
+        ent:SetPos(pos)
+        ent:Spawn()
     end
 
-    ent:SetPos(pos)
-    ent:Spawn()
     ent:Activate()
     if ent.CPPISetOwner then ent:CPPISetOwner(ply) end   -- prop protection ownership
     return ent
@@ -53,9 +36,7 @@ end
 
 -- A crate holding `amount` of a weapon
 local function spawnCrate(ply, item, amount)
-    local probe = ents.Create(item.class)   -- the class must exist
-    if not IsValid(probe) then return nil end
-    probe:Remove()
+    if not RP1942.weaponExists(item.class) then return nil end   -- the class must exist
     local crate = ents.Create("rp1942_weapon_crate")
     if not IsValid(crate) then return nil end
     crate:SetPos(spawnPos(ply) + Vector(0, 0, 10))

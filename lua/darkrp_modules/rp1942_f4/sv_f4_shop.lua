@@ -6,16 +6,7 @@ only after the item was actually given or spawned.
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_F4Buy")
 
-local SPAWN_DIST = 85
-
-local function spawnPos(ply)
-    local tr = util.TraceLine({
-        start = ply:EyePos(),
-        endpos = ply:EyePos() + ply:GetAimVector() * SPAWN_DIST,
-        filter = ply,
-    })
-    return tr.HitPos + tr.HitNormal * 12
-end
+local function spawnPos(ply) return RP1942.spawnInFront(ply, 85) end   -- rp1942_core/sv_pocket.lua
 
 local function owned(ply, item)
     local n = 0
@@ -41,21 +32,17 @@ local function deliver(ply, item)
         ent.RP1942_ShopOwner = ply
         return true
     elseif item.type == "weapon" then
-        local probe = ents.Create(item.class)   -- is the weapon installed?
-        if not IsValid(probe) then return false end
-        probe:Remove()
-        ent = ents.Create("spawned_weapon")
-        local wep = weapons.Get(item.class)
-        ent:SetModel(item.model or (wep and wep.WorldModel) or "models/weapons/w_pistol.mdl")
-        ent:SetWeaponClass(item.class)
-        ent.nodupe = true
+        -- the same as the dealers' guns: loaded, if it takes ammo (rp1942_core/sv_pocket.lua)
+        if not RP1942.weaponExists(item.class) then return false end
+        ent = RP1942.makeSpawnedWeapon(item.class, spawnPos(ply), nil, item.model)
+        if not IsValid(ent) then return false end
     else
         ent = ents.Create(item.class)
         if not IsValid(ent) then return false end
+        ent:SetPos(spawnPos(ply))
+        ent:Spawn()
     end
 
-    ent:SetPos(spawnPos(ply))
-    ent:Spawn()
     ent:Activate()
     ent.RP1942_ShopOwner = ply
     if ent.Setowning_ent then ent:Setowning_ent(ply) end

@@ -22,7 +22,7 @@ HOOKS (for other systems to react, e.g. door locks or the pain system):
     RP1942_PreExplosion(pos, opts)   return false to cancel the explosion
     RP1942_PostExplosion(pos, opts)  after damage has been applied
 
-Admin test: rp1942_test_explosion [damage] [radius]  (superadmin, at your crosshair)
+Admin test: !testexplosion [damage] [radius]  (ULX, at your crosshair)
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
 
@@ -78,21 +78,3 @@ function RP1942.explode(pos, opts)
     hook.Run("RP1942_PostExplosion", pos, opts)
     return true
 end
-
---[[---------------------------------------------------------------------------
-Admin test command
----------------------------------------------------------------------------]]
-concommand.Add("rp1942_test_explosion", function(ply, _, args)
-    if IsValid(ply) and not ply:IsSuperAdmin() then return end
-    if not IsValid(ply) then
-        print("[1942] Run this in-game; it explodes where you are aiming.")
-        return
-    end
-
-    local tr = ply:GetEyeTrace()
-    RP1942.explode(tr.HitPos, {
-        damage   = tonumber(args[1]),
-        radius   = tonumber(args[2]),
-        attacker = ply,
-    })
-end)
