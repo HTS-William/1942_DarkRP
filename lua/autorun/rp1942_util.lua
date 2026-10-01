@@ -16,9 +16,11 @@ Server only:
                                             (drawn by rp1942_core/cl_markers.lua; up to
                                             255). A tag ("doorlocks") replaces the labels
                                             last sent with the same tag.
-    RP1942.mapStore(name)                   a list saved for this map, in
-                                            data/rp1942/<name>_<map>.json:
+    RP1942.dataStore(name)                  a table saved for the whole server, in
+                                            data/rp1942/<name>.json:
                                             store.load() -> table, store.save(table)
+    RP1942.mapStore(name)                   the same, but one per map:
+                                            data/rp1942/<name>_<map>.json
 ---------------------------------------------------------------------------]]
 AddCSLuaFile()
 RP1942 = RP1942 or {}
@@ -60,14 +62,21 @@ if SERVER then
         net.Send(ply)
     end
 
-    function RP1942.mapStore(name)
-        local function path() return "rp1942/" .. name .. "_" .. game.GetMap() .. ".json" end
+    local function store(path)
         return {
             load = function() return util.JSONToTable(file.Read(path(), "DATA") or "") or {} end,
-            save = function(list)
+            save = function(tbl)
                 file.CreateDir("rp1942")
-                file.Write(path(), util.TableToJSON(list, true))
+                file.Write(path(), util.TableToJSON(tbl, true))
             end,
         }
+    end
+
+    function RP1942.dataStore(name)
+        return store(function() return "rp1942/" .. name .. ".json" end)
+    end
+
+    function RP1942.mapStore(name)
+        return store(function() return "rp1942/" .. name .. "_" .. game.GetMap() .. ".json" end)
     end
 end

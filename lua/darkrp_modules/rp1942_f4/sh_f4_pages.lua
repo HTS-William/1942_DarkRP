@@ -155,13 +155,15 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Laws
 - The Führer makes the laws from his menu (F3, Laws): add, remove, reset, or place a law board. Every law board shows them. The first laws are fixed and can't be removed.
+- Laws stand until a Führer removes or resets them: they stay through a change of Führer and through server restarts.
 
 # Martial law
 - The Führer can declare martial law (/lockdown). A siren sounds and a banner orders everyone to stay in their homes; anyone found outside may be arrested. /unlockdown lifts it.
 
 # Economy and taxes
 - The economy bar at the bottom of the screen shows how the economy is doing. A better economy means higher wages.
-- The Führer sets the tax rates. Taxes come out of your wages and go to the Reich treasury.
+- The Führer sets the tax rates. Taxes come out of your wages and market sales and go to the Reich treasury.
+- The economy, the tax rates and the treasury are kept when the server restarts: a new Führer inherits his predecessor's.
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
 - The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped.
 
@@ -174,7 +176,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - German Supplier (Reich): German service weapons for the Reich. Its prices follow the economy: up to 40% cheaper when the economy is strong, up to 50% dearer when it's weak. The menu shows the current difference.
 
 # Bank robbery
-- The Reichsbank vault holds the Reich treasury. Anyone outside the Reich (except the Reich Banker) can press E on it to rob it, when at least 5 Reich officials are in the city and the bank isn't on alert (45 minutes after the last robbery).
+- The Reichsbank vault holds the Reich treasury. Anyone outside the Reich (except the Reich Banker) can press E on it to rob it, when at least 5 Reich officials are in the city and the bank isn't on alert (45 minutes after the last robbery; a server restart doesn't cut it short).
 - The alarm sounds and everyone is told. The robber is WANTED. For the first 30 seconds, others can press E on the vault to ask to join; the robber decides who gets in.
 - Hold the bank for 10 minutes: the robber must stay alive, free and near the vault. If the robber dies, is arrested or leaves the bank, it fails, and the Reich member who stopped them gets a reward.
 - If the robber holds out, the WHOLE treasury is split evenly between the robber and the crew still alive and near the vault.

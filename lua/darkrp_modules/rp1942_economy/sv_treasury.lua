@@ -1,7 +1,17 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - Reich treasury (server)
+
+The balance is kept across restarts and map changes: data/rp1942/treasury.json.
+It's saved a few seconds after it changes (taxes come in often, so changes are
+gathered into one write) and again when the server shuts down.
 ---------------------------------------------------------------------------]]
 local T = RP1942.Treasury
+local store = RP1942.dataStore("treasury")
+local SAVE_DELAY = 5   -- seconds
+
+local function save()
+    store.save({ balance = RP1942.getTreasury() })
+end
 
 local function setBalance(value, reason)
     local old = RP1942.getTreasury()
@@ -34,6 +44,12 @@ hook.Add("RP1942_TaxCollected", "RP1942_TreasuryTaxIntake", function(ply, tax, r
     RP1942.treasuryDeposit(tax, "tax:" .. (source or "unknown"))
 end)
 
+hook.Add("RP1942_TreasuryChanged", "RP1942_TreasurySave", function()
+    if not timer.Exists("RP1942_TreasurySave") then timer.Create("RP1942_TreasurySave", SAVE_DELAY, 1, save) end
+end)
+hook.Add("ShutDown", "RP1942_TreasurySave", save)
+
 hook.Add("InitPostEntity", "RP1942_TreasuryStart", function()
-    SetGlobal2Int(T.KEY, T.START)
+    local saved = tonumber(store.load().balance)
+    SetGlobal2Int(T.KEY, saved and math.max(math.floor(saved), 0) or T.START)
 end)

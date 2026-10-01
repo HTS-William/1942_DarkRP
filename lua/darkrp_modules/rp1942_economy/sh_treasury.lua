@@ -1,7 +1,8 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - Reich treasury (shared)
 
-One pot. Every income tax is deposited into it automatically.
+One pot. Every income tax is deposited into it automatically. The balance is
+kept across restarts (sv_treasury.lua).
 
     RP1942.getTreasury()     -> current balance (works on server and client)
 
@@ -15,7 +16,7 @@ for from the treasury (the APC, bonuses, the German Supplier...) calls
 treasuryWithdraw; anything that pays into it calls treasuryDeposit.
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
-RP1942.Treasury = { KEY = "rp1942_treasury", START = 0 }
+RP1942.Treasury = { KEY = "rp1942_treasury", START = 0 }   -- START: the very first balance, before anything is saved
 
 function RP1942.getTreasury()
     return GetGlobal2Int(RP1942.Treasury.KEY, RP1942.Treasury.START)

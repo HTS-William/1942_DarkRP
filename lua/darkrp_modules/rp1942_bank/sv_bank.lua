@@ -21,6 +21,24 @@ Settings: defaults (sh_bank.lua) + data/rp1942/bank.json
 ---------------------------------------------------------------------------]]
 local function settingsFile() return SAVE_DIR .. "/bank.json" end
 
+--[[---------------------------------------------------------------------------
+The cooldown after a robbery is kept across restarts (the treasury is too, so
+a restart mustn't open the vault early): data/rp1942/bank_cooldown.json holds
+the real time it ends.
+---------------------------------------------------------------------------]]
+local cooldownStore = RP1942.dataStore("bank_cooldown")
+
+local function setCooldown(seconds)
+    seconds = math.max(seconds or 0, 0)
+    SetGlobal2Float("rp1942_bank_cd", seconds > 0 and CurTime() + seconds or 0)
+    cooldownStore.save({ ends = seconds > 0 and os.time() + math.ceil(seconds) or 0 })
+end
+
+hook.Add("InitPostEntity", "RP1942_BankCooldown", function()
+    local left = (tonumber(cooldownStore.load().ends) or 0) - os.time()
+    if left > 0 then SetGlobal2Float("rp1942_bank_cd", CurTime() + left) end
+end)
+
 local function loadSettings()
     B.settings = table.Copy(B.defaults)
     local saved = util.JSONToTable(file.Read(settingsFile(), "DATA") or "") or {}
@@ -267,7 +285,7 @@ local function finish(success, reason, opts)
     R.crew, R.pending = {}, {}
     R.initiator, R.vault = nil, nil
     SetGlobal2Bool("rp1942_bank_active", false)
-    if not opts.noCooldown then SetGlobal2Float("rp1942_bank_cd", CurTime() + S("cooldown")) end
+    if not opts.noCooldown then setCooldown(S("cooldown")) end
 
     if success then
         local text = string.format(B.text.won, DarkRP.formatMoney(total))
@@ -528,7 +546,7 @@ function RP1942.bankFinishNow()
 end
 
 function RP1942.bankResetCooldown()
-    SetGlobal2Float("rp1942_bank_cd", 0)
+    setCooldown(0)
     return true
 end
 

@@ -30,7 +30,7 @@ local E = RP1942.Economy
 
 E.MIN   = 1
 E.MAX   = 110
-E.START = 50              -- value when the server starts
+E.START = 50              -- value on the very first start (after that the saved value: sv_economy.lua)
 E.KEY   = "rp1942_economy"
 
 -- Income multiplier = economy / DIVISOR. At 55 the multiplier is exactly 1.0,

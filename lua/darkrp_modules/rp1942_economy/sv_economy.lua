@@ -5,8 +5,18 @@ The only place the economy value is changed. Everything that changes it
 (the Führer's menu, later: taxes, supply trains, air raids...) goes through
 setEconomy / addEconomy, so the value is always clamped to 1-110 and every
 change fires the same hook.
+
+The value is kept across restarts and map changes: data/rp1942/economy.json,
+saved a few seconds after it moves (market sales nudge it often, so changes
+are gathered into one write) and again when the server shuts down.
 ---------------------------------------------------------------------------]]
 local E = RP1942.Economy
+local store = RP1942.dataStore("economy")
+local SAVE_DELAY = 5   -- seconds
+
+local function save()
+    store.save({ value = RP1942.getEconomy() })
+end
 
 -- Returns the new value (clamped). Fires RP1942_EconomyChanged if it moved.
 function RP1942.setEconomy(value, reason)
@@ -26,8 +36,14 @@ function RP1942.addEconomy(delta, reason)
     return RP1942.setEconomy(RP1942.getEconomy() + (tonumber(delta) or 0), reason)
 end
 
+hook.Add("RP1942_EconomyChanged", "RP1942_EconomySave", function()
+    if not timer.Exists("RP1942_EconomySave") then timer.Create("RP1942_EconomySave", SAVE_DELAY, 1, save) end
+end)
+hook.Add("ShutDown", "RP1942_EconomySave", save)
+
 hook.Add("InitPostEntity", "RP1942_EconomyStart", function()
-    SetGlobal2Int(E.KEY, E.START)
+    local saved = tonumber(store.load().value)
+    SetGlobal2Int(E.KEY, saved and math.Clamp(math.Round(saved), E.MIN, E.MAX) or E.START)
 end)
 
 --[[---------------------------------------------------------------------------
