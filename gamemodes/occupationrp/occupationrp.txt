@@ -1,0 +1,16 @@
+"occupationrp"
+{
+	"base"		"darkrp"
+	"title"		"42Bros"
+	"version"	"1.0.0"
+	"category"	"rp"
+	"menusystem"	"1"
+
+	"author_name"	"42Bros (on DarkRP by FPtje Falco et al.)"
+	"author_email"	""
+	"author_url"	""
+
+	"icon"	""
+	"info"	""
+	"hide"	"0"
+}
