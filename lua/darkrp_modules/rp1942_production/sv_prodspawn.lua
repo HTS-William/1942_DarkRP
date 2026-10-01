@@ -43,7 +43,7 @@ end
 -- What the menu may spawn as a whole entity
 local MACHINES = {
     rp1942_oven = true, rp1942_flour = true, rp1942_wine_barrel = true,
-    rp1942_factory = true, rp1942_oil_rig = true, rp1942_market = true,
+    rp1942_factory = true, rp1942_scrap = true, rp1942_oil_rig = true, rp1942_market = true,
     rp1942_printer_bank = true, rp1942_printer_illegal = true,
     rp1942_dumpster = true,
     rp1942_bank_vault = true,
@@ -139,6 +139,7 @@ local function finish(ply)
         ent:DoPrint()   -- prints once, right now
     elseif class == "rp1942_factory" then
         if ent:GetState() == ent.STATE_DONE then return DarkRP.notify(ply, 1, 4, "The run is already done: COLLECT it.") end
+        if ent:GetState() == ent.STATE_IDLE then return DarkRP.notify(ply, 1, 4, "It has no scrap to work on: push scrap metal in first.") end
         ent:Finish()
     else
         return DarkRP.notify(ply, 1, 4, "Look at an oven, wine barrel, derrick or factory line.")

@@ -44,7 +44,7 @@ Files:
     sv_oil_sites.lua      oil sites (!addoilsite) and building derricks on them
     sv/cl_prodspawn.lua   the staff production spawner (!prodspawn)
     lua/entities/rp1942_good, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
-        rp1942_oil_rig, rp1942_factory
+        rp1942_oil_rig, rp1942_factory, rp1942_scrap
     darkrp_customthings/entities.lua   the F4 shop entries (prices, limits, jobs)
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
@@ -157,6 +157,9 @@ RP1942.Production = {
     flour = {
         model     = "models/props_junk/garbage_bag001a.mdl",
     },
+    scrap = {   -- the factory line's material (price and limit: darkrp_customthings/entities.lua)
+        model     = "models/gibs/metal_gib4.mdl",
+    },
     wine = {
         model     = "models/props_c17/woodbarrel001.mdl",
         time      = 240,              -- seconds to ferment
@@ -186,11 +189,12 @@ RP1942.Production = {
         siteAdmin = function(ply) return ply:IsSuperAdmin() end,   -- who may !addoilsite etc. without ULX (with ULX: its Groups tab)
     },
 
-    -- Factory Owner
+    -- Factory Owner. The line runs on scrap metal: one load per run.
     factory = {
-        model     = "models/props_wasteland/laundry_washer001a.mdl", -- placeholder until the real prop
+        model     = "models/props_mining/elevator_winch_empty.mdl",
+        hopper    = 4,                -- loads of scrap it holds waiting
         runTime   = 300,              -- seconds of running per run (halts don't count)
-        items     = 2,                -- goods per run
+        items     = 3,                -- goods per run (one load of scrap)
         halts     = 2,                -- faults per run
         wrongFix  = 10,               -- seconds of downtime added for pressing the wrong repair
         -- Downtime (seconds halted this run) -> stars
@@ -226,8 +230,9 @@ RP1942.PanelSpots = RP1942.PanelSpots or {}
 -- kitchen_oven1: 31 deep x 70 wide x 50 tall, origin at the back. The brass
 -- plate sits on the front of the oven (tuned in game with rp1942_panel_*).
 RP1942.PanelSpots.rp1942_oven = { mount = "face", face = "front", width = 0.46, top = 0.95, size = 0.86, nudge = { 17.5, 0.0, 0.0 } }
--- The factory line's plate (tuned in game with rp1942_panel_*)
-RP1942.PanelSpots.rp1942_factory = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { -4.0, -55.0, 80.0 } }
+-- The factory line's plate. NOT TUNED YET for the winch model: place it in
+-- game with the rp1942_panel_* commands and paste the line they print here.
+RP1942.PanelSpots.rp1942_factory = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00 }
 -- The oil derrick's plate (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_oil_rig = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.33, nudge = { -9.0, -41.0, 29.0 } }
 -- The market's board, on its mailbox (tuned in game with rp1942_panel_*)

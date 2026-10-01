@@ -68,10 +68,20 @@ DarkRP.createEntity("Oil Derrick", {
 
 DarkRP.createEntity("Factory Line", {
     ent = "rp1942_factory",
-    model = "models/props_wasteland/laundry_washer001a.mdl",
+    model = "models/props_mining/elevator_winch_empty.mdl",
     price = 1200,
     max = 1,
     cmd = "buyfactory",
+    allowed = { TEAM_FACTORY },
+    category = "Production",
+})
+
+DarkRP.createEntity("Scrap Metal", {   -- push it into the factory line: one load runs it once
+    ent = "rp1942_scrap",
+    model = "models/gibs/metal_gib4.mdl",
+    price = 60,
+    max = 6,
+    cmd = "buyscrap",
     allowed = { TEAM_FACTORY },
     category = "Production",
 })

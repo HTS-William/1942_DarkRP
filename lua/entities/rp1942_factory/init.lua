@@ -8,9 +8,45 @@ function ENT:Initialize()
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     self:SetUseType(SIMPLE_USE)
+    -- a model without its own collision still gets a solid box, so scrap can be pushed in
+    if not IsValid(self:GetPhysicsObject()) then
+        self:PhysicsInitBox(self:OBBMins(), self:OBBMaxs())
+        self:SetSolid(SOLID_VPHYSICS)
+    end
     local phys = self:GetPhysicsObject()
     if IsValid(phys) then phys:Wake() end
+    self:SetScrap(0)
+    self:Idle()
+end
+
+-- Nothing to work on: waits for scrap
+function ENT:Idle()
+    self:SetState(self.STATE_IDLE)
+    self:SetRunBase(0)
+    self:SetDownBase(0)
+    self:SetHaltedAt(0)
+    self:SetHalts(0)
+    self:SetFault("")
+    self:SetReadyList("")
+    self:Engine(false)
+end
+
+-- Idle with scrap in the hopper: take a load and start a run
+function ENT:TryStart()
+    if self:GetState() ~= self.STATE_IDLE or self:GetScrap() <= 0 then return false end
+    self:SetScrap(self:GetScrap() - 1)
     self:StartRun()
+    return true
+end
+
+-- A load of scrap pushed in (from rp1942_scrap)
+function ENT:AddScrap(scrap)
+    if self:GetScrap() >= (self:Config().hopper or 4) then return end   -- full: it bounces off
+    scrap.RP1942_Used = true
+    scrap:Remove()
+    self:SetScrap(self:GetScrap() + 1)
+    self:EmitSound("physics/metal/metal_box_impact_hard" .. math.random(1, 3) .. ".wav", 65)
+    self:TryStart()
 end
 
 function ENT:StartRun()
@@ -155,7 +191,7 @@ function ENT:OnPanelPress(ply, id)
     if id == "collect" then
         if self:GetState() ~= self.STATE_DONE then return end
         local goods, q = self:ReadyGoods(), self:GetReadyQuality()
-        if #goods == 0 then self:StartRun() return end
+        if #goods == 0 then self:Idle() self:TryStart() return end
         self:SetReadyList("")
         local top = self:LocalToWorld(Vector(self:OBBCenter().x, self:OBBCenter().y, self:OBBMaxs().z + 8))
         local names, droppedAll = {}, 0
@@ -172,13 +208,14 @@ function ENT:OnPanelPress(ply, id)
             DarkRP.notify(ply, 0, 5, "Collected " .. what .. ". Your pocket is full: " .. droppedAll .. " left on top of the line.")
         end
         self:EmitSound("physics/metal/metal_box_impact_soft2.wav", 60)
-        self:StartRun()
+        self:Idle()
+        self:TryStart()   -- the next run, if there's scrap in the hopper
     end
 end
 
 function ENT:Use(ply)
     if IsValid(ply) and ply:IsPlayer() then
-        DarkRP.notify(ply, 0, 3, "Look at a button on the factory's panel and press E.")
+        DarkRP.notify(ply, 0, 3, "Look at a button on the factory's panel and press E. Push scrap metal into the line to run it.")
     end
 end
 

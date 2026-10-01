@@ -201,7 +201,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Don't leave it in the red. After a while an alarm sounds and a red light flashes; if the pressure still isn't brought down, the derrick explodes, and it's gone.
 
 # Factory Owner
-- Buy a Factory Line. It runs on its own and makes 2 goods per run.
+- Buy a Factory Line and Scrap Metal in the F4 Shop. Push scrap into the line: it holds 4 loads, and each run uses one and makes 3 goods. With the hopper empty the line stands idle until you load more.
 - Twice a run it halts with a fault: the BELT, BOILER or FUSE lamp flashes. Press the matching repair button (RETHREAD BELT, VENT BOILER or REPLACE FUSE). The wrong one costs extra downtime.
 - The less downtime, the better the run, and the better the odds of rare goods: common (rations, boots), uncommon (pots, kettles), rare (clocks) and very rare (radios). COLLECT when the run is done.
 
@@ -273,7 +273,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !clearwanted <player> - Clear someone's wanted status
 
 #staff Staff: production
-!prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, barrels, factory lines, derricks, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
+!prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, barrels, factory lines, scrap metal, derricks, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
 !saveprod - Look at a machine or dumpster placed from !prodspawn (or any production machine): it's saved for this map and comes back after every restart, frozen and owned by nobody
 !saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 !unsaveprod - Look at a saved machine: remove it for good

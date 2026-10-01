@@ -36,6 +36,7 @@ local MACHINES = {
     { class = "rp1942_flour",       name = "Sack of Flour", cfg = "flour" },
     { class = "rp1942_wine_barrel", name = "Wine Barrel",  cfg = "wine" },
     { class = "rp1942_factory",     name = "Factory Line", cfg = "factory" },
+    { class = "rp1942_scrap",       name = "Scrap Metal",  cfg = "scrap" },
     { class = "rp1942_oil_rig",     name = "Oil Derrick",  cfg = "oil",    note = "bolted where you aim" },
     { class = "rp1942_market",      name = "Market",       cfg = "market", note = "not saved" },
     { class = "rp1942_printer_bank",    name = "Banking Printer", model = "models/props_c17/consolebox01a.mdl", note = "legal" },
