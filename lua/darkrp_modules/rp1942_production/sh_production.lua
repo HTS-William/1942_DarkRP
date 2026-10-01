@@ -230,9 +230,8 @@ RP1942.PanelSpots = RP1942.PanelSpots or {}
 -- kitchen_oven1: 31 deep x 70 wide x 50 tall, origin at the back. The brass
 -- plate sits on the front of the oven (tuned in game with rp1942_panel_*).
 RP1942.PanelSpots.rp1942_oven = { mount = "face", face = "front", width = 0.46, top = 0.95, size = 0.86, nudge = { 17.5, 0.0, 0.0 } }
--- The factory line's plate. NOT TUNED YET for the winch model: place it in
--- game with the rp1942_panel_* commands and paste the line they print here.
-RP1942.PanelSpots.rp1942_factory = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00 }
+-- The factory line's control desk, flat on the side of the winch (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_factory = { mount = "face", face = "right", width = 0.80, top = 0.80, size = 0.56, nudge = { 0.0, 15.0, 0.0 } }
 -- The oil derrick's plate (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_oil_rig = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.33, nudge = { -9.0, -41.0, 29.0 } }
 -- The market's board, on its mailbox (tuned in game with rp1942_panel_*)

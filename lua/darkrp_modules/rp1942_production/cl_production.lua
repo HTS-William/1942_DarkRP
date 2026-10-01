@@ -405,7 +405,9 @@ function RP1942.drawPanel(ent)
     local cx, cy = cursor(pos, ang, scale, w, h)
     if not cx and occluded(ent, eye, pos) then return end
 
-    if not cacheCvar:GetBool() then
+    -- A texture bigger than the screen can come out cut off on some setups:
+    -- such a panel (a small window, a tall panel) is painted directly instead
+    if not cacheCvar:GetBool() or w > ScrW() or h > ScrH() then
         -- The old way: paint it all, every frame
         local P = setmetatable({ w = w, h = h, ent = ent, cx = cx, cy = cy }, Painter)
         cam.Start3D2D(pos, ang, scale)
@@ -547,7 +549,8 @@ Brass & enamel: a machine control plate (the oven's style; the barrel and
 market can use it too). Everything draws in canvas pixels inside PaintPanel.
     B.Plate(w, h, enamel)                  brass rim, enamel face, rivets
     B.Plaque(cx, y, w, h, text, font)      engraved brass nameplate
-    B.Dial(cx, cy, r, value, zones, label, live)   needle gauge, value 0-100
+    B.Dial(cx, cy, r, value, zones, label, live, face)   needle gauge, value 0-100
+                                           (face: the dial's colour; default ivory)
     B.Counter(x, y, text, size)            mechanical digit wheels -> width
     B.Lamp(cx, cy, r, on, color)           indicator lamp
     B.Stars(x, y, quality, size)           embossed brass stars
@@ -648,10 +651,10 @@ function B.Plaque(cx, y, w, h, text, font)
 end
 
 -- value 0-100 over a 240-degree sweep; zones = { { from, to, color }, ... }
-function B.Dial(cx, cy, r, value, zones, label, live)
+function B.Dial(cx, cy, r, value, zones, label, live, face)
     B.Circle(cx, cy, r + 11, B.DARK)
     B.Circle(cx, cy, r + 8, B.BRASS)
-    B.Circle(cx, cy, r, B.WHITE)
+    B.Circle(cx, cy, r, face or B.WHITE)
     local function ang(v) return 150 + 240 * v / 100 end
     for _, z in ipairs(zones) do B.Arc(cx, cy, r - 22, r - 10, ang(z[1]), ang(z[2]), z[3]) end
     for v = 0, 100, 5 do
