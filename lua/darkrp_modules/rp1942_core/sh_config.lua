@@ -113,7 +113,7 @@ Faction tags (rp1942_core/cl_faction_tags.lua)
 A label above undercover jobs' heads that only their own side can see, so
 colleagues recognise each other. Everyone else sees nothing.
 jobs:      job COMMAND = { text, seenBy = faction that sees it, accent colour }
-distance:  game units (about 40 per metre); it fades out over the last quarter
+distance:  game units (~52 units = 1 m); it fades out over the last quarter
 ---------------------------------------------------------------------------]]
 C.FactionTags = {
     enabled  = true,

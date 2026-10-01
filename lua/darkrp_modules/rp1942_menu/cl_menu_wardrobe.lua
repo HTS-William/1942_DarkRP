@@ -15,11 +15,8 @@ local PANEL = {}
 
 -- Card captions: a size smaller than the menu's body text, so names like
 -- "Leibstandarte Rifleman" fit on two lines
-local function buildFonts()
-    surface.CreateFont("RP1942_WardrobeCaption", { font = "Roboto", size = math.max(12, math.floor(ScrH() * 0.0145)), weight = 500, extended = true })
-end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_WardrobeFonts", buildFonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_WardrobeCaption", 0.0145, 500)
 
 function PANEL:GetSubtitle()
     return "Wardrobe"

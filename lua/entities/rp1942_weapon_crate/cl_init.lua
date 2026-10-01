@@ -3,7 +3,7 @@ include("shared.lua")
 surface.CreateFont("RP1942_CrateName",  { font = "Roboto", size = 34, weight = 800, extended = true })
 surface.CreateFont("RP1942_CrateCount", { font = "Roboto", size = 26, weight = 600, extended = true })
 
-local TEXT, GOLD = Color(236, 228, 212), Color(201, 168, 92)
+local TEXT, GOLD = RP1942.col("text"), RP1942.col("gold")
 
 function ENT:Draw()
     self:DrawModel()

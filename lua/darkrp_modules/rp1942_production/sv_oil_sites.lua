@@ -14,18 +14,9 @@ The F4 Shop only offers a derrick while a site is free (GetGlobal2Int
 "RP1942_OilSitesFree", used by its customCheck in entities.lua).
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.Production.oil
-util.AddNetworkString("RP1942_Markers")
 
-local SAVE_DIR = "rp1942"
-local function saveFile() return SAVE_DIR .. "/oilsites_" .. game.GetMap() .. ".json" end
-local function loadSites()
-    local raw = file.Read(saveFile(), "DATA")
-    return raw and util.JSONToTable(raw) or {}
-end
-local function saveSites(list)
-    file.CreateDir(SAVE_DIR)
-    file.Write(saveFile(), util.TableToJSON(list, true))
-end
+local store = RP1942.mapStore("oilsites")   -- lua/autorun/rp1942_util.lua
+local loadSites, saveSites = store.load, store.save
 
 local sites = {}
 local function sitePos(s) return Vector(s.x, s.y, s.z) end
@@ -54,17 +45,8 @@ hook.Add("InitPostEntity", "RP1942_OilSites", function()
 end)
 hook.Add("PostCleanupMap", "RP1942_OilSites", function() timer.Simple(0, RP1942.updateOilSites) end)
 
--- Show markers to a player: { { pos =, text = }, ... } for `seconds`
-local function sendMarkers(ply, list, seconds)
-    net.Start("RP1942_Markers")
-    net.WriteFloat(seconds)
-    net.WriteUInt(math.min(#list, 64), 7)
-    for i = 1, math.min(#list, 64) do
-        net.WriteVector(list[i].pos)
-        net.WriteString(list[i].text)
-    end
-    net.Send(ply)
-end
+-- Labels on a player's screen (lua/autorun/rp1942_util.lua)
+local function sendMarkers(ply, list, seconds, tag) RP1942.showMarkers(ply, list, seconds, tag) end
 
 --[[---------------------------------------------------------------------------
 Building a derrick (the F4 Shop's spawn function, entities.lua). Picks the
@@ -137,7 +119,7 @@ local function showAll(ply)
     for id, s in pairs(sites) do
         list[#list + 1] = { pos = sitePos(s) + Vector(0, 0, 40), text = used[id] and "OIL SITE (TAKEN)" or "OIL SITE (FREE)" }
     end
-    sendMarkers(ply, list, 60)
+    sendMarkers(ply, list, 60, "oilsites")
     return #list
 end
 

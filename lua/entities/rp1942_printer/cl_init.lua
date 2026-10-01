@@ -13,14 +13,12 @@ ENT.PanelNoBackground = true
 
 surface.CreateFont("RP1942_PrinterBig", { font = "Roboto", size = 58, weight = 800, extended = true })
 
-local function colors()
-    local c = RP1942.F4Config and RP1942.F4Config.colors or {}
+local function colors()   -- the shared palette (rp1942_core/cl_theme.lua)
+    local C = RP1942.col
     return {
-        panel = c.panel or Color(28, 26, 23), card = c.card or Color(38, 35, 31), gold = c.gold or Color(201, 168, 92),
-        text = c.text or Color(236, 228, 212), sub = c.sub or Color(160, 152, 136), well = Color(46, 43, 39),
-        green = Color(90, 170, 90), greenD = c.categoryAlt or Color(38, 72, 30), red = Color(200, 60, 50),
-        redD = c.tabActive or Color(112, 22, 22), amber = Color(230, 170, 60), button = c.button or Color(128, 26, 24),
-        neutral = Color(60, 56, 50),
+        panel = C("panel"), card = C("card"), gold = C("gold"), text = C("text"), sub = C("sub"), well = C("well"),
+        green = C("good"), greenD = C("categoryAlt"), red = C("bad"), redD = C("tabActive"), amber = C("warn"),
+        button = C("button"), neutral = C("neutral"),
     }
 end
 

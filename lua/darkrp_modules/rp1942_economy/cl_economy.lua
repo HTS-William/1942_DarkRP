@@ -7,15 +7,8 @@ local SHOW_HUD = true
 local COLOR_TEXT = Color(230, 224, 208)
 local COLOR_OUTLINE = Color(0, 0, 0, 200)
 
-local function buildFont()
-    surface.CreateFont("RP1942_EconomyHUD", {
-        font = "Roboto",
-        size = math.max(14, math.floor(ScrH() * 0.019)),
-        weight = 500,
-    })
-end
-buildFont()
-hook.Add("OnScreenSizeChanged", "RP1942_EconomyFont", buildFont)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_EconomyHUD", 0.019, 500, { min = 14 })
 
 hook.Add("HUDPaint", "RP1942_EconomyHUD", function()
     if not SHOW_HUD then return end

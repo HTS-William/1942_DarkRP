@@ -21,11 +21,9 @@ function UI.mix(a, b, t)
     return Color(Lerp(t, a.r, b.r), Lerp(t, a.g, b.g), Lerp(t, a.b, b.b), Lerp(t, a.a or 255, b.a or 255))
 end
 
-local function buildFonts()
-    local h = ScrH()
-    local function font(name, scale, weight)
-        surface.CreateFont(name, { font = "Roboto", size = math.max(12, math.floor(h * scale)), weight = weight, extended = true })
-    end
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+do
+    local font = RP1942.screenFont
     font("RP1942_F4Title",   0.026, 800)
     font("RP1942_F4Tab",     0.016, 600)
     font("RP1942_F4Big",     0.034, 800)
@@ -34,8 +32,6 @@ local function buildFonts()
     font("RP1942_F4Small",   0.0135, 600)
     font("RP1942_F4Button",  0.017, 700)
 end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_F4Fonts", buildFonts)
 
 -- A flat button. isEnabled (optional) is checked every frame.
 function UI.button(parent, text, onClick, isEnabled)

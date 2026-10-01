@@ -8,16 +8,12 @@ Everyone else gets a banner: the Führer chose wisely / poorly.
 ---------------------------------------------------------------------------]]
 local D = RP1942.Decisions
 
-local function fonts()
-    local h = ScrH()
-    surface.CreateFont("RP1942_DecTitle",  { font = "Roboto", size = math.max(18, math.floor(h * 0.024)), weight = 900, extended = true })
-    surface.CreateFont("RP1942_DecText",   { font = "Roboto", size = math.max(15, math.floor(h * 0.019)), weight = 500, extended = true })
-    surface.CreateFont("RP1942_DecAnswer", { font = "Roboto", size = math.max(14, math.floor(h * 0.017)), weight = 500, extended = true })
-    surface.CreateFont("RP1942_DecTag",    { font = "Roboto", size = math.max(12, math.floor(h * 0.0135)), weight = 800, extended = true })
-    surface.CreateFont("RP1942_DecBig",    { font = "Roboto", size = math.max(24, math.floor(h * 0.036)), weight = 900, extended = true })
-end
-fonts()
-hook.Add("OnScreenSizeChanged", "RP1942_DecisionFonts", fonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_DecTitle", 0.024, 900, { min = 18 })
+RP1942.screenFont("RP1942_DecText", 0.019, 500, { min = 15 })
+RP1942.screenFont("RP1942_DecAnswer", 0.017, 500, { min = 14 })
+RP1942.screenFont("RP1942_DecTag", 0.0135, 800)
+RP1942.screenFont("RP1942_DecBig", 0.036, 900, { min = 24 })
 
 local COL = {
     bg = Color(22, 21, 19, 250), title = Color(30, 28, 25), rule = Color(128, 26, 24),

@@ -3,7 +3,7 @@ include("shared.lua")
 surface.CreateFont("RP1942_RadioName", { font = "Roboto", size = 28, weight = 800, extended = true })
 surface.CreateFont("RP1942_RadioSub",  { font = "Roboto", size = 20, weight = 600, extended = true })
 
-local GOLD, SUB, RED = Color(201, 168, 92), Color(170, 162, 146), Color(220, 70, 60)
+local GOLD, SUB, RED = RP1942.col("gold"), Color(170, 162, 146), Color(220, 70, 60)
 
 function ENT:Think()
     RP1942.radioThink(self)

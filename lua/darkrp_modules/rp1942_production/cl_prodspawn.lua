@@ -3,26 +3,19 @@
 The window the server opens (sv_prodspawn.lua). Aim first, then open it:
 everything spawns at your crosshair.
 ---------------------------------------------------------------------------]]
-local function colors()
-    local c = RP1942.F4Config and RP1942.F4Config.colors or {}
+local function colors()   -- the shared palette (rp1942_core/cl_theme.lua)
+    local C = RP1942.col
     return {
-        bg = c.bg or Color(20, 19, 17, 248), bar = c.titleBar or Color(14, 13, 12),
-        panel = c.panel or Color(28, 26, 23), card = c.card or Color(38, 35, 31),
-        hover = c.cardHover or Color(52, 48, 42), on = c.cardSelected or Color(64, 52, 36),
-        head = c.category or Color(84, 18, 18), gold = c.gold or Color(201, 168, 92),
-        text = c.text or Color(236, 228, 212), sub = c.sub or Color(160, 152, 136),
-        button = c.button or Color(128, 26, 24), buttonHover = c.buttonHover or Color(156, 36, 32),
+        bg = C("bg"), bar = C("titleBar"), panel = C("panel"), card = C("card"),
+        hover = C("cardHover"), on = C("cardSelected"), head = C("category"), gold = C("gold"),
+        text = C("text"), sub = C("sub"), button = C("button"), buttonHover = C("buttonHover"),
     }
 end
 
-local function fonts()
-    local h = ScrH()
-    surface.CreateFont("RP1942_PSTitle", { font = "Roboto", size = math.max(20, math.floor(h * 0.026)), weight = 800, extended = true })
-    surface.CreateFont("RP1942_PSHead",  { font = "Roboto", size = math.max(15, math.floor(h * 0.018)), weight = 800, extended = true })
-    surface.CreateFont("RP1942_PSBody",  { font = "Roboto", size = math.max(13, math.floor(h * 0.015)), weight = 500, extended = true })
-end
-fonts()
-hook.Add("OnScreenSizeChanged", "RP1942_ProdSpawnFonts", fonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_PSTitle", 0.026, 800, { min = 20 })
+RP1942.screenFont("RP1942_PSHead", 0.018, 800, { min = 15 })
+RP1942.screenFont("RP1942_PSBody", 0.015, 500, { min = 13 })
 
 local function send(kind, id, q, count, pocket)
     net.Start("RP1942_ProdSpawn")
@@ -224,20 +217,4 @@ end
 net.Receive("RP1942_ProdSpawnOpen", open)
 
 -- !prodsaves: highlight every saved machine for a minute
-local savedSpots, savedUntil = {}, 0
-net.Receive("RP1942_ProdSaves", function()
-    savedSpots = {}
-    for i = 1, net.ReadUInt(8) do savedSpots[i] = net.ReadVector() end
-    savedUntil = CurTime() + 60
-end)
-hook.Add("HUDPaint", "RP1942_ProdSaves", function()
-    if CurTime() > savedUntil then return end
-    local C = colors()
-    for _, pos in ipairs(savedSpots) do
-        local sp = (pos + Vector(0, 0, 40)):ToScreen()
-        if sp.visible then
-            draw.RoundedBox(4, sp.x - 5, sp.y - 5, 10, 10, C.gold)
-            draw.SimpleText("SAVED  " .. math.floor(LocalPlayer():GetPos():Distance(pos) / 52.5) .. " m", "RP1942_PSBody", sp.x, sp.y - 8, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-        end
-    end
-end)
+-- (!prodsaves markers: rp1942_core/cl_markers.lua)

@@ -197,11 +197,8 @@ end
 --[[---------------------------------------------------------------------------
 Robbing: press E to start, keep holding E and looking at the train
 ---------------------------------------------------------------------------]]
-local function setHold(ply, startTime, endTime, text)
-    ply:SetNW2Float("RP1942_HoldStart", startTime)
-    ply:SetNW2Float("RP1942_HoldEnd", endTime)
-    ply:SetNW2String("RP1942_HoldText", text or "")
-end
+-- (lua/autorun/rp1942_util.lua)
+local function clearHold(ply) RP1942.clearHoldBar(ply) end
 
 function ENT:Use(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return end
@@ -217,7 +214,7 @@ function ENT:Use(ply)
     local c = self:GetConfig()
     local now = CurTime()
     self.robbers[ply] = now + (c.holdTime or 4)
-    setHold(ply, now, self.robbers[ply], "Robbing a crate...")
+    RP1942.setHoldBar(ply, self.robbers[ply] - now, "Robbing a crate...")
 end
 
 function ENT:ThinkRobbers(c, now)
@@ -231,10 +228,10 @@ function ENT:ThinkRobbers(c, now)
 
         if not ok then
             self.robbers[ply] = nil
-            if IsValid(ply) then setHold(ply, 0, 0) end
+            if IsValid(ply) then clearHold(ply) end
         elseif now >= doneAt then
             self.robbers[ply] = nil
-            setHold(ply, 0, 0)
+            clearHold(ply)
             self:GiveCrate(ply, c)
         end
     end
@@ -301,6 +298,6 @@ end
 
 function ENT:OnRemove()
     for ply in pairs(self.robbers or {}) do
-        if IsValid(ply) then setHold(ply, 0, 0) end
+        if IsValid(ply) then clearHold(ply) end
     end
 end

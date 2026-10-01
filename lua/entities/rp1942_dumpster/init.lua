@@ -51,11 +51,8 @@ end
 Searching: press E to start, keep holding E and looking at the dumpster
 (the progress bar is the shared "hold" bar from rp1942_core/cl_holdbar.lua)
 ---------------------------------------------------------------------------]]
-local function setHold( ply, startTime, endTime, text )
-	ply:SetNW2Float( "RP1942_HoldStart", startTime )
-	ply:SetNW2Float( "RP1942_HoldEnd", endTime )
-	ply:SetNW2String( "RP1942_HoldText", text or "" )
-end
+-- (lua/autorun/rp1942_util.lua)
+local function clearHold( ply ) RP1942.clearHoldBar( ply ) end
 
 function ENT:HasDrop()
 	return self.drop.money > 0 or #self.drop.weapons > 0
@@ -75,7 +72,7 @@ function ENT:Use( activator, caller )
 
 	local now = CurTime()
 	self.searchers[ ply ] = now + CFG.SearchTime
-	setHold( ply, now, now + CFG.SearchTime, "Searching the dumpster..." )
+	RP1942.setHoldBar( ply, CFG.SearchTime, "Searching the dumpster..." )
 	self:EmitSound( CFG.UseSound, 70 )
 	self.nextRummage = now + 0.5
 end
@@ -93,7 +90,7 @@ function ENT:Think()
 		if not ok then
 			self.searchers[ ply ] = nil
 			if IsValid( ply ) then
-				setHold( ply, 0, 0 )
+				clearHold( ply )
 				--> Let go almost straight away: they probably tapped E expecting instant loot
 				if not ply:KeyDown( IN_USE ) and doneAt - now > CFG.SearchTime - 0.6 then
 					DarkRP.notify( ply, 0, 3, "Keep holding E to search the dumpster." )
@@ -101,7 +98,7 @@ function ENT:Think()
 			end
 		elseif now >= doneAt then
 			self.searchers[ ply ] = nil
-			setHold( ply, 0, 0 )
+			clearHold( ply )
 			self:FinishSearch( ply )
 		end
 	end
@@ -427,19 +424,8 @@ DarkRP.defineChatCommand( "deaddrop", deadDrop )
 Placing dumpsters: fixed ones from config.lua, plus ones placed in game with
 !adddumpster, saved per map in data/rp1942/dumpsters_<map>.json
 ---------------------------------------------------------------------------]]
-local SAVE_DIR = "rp1942"
-local function saveFile() return SAVE_DIR .. "/dumpsters_" .. game.GetMap() .. ".json" end
-
-local function loadSaved()
-	local raw = file.Read( saveFile(), "DATA" )
-	local list = raw and util.JSONToTable( raw ) or {}
-	return list
-end
-
-local function writeSaved( list )
-	file.CreateDir( SAVE_DIR )
-	file.Write( saveFile(), util.TableToJSON( list, true ) )
-end
+local store = RP1942.mapStore( "dumpsters" )   -- lua/autorun/rp1942_util.lua
+local loadSaved, writeSaved = store.load, store.save
 
 local function spawnDumpster( pos, ang, saveId )
 	local d = ents.Create( "rp1942_dumpster" )
@@ -593,7 +579,7 @@ end )
 function ENT:OnRemove()
 	timer.Remove( "rp1942_dumpsters_spawn_" .. self:EntIndex() )
 	for ply in pairs( self.searchers or {} ) do
-		if IsValid( ply ) then setHold( ply, 0, 0 ) end
+		if IsValid( ply ) then clearHold( ply ) end
 	end
 end
 

@@ -18,14 +18,7 @@ RP1942.HUDConfig.notices = false (sh_hud.lua) brings the default boxes back.
 local CFG = RP1942.HUDConfig
 if not CFG then return end
 
-local FALLBACK = {
-    bg = Color(20, 19, 17), tabActive = Color(112, 22, 22), gold = Color(201, 168, 92),
-    text = Color(236, 228, 212), sub = Color(160, 152, 136),
-}
-local function C(key)
-    local f4 = RP1942.F4Config and RP1942.F4Config.colors
-    return (f4 and f4[key]) or FALLBACK[key]
-end
+local function C(key) return RP1942.col(key) end   -- rp1942_core/cl_theme.lua
 
 local STRIP = {
     [0] = "gold",                       -- NOTIFY_GENERIC
@@ -39,12 +32,8 @@ local function stripColour(kind)
     return isstring(c) and C(c) or c
 end
 
--- Its own font, a little bigger than the HUD's body text
-local function buildFont()
-    surface.CreateFont("RP1942_HudNotice", { font = "Roboto", size = math.max(14, math.floor(ScrH() * (CFG.noticeText or 0.018))), weight = 500, extended = true })
-end
-buildFont()
-hook.Add("OnScreenSizeChanged", "RP1942_HUDNoticeFont", buildFont)
+-- Its own font, a little bigger than the HUD's body text (lua/autorun/client/rp1942_screenfonts.lua)
+RP1942.screenFont("RP1942_HudNotice", CFG.noticeText or 0.018, 500, { min = 14 })
 
 local notices = {}   -- oldest first
 

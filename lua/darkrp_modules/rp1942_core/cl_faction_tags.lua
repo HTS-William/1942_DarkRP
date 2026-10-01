@@ -10,13 +10,8 @@ Where it goes: DarkRP draws the name 50px above the head when you look at
 someone; a wanted player instead has WANTED (and its reason) above the head
 with the name below. The label sits above whichever of those is there.
 ---------------------------------------------------------------------------]]
-local function buildFont()
-    surface.CreateFont("RP1942_ReichTag", {
-        font = "Roboto", size = math.max(12, math.floor(ScrH() * 0.016)), weight = 800, extended = true,
-    })
-end
-buildFont()
-hook.Add("OnScreenSizeChanged", "RP1942_FactionTagFont", buildFont)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_ReichTag", 0.016, 800)
 
 local function fontHeight(font)
     surface.SetFont(font)

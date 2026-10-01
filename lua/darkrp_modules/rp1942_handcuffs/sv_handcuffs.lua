@@ -20,22 +20,15 @@ local function click(arrester)
     arrester:EmitSound("weapons/357/357_reload" .. CLICKS[math.random(#CLICKS)] .. ".wav", 50, 100)
 end
 
-local function setBar(ply, start, finish, text)
-    if not IsValid(ply) then return end
-    ply:SetNW2Float("RP1942_HoldStart", start)
-    ply:SetNW2Float("RP1942_HoldEnd", finish)
-    ply:SetNW2String("RP1942_HoldText", text or "")
-end
-
 -- Let go. why: told to the arrester (nil = quietly); the prisoner hears they're free.
 local function stop(arrester, why)
     local c = active[arrester]
     if not c then return end
     active[arrester] = nil
     local target = c.target
-    setBar(arrester, 0, 0, "")
+    RP1942.clearHoldBar(arrester)
     if IsValid(target) then
-        setBar(target, 0, 0, "")
+        RP1942.clearHoldBar(target)
         target:SetNW2Entity("RP1942_CuffedBy", NULL)
     end
     if why then
@@ -66,8 +59,8 @@ function RP1942.handcuffStart(arrester, target)
     local now = CurTime()
     active[arrester] = { target = target, finish = now + CFG.time, nextSound = now + 1 }
     target:SetNW2Entity("RP1942_CuffedBy", arrester)
-    setBar(arrester, now, now + CFG.time, "Handcuffing " .. target:Nick() .. "...")
-    setBar(target, now, now + CFG.time, arrester:Nick() .. " is handcuffing you...")
+    RP1942.setHoldBar(arrester, CFG.time, "Handcuffing " .. target:Nick() .. "...")   -- lua/autorun/rp1942_util.lua
+    RP1942.setHoldBar(target, CFG.time, arrester:Nick() .. " is handcuffing you...")
     click(arrester)
     return true
 end

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - padlocks (client): the lock's menu (Shift+E) and !doorlocks
+1942 DarkRP - padlocks (client): the lock's menu (Shift+E)
 ---------------------------------------------------------------------------]]
 local frame
 
@@ -151,24 +151,4 @@ net.Receive("RP1942_PadlockMenu", function()
     if IsValid(d.lock) then openMenu(d) end
 end)
 
---[[ !doorlocks: every lock, marked on screen for a minute -------------------]]
-local markers, markersUntil = {}, 0
-net.Receive("RP1942_PadlockMarkers", function()
-    markers = {}
-    for i = 1, net.ReadUInt(8) do markers[i] = { pos = net.ReadVector(), text = net.ReadString() } end
-    markersUntil = CurTime() + 60
-end)
-
-hook.Add("HUDPaint", "RP1942_PadlockMarkers", function()
-    if CurTime() > markersUntil or #markers == 0 then return end
-    local eye = LocalPlayer():EyePos()
-    for _, m in ipairs(markers) do
-        local sp = m.pos:ToScreen()
-        if sp.visible then
-            local dist = math.floor(eye:Distance(m.pos) / 52.5)
-            draw.RoundedBox(4, sp.x - 5, sp.y - 5, 10, 10, Color(201, 168, 92))
-            draw.SimpleTextOutlined(m.text .. "  ·  " .. dist .. " m", "DermaDefaultBold", sp.x, sp.y - 10,
-                Color(236, 228, 212), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0, 220))
-        end
-    end
-end)
+-- (!doorlocks markers: rp1942_core/cl_markers.lua)

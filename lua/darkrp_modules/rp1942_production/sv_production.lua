@@ -246,16 +246,8 @@ end
 Markets: placed in game with !addmarket, saved per map in
 data/rp1942/markets_<map>.json
 ---------------------------------------------------------------------------]]
-local SAVE_DIR = "rp1942"
-local function saveFile() return SAVE_DIR .. "/markets_" .. game.GetMap() .. ".json" end
-local function loadSaved()
-    local raw = file.Read(saveFile(), "DATA")
-    return raw and util.JSONToTable(raw) or {}
-end
-local function writeSaved(list)
-    file.CreateDir(SAVE_DIR)
-    file.Write(saveFile(), util.TableToJSON(list, true))
-end
+local store = RP1942.mapStore("markets")   -- lua/autorun/rp1942_util.lua
+local loadSaved, writeSaved = store.load, store.save
 
 local function spawnMarket(pos, yaw, saveId)
     local m = ents.Create("rp1942_market")

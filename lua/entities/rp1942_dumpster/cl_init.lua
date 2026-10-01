@@ -31,16 +31,9 @@ local function cooldownLeft( ent )
 	return math.max( 0, ( readyAt[ ent ] or 0 ) - CurTime() )
 end
 
-local function colors()
-	local f4 = RP1942 and RP1942.F4Config and RP1942.F4Config.colors or {}
-	return {
-		bg    = Color( 14, 13, 12, 215 ),
-		strip = f4.gold or Color( 201, 168, 92 ),
-		text  = f4.text or Color( 236, 228, 212 ),
-		dim   = Color( 160, 152, 136 ),
-		busy  = Color( 170, 60, 50 ),
-		drop  = Color( 110, 170, 90 ),
-	}
+local function colors()   -- the shared palette (rp1942_core/cl_theme.lua)
+	local C = RP1942.col
+	return { bg = C( "labelBg" ), strip = C( "gold" ), text = C( "text" ), dim = C( "sub" ), busy = C( "bad" ), drop = C( "good" ) }
 end
 
 local function getLabel()

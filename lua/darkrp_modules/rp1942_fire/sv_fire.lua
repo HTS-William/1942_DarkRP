@@ -223,6 +223,7 @@ function RP1942.extinguishAll()
     end
     nodes = {}
     clusters = {}
+    count = 0
     return n
 end
 

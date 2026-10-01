@@ -11,27 +11,19 @@ local function fmt(sec)
     return string.format("%d:%02d", math.floor(sec / 60), sec % 60)
 end
 
-local colorCache
-local function colors()
-    if colorCache then return colorCache end
-    local c = RP1942.F4Config and RP1942.F4Config.colors or {}
-    colorCache = {
-        bg = c.bg or Color(20, 19, 17, 248), bar = c.titleBar or Color(14, 13, 12),
-        card = c.card or Color(38, 35, 31), gold = c.gold or Color(201, 168, 92),
-        text = c.text or Color(236, 228, 212), sub = c.sub or Color(160, 152, 136),
-        red = Color(200, 60, 50), redD = Color(128, 18, 16), green = Color(90, 170, 90), well = Color(46, 43, 39),
+local REDD = Color(128, 18, 16)
+local function colors()   -- the shared palette (rp1942_core/cl_theme.lua)
+    local C = RP1942.col
+    return {
+        bg = C("bg"), bar = C("titleBar"), card = C("card"), gold = C("gold"), text = C("text"), sub = C("sub"),
+        red = C("bad"), redD = REDD, green = C("good"), well = C("well"),
     }
-    return colorCache
 end
 
-local function fonts()
-    local h = ScrH()
-    surface.CreateFont("RP1942_BankHead",  { font = "Roboto", size = math.max(14, math.floor(h * 0.016)), weight = 800, extended = true })
-    surface.CreateFont("RP1942_BankTime",  { font = "Roboto", size = math.max(28, math.floor(h * 0.042)), weight = 900, extended = true })
-    surface.CreateFont("RP1942_BankBody",  { font = "Roboto", size = math.max(13, math.floor(h * 0.015)), weight = 500, extended = true })
-end
-fonts()
-hook.Add("OnScreenSizeChanged", "RP1942_BankFonts", fonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_BankHead", 0.016, 800, { min = 14 })
+RP1942.screenFont("RP1942_BankTime", 0.042, 900, { min = 28 })
+RP1942.screenFont("RP1942_BankBody", 0.015, 500, { min = 13 })
 
 net.Receive("RP1942_BankSettings", function()
     local t = util.JSONToTable(net.ReadString() or "")
@@ -150,7 +142,7 @@ hook.Add("HUDPaint", "RP1942_Bank", function()
         local pos = vault:WorldSpaceCenter() + Vector(0, 0, 60)
         local sp = pos:ToScreen()
         if sp.visible then
-            local d = math.floor(me:GetPos():Distance(vault:GetPos()) / 52.5)
+            local d = RP1942.metres(me:GetPos():Distance(vault:GetPos()))
             local pulse = 0.6 + 0.4 * math.abs(math.sin(RealTime() * 3))
             surface.SetDrawColor(C.red.r, C.red.g, C.red.b, 255 * pulse)
             surface.DrawOutlinedRect(sp.x - 10, sp.y - 10, 20, 20, 2)

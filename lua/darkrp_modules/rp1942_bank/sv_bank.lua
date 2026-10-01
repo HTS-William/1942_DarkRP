@@ -102,12 +102,8 @@ end)
 --[[---------------------------------------------------------------------------
 The vault: placed with !addvault, saved per map in data/rp1942/bankvault_<map>.json
 ---------------------------------------------------------------------------]]
-local function vaultFile() return SAVE_DIR .. "/bankvault_" .. game.GetMap() .. ".json" end
-local function loadVaults() return util.JSONToTable(file.Read(vaultFile(), "DATA") or "") or {} end
-local function writeVaults(list)
-    file.CreateDir(SAVE_DIR)
-    file.Write(vaultFile(), util.TableToJSON(list, true))
-end
+local vaultStore = RP1942.mapStore("bankvault")   -- lua/autorun/rp1942_util.lua
+local loadVaults, writeVaults = vaultStore.load, vaultStore.save
 
 local function spawnVault(pos, yaw, id)
     local v = ents.Create("rp1942_bank_vault")

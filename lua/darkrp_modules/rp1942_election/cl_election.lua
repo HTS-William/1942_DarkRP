@@ -31,14 +31,9 @@ local COL = {
     shade     = Color(0, 0, 0, 90),
 }
 
-local function buildFonts()
-    local h = ScrH()
-    local function font(name, scale, weight, face)
-        surface.CreateFont(name, {
-            font = face or "Roboto", size = math.max(12, math.floor(h * scale)),
-            weight = weight, extended = true,   -- extended: the ü in Führer
-        })
-    end
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+local function font(name, scale, weight, face) RP1942.screenFont(name, scale, weight, { font = face }) end
+do
     font("RP1942_ElTitle",  0.028, 800)
     font("RP1942_ElSub",    0.016, 300, "Roboto Light")
     font("RP1942_ElTimer",  0.030, 700)
@@ -50,8 +45,6 @@ local function buildFonts()
     font("RP1942_ElAlertSub", 0.020, 400)
     font("RP1942_ElAlertMsg", 0.024, 500)
 end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_ElectionFonts", buildFonts)
 
 local function clock(seconds)
     return string.FormattedTime(math.max(0, math.ceil(seconds)), "%01i:%02i")

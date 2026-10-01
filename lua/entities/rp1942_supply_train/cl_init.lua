@@ -3,16 +3,9 @@ include("shared.lua")
 surface.CreateFont("RP1942_TrainTitle", { font = "Roboto", size = 64, weight = 800, extended = true })
 surface.CreateFont("RP1942_TrainLine",  { font = "Roboto", size = 40, weight = 500, extended = true })
 
-local function colors()
-    local f4 = RP1942 and RP1942.F4Config and RP1942.F4Config.colors or {}
-    return {
-        bg     = Color(14, 13, 12, 215),
-        strip  = f4.category or Color(84, 18, 18),
-        text   = f4.text or Color(236, 228, 212),
-        dim    = Color(170, 160, 140),
-        gold   = f4.gold or Color(201, 168, 92),
-        red    = Color(210, 60, 50),
-    }
+local function colors()   -- the shared palette (rp1942_core/cl_theme.lua)
+    local C = RP1942.col
+    return { bg = C("labelBg"), strip = C("category"), text = C("text"), dim = C("dim"), gold = C("gold"), red = C("bad") }
 end
 
 local STATUS = {

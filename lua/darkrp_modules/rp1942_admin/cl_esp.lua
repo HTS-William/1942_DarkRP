@@ -20,13 +20,9 @@ net.Receive("RP1942_ESPData", function()
     end
 end)
 
-local function fonts()
-    local h = ScrH()
-    surface.CreateFont("RP1942_ESPName", { font = "Roboto", size = math.max(14, math.floor(h * 0.016)), weight = 800, extended = true, outline = true })
-    surface.CreateFont("RP1942_ESPInfo", { font = "Roboto", size = math.max(12, math.floor(h * 0.013)), weight = 600, extended = true, outline = true })
-end
-fonts()
-hook.Add("OnScreenSizeChanged", "RP1942_ESPFonts", fonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_ESPName", 0.016, 800, { min = 14, outline = true })
+RP1942.screenFont("RP1942_ESPInfo", 0.013, 600, { outline = true })
 
 local function lifted(col)
     local lum = 0.299 * col.r + 0.587 * col.g + 0.114 * col.b
@@ -82,7 +78,7 @@ local function drawPlayer(p, eye, cfg, maxD, dis)
     local lines = {
         { p:Nick() .. ((rank ~= "user" and rank ~= "") and ("  [" .. string.upper(rank) .. "]") or ""), "RP1942_ESPName", col },
         { jobText, "RP1942_ESPInfo", Color(230, 225, 215) },
-        { (alive and (hp .. " HP") or "DEAD") .. "   ·   " .. math.floor(dist / 52.5) .. " m"
+        { (alive and (hp .. " HP") or "DEAD") .. "   ·   " .. RP1942.metres(dist) .. " m"
             .. (p:getDarkRPVar("wanted") and "   ·   WANTED" or "") .. (dormant and "   ·   far" or ""), "RP1942_ESPInfo", Color(190, 185, 170) },
     }
     local y = head.y - 4

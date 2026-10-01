@@ -21,30 +21,19 @@ local CFG = RP1942.HUDConfig
 if not CFG then return end
 local HC = CFG.colors
 
--- Base colours follow the F4 menu so the two always match
-local FALLBACK = {
-    bg = Color(20, 19, 17), titleBar = Color(14, 13, 12), tabActive = Color(112, 22, 22),
-    gold = Color(201, 168, 92), text = Color(236, 228, 212), sub = Color(160, 152, 136),
-}
-local function C(key)
-    local f4 = RP1942.F4Config and RP1942.F4Config.colors
-    return (f4 and f4[key]) or FALLBACK[key]
-end
+-- Base colours follow the F4 menu so the two always match (rp1942_core/cl_theme.lua)
+local function C(key) return RP1942.col(key) end
 local function alpha(c, a) return Color(c.r, c.g, c.b, a) end
 
-local function buildFonts()
-    local h = ScrH()
-    local function font(name, scale, weight)
-        surface.CreateFont(name, { font = "Roboto", size = math.max(12, math.floor(h * scale)), weight = weight, extended = true })
-    end
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+do
+    local font = RP1942.screenFont
     font("RP1942_HudName",    0.021, 800)
     font("RP1942_HudBody",    0.015, 500)
     font("RP1942_HudSmall",   0.0125, 700)
     font("RP1942_HudAmmo",    0.040, 800)
     font("RP1942_HudAmmoSub", 0.018, 600)
 end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_HudFonts", buildFonts)
 
 local function textSize(font, text)
     surface.SetFont(font)

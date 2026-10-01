@@ -3,7 +3,7 @@ include("shared.lua")
 surface.CreateFont("RP1942_VaultTitle", { font = "Roboto", size = 42, weight = 900, extended = true })
 surface.CreateFont("RP1942_VaultSub",   { font = "Roboto", size = 26, weight = 600, extended = true })
 
-local GOLD, TEXT, SUB, RED = Color(201, 168, 92), Color(236, 228, 212), Color(170, 162, 146), Color(220, 70, 60)
+local GOLD, SUB, RED = RP1942.col("gold"), Color(170, 162, 146), Color(220, 70, 60)
 
 local function fmt(sec)
     sec = math.max(0, math.ceil(sec))

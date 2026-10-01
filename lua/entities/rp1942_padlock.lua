@@ -46,7 +46,7 @@ end
 -- Client: the label, up close
 surface.CreateFont("RP1942_PadlockName", { font = "Roboto", size = 26, weight = 800, extended = true })
 surface.CreateFont("RP1942_PadlockSub",  { font = "Roboto", size = 19, weight = 600, extended = true })
-local GOLD, SUB, GREEN = Color(201, 168, 92), Color(200, 192, 176), Color(130, 190, 100)
+local GOLD, SUB, GREEN = RP1942.col("gold"), Color(200, 192, 176), Color(130, 190, 100)
 
 function ENT:Draw()
     self:DrawModel()

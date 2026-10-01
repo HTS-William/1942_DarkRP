@@ -64,15 +64,11 @@ RP1942.MenuThemes = {
 --[[---------------------------------------------------------------------------
 Fonts (sized from screen height, rebuilt on resolution change)
 ---------------------------------------------------------------------------]]
-local function buildFonts()
-    local h = ScrH()
-    surface.CreateFont("RP1942_MenuTitle",   { font = "Roboto",       size = math.max(20, math.floor(h * 0.030)), weight = 700 })
-    surface.CreateFont("RP1942_MenuSub",     { font = "Roboto Light", size = math.max(14, math.floor(h * 0.017)), weight = 300 })
-    surface.CreateFont("RP1942_MenuSection", { font = "Roboto",       size = math.max(15, math.floor(h * 0.019)), weight = 700 })
-    surface.CreateFont("RP1942_MenuBody",    { font = "Roboto Light", size = math.max(14, math.floor(h * 0.018)), weight = 300 })
-end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_MenuFonts", buildFonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_MenuTitle", 0.030, 700, { min = 20 })
+RP1942.screenFont("RP1942_MenuSub", 0.017, 300, { min = 14, font = "Roboto Light" })
+RP1942.screenFont("RP1942_MenuSection", 0.019, 700, { min = 15 })
+RP1942.screenFont("RP1942_MenuBody", 0.018, 300, { min = 14, font = "Roboto Light" })
 
 local HEADER_H = 58
 

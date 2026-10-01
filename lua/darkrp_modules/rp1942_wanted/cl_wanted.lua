@@ -10,18 +10,11 @@ Colours and text: RP1942.Wanted in sh_wanted.lua.
 local CFG = RP1942.Wanted
 local COLS = CFG.colors
 
-local function buildFonts()
-    local h = ScrH()
-    local function font(name, scale, weight)
-        surface.CreateFont(name, { font = "Roboto", size = math.max(12, math.floor(h * scale)), weight = weight, extended = true })
-    end
-    font("RP1942_WantedTag",    0.030, 900)
-    font("RP1942_WantedReason", 0.016, 500)
-    font("RP1942_AlertTitle",   0.015, 500)
-    font("RP1942_AlertText",    0.026, 800)
-end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_WantedFonts", buildFonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_WantedTag",    0.030, 900)
+RP1942.screenFont("RP1942_WantedReason", 0.016, 500)
+RP1942.screenFont("RP1942_AlertTitle",   0.015, 500)
+RP1942.screenFont("RP1942_AlertText",    0.026, 800)
 
 local function mix(a, b, t)
     return Color(Lerp(t, a.r, b.r), Lerp(t, a.g, b.g), Lerp(t, a.b, b.b), Lerp(t, a.a or 255, b.a or 255))

@@ -48,7 +48,7 @@ RP1942.Wanted = {
 
     -- The tag above wanted players
     showReason      = true,            -- small reason line under WANTED
-    tagMaxDistance  = 800,             -- game units (about 40 per metre): beyond this, no tag.
+    tagMaxDistance  = 800,             -- game units (~52 units = 1 m): beyond this, no tag.
                                        -- It fades out over the last quarter of the distance.
 
     -- Alert boxes

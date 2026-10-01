@@ -18,11 +18,10 @@ local S = RP1942.padlockSetting
 
 util.AddNetworkString("RP1942_PadlockMenu")     -- to a player: open the lock's menu
 util.AddNetworkString("RP1942_PadlockEdit")     -- from a player: change it
-util.AddNetworkString("RP1942_PadlockMarkers")  -- to staff: every lock, for !doorlocks
 
 local DATA_DIR = "rp1942"
 local SETTINGS_FILE = DATA_DIR .. "/padlocks.json"
-local function savesFile() return DATA_DIR .. "/padlocks_" .. game.GetMap() .. ".json" end
+local store = RP1942.mapStore("padlocks")   -- staff locks saved per map (lua/autorun/rp1942_util.lua)
 
 local locks = {}   -- every padlock: ent -> true
 
@@ -456,7 +455,7 @@ end)
 hook.Add("CanProperty", "RP1942_Padlocks", function(ply, _, ent) return guarded(ply, ent) end)
 
 --[[ Staff locks saved per map ----------------------------------------------]]
-local function loadSaves() return util.JSONToTable(file.Read(savesFile(), "DATA") or "") or {} end
+local loadSaves = store.load
 
 writeSave = function(id, lock)
     local saves = loadSaves()
@@ -479,8 +478,7 @@ writeSave = function(id, lock)
             players = players,
         }
     end
-    file.CreateDir(DATA_DIR)
-    file.Write(savesFile(), util.TableToJSON(saves, true))
+    store.save(saves)
 end
 
 -- A saved door is a fresh prop owned by nobody, so it outlives whoever placed it
@@ -582,13 +580,7 @@ RP1942.defineStaffCommand("doorlocks", function(ply)
             list[#list + 1] = { pos = lock:GetPos(), text = who }
         end
     end
-    net.Start("RP1942_PadlockMarkers")
-    net.WriteUInt(math.min(#list, 255), 8)
-    for i = 1, math.min(#list, 255) do
-        net.WriteVector(list[i].pos)
-        net.WriteString(list[i].text)
-    end
-    net.Send(ply)
+    RP1942.showMarkers(ply, list, 60, "doorlocks")   -- lua/autorun/rp1942_util.lua
     say(ply, #list .. " padlock(s) on the map, highlighted for a minute.")
 end)
 

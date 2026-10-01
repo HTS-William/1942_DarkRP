@@ -56,7 +56,7 @@ local function getLabel()
     function Label:Paint(ent)
         local info = ent:LabelInfo()
         if not info then return end
-        local f4 = RP1942.F4Config and RP1942.F4Config.colors or {}
+        local C = RP1942.col   -- rp1942_core/cl_theme.lua
         local lines = info.lines or {}
         surface.SetFont("RP1942_ProdTitle")   -- the title in its own (bigger) font
         local w = select(1, surface.GetTextSize(info.title or "")) + 44
@@ -66,18 +66,18 @@ local function getLabel()
         local h = 50 + #lines * 30 + (info.progress and 18 or 0)
         local x, y = -w / 2, -h
 
-        draw.RoundedBox(0, x, y, w, h, Color(14, 13, 12, 215))
-        surface.SetDrawColor(info.accent or f4.gold or Color(201, 168, 92))
+        draw.RoundedBox(0, x, y, w, h, C("labelBg"))
+        surface.SetDrawColor(info.accent or C("gold"))
         surface.DrawRect(x, y, 6, h)
-        draw.SimpleText(info.title or "", "RP1942_ProdTitle", x + 22, y + 8, f4.text or Color(236, 228, 212))
+        draw.SimpleText(info.title or "", "RP1942_ProdTitle", x + 22, y + 8, C("text"))
         for i, l in ipairs(lines) do
-            draw.SimpleText(l, "RP1942_ProdLine", x + 22, y + 14 + i * 30, Color(170, 160, 142))
+            draw.SimpleText(l, "RP1942_ProdLine", x + 22, y + 14 + i * 30, C("dim"))
         end
         if info.progress then
             local bx, by, bw = x + 22, y + h - 20, w - 44
-            surface.SetDrawColor(46, 43, 39)
+            surface.SetDrawColor(C("well"))
             surface.DrawRect(bx, by, bw, 8)
-            surface.SetDrawColor(info.accent or f4.gold or Color(201, 168, 92))
+            surface.SetDrawColor(info.accent or C("gold"))
             surface.DrawRect(bx, by, math.floor(bw * math.Clamp(info.progress, 0, 1)), 8)
         end
     end
@@ -749,36 +749,4 @@ function B.Toggle(P, id, cx, cy, on, enabled)
     return hot
 end
 
---[[---------------------------------------------------------------------------
-Markers: labels on the screen over places in the world, for a while (your
-new oil derrick, or every oil site for admins; sv_oil_sites.lua)
----------------------------------------------------------------------------]]
-local markers, markersUntil = {}, 0
-
-net.Receive("RP1942_Markers", function()
-    local seconds = net.ReadFloat()
-    local n = net.ReadUInt(7)
-    markers = {}
-    for i = 1, n do markers[i] = { pos = net.ReadVector(), text = net.ReadString() } end
-    markersUntil = CurTime() + seconds
-end)
-
-hook.Add("HUDPaint", "RP1942_Markers", function()
-    if CurTime() > markersUntil or #markers == 0 then return end
-    local eye = LocalPlayer():EyePos()
-    local fade = math.Clamp((markersUntil - CurTime()) / 5, 0, 1)
-    for _, m in ipairs(markers) do
-        local s = m.pos:ToScreen()
-        if s.visible then
-            local dist = math.floor(eye:Distance(m.pos) / 52.5)   -- metres, roughly
-            local text = m.text .. "  ·  " .. dist .. " m"
-            surface.SetFont("RP1942_PanelSmall")
-            local tw, th = surface.GetTextSize(text)
-            local x, y = math.Clamp(s.x, tw / 2 + 8, ScrW() - tw / 2 - 8), math.Clamp(s.y, 40, ScrH() - 40)
-            draw.RoundedBox(4, x - tw / 2 - 8, y - th - 14, tw + 16, th + 8, Color(14, 13, 12, 210 * fade))
-            draw.SimpleText(text, "RP1942_PanelSmall", x, y - th - 10, Color(226, 196, 120, 255 * fade), TEXT_ALIGN_CENTER)
-            surface.SetDrawColor(226, 196, 120, 255 * fade)
-            surface.DrawRect(x - 1, y - 6, 2, 6)
-        end
-    end
-end)
+-- (Markers on the screen moved to rp1942_core/cl_markers.lua)

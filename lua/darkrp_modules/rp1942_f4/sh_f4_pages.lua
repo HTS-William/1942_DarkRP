@@ -79,6 +79,7 @@ Raiding - Breaking into someone's property to take their valuables.
 /rpname First Last - Change your roleplay name later
 
 # Keys and menus
+- Hands (slot 1, what you spawn holding): left click raises your fists, click again to punch; right click pushes the player in front of you; R raises or lowers your fists. With your hands down you're harmless, and the fists drop by themselves after a few seconds without a punch.
 - Sitting: hold your walk key (Alt by default) and press E while looking at a bench, a chair, the ground or a prop to sit there; press E again to get up. Plain E never sits, so doors, machines, dumpsters and crates keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
 F4 - Jobs, the shop, commands and these pages
 F2 - Look at a door: buys it if it's for sale. On a door you own, opens its menu (sell it, add co-owners, give it a title). Shift+F2 always opens the menu
@@ -310,9 +311,6 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 !doorlocks - Mark every padlock on the map for a minute
 !locksettings <setting> [value] - openTime, perPlayer, minSize, maxSize, maxAccess, allowFaction, allowJob, knock, staffPickable, staffRammable, shootable (padlocks can be shot off, with a health bar; off by default), lockHealth, brokenTime, healDelay, hitRadius (how close to the padlock a shot on the door still counts)
 A player's padlock is theirs: only the owner can Shift+E it to change who gets in. Staff Shift+E only staff padlocks; for a player's lock that's a problem, use !removelock (the owner gets no refund)
-
-#staff Staff: hands (testing)
-- Hands (rp1942_hands): Q menu -> Weapons -> 1942 DarkRP. Left click raises your fists, again to punch; right click pushes; R raises or lowers them. Nobody spawns with them yet.
 
 #staff Staff: fire
 !fire [spots] - Light a fire where you're looking (it spreads like any other)

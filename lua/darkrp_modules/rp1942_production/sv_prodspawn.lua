@@ -162,18 +162,9 @@ end
 --[[---------------------------------------------------------------------------
 Permanent machines
 ---------------------------------------------------------------------------]]
-util.AddNetworkString("RP1942_ProdSaves")
 
-local SAVE_DIR = "rp1942"
-local function saveFile() return SAVE_DIR .. "/prodsaves_" .. game.GetMap() .. ".json" end
-local function loadSaves()
-    local raw = file.Read(saveFile(), "DATA")
-    return raw and util.JSONToTable(raw) or {}
-end
-local function writeSaves(list)
-    file.CreateDir(SAVE_DIR)
-    file.Write(saveFile(), util.TableToJSON(list, true))
-end
+local store = RP1942.mapStore("prodsaves")   -- lua/autorun/rp1942_util.lua
+local loadSaves, writeSaves = store.load, store.save
 
 local function freeze(ent)
     local phys = ent:GetPhysicsObject()
@@ -298,7 +289,7 @@ function RP1942.prodSaves(ply)
     for _, v in pairs(loadSaves()) do
         counts[v.class] = (counts[v.class] or 0) + 1
         total = total + 1
-        spots[#spots + 1] = Vector(v.x, v.y, v.z)
+        spots[#spots + 1] = { pos = Vector(v.x, v.y, v.z + 40), text = "SAVED" }
     end
     if total == 0 then return DarkRP.notify(ply, 0, 5, "No saved machines on this map yet. Look at one and use !saveprod.") end
     local parts = {}
@@ -307,10 +298,7 @@ function RP1942.prodSaves(ply)
         parts[#parts + 1] = n .. "x " .. ((stored and stored.t and stored.t.PrintName) or class)
     end
     DarkRP.notify(ply, 0, 8, total .. " saved machine(s): " .. table.concat(parts, ", ") .. ". Highlighted for a minute.")
-    net.Start("RP1942_ProdSaves")
-    net.WriteUInt(math.min(#spots, 255), 8)
-    for i = 1, math.min(#spots, 255) do net.WriteVector(spots[i]) end
-    net.Send(ply)
+    RP1942.showMarkers(ply, spots, 60, "prodsaves")   -- lua/autorun/rp1942_util.lua
 end
 
 RP1942.defineStaffCommand("saveprod", function(ply) RP1942.prodSave(ply) return "" end)

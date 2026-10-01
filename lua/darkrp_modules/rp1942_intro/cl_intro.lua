@@ -64,18 +64,9 @@ local startTime
 --[[---------------------------------------------------------------------------
 Fonts are sized from the screen height, and rebuilt if the resolution changes
 ---------------------------------------------------------------------------]]
-local function buildFonts()
-    for style, f in pairs(card.fonts) do
-        surface.CreateFont("RP1942_Intro_" .. style, {
-            font = f.font,
-            size = math.max(12, math.floor(ScrH() * f.size)),
-            weight = f.weight,
-            antialias = true,
-        })
-    end
+for style, f in pairs(card.fonts) do   -- lua/autorun/client/rp1942_screenfonts.lua
+    RP1942.screenFont("RP1942_Intro_" .. style, f.size, f.weight, { font = f.font, antialias = true })
 end
-buildFonts()
-hook.Add("OnScreenSizeChanged", "RP1942_IntroFonts", buildFonts)
 
 --[[---------------------------------------------------------------------------
 Easing

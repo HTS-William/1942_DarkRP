@@ -22,14 +22,10 @@ local CFG = {
 
 local show = CreateClientConVar("rp1942_orders_hud", "1", true, false, "Show your faction's orders (agenda) in the top-left corner", 0, 1)
 
-local function fonts()
-    local h = ScrH()
-    surface.CreateFont("RP1942_OrdersTitle", { font = "Roboto", size = math.max(15, math.floor(h * 0.018)), weight = 900, extended = true })
-    surface.CreateFont("RP1942_OrdersText",  { font = "Roboto", size = math.max(15, math.floor(h * 0.019)), weight = 500, extended = true })
-    surface.CreateFont("RP1942_OrdersSmall", { font = "Roboto", size = math.max(12, math.floor(h * 0.014)),  weight = 500, extended = true })
-end
-fonts()
-hook.Add("OnScreenSizeChanged", "RP1942_OrdersFonts", fonts)
+-- fonts sized from the screen: lua/autorun/client/rp1942_screenfonts.lua
+RP1942.screenFont("RP1942_OrdersTitle", 0.018, 900, { min = 15 })
+RP1942.screenFont("RP1942_OrdersText", 0.019, 500, { min = 15 })
+RP1942.screenFont("RP1942_OrdersSmall", 0.014, 500)
 
 -- DarkRP's own agenda box is replaced
 hook.Add("HUDShouldDraw", "RP1942_Orders", function(name)

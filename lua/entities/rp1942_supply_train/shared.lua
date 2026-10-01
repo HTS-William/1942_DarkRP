@@ -1,8 +1,8 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - Reich supply train (world event)
 Settings live in darkrp_modules/rp1942_events/sh_events.lua
-(RP1942.Events.train). Started by the world events scheduler or by an admin
-with "rp1942_event train"; not meant to be spawned from the Q menu.
+(RP1942.Events.train). Started by the world events scheduler or by staff
+with !train; not meant to be spawned from the Q menu.
 ---------------------------------------------------------------------------]]
 ENT.Type        = "anim"
 ENT.Base        = "base_anim"

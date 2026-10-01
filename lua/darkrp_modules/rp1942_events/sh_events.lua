@@ -126,7 +126,7 @@ end
 --[[---------------------------------------------------------------------------
 Event registry (server). Each event file calls:
     RP1942.registerEvent("id", {
-        name     = "Shown in rp1942_event",
+        name     = "Shown in !event and the settings menu",
         config   = RP1942.Events.<id>,          -- uses enabled / weight / minPlayers / map
         canStart = function() return true end,  -- optional extra condition
         start    = function() ... end,          -- return false if it couldn't start
