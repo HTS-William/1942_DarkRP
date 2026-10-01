@@ -230,6 +230,8 @@ RP1942.PanelSpots.rp1942_oven = { mount = "face", face = "front", width = 0.46, 
 RP1942.PanelSpots.rp1942_factory = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { -4.0, -55.0, 80.0 } }
 -- The oil derrick's plate (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_oil_rig = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.33, nudge = { -9.0, -41.0, 29.0 } }
+-- The market's board, on its mailbox (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_market = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { 0.0, -50.0, 12.0 } }
 
 -- The good id of an entity, or nil
 function RP1942.goodOf(ent)
