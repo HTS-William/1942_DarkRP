@@ -105,6 +105,12 @@ RP1942.F4Shop = {
           category = "Supplies", model = "models/props_lab/citizenradio.mdl",
           description = "A wireless set. Press E on it to tune in a station or any stream link; Shift+E to carry it." },
 
+        -- Padlock (rp1942_padlocks): fit it to a prop you own and the prop becomes
+        -- a door. Our answer to keypads: no codes.
+        { name = "Padlock", type = "weapon", class = "rp1942_padlock_kit", price = 250,
+          category = "Tools", model = "models/props_wasteland/prison_padlock001a.mdl",
+          description = "Fit it to a prop you own: the prop becomes a door that opens for you and whoever you let in (Shift+E on the lock)." },
+
         -- More examples - remove the -- in front of a line to switch it on:
 
         -- { name = "Health Kit", type = "entity", class = "item_healthkit", price = 150,

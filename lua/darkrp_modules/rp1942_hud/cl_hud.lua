@@ -270,9 +270,49 @@ end
 --[[---------------------------------------------------------------------------
 Bottom-right: weapon and ammo. Returns its rectangle, or nil if not shown.
 ---------------------------------------------------------------------------]]
+--[[---------------------------------------------------------------------------
+Bottom-right, for tools: a weapon with no ammo can show its own instructions
+in the ammo panel's place, in the same style. In the SWEP:
+    function SWEP:HudInfo()
+        return { "LEFT CLICK  fit it to a prop", "Shift+E the lock  settings" }
+    end
+The first line is bright, the rest are dimmer. Return nil to show nothing.
+---------------------------------------------------------------------------]]
+local function drawWeaponInfo(lp, m, wep, lines)
+    local s, pad = m.s, m.pad
+    local nameH, bodyH = fontH("RP1942_HudSmall"), fontH("RP1942_HudBody")
+    local maxW = math.floor(m.areaW * 0.3)
+    local name = fit(string.upper(language.GetPhrase(wep:GetPrintName() or "")), "RP1942_HudSmall", maxW - pad * 2)
+    local w = math.max(textSize("RP1942_HudSmall", name), math.floor(130 * s))
+    for i, l in ipairs(lines) do
+        lines[i] = fit(l, "RP1942_HudBody", maxW - pad * 2)
+        w = math.max(w, textSize("RP1942_HudBody", lines[i]))
+    end
+    w = w + pad * 2
+    local lineH = bodyH + math.floor(2 * s)
+    local h = pad + nameH + math.floor(4 * s) + 2 + math.floor(6 * s) + #lines * lineH + pad - math.floor(2 * s)
+    local x, y = m.right - m.margin - w, m.sh - m.margin - h
+
+    draw.RoundedBox(6, x, y, w, h, alpha(C("bg"), 235))
+    draw.SimpleText(name, "RP1942_HudSmall", x + w - pad, y + pad, C("sub"), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+    local ry = y + pad + nameH + math.floor(4 * s)
+    surface.SetDrawColor(C("tabActive"))
+    surface.DrawRect(x, ry, w, 2)
+    local ly = ry + 2 + math.floor(6 * s)
+    for i, l in ipairs(lines) do
+        draw.SimpleText(l, "RP1942_HudBody", x + w - pad, ly, i == 1 and C("text") or C("sub"), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+        ly = ly + lineH
+    end
+    return { x = x, y = y, w = w, h = h }
+end
+
 local function drawAmmo(lp, m)
     local wep = lp:GetActiveWeapon()
     if not IsValid(wep) then return nil end
+    if wep.HudInfo then
+        local lines = wep:HudInfo()
+        if lines and #lines > 0 then return drawWeaponInfo(lp, m, wep, lines) end
+    end
     local ammoType = wep:GetPrimaryAmmoType()
     local clip = wep:Clip1()
     if ammoType == -1 and clip < 0 then return nil end   -- melee, tools, hands

@@ -123,6 +123,14 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Führer reads what came of his choice; everyone else hears whether he chose wisely or poorly, and by how much the economy moved.
 - He has 90 seconds to answer. Decide later closes the window; /decision opens it again. If he doesn't decide in time, the economy drops 10 points and everyone hears about it.
 
+# Padlocks (doors for your base)
+- Buy a Padlock in the F4 shop (Tools), look at a prop you own and left click: the prop becomes a door. You can have 2.
+- E opens it for 5 seconds, then it closes by itself (never on someone standing in it). Anyone you haven't let in knocks instead, and you're told.
+- Shift+E on your padlock: let in players by name, everyone in your faction or everyone with your job, or take the padlock off. Taking it off (or using the remover on it or its door) gives you the padlock back.
+- Raiding: a lockpick picks it (the owner is told). The Reich's battering ram breaks it open, but only with a warrant on the owner.
+- When the server allows it, padlocks show a health bar and can be shot off: the door then stays open for a minute before the padlock is whole again.
+- Base rules: one entrance per base, no maze or one-way bases, no doors blocking streets or other players' doors.
+
 # Fire
 - Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or derrick going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
 - Fire never starts in water, and each patch can only grow so far.
@@ -290,6 +298,14 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 
 #staff Staff: the Führer's decisions
 !fuhrerquestion [number] - Send the Führer a decision now (to you, if nobody is in office, to test it). A number picks that question; empty = the next from the deck. Answering it really moves the economy
+
+#staff Staff: padlocks
+!padlock - A staff padlock that doesn't run out: fits on any prop, with no owner. Shift+E it to choose which faction or Reich unit opens it
+!savelock - Look at a staff padlock: it and its door come back after every restart and cleanup, on this map
+!removelock - Look at any padlock: remove it (and from the save)
+!doorlocks - Mark every padlock on the map for a minute
+!locksettings <setting> [value] - openTime, perPlayer, minSize, maxSize, maxAccess, allowFaction, allowJob, knock, staffPickable, staffRammable, shootable (padlocks can be shot off, with a health bar; off by default), lockHealth, brokenTime, healDelay, hitRadius (how close to the padlock a shot on the door still counts)
+Staff can Shift+E any padlock to see its owner and who can open it.
 
 #staff Staff: fire
 !fire [spots] - Light a fire where you're looking (it spreads like any other)

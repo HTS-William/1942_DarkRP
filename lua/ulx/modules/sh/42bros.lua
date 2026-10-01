@@ -264,6 +264,30 @@ register("bankstatus", ulx.rp1942bankstatus, "!bankstatus", ULib.ACCESS_ADMIN,
     "Shows what the bank robbery system is doing: on/off, vaults, Reich online, the running robbery and its crew, the cooldown and the treasury.")
 
 --[[---------------------------------------------------------------------------
+Padlocks (rp1942_padlocks)
+---------------------------------------------------------------------------]]
+function ulx.rp1942padlock(ply)
+    if not inGameOnly(ply) then return end
+    if darkrpCommand(ply, "padlock") then ulx.fancyLogAdmin(ply, true, "#A took a staff padlock") end
+end
+register("padlock", ulx.rp1942padlock, "!padlock", ULib.ACCESS_SUPERADMIN,
+    "Gives you a staff padlock that doesn't run out. Left click any prop: it becomes a door with no owner. Shift+E the lock to choose which faction or Reich unit opens it, then !savelock to keep it on this map.")
+
+lookAt("savelock", ULib.ACCESS_SUPERADMIN, "Look at a staff padlock: it and its door come back after every restart and cleanup, on this map.")
+lookAt("removelock", ULib.ACCESS_ADMIN, "Look at any padlock: removes it (and from this map's save). This permission also lets staff open any lock's menu (Shift+E) and move staff doors.")
+lookAt("doorlocks", ULib.ACCESS_ADMIN, "Marks every padlock on the map on your screen for a minute, with its owner.")
+
+function ulx.rp1942locksettings(ply, key, value)
+    if darkrpCommand(ply, "locksettings", key .. " " .. (value or "")) and value and value ~= "" then
+        ulx.fancyLogAdmin(ply, true, "#A set the padlock setting #s to #s", key, value)
+    end
+end
+local ls = register("locksettings", ulx.rp1942locksettings, "!locksettings", ULib.ACCESS_SUPERADMIN,
+    "Padlock settings (saved in data/rp1942/padlocks.json): openTime, perPlayer, minSize, maxSize, maxAccess, allowFaction, allowJob, knock, staffPickable, staffRammable, shootable (padlocks can be shot off, with a health bar), lockHealth, brokenTime, healDelay, hitRadius. No value shows the current one; no setting lists them all.")
+ls:addParam{ type = ULib.cmds.StringArg, hint = "setting", default = "", ULib.cmds.optional, completes = RP1942.Padlocks and RP1942.Padlocks.keys or nil }
+ls:addParam{ type = ULib.cmds.StringArg, hint = "value", default = "", ULib.cmds.optional }
+
+--[[---------------------------------------------------------------------------
 The Führer's decisions (rp1942_decisions)
 ---------------------------------------------------------------------------]]
 function ulx.rp1942fuhrerquestion(ply, number)
