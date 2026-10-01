@@ -16,6 +16,9 @@ arrested timer, the lockdown notice, agendas, voice chat.
                    Hover it with the cursor out (C, F3, chat) to see the
                    Reich treasury and every tax rate.
     bottom-right   weapon name and ammo (only for weapons that use ammo)
+    right side     notifications, a bit below the middle, in the same style
+                   (every DarkRP / Garry's Mod notice: padlock alerts, "you
+                   can't afford that", hints...). Red strip = an error.
 
 Any screen: everything scales with the screen height; on very wide screens
 (ultrawide, triple monitors) the HUD stays inside a central maxAspect area;
@@ -25,7 +28,7 @@ While this HUD is on, the wanted system's small corner tag is left out (the
 WANTED status tag replaces it), and so is the economy line at the top of the
 screen (the economy bar replaces it).
 
-Files: sh_hud.lua (this), cl_hud.lua (the drawing).
+Files: sh_hud.lua (this), cl_hud.lua (the drawing), cl_notices.lua (notifications).
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
 
@@ -39,6 +42,12 @@ RP1942.HUDConfig = {
     width       = 380,         -- player panel width at 1080p (scales with the screen)
     economyWidth = 440,        -- economy bar width at 1080p
     maxAspect   = 21 / 9,      -- wider screens keep the HUD in a central area this shape
+
+    notices     = true,        -- notifications in the HUD's style (false = Garry's Mod's boxes)
+    noticeMax   = 5,           -- most shown at once (the oldest goes first)
+    noticeWidth = 440,         -- widest a notification gets at 1080p
+    noticeY     = 0.6,         -- where the stack ends, down the right side (0.5 = middle, false = right above the ammo panel)
+    noticeText  = 0.018,       -- text size, as a share of the screen height (HUD body text is 0.015)
 
     --[[-----------------------------------------------------------------------
     Colours. Background, text and accents follow the F4 menu's colours

@@ -363,6 +363,7 @@ GM.Config.DisallowDrop = {
     ["lockpick"] = true,
     ["med_kit"] = true,
     ["pocket"] = true,
+    ["rp1942_hands"] = true,
     ["stunstick"] = true,
     ["unarrest_stick"] = true,
     ["weapon_keypadchecker"] = true,
@@ -373,6 +374,7 @@ GM.Config.DisallowDrop = {
 
 -- The list of weapons people spawn with.
 GM.Config.DefaultWeapons = {
+    "rp1942_hands",       -- punch (left click) and push (right click): darkrp_modules/rp1942_hands
     "keys",
     "weapon_physcannon",
     "gmod_camera",

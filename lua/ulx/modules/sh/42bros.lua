@@ -274,7 +274,7 @@ register("padlock", ulx.rp1942padlock, "!padlock", ULib.ACCESS_SUPERADMIN,
     "Gives you a staff padlock that doesn't run out. Left click any prop: it becomes a door with no owner. Shift+E the lock to choose which faction or Reich unit opens it, then !savelock to keep it on this map.")
 
 lookAt("savelock", ULib.ACCESS_SUPERADMIN, "Look at a staff padlock: it and its door come back after every restart and cleanup, on this map.")
-lookAt("removelock", ULib.ACCESS_ADMIN, "Look at any padlock: removes it (and from this map's save). This permission also lets staff open any lock's menu (Shift+E) and move staff doors.")
+lookAt("removelock", ULib.ACCESS_ADMIN, "Look at any padlock: removes it (and from this map's save). This permission also lets staff open staff locks' menus (Shift+E) and move staff doors. A player's lock's menu is only for its owner.")
 lookAt("doorlocks", ULib.ACCESS_ADMIN, "Marks every padlock on the map on your screen for a minute, with its owner.")
 
 function ulx.rp1942locksettings(ply, key, value)

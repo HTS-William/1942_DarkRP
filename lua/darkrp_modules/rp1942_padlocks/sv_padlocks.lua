@@ -30,6 +30,13 @@ local function isStaff(ply)
     return RP1942.staffCan(ply, "ulx removelock", function(p) return p:IsSuperAdmin() end)
 end
 
+-- Who gets a lock's menu: a player's lock is its owner's alone (staff take
+-- one off with !removelock); a staff lock is for staff.
+local function canEdit(ply, lock)
+    if lock:GetStaff() then return isStaff(ply) end
+    return IsValid(lock:GetLockOwner()) and lock:GetLockOwner() == ply
+end
+
 --[[ Settings: padlocks.json over the defaults ------------------------------]]
 local function loadSettings()
     local saved = util.JSONToTable(file.Read(SETTINGS_FILE, "DATA") or "") or {}
@@ -336,7 +343,7 @@ local function sendMenu(ply, lock)
     net.Start("RP1942_PadlockMenu")
     net.WriteEntity(lock)
     net.WriteBool(isOwner)
-    net.WriteBool(isStaff(ply))
+    net.WriteBool(lock:GetStaff())   -- a staff lock's menu: every group and job
     net.WriteBool(S("allowFaction"))
     net.WriteBool(S("allowJob"))
     net.WriteUInt(S("maxAccess"), 8)
@@ -364,8 +371,8 @@ net.Receive("RP1942_PadlockEdit", function(_, ply)
     if not IsValid(lock) or lock:GetClass() ~= "rp1942_padlock" or not lock.access then return end
     if lock:GetPos():DistToSqr(ply:GetPos()) > 400 * 400 then return end
     local owner = lock:GetLockOwner()
-    local staff = isStaff(ply)
-    if owner ~= ply and not staff then return end
+    if not canEdit(ply, lock) then return end
+    local staff = lock:GetStaff()   -- staff editing a staff lock: any group or job
     local a = lock.access
 
     if action == "remove" then
@@ -410,7 +417,7 @@ hook.Add("PlayerUse", "RP1942_Padlocks", function(ply, ent)
     if (ply.RP1942_NextLockUse or 0) > CurTime() then return false end
     ply.RP1942_NextLockUse = CurTime() + 0.5
 
-    if ply:KeyDown(IN_SPEED) and (lock:GetLockOwner() == ply or isStaff(ply)) then
+    if ply:KeyDown(IN_SPEED) and canEdit(ply, lock) then
         sendMenu(ply, lock)
         return false
     end

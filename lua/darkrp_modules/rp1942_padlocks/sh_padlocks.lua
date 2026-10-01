@@ -5,7 +5,7 @@ Our answer to keypads. A padlock turns a prop you own into a door:
     E                 open it (5 s), if you're allowed. It closes by itself,
                       and never on someone standing in the doorway.
     E (not allowed)   knock: the owner is told someone's at the door
-    Shift + E         the owner (or staff): the lock's menu. Who may open
+    Shift + E         the owner only: the lock's menu. Who may open
                       it: players by name, "anyone in my faction", "anyone
                       with my job". Remove the padlock: you get it back
                       (also with the remover tool on it or its door).
@@ -35,7 +35,8 @@ STAFF (ULX 42Bros)
     !doorlocks        every lock on the map, highlighted for a minute
     !locksettings     <setting> <value>: change a setting below (saved in
                       data/rp1942/padlocks.json). No value shows it.
-Looking at a lock, staff see its owner; Shift+E shows who has access.
+Staff can't open a player's lock's menu: the owner decides who gets in.
+Staff locks' menus are for staff. To deal with a player's lock: !removelock.
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
 RP1942.Padlocks = RP1942.Padlocks or {}

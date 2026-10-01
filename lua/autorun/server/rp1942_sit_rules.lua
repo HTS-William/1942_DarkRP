@@ -8,7 +8,7 @@ These are the rules that make it behave in DarkRP:
       printers, the vault, markets, crates, goods, dropped weapons, the
       supply train, law boards (Alt + E on them still does nothing)
     - !spawn and !sitstuck (an_sitanywhere_helper_commands.lua) can't be
-      used to escape: not while arrested, wanted, robbing the bank, or
+      used to escape: not while arrested, being handcuffed, wanted, robbing the bank, or
       within 20 seconds of taking damage from a player
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
@@ -52,6 +52,7 @@ end)
 
 local function cantTeleport(ply)
     if ply.isArrested and ply:isArrested() then return "not while you're arrested" end
+    if RP1942.isBeingCuffed and RP1942.isBeingCuffed(ply) then return "not while you're being handcuffed" end
     if ply.getDarkRPVar and ply:getDarkRPVar("wanted") then return "not while you're wanted" end
     if RP1942 and RP1942.bankIsCrew and RP1942.bankIsCrew(ply) then return "not during a bank robbery" end
     if (ply.RP1942_LastHurt or 0) > CurTime() - COMBAT_SECONDS then return "not so soon after a fight" end

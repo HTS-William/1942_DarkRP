@@ -1,7 +1,7 @@
 --[[---------------------------------------------------------------------------
 1942 DarkRP - the Reich can't be arrested (server)
 
-Nobody can arrest a member of the Reich with the arrest baton. Staff can
+Nobody can arrest a member of the Reich (handcuffs or arrest baton). Staff can
 still jail anyone with ULX (!jail) or DarkRP's admin arrest.
 
 Undercover agents (the Gestapo) CAN be arrested: refusing to arrest a

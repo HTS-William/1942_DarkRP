@@ -106,7 +106,7 @@ Reich - The occupying authority, made up of the units below.
 Wehrmacht - The police force. Keeps order, patrols and makes arrests.
 Waffen-SS - The elite special unit, called in when the Wehrmacht isn't enough.
 Leibstandarte - The Führer's personal bodyguard (StG 44 and P38). Only for those already in the Reich: switch to it from any Reich job, no vote. Pick any of its three uniforms in F4.
-Batons - Every Reich job carries the stun, arrest and unarrest batons and a weapon checker. Reich jobs that can raid (RAID = YES) also carry a battering ram.
+Batons and handcuffs - Every Reich job carries the stun and unarrest batons, handcuffs and a weapon checker. Reich jobs that can raid (RAID = YES) also carry a battering ram.
 Riflemen - The Wehrmacht and Waffen-SS start at Rifleman. Its specialisations appear in the job menu once you hold it.
 Joining the Reich - Taking a Reich job from outside the Reich needs a vote of the server (F4 shows Call a vote; in chat /vote plus the job's command, e.g. /votewehrrifleman). Once you're in, moving up or across is instant. The vote only says you'd like to join the Reich, never which job, so the Gestapo is voted in too without being exposed. The Führer is elected instead.
 Unit music - Each unit has its own music that plays for you (only you) when you join it (as a Rifleman, or the Leibstandarte). Moving through its specialisations doesn't replay it. rp1942_job_music 0 in the console turns it off; rp1942_job_music_stop stops the current song.
@@ -116,6 +116,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Robbing the supply train also makes you wanted.
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
 - Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
+
+# Handcuffs (arrests)
+- The Reich arrests with handcuffs. Left click a player to grab them: they're held still (no moving, shooting, sitting or changing job) and a bar fills for both of you. After 8 seconds they're arrested and taken to jail.
+- The arrest is stopped if the officer walks away, puts the handcuffs away or right clicks to let go, or if either of them dies. Shooting the officer is how comrades break someone free.
 
 # The Führer's decisions
 - While a Führer is in office, every 3 to 5 minutes a matter of state lands on his desk: one situation, three answers. Each answer is marked LOW, MODERATE or HIGH IMPACT.
@@ -305,7 +309,10 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 !removelock - Look at any padlock: remove it (and from the save)
 !doorlocks - Mark every padlock on the map for a minute
 !locksettings <setting> [value] - openTime, perPlayer, minSize, maxSize, maxAccess, allowFaction, allowJob, knock, staffPickable, staffRammable, shootable (padlocks can be shot off, with a health bar; off by default), lockHealth, brokenTime, healDelay, hitRadius (how close to the padlock a shot on the door still counts)
-Staff can Shift+E any padlock to see its owner and who can open it.
+A player's padlock is theirs: only the owner can Shift+E it to change who gets in. Staff Shift+E only staff padlocks; for a player's lock that's a problem, use !removelock (the owner gets no refund)
+
+#staff Staff: hands (testing)
+- Hands (rp1942_hands): Q menu -> Weapons -> 1942 DarkRP. Left click raises your fists, again to punch; right click pushes; R raises or lowers them. Nobody spawns with them yet.
 
 #staff Staff: fire
 !fire [spots] - Light a fire where you're looking (it spreads like any other)

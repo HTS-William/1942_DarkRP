@@ -146,8 +146,8 @@ RP1942.Weapons = {
     luger       = "mcv_luger",           -- Luger P08, Führer sidearm
 
     -- DarkRP built-ins (these exist already)
-    stun        = "stunstick",           -- every Reich job carries stun + arrest + unarrest
-    arrest      = "arrest_stick",
+    stun        = "stunstick",           -- every Reich job carries stun + handcuffs + unarrest
+    arrest      = "rp1942_handcuffs",    -- handcuffs: 8 s holding them still, then arrested (rp1942_handcuffs); "arrest_stick" = the instant baton
     unarrest    = "unarrest_stick",
     checker     = "weaponchecker",
     ram         = "door_ram",
