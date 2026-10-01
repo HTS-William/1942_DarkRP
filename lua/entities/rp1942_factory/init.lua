@@ -63,7 +63,7 @@ function ENT:StartRun()
 
     -- When it'll halt (seconds of running), spread over the run
     self.haltAt = {}
-    local n = math.max(c.halts or 0, 0)
+    local n = math.max(RP1942.rollCount(c.halts), 0)   -- how many: random, and never shown
     for i = 1, n do
         local from, to = (i - 1) / n, i / n
         self.haltAt[i] = c.runTime * math.Rand(from + (to - from) * 0.2, from + (to - from) * 0.85)

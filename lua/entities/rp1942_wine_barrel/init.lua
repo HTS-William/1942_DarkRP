@@ -21,8 +21,9 @@ function ENT:Begin()
     -- When it'll call for stirring: spread across the middle of the ferment,
     -- each call finishing before the next and before the end
     self.callAt = {}
-    local slot = (c.time * 0.8) / c.stirs
-    for i = 1, c.stirs do
+    local calls = math.max(RP1942.rollCount(c.stirs), 1)   -- how many: random, and never shown
+    local slot = (c.time * 0.8) / calls
+    for i = 1, calls do
         local from = c.time * 0.1 + (i - 1) * slot
         self.callAt[i] = now + from + math.Rand(0, math.max(slot - c.stirWindow - 2, 0))
     end
@@ -44,7 +45,7 @@ function ENT:Think()
         if now >= self:GetDoneAt() then
             self:SetDoneAt(0)
             self:SetStirBy(0)
-            self:SetQuality(self:Vintage(self:GetStirs()))
+            self:SetQuality(self:Vintage(self:GetCalls() - self:GetStirs()))
             self:EmitSound("ambient/water/water_pour1.wav", 70)
         end
     end

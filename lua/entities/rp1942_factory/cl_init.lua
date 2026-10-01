@@ -151,8 +151,7 @@ function ENT:PaintPanel(P, w, h)
         for _, x in ipairs(RP1942.FactoryFaults) do if x.id == self:GetFault() then f = x end end
         msg, col = "HALTED: " .. (f and f.lamp or "?") .. " FAULT  -  " .. (f and f.button or "REPAIR IT"), Color(255, 130, 110)
     else
-        local left = math.max((c.halts or 0) - self:GetHalts(), 0)
-        msg, col = "RUNNING  ·  " .. (left > 0 and (left .. (left == 1 and " HALT" or " HALTS") .. " TO COME") or "NO MORE HALTS THIS RUN"), Color(140, 220, 140)
+        msg, col = "RUNNING  ·  WATCH FOR FAULTS", Color(140, 220, 140)
     end
     draw.SimpleText(msg, "RP1942_BrassLabel", w / 2, 452, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 

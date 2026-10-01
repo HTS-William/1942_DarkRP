@@ -2,9 +2,10 @@
 1942 DarkRP - wine barrel (Winemaker). Settings: RP1942.Production.wine
 (rp1942_production/sh_production.lua).
 
-    START on its panel sets it fermenting. A few times along the way the must
-    needs stirring: press STIR before the timer runs out. Every stir it gets
-    raises the vintage (stars). When it's done, BOTTLE pours the bottles
+    START on its panel sets it fermenting. Now and then along the way the must
+    needs stirring (how many times, and when, is random and never shown):
+    press STIR before the timer runs out. Every call missed lowers the
+    vintage (stars). When it's done, BOTTLE pours the bottles
     (into your pocket while there's room) and the barrel is used up.
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"
@@ -28,9 +29,13 @@ function ENT:IsFermenting() return self:GetDoneAt() > 0 end
 function ENT:IsDone() return self:GetQuality() > 0 end
 function ENT:NeedsStir() return self:GetStirBy() > CurTime() end
 
--- Stars for a number of stirs made
-function ENT:Vintage(stirs)
-    local total = self:Config().stirs
-    if stirs >= total then return 3 elseif stirs >= total - 1 then return 2 end
+-- Stars for the number of calls for stirring that went unanswered
+function ENT:Vintage(missed)
+    if missed <= 0 then return 3 elseif missed == 1 then return 2 end
     return 1
+end
+
+-- Calls missed so far (a call still waiting for its stir doesn't count yet)
+function ENT:Missed()
+    return math.max(self:GetCalls() - self:GetStirs() - (self:NeedsStir() and 1 or 0), 0)
 end

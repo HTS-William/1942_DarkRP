@@ -28,8 +28,8 @@ function ENT:PaintPanel(P, w, h)
         y = y + 70
         P:Text("HOW IT WORKS", "RP1942_PanelHead", x, y, C.dim)
         P:Text("While it ferments, the must calls for stirring", "RP1942_PanelBody", x, y + 30, C.dim)
-        P:Text(c.stirs .. " times. Stir before the timer runs out:", "RP1942_PanelBody", x, y + 58, C.dim)
-        P:Text("every stir raises the vintage.", "RP1942_PanelBody", x, y + 86, C.dim)
+        P:Text("now and then. Stir before the timer runs out:", "RP1942_PanelBody", x, y + 58, C.dim)
+        P:Text("every call you miss lowers the vintage.", "RP1942_PanelBody", x, y + 86, C.dim)
         y = y + 150
         P:Button("start", x, y, iw, 64, "START FERMENTING", { color = ACCENT })
     else
@@ -52,17 +52,17 @@ function ENT:PaintPanel(P, w, h)
             P:Bar(x, y + 62, iw, 12, left / c.stirWindow, ALERT)
         elseif fermenting then
             P:Text("RESTING", "RP1942_PanelHead", x, y, C.dim)
-            local waiting = c.stirs - calls
-            P:Text(waiting > 0 and ("It will call for stirring " .. waiting .. " more time" .. (waiting == 1 and "." or "s."))
-                or "No more stirring needed. Let it finish.", "RP1942_PanelBody", x, y + 28, C.faint)
+            P:Text("Stay close: it may call for stirring again.", "RP1942_PanelBody", x, y + 28, C.faint)
         end
         y = y + 96
 
         -- Vintage: final once done, otherwise the best it can still reach
-        local stars = done and self:GetQuality() or self:Vintage(stirs + (c.stirs - calls) + (self:NeedsStir() and 1 or 0))
-        P:Text(done and "VINTAGE" or "VINTAGE (IF EVERY CALL IS ANSWERED)", "RP1942_PanelHead", x, y, C.dim)
+        local missed = done and (calls - stirs) or self:Missed()
+        local stars = done and self:GetQuality() or self:Vintage(missed)
+        P:Text(done and "VINTAGE" or "VINTAGE (SO FAR)", "RP1942_PanelHead", x, y, C.dim)
         local sw = P:Stars(x, y + 30, stars, 26)
-        P:Text(RP1942.qualityName(stars) .. "  ·  stirred " .. stirs .. " of " .. c.stirs .. " times", "RP1942_PanelBody", x + sw + 8, y + 30, C.text)
+        P:Text(RP1942.qualityName(stars) .. "  ·  stirred " .. stirs .. (stirs == 1 and " time" or " times")
+            .. (missed > 0 and ("  ·  missed " .. missed) or ""), "RP1942_PanelBody", x + sw + 8, y + 30, C.text)
         y = y + 80
 
         if done then

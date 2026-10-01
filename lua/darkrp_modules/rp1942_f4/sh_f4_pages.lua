@@ -190,8 +190,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - More time in the green means more loaves (up to 3) and more stars. COLLECT BREAD when it's done, and the next sack goes in.
 
 # Winemaker
-- Buy a Wine Barrel and press START. While it ferments it calls for stirring a few times: STIR before its timer runs out.
-- Every stir it gets raises the vintage. BOTTLE when it's done for 3 bottles. The barrel is used up.
+- Buy a Wine Barrel and press START. While it ferments it calls for stirring now and then (you never know how many times, or when): STIR before its timer runs out.
+- Every call you miss lowers the vintage. BOTTLE when it's done for 3 bottles. The barrel is used up.
 
 # Petroleum Producer
 - Buy an Oil Derrick. It isn't placed by hand: it's built on the nearest free oil site and bolted down, and it's marked on your screen once built. If every site is taken, it isn't for sale until one frees up.
@@ -202,7 +202,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Factory Owner
 - Buy a Factory Line and Scrap Metal in the F4 Shop. Push scrap into the line: it holds 4 loads, and each run uses one and makes 3 goods. With the hopper empty the line stands idle until you load more.
-- Twice a run it halts with a fault: the BELT, BOILER or FUSE lamp flashes. Press the matching repair button (RETHREAD BELT, VENT BOILER or REPLACE FUSE). The wrong one costs extra downtime.
+- Now and then it halts with a fault (you never know how many times a run, or when): the BELT, BOILER or FUSE lamp flashes. Press the matching repair button (RETHREAD BELT, VENT BOILER or REPLACE FUSE). The wrong one costs extra downtime.
 - The less downtime, the better the run, and the better the odds of rare goods: common (rations, boots), uncommon (pots, kettles), rare (clocks) and very rare (radios). COLLECT when the run is done.
 
 # Markets

@@ -5,7 +5,8 @@
     It runs on scrap metal (rp1942_scrap, bought in the F4 shop): push loads
     into it and they wait in its hopper (up to `hopper`). Each run uses one
     load; with the hopper empty the line stands idle until more goes in.
-    A run halts twice with a fault: the BELT, BOILER or FUSE lamp flashes and
+    A run halts now and then with a fault (how many times, and when, is
+    random and never shown): the BELT, BOILER or FUSE lamp flashes and
     the line stops until someone presses the matching repair button (the
     wrong one costs extra downtime). The run's stars come from its downtime,
     and better runs have better odds of rare goods. When the run is done,

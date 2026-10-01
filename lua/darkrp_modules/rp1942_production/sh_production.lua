@@ -21,8 +21,8 @@ the panel and press E.
                 climbs; turn the wheel to open it and the pressure falls. Keep
                 it in the green: more time there = more canisters of crude and
                 more stars. FILL CANISTERS when the tank is full.
-    Factory     buys a factory line. It runs on its own, but halts twice a
-    Owner       run with a fault (BELT, BOILER or FUSE): press the matching
+    Factory     buys a factory line. It runs on scrap metal, and now and then
+    Owner       halts with a fault (BELT, BOILER or FUSE): press the matching
                 repair button. The less downtime, the better the run, and the
                 better the odds of rare goods (clocks, radios). COLLECT.
 
@@ -165,9 +165,9 @@ RP1942.Production = {
         time      = 240,              -- seconds to ferment
         bottles   = 3,
         good      = "wine",
-        stirs     = 3,                -- times it calls for stirring
+        stirs     = { 2, 4 },         -- times it calls for stirring: a random number in this range per barrel (kept secret)
         stirWindow = 15,              -- seconds you have to stir each time
-        -- stirs made -> stars: all of them 3, all but one 2, fewer 1
+        -- calls missed -> stars: none 3, one 2, more 1
     },
 
     -- Petroleum Producer. The derrick is built on a free oil site and can't be moved.
@@ -195,7 +195,7 @@ RP1942.Production = {
         hopper    = 4,                -- loads of scrap it holds waiting
         runTime   = 300,              -- seconds of running per run (halts don't count)
         items     = 3,                -- goods per run (one load of scrap)
-        halts     = 2,                -- faults per run
+        halts     = { 1, 3 },         -- faults per run: a random number in this range, at random times (kept secret)
         wrongFix  = 10,               -- seconds of downtime added for pressing the wrong repair
         -- Downtime (seconds halted this run) -> stars
         grades    = { { downtime = 15, stars = 3 }, { downtime = 45, stars = 2 }, { downtime = math.huge, stars = 1 } },
@@ -236,6 +236,12 @@ RP1942.PanelSpots.rp1942_factory = { mount = "face", face = "right", width = 0.8
 RP1942.PanelSpots.rp1942_oil_rig = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.33, nudge = { -9.0, -41.0, 29.0 } }
 -- The market's board, on its mailbox (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_market = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { 0.0, -50.0, 12.0 } }
+
+-- A count from the config: a fixed number, or { min, max } for a random one
+function RP1942.rollCount(v)
+    if istable(v) then return math.random(v[1] or 0, v[2] or v[1] or 0) end
+    return tonumber(v) or 0
+end
 
 -- The good id of an entity, or nil
 function RP1942.goodOf(ent)
