@@ -160,12 +160,19 @@ Player models
 PLACEHOLDERS: stock HL2/GMod models so the server boots and jobs are testable.
 Replace with the paths from your content pack.
 ---------------------------------------------------------------------------]]
+-- The civilians (the d42rp content pack)
 local civM = {
-    "models/player/group01/male_02.mdl",
-    "models/player/group01/male_04.mdl",
-    "models/player/group01/male_07.mdl",
-    "models/player/group01/female_01.mdl",
-    "models/player/group01/female_04.mdl",
+    "models/d42rp/player/civilians/citizen_male_01.mdl",
+    "models/d42rp/player/civilians/citizen_male_02.mdl",
+    "models/d42rp/player/civilians/citizen_male_03.mdl",
+    "models/d42rp/player/civilians/citizen_male_04.mdl",
+    "models/d42rp/player/civilians/citizen_male_05.mdl",
+    "models/d42rp/player/civilians/citizen_male_06.mdl",
+    "models/d42rp/player/civilians/citizen_male_07.mdl",
+    "models/d42rp/player/civilians/citizen_female_01.mdl",
+    "models/d42rp/player/civilians/citizen_female_02.mdl",
+    "models/d42rp/player/civilians/citizen_female_03.mdl",
+    "models/d42rp/player/civilians/citizen_female_04.mdl",
 }
 
 RP1942.Models = {

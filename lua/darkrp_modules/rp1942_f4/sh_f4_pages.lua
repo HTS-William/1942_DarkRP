@@ -75,7 +75,7 @@ Raiding - Breaking into someone's property to take their valuables.
 # Your name
 - When you first join, the Meldeamt (registration office) asks for your roleplay name: a first and a last name that fits 1942. Random Name suggests one.
 - It's the name everyone sees, and the one that will go on your papers.
-/register - Open the registration form again, to change your roleplay name
+/register - Open the registration form again, to change your roleplay name or whether you are registered as a man or a woman (jobs with both give you a fitting model; an outfit you pick in F4 always wins)
 /rpname First Last - Change your roleplay name later
 
 # Keys and menus
