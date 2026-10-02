@@ -14,8 +14,8 @@ PainSystem = PainSystem or {}
 -- CONFIG
 -----------------------------------------------------------------------------
 local CFG = {
-    LegInjuryDuration = 20,     -- Seconds a leg shot prevents jump/sprint. 0 = until respawn.
-    FallCripplesLegs  = false,  -- Should fall damage also stop jump/sprint?
+    LegInjuryDuration = 60,     -- Seconds a leg shot prevents jump/sprint. 0 = until respawn.
+    FallCripplesLegs  = true,  -- Should fall damage also stop jump/sprint?
     HealRestoreLegs   = 0.75,   -- Healing up to this fraction of max health restores legs. false = disabled.
     AllowNPCAttackers = false,  -- Should NPCs shooting players also trigger pain?
     SoundCooldown     = 0.75,   -- Min seconds between pain sounds per player (prevents spam from shotguns/SMGs)

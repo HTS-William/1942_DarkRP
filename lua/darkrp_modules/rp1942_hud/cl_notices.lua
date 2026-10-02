@@ -59,6 +59,7 @@ end
 
 local function add(text, kind, length)
     text = tostring(text or "")
+    if string.sub(text, 1, 1) == "#" then text = language.GetPhrase(string.sub(text, 2)) end   -- "#Undone_Prop" and the like
     if text == "" then return end
     notices[#notices + 1] = { text = text, kind = tonumber(kind) or 0, start = RealTime(), len = math.max(tonumber(length) or 4, 1) }
     while #notices > (CFG.noticeMax or 5) do table.remove(notices, 1) end
@@ -66,13 +67,21 @@ end
 
 -- Take over Garry's Mod's notifications (DarkRP's go through here too).
 -- Done again after load, in case another addon replaced it in the meantime.
+--
+-- The wrapper looks up RP1942.addHudNotice every time instead of keeping
+-- this file's own add(): when the server reloads this file while running
+-- (dropping in an update), the wrapper from before would otherwise keep
+-- filling the OLD list while the new HUDPaint draws the new, empty one, and
+-- every notification vanished until a restart.
+RP1942.addHudNotice = add
 local function takeOver()
     if not notification or notification.RP1942_Styled == notification.AddLegacy then return end
     local original = notification.RP1942_Original or notification.AddLegacy
     notification.RP1942_Original = original
     notification.AddLegacy = function(text, kind, length)
-        if CFG.enabled == false or CFG.notices == false then return original(text, kind, length) end
-        add(text, kind, length)
+        local cfg = RP1942.HUDConfig or {}
+        if cfg.enabled == false or cfg.notices == false or not RP1942.addHudNotice then return original(text, kind, length) end
+        RP1942.addHudNotice(text, kind, length)
     end
     notification.RP1942_Styled = notification.AddLegacy
 end
