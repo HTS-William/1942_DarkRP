@@ -100,6 +100,7 @@ F.defaults = {
                                -- our fires take its place; false keeps it under them
     molotovSpots     = 7,      -- fires lit by a molotov / WP pool (within its radius)
     blastChance      = 0.15,   -- chance an explosion leaves fire behind (0-1)
+    rocketBlastChance = 0.05,  -- the same for a Bazooka / Panzerschreck rocket (and the APC's gun)
     blastMinDamage   = 40,     -- explosions weaker than this never start fires
     blastMaxSpots    = 2,      -- most fires one explosion can start
     flamethrowerChance = 0.05, -- chance per flame tick (10 a second) that the ground it lands on catches

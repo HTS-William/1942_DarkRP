@@ -122,6 +122,12 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Reich arrests with handcuffs. Left click a player to grab them: they're held still (no moving, shooting, sitting or changing job) and a bar fills for both of you. After 8 seconds they're arrested and taken to jail.
 - The arrest is stopped if the officer walks away, puts the handcuffs away or right clicks to let go, or if either of them dies. Shooting the officer is how comrades break someone free.
 
+# The Führer's perks
+- The Führer buys perks for the Reich from the treasury, in his menu (F3, Perks). Reich soldiers are the Wehrmacht, Waffen-SS and Leibstandarte.
+- Armoured car (R.M. 60,000): an Sd.Kfz. 222 appears at the APC garage, owned by the Wehrmacht Driver (his keys lock and unlock it; if none is on duty, the next one gets it). Only the Wehrmacht Driver can drive it. Its gun fires Panzerschreck rockets where the driver looks (left click, 6 seconds to reload, R.M. 500 a shot from the driver's own money). One at a time; it stays until it's destroyed, and another can be bought 10 minutes after.
+- Kevlar issue (R.M. 20,000): every Reich soldier online gets full armour at once. 10 minutes before it can be bought again.
+- Soldiers' pay bonus (R.M. 25,000): Reich soldiers' wages are raised by half for 20 minutes. Buying it again adds another 20 minutes.
+
 # The Führer's decisions
 - While a Führer is in office, every 3 to 5 minutes a matter of state lands on his desk: one situation, three answers. Each answer is marked LOW, MODERATE or HIGH IMPACT.
 - Low impact: 70-90% odds, the economy moves 5-10 points. Moderate: 40-70%, 10-15 points. High: 20-50%, 15-25 points. Success raises the economy, failure lowers it.
@@ -141,7 +147,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Base rules: one entrance per base, no maze or one-way bases, no doors blocking streets or other players' doors.
 
 # Fire
-- Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, rockets, a printer or rig going up) can leave fires behind. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
+- Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, a printer or rig going up) can leave fires behind. Bazooka and Panzerschreck rockets burst into flame like a molotov, and now and then leave fires too. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
 - Fire never starts in water, and each patch can only grow so far.
 - Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. It never runs out. Every fire you put out pays 20 RM, unless you lit it yourself.
 
@@ -284,6 +290,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !saveprodall - Save every machine you placed from !prodspawn that isn't saved yet
 !unsaveprod - Look at a saved machine: remove it for good
 !prodsaves - Count the saved machines on this map and highlight them for a minute
+!setapcspot - Look at the floor: the APC garage, where the Führer's armoured car appears, facing you (saved for this map)
 !addmarket - Place a market where you're looking (saved for this map)
 !removemarket - Remove the market you're looking at
 !addoilsite - Mark an oil site where you're looking; a bought rig is built on the nearest free one, facing where you stood (saved for this map)

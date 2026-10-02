@@ -197,6 +197,7 @@ end
 
 lookAt("adddumpster", ULib.ACCESS_SUPERADMIN, "Look at the floor: places a dumpster there, facing you. Saved for this map.")
 lookAt("removedumpster", ULib.ACCESS_SUPERADMIN, "Look at a dumpster: removes it, and from this map's save.")
+lookAt("setapcspot", ULib.ACCESS_SUPERADMIN, "Look at the floor: the APC garage. The armoured car the Führer buys (a perk) appears there, facing you. Saved for this map.")
 lookAt("addmarket", ULib.ACCESS_SUPERADMIN, "Look at the floor: places a market there, facing you, where players sell goods. Saved for this map.")
 lookAt("removemarket", ULib.ACCESS_SUPERADMIN, "Look at a market: removes it, and from this map's save.")
 function ulx.rp1942getdumpsterpos(ply)

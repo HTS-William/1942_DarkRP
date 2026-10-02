@@ -59,6 +59,8 @@ hook.Add("playerGetSalary", "RP1942_EconomyWages", function(ply, amount)
     if not amount or amount <= 0 then return end
 
     local gross = RP1942.applyEconomy(amount, "salary")
+    -- The Führer's soldiers' pay bonus (rp1942_perks/sh_perks.lua)
+    if RP1942.salaryBonus then gross = math.floor(gross * RP1942.salaryBonus(ply)) end
     if not RP1942.applyTax then return false, nil, gross end
 
     local net, tax, rate = RP1942.applyTax(ply, gross, "salary")

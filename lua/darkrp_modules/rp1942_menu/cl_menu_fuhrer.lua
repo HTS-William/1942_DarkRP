@@ -75,6 +75,7 @@ function PANEL:Populate()
 
     self:AddLaws()
     self:AddPayout()
+    if RP1942.addPerkSection then RP1942.addPerkSection(self) end   -- rp1942_perks/cl_perks.lua
 
     if not RP1942.getTaxRate then
         self:AddText("Tax module not loaded.")

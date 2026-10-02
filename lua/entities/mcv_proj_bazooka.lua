@@ -23,6 +23,8 @@ function ENT:Detonate()
     local attacker = self.Attacker or self:GetOwner() or self
     local dmg = self.ExplosionDamage
 
+    -- 1942 DarkRP: rockets leave fire at their own (lower) chance (rp1942_fire: rocketBlastChance)
+    if RP1942 and RP1942.Fire then RP1942.Fire.nextBlastChance = "rocketBlastChance" end
     util.BlastDamage(self:GetInflictor(), attacker, self:GetPos(), self.ExplosionRadius, dmg)
     self:FireBullets({
         Attacker = attacker,
@@ -40,6 +42,8 @@ function ENT:Detonate()
     })
 
     MCV.ExplosionEffect("rpg", self:GetImpactPos(), self:GetImpactNormal(), self:WaterLevel() > 0)
+    -- 1942 DarkRP: and burst into flame like a molotov (its fire burst particle, not its pool)
+    if self:WaterLevel() == 0 then ParticleEffect("Molotov_Explosion", self:GetImpactPos(), MCV.SurfaceAngle(self:GetImpactNormal())) end
 
     self:EmitSound("MCV_BaseGrenade.Explode")
 

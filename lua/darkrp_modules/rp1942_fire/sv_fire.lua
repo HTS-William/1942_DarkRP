@@ -270,10 +270,14 @@ local function nearFirePool(pos)
 end
 
 local function onBlast(pos, radius, damage, attacker, inflictor)
+    -- A projectile can name its own chance for the blast it's about to make
+    -- (the rockets: rocketBlastChance), for this one blast only
+    local chanceKey = F.nextBlastChance or "blastChance"
+    F.nextBlastChance = nil
     if not S("enabled") or not isvector(pos) then return end
     damage = tonumber(damage) or 0
     if damage < S("blastMinDamage") then return end
-    if math.random() > S("blastChance") then return end
+    if math.random() > (tonumber(S(chanceKey)) or S("blastChance")) then return end
     radius = tonumber(radius) or 200
     local spots = math.Clamp(math.Round(radius / 100), 1, S("blastMaxSpots"))
     -- a moment later: a molotov / WP blast is followed by its pool, which
