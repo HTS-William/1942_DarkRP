@@ -9,6 +9,7 @@ ENT.PanelSize  = { w = 560, h = 600 }
 ENT.PanelScale = 0.045   -- only used if the panel floats (no spot)
 ENT.PanelNoBackground = true
 
+local DIAL_FACE = Color(150, 140, 118)   -- aged, like the factory's and the oil rig's: a white face glows on dark maps
 local ENAMEL = Color(26, 50, 42)
 local COLD, RIGHT, HOT = Color(70, 90, 150), Color(60, 140, 70), Color(190, 50, 40)
 local AMBER = Color(240, 170, 60)
@@ -25,7 +26,7 @@ function ENT:PaintPanel(P, w, h)
 
     -- The fire: the dial's needle is the heat, its coloured bands the zones
     local heat = baking and self:Heat() or 0
-    B.Dial(170, 222, 108, heat, { { 0, c.heat.cold, COLD }, { c.heat.cold, c.heat.hot, RIGHT }, { c.heat.hot, 100, HOT } }, "FEUER / HEAT", baking and not off)
+    B.Dial(170, 222, 108, heat, { { 0, c.heat.cold, COLD }, { c.heat.cold, c.heat.hot, RIGHT }, { c.heat.hot, 100, HOT } }, "FEUER / HEAT", baking and not off, DIAL_FACE)
 
     -- What to do now, under the dial
     local zone = baking and self:HeatZone() or nil

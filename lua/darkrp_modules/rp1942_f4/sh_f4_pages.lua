@@ -80,7 +80,7 @@ Raiding - Breaking into someone's property to take their valuables.
 
 # Keys and menus
 - Hands (slot 1, what you spawn holding): left click raises your fists, click again to punch; right click pushes the player in front of you; R raises or lowers your fists. With your hands down you're harmless, and the fists drop by themselves after a few seconds without a punch.
-- Sitting: hold your walk key (Alt by default) and press E while looking at a bench, a chair, the ground or a prop to sit there; press E again to get up. Plain E never sits, so doors, machines, dumpsters and crates keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
+- Sitting: hold your walk key (Alt by default) and press E while looking at a bench, a chair, the ground or a prop to sit there; press E again to get up. Sitting is no shield: you can still be shot, blown up or handcuffed, and getting hurt by a player stands you up (no sitting back down for a few seconds). Plain E never sits, so doors, machines, dumpsters and crates keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
 F4 - Jobs, Appearance (your model's bodygroups and skin, remembered per model), the shop, commands and these pages
 F2 - Look at a door: buys it if it's for sale. On a door you own, opens its menu (sell it, add co-owners, give it a title). Shift+F2 always opens the menu
 F3 - Your job's own menu, if it has one (the wardrobe for undercover jobs, the Führer's office...)
