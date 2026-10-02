@@ -175,6 +175,17 @@ local function open()
         local name = f .. " " .. l
         status, statusCol = "Registering...", C.sub
         waitingFor, waitUntil = name, RealTime() + 3
+        -- Outfits picked in F4 that are now the wrong kind: switch them to the first that fits
+        if DarkRP.getPreferredJobModel and DarkRP.setPreferredJobModel and RP1942.jobModelsFor then
+            for teamNr, job in pairs(RPExtraTeams) do
+                local fits = RP1942.jobModelsFor(job, sex)
+                local pref = DarkRP.getPreferredJobModel(teamNr)
+                if fits and #fits < #job.model and pref and pref ~= "" and RP1942.modelSex(pref) ~= sex then
+                    DarkRP.setPreferredJobModel(teamNr, fits[1])
+                end
+            end
+        end
+        -- (after the outfits, so the server already knows them when it changes the model)
         net.Start("RP1942_SetSex") net.WriteString(sex) net.SendToServer()
         RunConsoleCommand("darkrp", "rpname", name)
     end

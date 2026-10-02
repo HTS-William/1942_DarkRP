@@ -6,7 +6,8 @@ gives you one that fits you:
     1. what you ticked on the Meldeamt form (Herr / Frau, /register), or
     2. if you never did: a guess from your first name (Anna, Greta, Zofia...
        and most names ending in -a or -e are women's; everything else men's)
-A model you picked yourself in F4 (the outfits under a job) always wins.
+An outfit you picked yourself in F4 (under a job) is kept if it's the right
+kind; switching Herr / Frau on the form changes it to one that is.
 
 Which models are women's: any whose path contains "female", plus any listed
 in FEMALE_MODELS below.

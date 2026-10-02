@@ -11,10 +11,9 @@ function SWEP:PrimaryAttack()
 
     if self:GetSafe() then self:ToggleSafe(true) return end
 
-    // A weapon flagged SWEP.DestroyDoor = 1 can kick a nearby rotating door open instead of
-    // firing. TryBreakDoor() runs the same way on both realms so the client and server agree
-    // to skip the shot together; only the server actually touches the door (see BreakDoor()).
-    if self:TryBreakDoor() then return end
+    // 1942 DarkRP: a weapon flagged SWEP.DestroyDoor = 1 now fires as normal, and its shot
+    // blasts open a rotating door it hits within DestroyDoorRange (BulletAttack's callback
+    // below). It used to skip the shot and open the door without firing (TryBreakDoor).
 
     local owner = self:GetOwner()
     local bursting = self:IsBursting() // a runaway burst finishing itself (ThinkWeapon)
@@ -205,63 +204,25 @@ function SWEP:TryBreakDoor()
     return true
 end
 
-// Swaps the real door for a physics prop wearing its model/skin, shoves that prop through
-// the doorway, and puts the original door back (solid, drawn, "closed" again) after a while.
-// The real door never actually opens or gets deleted -- it's just hidden and non-solid for the
-// duration, so triggers, autosave, and anything else tracking it keep working normally.
+// 1942 DarkRP: called when a breaching shot hits a door (BulletAttack). TryBreakDoor above is
+// no longer used. The shot blows the lock and the door swings open (away from the shooter).
+// It used to be taken off its hinges (swapped for a flying physics prop, the real door
+// hidden for 25 seconds); now it just opens, so the doorway can be shut again.
 function SWEP:BreakDoor(door)
     if !IsValid(door) then return end
 
     local owner = self:GetOwner()
 
-    door:Fire("open", "", 0.001)
-    door:Fire("unlock", "", 0.001)
-
-    local pos = door:GetPos()
-    local ang = door:GetAngles()
-    local model = door:GetModel()
-    local skin = door:GetSkin()
-
     local smoke = EffectData()
-    smoke:SetOrigin(pos)
+    smoke:SetOrigin(door:GetPos())
     util.Effect("effect_smokedoor", smoke)
+    door:EmitSound("physics/wood/wood_crate_break" .. math.random(1, 5) .. ".wav", 80)
 
-    door:SetNotSolid(true)
-    door:SetNoDraw(true)
-
-    local function ResetDoor(realdoor, fakedoor)
-        if !IsValid(realdoor) then return end
-        realdoor:SetNotSolid(false)
-        realdoor:SetNoDraw(false)
-        if IsValid(fakedoor) then fakedoor:Remove() end
+    door:Fire("unlock", "", 0)
+    if IsValid(owner) then
+        door:Fire("openawayfrom", "!activator", 0.01, owner)   -- swing away from the shooter
     end
-
-    local norm = (pos - (IsValid(owner) and owner:GetPos() or pos)):GetNormalized()
-    local push = 20000 * norm
-
-    local fake = ents.Create("prop_physics")
-    if !IsValid(fake) then return end
-
-    fake:SetPos(pos)
-    fake:SetAngles(ang)
-    fake:SetModel(model)
-
-    if skin then
-        fake:SetSkin(skin)
-    end
-
-    fake:Spawn()
-
-    timer.Simple(0.01, function()
-        if !IsValid(fake) then return end
-        fake:SetVelocity(push)
-        local phys = fake:GetPhysicsObject()
-        if IsValid(phys) then
-            phys:ApplyForceCenter(push)
-        end
-    end)
-
-    timer.Simple(25, function() ResetDoor(door, fake) end)
+    door:Fire("open", "", 0.02)
 end
 
 // True when the current viewmodel was compiled with the recoil_r / recoil_l pose parameters
@@ -676,6 +637,14 @@ function SWEP:BulletAttack(shootPos, shootDir)
             TracerName = "mcv_tracer",
             Callback = function(attacker, tr, dmginfo)
                 local distance = state.distance + (tr.HitPos - tr.StartPos):Length()
+                // 1942 DarkRP: breaching shot - the pellets that hit a door close enough open it
+                if SERVER and (self.DestroyDoor or 0) != 0 and IsValid(tr.Entity)
+                    and tr.Entity:GetClass() == "prop_door_rotating"
+                    and distance <= (self.DestroyDoorRange or 200)   -- shotguns: about 4 m
+                    and (tr.Entity.MCV_BreachedAt or 0) != CurTime() then
+                    tr.Entity.MCV_BreachedAt = CurTime()   // once per shot, not once per pellet
+                    self:BreakDoor(tr.Entity)
+                end
                 self:ApplyBulletDamage(tr, dmginfo, distance)
                 if SERVER then self:QueuePenetration(tr, state, queue) end
             end
