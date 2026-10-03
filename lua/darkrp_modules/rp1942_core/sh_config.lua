@@ -160,13 +160,27 @@ Player models
 PLACEHOLDERS: stock HL2/GMod models so the server boots and jobs are testable.
 Replace with the paths from your content pack.
 ---------------------------------------------------------------------------]]
+-- The civilians (the d42rp content pack)
 local civM = {
-    "models/player/group01/male_02.mdl",
-    "models/player/group01/male_04.mdl",
-    "models/player/group01/male_07.mdl",
-    "models/player/group01/female_01.mdl",
-    "models/player/group01/female_04.mdl",
+    "models/d42rp/player/civilians/citizen_male_01.mdl",
+    "models/d42rp/player/civilians/citizen_male_02.mdl",
+    "models/d42rp/player/civilians/citizen_male_03.mdl",
+    "models/d42rp/player/civilians/citizen_male_04.mdl",
+    "models/d42rp/player/civilians/citizen_male_05.mdl",
+    "models/d42rp/player/civilians/citizen_male_06.mdl",
+    "models/d42rp/player/civilians/citizen_male_07.mdl",
+    "models/d42rp/player/civilians/citizen_female_01.mdl",
+    "models/d42rp/player/civilians/citizen_female_02.mdl",
+    "models/d42rp/player/civilians/citizen_female_03.mdl",
+    "models/d42rp/player/civilians/citizen_female_04.mdl",
 }
+
+-- The Resistance: the mafia men and the civilians above, so fighters can blend in
+local resModels = {
+    "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
+    "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl",
+}
+for _, m in ipairs(civM) do resModels[#resModels + 1] = m end
 
 RP1942.Models = {
     civilian     = civM,
@@ -176,13 +190,27 @@ RP1942.Models = {
     doctor       = { "models/player/kleiner.mdl" },
     banker       = { "models/player/gman_high.mdl" },
     staff        = { "models/player/breen.mdl" },   -- Staff on Duty
-    labourer     = { "models/player/group02/male_02.mdl", "models/player/group02/male_06.mdl" },
-    resistance   = { "models/player/group03/male_01.mdl", "models/player/group03/male_05.mdl", "models/player/group03/female_02.mdl" },
+    -- The production jobs (Baker, Winemaker, Petroleum Producer, Factory Owner):
+    -- Half-Life 2's refugees and citizens, men and women (the Herr / Frau
+    -- choice on the Meldeamt form gives each player a fitting one)
+    labourer     = {
+        "models/player/group02/male_02.mdl", "models/player/group02/male_04.mdl",
+        "models/player/group02/male_06.mdl", "models/player/group02/male_08.mdl",
+        "models/player/group01/male_01.mdl", "models/player/group01/male_02.mdl",
+        "models/player/group01/male_03.mdl", "models/player/group01/male_07.mdl",
+        "models/player/group01/male_09.mdl",
+        "models/player/group01/female_01.mdl", "models/player/group01/female_02.mdl",
+        "models/player/group01/female_03.mdl", "models/player/group01/female_04.mdl",
+        "models/player/group01/female_06.mdl",
+    },
+    -- The Resistance jobs: the mafia men plus the d42rp civilians (resModels, above)
+    resistance   = resModels,
     -- The Resistance Operative's normal model ("Standard issue" in its wardrobe).
     -- Starts as the Resistance models; change it here without touching other jobs.
-    resoperative = { "models/player/group03/male_01.mdl", "models/player/group03/male_05.mdl", "models/player/group03/female_02.mdl" },
-    res_leader   = { "models/player/odessa.mdl" },
-    dealer       = { "models/player/eli.mdl" },
+    resoperative = resModels,
+    res_leader   = resModels,
+    dealer       = { "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
+                     "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl" },
     -- The Reich (models/d42rp/player): grunt = riflemen and the other ranks,
     -- nco = the NCO, kommandant = the Offizier. The Leibstandarte may pick any of its three.
     wehrmacht         = { "models/d42rp/player/wehrmacht_grunt.mdl" },

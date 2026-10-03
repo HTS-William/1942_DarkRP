@@ -242,7 +242,7 @@ end
 
 function ENT:Use(ply)
     if IsValid(ply) and ply:IsPlayer() then
-        DarkRP.notify(ply, 0, 3, "Look at a button on the rig's panel and press E.")
+        DarkRP.notify(ply, 0, 3, "Look at the valve wheel on the rig's panel and press E.")
     end
 end
 

@@ -115,9 +115,21 @@ hook.Add("HUDPaint", "RP1942_ReichAlerts", function()
     local y = margin
     if CFG.alertPosition == "topcenter" then y = math.floor(sh * 0.019) + math.floor(60 * s) end
     if CFG.alertPosition == CFG.selfPosition and indicatorH > 0 then y = y + indicatorH + gap end
-    -- Below the Orders panel when it's in the same corner (rp1942_hud/cl_orders.lua)
+    -- Below the Orders panel when it's in the same corner (rp1942_hud/cl_orders.lua).
+    -- If a long list of orders leaves no room there before the chat box (EasyChat
+    -- sits at the left, centred: its top is ScrH/2 - 160, and it draws over the
+    -- HUD), they go beside the panel instead, so they're never hidden behind the chat.
+    local left = margin
     local orders = RP1942.OrdersRect
-    if orders and CFG.alertPosition == "topleft" and orders.x < sw / 2 then y = math.max(y, orders.y + orders.h + gap) end
+    if orders and CFG.alertPosition == "topleft" and orders.x < sw / 2 then
+        local below = math.max(y, orders.y + orders.h + gap)
+        if below + boxH <= math.floor(sh / 2) - 160 - gap then
+            y = below
+        else
+            left = orders.x + orders.w + gap
+            y = math.max(y, orders.y)
+        end
+    end
 
     local now = RealTime()
     for i = #alerts, 1, -1 do
@@ -147,7 +159,7 @@ hook.Add("HUDPaint", "RP1942_ReichAlerts", function()
         elseif CFG.alertPosition == "topcenter" then
             x = (sw - w) / 2
         else
-            x = margin - (1 - slide) * (w + margin)
+            x = left - (1 - slide) * (w + left)
         end
 
         local function col(c) return Color(c.r, c.g, c.b, (c.a or 255) * fade) end
