@@ -71,3 +71,42 @@ hook.Add("playerGetSalary", "RP1942_EconomyWages", function(ply, amount)
     return false, string.format("Payday! You received %s after %d%% tax (%s withheld).",
         DarkRP.formatMoney(net), rate, DarkRP.formatMoney(tax)), net
 end)
+
+--[[---------------------------------------------------------------------------
+No Führer: the economy slips (settings: RP1942.Economy.Leaderless, sh_economy.lua)
+---------------------------------------------------------------------------]]
+local L = E.Leaderless
+local nextDrop, leaderlessSince, drops
+
+local function hasFuhrer()
+    for _, p in ipairs(player.GetAll()) do
+        local job = RPExtraTeams[p:Team()]
+        if job and job.mayor then return true end
+    end
+    return false
+end
+
+local function roll(r) return istable(r) and math.random(r[1], r[2] or r[1]) or (tonumber(r) or 0) end
+
+timer.Create("RP1942_EconomyLeaderless", 5, 0, function()
+    if not (L and L.enabled) then return end
+    local now = CurTime()
+    if hasFuhrer() or player.GetCount() < (L.minPlayers or 0) then
+        nextDrop, leaderlessSince, drops = nil, nil, 0
+        return
+    end
+    leaderlessSince = leaderlessSince or now
+    if now - leaderlessSince < (L.grace or 0) then return end
+    nextDrop = nextDrop or (now + roll(L.every))
+    if now < nextDrop then return end
+    nextDrop = now + roll(L.every)
+
+    local before = RP1942.getEconomy()
+    if before <= (L.floor or 1) then return end
+    local after = RP1942.setEconomy(math.max(before - roll(L.drop), L.floor or 1), "no Führer in office")
+    drops = (drops or 0) + 1
+    -- Say so the first time, then every third drop, so it isn't spammy
+    if RP1942.alert and after < before and (drops == 1 or drops % 3 == 0) then
+        RP1942.alert(string.format("With no Führer in office the economy is slipping (%d, down %d). The Reich needs a leader.", after, before - after), "wanted")
+    end
+end)

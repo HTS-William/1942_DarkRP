@@ -12,9 +12,10 @@ The name is what will go on their papers (a future papers system).
     rp1942_rpname   the same, in console
 ---------------------------------------------------------------------------]]
 local FIRST = {
-    "Hans", "Karl", "Friedrich", "Otto", "Wilhelm", "Heinrich", "Ernst", "Walter", "Paul", "Kurt", "Josef", "Franz",
-    "Anna", "Greta", "Marta", "Elise", "Hedwig", "Ilse", "Frieda", "Irene",
-    "Jan", "Tadeusz", "Piotr", "Andrzej", "Marek", "Zofia", "Halina", "Irena", "Krystyna", "Wanda",
+    m = { "Hans", "Karl", "Friedrich", "Otto", "Wilhelm", "Heinrich", "Ernst", "Walter", "Paul", "Kurt", "Josef", "Franz",
+          "Jan", "Tadeusz", "Piotr", "Andrzej", "Marek" },
+    f = { "Anna", "Greta", "Marta", "Elise", "Hedwig", "Ilse", "Frieda", "Irene",
+          "Zofia", "Halina", "Irena", "Krystyna", "Wanda" },
 }
 local LAST = {
     "Richter", "Becker", "Hoffmann", "Schulz", "Wagner", "Keller", "Brandt", "Vogel", "Krause", "Neumann", "Lehmann", "Hartmann",
@@ -54,7 +55,7 @@ local function open()
     local C, s = UI.C, UI.scale()
 
     form = vgui.Create("EditablePanel")
-    form:SetSize(math.floor(560 * s), math.floor(330 * s))
+    form:SetSize(math.floor(560 * s), math.floor(380 * s))
     form:Center()
     form:MakePopup()
     form:SetAlpha(0)
@@ -133,6 +134,36 @@ local function open()
         draw.SimpleText(name, "RP1942_F4Head", tw, h / 2, C.gold, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     end
 
+    -- Herr / Frau: guessed from the first name as it's typed, until it's clicked
+    local sexY = fieldY + math.floor(104 * s)
+    local sex, sexPicked = RP1942.playerSex and RP1942.playerSex(LocalPlayer()) or "m", false
+    local sexLabel = vgui.Create("DLabel", form)
+    sexLabel:SetPos(pad, sexY + math.floor(8 * s))
+    sexLabel:SetFont("RP1942_F4Small")
+    sexLabel:SetTextColor(C.sub)
+    sexLabel:SetText("REGISTERED AS")
+    sexLabel:SizeToContents()
+    local function sexButton(x, key, text)
+        local b = vgui.Create("DButton", form)
+        b:SetPos(x, sexY)
+        b:SetSize(math.floor(120 * s), math.floor(32 * s))
+        b:SetText("")
+        b.Paint = function(self, w, h)
+            local on = sex == key
+            draw.RoundedBox(4, 0, 0, w, h, on and C.tabActive or (self:IsHovered() and C.tabHover or C.entry))
+            if on then surface.SetDrawColor(C.gold) surface.DrawOutlinedRect(0, 0, w, h, 1) end
+            draw.SimpleText(text, "RP1942_F4Small", w / 2, h / 2, on and C.text or C.sub, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
+        b.DoClick = function() surface.PlaySound("ui/buttonclick.wav") sex, sexPicked = key, true end
+        return b
+    end
+    local lx = pad + sexLabel:GetWide() + math.floor(14 * s)
+    sexButton(lx, "m", "HERR  (MAN)")
+    sexButton(lx + math.floor(128 * s), "f", "FRAU  (WOMAN)")
+    first.OnValueChange = function(_, v)
+        if not sexPicked and RP1942.nameSex and string.Trim(v or "") ~= "" then sex = RP1942.nameSex(v) end
+    end
+
     local function submit()
         local f, l = capital(string.Trim(first:GetValue())), capital(string.Trim(last:GetValue()))
         local err = checkPart(f, "The first name") or checkPart(l, "The last name")
@@ -144,6 +175,18 @@ local function open()
         local name = f .. " " .. l
         status, statusCol = "Registering...", C.sub
         waitingFor, waitUntil = name, RealTime() + 3
+        -- Outfits picked in F4 that are now the wrong kind: switch them to the first that fits
+        if DarkRP.getPreferredJobModel and DarkRP.setPreferredJobModel and RP1942.jobModelsFor then
+            for teamNr, job in pairs(RPExtraTeams) do
+                local fits = RP1942.jobModelsFor(job, sex)
+                local pref = DarkRP.getPreferredJobModel(teamNr)
+                if fits and #fits < #job.model and pref and pref ~= "" and RP1942.modelSex(pref) ~= sex then
+                    DarkRP.setPreferredJobModel(teamNr, fits[1])
+                end
+            end
+        end
+        -- (after the outfits, so the server already knows them when it changes the model)
+        net.Start("RP1942_SetSex") net.WriteString(sex) net.SendToServer()
         RunConsoleCommand("darkrp", "rpname", name)
     end
     first.OnEnter = function() last:RequestFocus() end
@@ -155,7 +198,8 @@ local function open()
     register:SetPos(form:GetWide() - bw - pad, form:GetTall() - bh - pad)
 
     local random = UI.button(form, "Random name", function()
-        first:SetValue(FIRST[math.random(#FIRST)])
+        local pool = FIRST[sex] or FIRST.m
+        first:SetValue(pool[math.random(#pool)])
         last:SetValue(LAST[math.random(#LAST)])
         status = ""
     end)

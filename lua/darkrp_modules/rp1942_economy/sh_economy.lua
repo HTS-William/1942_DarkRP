@@ -37,6 +37,18 @@ E.KEY   = "rp1942_economy"
 -- so 1 -> x0.02, 50 (start) -> x0.91, 110 -> x2.0
 E.DIVISOR = 55
 
+-- With nobody in office as Führer, the economy slips: every few minutes it
+-- loses a few points (never below `floor`). The Führer's decisions are what
+-- raise it, so an empty office now costs something too. (sv_economy.lua)
+E.Leaderless = {
+    enabled    = true,
+    every      = { 180, 300 },   -- seconds between drops: a random time in this range (like the decisions)
+    drop       = { 2, 5 },       -- points lost each time, random in this range
+    floor      = 25,             -- it never pushes the economy below this ("downturn")
+    minPlayers = 2,              -- only while at least this many players are online
+    grace      = 120,            -- seconds after the last Führer leaves before it starts
+}
+
 -- Ascending by min
 E.Tiers = {
     { id = "poor",        min = 1,   text = "The economy is poor right now" },

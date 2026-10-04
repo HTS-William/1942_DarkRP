@@ -112,7 +112,9 @@ local function preferredModel(job)
     local models = jobModels(job)
     local pref = DarkRP.getPreferredJobModel and DarkRP.getPreferredJobModel(job.team)
     if pref and table.HasValue(models, pref) then return pref end
-    return models[1]
+    -- No pick yet: one that fits you (rp1942_intro/sh_sex.lua), as the server will give you
+    local fits = RP1942.jobModelsFor and RP1942.jobModelsFor(job, RP1942.playerSex(LocalPlayer()))
+    return fits and fits[1] or models[1]
 end
 
 --[[---------------------------------------------------------------------------
