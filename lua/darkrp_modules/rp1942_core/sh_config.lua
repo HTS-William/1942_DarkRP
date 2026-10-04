@@ -175,6 +175,13 @@ local civM = {
     "models/d42rp/player/civilians/citizen_female_04.mdl",
 }
 
+-- The Resistance: the mafia men and the civilians above, so fighters can blend in
+local resModels = {
+    "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
+    "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl",
+}
+for _, m in ipairs(civM) do resModels[#resModels + 1] = m end
+
 RP1942.Models = {
     civilian     = civM,
     gestapo      = civM,   -- plain clothes: keep this identical to civilian, or the cover is pointless
@@ -196,14 +203,12 @@ RP1942.Models = {
         "models/player/group01/female_03.mdl", "models/player/group01/female_04.mdl",
         "models/player/group01/female_06.mdl",
     },
-    resistance   = { "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
-                     "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl" },
+    -- The Resistance jobs: the mafia men plus the d42rp civilians (resModels, above)
+    resistance   = resModels,
     -- The Resistance Operative's normal model ("Standard issue" in its wardrobe).
     -- Starts as the Resistance models; change it here without touching other jobs.
-    resoperative = { "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
-                     "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl" },
-    res_leader   = { "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
-                     "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl" },
+    resoperative = resModels,
+    res_leader   = resModels,
     dealer       = { "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
                      "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl" },
     -- The Reich (models/d42rp/player): grunt = riflemen and the other ranks,
