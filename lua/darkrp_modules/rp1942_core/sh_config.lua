@@ -175,42 +175,43 @@ local civM = {
     "models/d42rp/player/civilians/citizen_female_04.mdl",
 }
 
--- The Resistance: the mafia men and the civilians above, so fighters can blend in
-local resModels = {
-    "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
-    "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl",
-}
-for _, m in ipairs(civM) do resModels[#resModels + 1] = m end
+-- The d42rp civilians pack: numbered models, e.g. numbered("rebel_male_", 7)
+local function numbered(prefix, n)
+    local t = {}
+    for i = 1, n do t[#t + 1] = string.format("models/d42rp/player/civilians/%s%02d.mdl", prefix, i) end
+    return t
+end
+local function join(...)
+    local t = {}
+    for _, list in ipairs({ ... }) do for _, m in ipairs(list) do t[#t + 1] = m end end
+    return t
+end
+
+-- The Resistance: the rebels, men and women
+local resModels = join(numbered("rebel_male_", 7), numbered("rebel_female_", 4))
 
 RP1942.Models = {
     civilian     = civM,
     gestapo      = civM,   -- plain clothes: keep this identical to civilian, or the cover is pointless
-    hobo         = { "models/player/group01/male_01.mdl" },
+    hobo         = civM,   -- the d42rp civilians, men and women
     merchant     = { "models/player/monk.mdl" },
     doctor       = { "models/player/kleiner.mdl" },
     banker       = { "models/player/gman_high.mdl" },
     staff        = { "models/player/breen.mdl" },   -- Staff on Duty
     -- The production jobs (Baker, Winemaker, Petroleum Producer, Factory Owner):
-    -- Half-Life 2's refugees and citizens, men and women (the Herr / Frau
-    -- choice on the Meldeamt form gives each player a fitting one)
-    labourer     = {
-        "models/player/group02/male_02.mdl", "models/player/group02/male_04.mdl",
-        "models/player/group02/male_06.mdl", "models/player/group02/male_08.mdl",
-        "models/player/group01/male_01.mdl", "models/player/group01/male_02.mdl",
-        "models/player/group01/male_03.mdl", "models/player/group01/male_07.mdl",
-        "models/player/group01/male_09.mdl",
-        "models/player/group01/female_01.mdl", "models/player/group01/female_02.mdl",
-        "models/player/group01/female_03.mdl", "models/player/group01/female_04.mdl",
-        "models/player/group01/female_06.mdl",
-    },
-    -- The Resistance jobs: the mafia men plus the d42rp civilians (resModels, above)
+    -- the d42rp businessmen (men only, so everyone gets one of these)
+    labourer     = numbered("business_male_", 7),
+    -- The Resistance jobs (and the Thieves): the rebels (resModels, above)
     resistance   = resModels,
     -- The Resistance Operative's normal model ("Standard issue" in its wardrobe).
     -- Starts as the Resistance models; change it here without touching other jobs.
     resoperative = resModels,
-    res_leader   = resModels,
-    dealer       = { "models/humans/mafia/male_02.mdl", "models/humans/mafia/male_04.mdl", "models/humans/mafia/male_06.mdl",
-                     "models/humans/mafia/male_07.mdl", "models/humans/mafia/male_08.mdl", "models/humans/mafia/male_09.mdl" },
+    res_leader   = numbered("rebleader_male_", 7),   -- the rebel leaders
+    -- The dealers, one model each
+    dealer_blackmarket = { "models/d42rp/player/blackmarket_dealer.mdl" },
+    dealer_cherkesov   = { "models/d42rp/player/cherkesov_dealer.mdl" },
+    supplier           = { "models/d42rp/player/wehrmacht_supplier.mdl" },   -- the German Supplier
+    dealer       = { "models/d42rp/player/blackmarket_dealer.mdl" },   -- (old shared key: the unused Rüstung Dealer)
     -- The Reich (models/d42rp/player): grunt = riflemen and the other ranks,
     -- nco = the NCO, kommandant = the Offizier. The Leibstandarte may pick any of its three.
     wehrmacht         = { "models/d42rp/player/wehrmacht_grunt.mdl" },

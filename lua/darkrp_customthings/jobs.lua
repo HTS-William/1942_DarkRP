@@ -307,7 +307,7 @@ RESISTANCE (incl. black-market dealers)
 TEAM_BLACKMARKET = job{
     name = "Black Market Dealer",
     color = Color(70, 50, 40),
-    model = M.dealer,
+    model = M.dealer_blackmarket,
     description = [[Buys weapons and explosives off the black market (F3) at fixed prices, whatever the economy, and sells them on. Anti-tank launchers, explosives, silenced guns and plenty more.]],
     weapons = {},
     command = "blackmarket",
@@ -337,7 +337,7 @@ TEAM_RUSTUNG = job{
 TEAM_CHERKESOV = job{
     name = "Cherkesov Dealer",
     color = Color(120, 40, 30),
-    model = M.dealer,
+    model = M.dealer_cherkesov,
     description = [[Buys Soviet and Allied weapons (F3) at fixed prices, whatever the economy, and sells them on: machine guns, anti-tank rifles, submachine guns and more.]],
     weapons = {},
     command = "cherkesov",
@@ -464,7 +464,7 @@ enforced server-side). Joining from outside the Reich is voted.
 TEAM_SUPPLIER = job{
     name = "German Supplier",
     color = Color(80, 90, 70),
-    model = M.merchant,
+    model = M.supplier,
     description = [[Buys German service weapons from the Reich armoury (F3) and supplies them to the Reich. Prices follow the economy: cheaper when it's strong, dearer when it's weak.]],
     weapons = { W.stun, W.arrest, W.unarrest },
     command = "gersupplier",
