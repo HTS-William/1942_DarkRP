@@ -199,14 +199,14 @@ RP1942.Models = {
     banker       = { "models/player/gman_high.mdl" },
     staff        = { "models/player/breen.mdl" },   -- Staff on Duty
     -- The production jobs (Baker, Winemaker, Petroleum Producer, Factory Owner):
-    -- the d42rp businessmen (men only, so everyone gets one of these)
-    labourer     = numbered("business_male_", 7),
+    -- the d42rp businessmen, and the civilian women for women
+    labourer     = join(numbered("business_male_", 7), numbered("citizen_female_", 4)),
     -- The Resistance jobs (and the Thieves): the rebels (resModels, above)
     resistance   = resModels,
     -- The Resistance Operative's normal model ("Standard issue" in its wardrobe).
     -- Starts as the Resistance models; change it here without touching other jobs.
     resoperative = resModels,
-    res_leader   = numbered("rebleader_male_", 7),   -- the rebel leaders
+    res_leader   = join(numbered("rebleader_male_", 7), numbered("rebel_female_", 4)),   -- the rebel leaders, and the rebel women for women
     -- The dealers, one model each
     dealer_blackmarket = { "models/d42rp/player/blackmarket_dealer.mdl" },
     dealer_cherkesov   = { "models/d42rp/player/cherkesov_dealer.mdl" },
