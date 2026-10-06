@@ -41,125 +41,92 @@ end
 RP1942.F4Pages = {
 
     { tab = "Rules", icon = "icon16/error.png", text = [[
-These rules apply to everyone. Staff may act on anything that breaks their spirit, even if it isn't written here. Terms like RDM and NLR are explained in RP Definitions.
+These rules apply to everyone. Staff may act on anything that breaks their spirit, even if it isn't written here. Terms are explained in RP Definitions. Punishments are listed with each rule; serious breaks can skip straight to a ban.
 
-# 1. FearRP
-- Value your life. If someone has a gun on you and makes a demand, comply: don't pull a weapon, run, or call for help.
-- Calling for help in OOC, private messages, /radio or voice while you're being held up breaks FearRP.
-- Outnumbered or outgunned (one rifle against a squad, a pistol against the armoured car), you surrender or flee, you don't charge.
-- Held at gunpoint by the Reich and told to stop: you stop. Running or fighting is resisting arrest, and you can be shot for it.
+# 1. RDM
+- 1. RDM is prohibited. You must have a valid reason for killing someone. ( First warn, then kick, then ban ).
+- 1a. Mass RDM is no tolerance, and is an instant ban.
+- 1b. CDM is prohibited. Vehicles are not for running people over. ( First warn, then kick, then ban ).
+- 1c. Spawn killing and spawn camping are prohibited. ( First kick, then ban ).
 
-# 2. RDM and CDM
-- No RDM: you need a roleplay reason to attack someone. They attacked you or someone you protect, they resisted arrest, you're robbing or raiding them (or they you), or your factions are in an active fight right now.
-- Faction isn't a reason on its own: the Reich and the Resistance can't open fire on each other just for the uniform. There has to be something going on.
-- No CDM: the armoured car isn't for running people over. Its gun is for Reich duties, with the same reasons as any other weapon.
-- Hands count: punching is an attack, and pushing someone off a height or into fire to kill them is RDM without a reason.
-- Fire counts: molotovs, explosives and the fires they leave are attacks. You're responsible for where your fire spreads.
-- No spawn killing or spawn camping. Don't attack someone who is AFK, in the registration form or just spawned.
-- New Life Rule (NLR): after you die you forget what led to it, can't take revenge for it, and stay away from where you died for 3 minutes.
+# 2. RDA
+- 2. RDA is prohibited. You must have a valid reason for arresting someone. ( First warn, then demotion, then ban ).
+- 2a. Mass RDA is no tolerance, and is an instant ban.
+- 2b. Warrants need a valid reason. No warrant, no battering ram. ( First warn, then demotion, then ban ).
 
-# 3. AFK farming
-- No AFK money farming. Money printers, the Banking Printer and the production machines (oven, wine barrel, oil rig, factory line) need you there tending them; leaving them running while you're away isn't allowed.
-- The oil rig and factory line need active tending by design. Using macros or scripts to work them is an exploit.
-- Staff may remove machines and printers left running by someone who's AFK.
+# 3. NLR
+- 3. NLR ( New Life Rule ) is 3 minutes long and must be respected (unless a rule was broken, resulting in your death). After you die you forget what led to it, can't take revenge for it, and must stay away from where you died. ( First warn, then kick, then ban ).
 
-# 4. Random arrest
-- The Reich arrests only with a reason: a law broken, a crime seen or reported, being wanted, resisting, or being outside during martial law.
-- Handcuff and take them in. Someone who's complying is arrested, not shot.
-- A warrant needs a reason too (a crime seen or reported). No warrant, no battering ram.
-- Random arrests and warrants get you demoted.
+# 4. FearRP
+- 4. FearRP: you must value your character's life. You cannot pull a gun while already held at gunpoint during a mugging. ( First warn, then kick, then ban ).
+- 4a. You cannot call for help (OOC, private messages, /radio or voice) while held at gunpoint. ( First warn, then kick, then ban ).
+- 4b. Told to stop by the Reich at gunpoint, you stop. Running or fighting is resisting arrest.
 
-# 5. FailRP
-- Stay in character outside of OOC chat, and act like someone living in 1942. Everything said in normal chat is said by your character.
-- Do only what your job allows: the Reich doesn't run illegal printers or help raid, producers don't raid, the Führer doesn't fight on the front line.
-- Your roleplay name must fit 1942 (a first and last name). No meme, offensive or modern names. Staff can rename you.
-- Don't break character to escape: no logging off, changing job or suiciding to dodge an arrest, a robbery or a raid.
-- /me and /advert are in character. Adverts aren't for OOC chat or threatening a whole faction.
+# 5. FailRP / Job abuse
+- 5. You must act according to your chosen job's description and rules. Changing your job just to get access to a specific weapon or self-supply items is forbidden. ( First warn, then kick, then ban ).
+- 5a. Logging off, changing job or suiciding to avoid an arrest, a robbery or a raid is forbidden. ( First warn, then kick, then ban ).
+- 5b. Your roleplay name must be a first and last name that fits 1942. No meme, offensive or modern names. ( Staff rename you, then kick ).
 
-# 6. Job abuse
-- Don't take a job just for its weapons, tools or money and then switch. Taking a dealer job to arm yourself and leaving is job abuse.
-- No job hopping to get out of a situation, or to reset a cooldown.
-- Do your job: a Reich soldier keeps order, a producer produces, a dealer deals.
-- Staff check fast job changes. Doing it to dodge rules gets you a job ban.
+# 6. Metagaming
+- 6. Using information obtained out-of-character (such as reading a player's overhead name/title or hearing voice comms via Discord) during in-character situations is not allowed. ( First warn, then kick, then ban ).
+- 6a. The WANTED tag is public. Acting on it is allowed.
+- 6b. Exposing a Gestapo agent or an undercover operative from something you saw out-of-character is forbidden. ( First warn, then kick, then ban ).
 
-# 7. Job rules: Reich (Wehrmacht, Waffen-SS, Leibstandarte)
-- Keep order and protect the city. Guard the Reichsbank vault, the supply train and the Führer.
-- Reich members can't be arrested, so don't abuse it: breaking laws or killing civilians without reason gets you demoted.
-- Reich weapons are for Reich duties: no handing them to other factions or selling them.
-- Follow the Führer's orders and the chain of command, as long as they don't break these rules.
-# 7. Job rules: Wehrmacht Driver
-- The armoured car is the Reich's: drive it for Reich duties, not joyrides. Don't block roads or spawn with it, or use it to run people over.
-# 7. Job rules: Gestapo
-- Keep your cover. Never reveal it OOC, and don't use what you learn in cover as an ordinary soldier unless you've roleplayed passing it on.
-# 7. Job rules: The Führer
-- Stay in the role: make laws, set taxes, decide, and lead. Going AFK for long or trolling in office gets you removed.
-- Laws must be roleplay laws that can be followed. No "kill on sight" laws for the whole city, no laws against walking or existing, no laws that target one player.
-- Martial law (/lockdown) needs a reason (an attack, a raid on the Reich, a bank robbery) and lasts at most 10 minutes, with 10 minutes before the next.
-- Taxes can go as high as 100% for any faction or job, but they come at a price: while any faction or job is taxed above 50%, the Reich is raidable for it. Anyone whose job can raid (RAID = YES) may raid the Reich (the Reichsbank vault and Reich buildings) in protest, following the raid rules below.
-- The treasury is for the Reich: payouts, perks and lotteries. Draining it on purpose before you leave office isn't allowed. At most one lottery every 10 minutes.
-# 7. Job rules: The Resistance
-- Fight from the shadows: attacks on the Reich need a goal (a raid, a rescue, a robbery, sabotage), not random killing of patrols.
-- Operatives in disguise keep their cover in character. A Reich uniform doesn't give you Reich powers.
-# 7. Job rules: Thief, Pro Thief and every RAID = YES job (raids and mugging)
-- Only jobs marked RAID = YES at the end of their description can raid. RAID = NO: Hobos, the producers, the dealers, the Reich Banker, the Reich Scientist and the Führer.
-- Announce a raid with /advert ("Raid") before you start. A raid lasts up to 10 minutes.
-- Wait 10 minutes after a raid before raiding again, and 30 minutes before raiding the same base again.
-- In a raid you may kill the defenders of the raided base and anyone who shoots at you, and take what's inside. Defenders defend their own base only, and once dead (NLR) can't come back to it.
-- The Reich raids with the battering ram, and only with a warrant. Lockpicks pick doors and padlocks; a shotgun blast up close blows a door open. Blasting doors open is part of a raid, so it needs a raid too.
-- Mugging: announce it ("/me draws a pistol: your money!"), give at least 10 seconds to comply, take at most RM 2,000. Not the same player again for 20 minutes, and never at spawn or the market.
-- Kidnapping needs a reason and a demand: at most 10 minutes, ransom at most RM 5,000.
-# 7. Job rules: Dealers (Black Market, Cherkesov, German Supplier)
-- Sell to others; don't take a dealer job to arm yourself or your friends and leave. Dealers don't raid.
-# 7. Job rules: Producers (Baker, Winemaker, Petroleum Producer, Factory Owner)
-- Work your machines and sell your goods. Producers don't raid. Destroying someone's machine needs a roleplay reason, like a raid.
-# 7. Job rules: Reich Banker and printers
-- Money printers are illegal (the Banking Printer is the Reich Banker's legal one). The Reich can seize them; owning one is your risk.
+# 7. Prop blocking
+- 7. Prop blocking is forbidden and you must have at least one way into a base, whether it be a regular door or a fading door. ( First kick, then ban ).
+- 7a. At most 2 doors or padlocks between the entrance and the inside. No mazes, one-way props or crouch/jump-only entrances. ( First kick, then ban ).
+- 7b. No building in public places: spawn, the market, the station, the bank or Reich buildings. ( Props removed, then kick ).
 
-# 8. Metagame
-- What your character knows comes from roleplay, not from your screen or from OOC: chat, streams, Discord or the scoreboard.
-- Names and job titles above heads aren't proof. Don't arrest or attack someone because of a job title you can see; an undercover agent's title is their cover.
-- The WANTED tag is public: the Reich has put out word on that person, so acting on it is fine.
-- Never expose a Gestapo agent or an undercover operative from something you saw OOC.
+# 8. Prop surfing
+- 8. Prop surfing is forbidden. ( First warn, then kick, then ban ).
+- 8a. Prop pushing, prop climbing and prop killing are forbidden. ( First warn, then kick, then ban ).
 
-# 9. Respect and conduct
-- Be respectful in OOC chat, voice and on Discord. No harassment, slurs, or targeting people for who they are.
-- This is a 1942 occupation roleplay. Play the history; don't celebrate it. No real-world hate speech, extremist symbols or propaganda OOC, and no jokes about real atrocities. Playing a Reich character is roleplay, not a platform.
-- No spamming chat, voice, adverts or /radio. No mic spam, soundboards or earrape. English in OOC chat.
-- Don't impersonate staff or another player.
-- Staff decisions are final in the moment. Disagree on Discord afterwards, not in game.
+# 9. AFK farming
+- 9. Money printers and production machines must be tended. Leaving them running while you're AFK is forbidden. ( Machines removed, then warn, then kick ).
+- 9a. Macros or scripts to work machines are an exploit (see 10).
 
 # 10. Exploits and cheating
-- No cheats, scripts, macros or exploits. Report bugs to staff; abusing a bug is treated like cheating.
-- No duping or money glitches in machines, printers, the market, the bank or the treasury.
-- Don't use !sitstuck or !spawn to escape a fight, an arrest or a raid, and no sitting or prop tricks to get inside walls or under the map.
-- No alt accounts to get round a job limit, a vote, a cooldown or a ban, and no passing money or items to an alt to dodge a death or an arrest.
-- No scamming: taking money in an OOC deal and not delivering.
+- 10. Cheats, scripts, macros, duping and abusing bugs are no tolerance, and are a permanent ban.
+- 10a. Alt accounts used to get round a job limit, a vote, a cooldown or a ban are a permanent ban.
+- 10b. Scamming in OOC deals is forbidden. ( First warn, then kick, then ban ).
 
-# 11. Props and building
-- No prop pushing, surfing, climbing or killing.
-- No prop blocking: doors you don't own, streets, spawn, the market, machines, the bank, the train tracks or a job's way in.
-- Builds must look like they belong in 1942. No floating props, mazes, one-way props or crouch/jump-only entrances.
-- A base needs a way in that can be raided: a door you own or a padlock door (you can have 2), with at most 2 doors or padlocks between the entrance and the inside.
-- Don't build in public places (spawn, the market, the station, the bank, Reich buildings) unless your job owns them.
+# 11. Conduct
+- 11. Harassment, slurs and targeting people OOC are forbidden. ( First warn, then kick, then ban ).
+- 11a. Real-world hate speech, extremist symbols or propaganda OOC is no tolerance, and is an instant ban. Playing a Reich character is roleplay, not a platform.
+- 11b. Chat, mic, advert or /radio spam is forbidden. ( First warn, then kick, then ban ).
+- 11c. Impersonating staff is forbidden. ( First kick, then ban ).
 
-# 12. Staff and reports
-- Staff on Duty is for handling reports. Don't use staff tools, noclip or the staff job for your own roleplay.
-- Report rule breaks with @ in chat or on Discord: what happened and who. Don't take revenge yourself.
+# 12. Raiding
+- 12. Only jobs marked RAID = YES can raid. Production jobs cannot raid.
+- 12a. Civilian jobs who can raid can base with other jobs / factions that can raid. IE: Civilians / Doctors can side with either the Resistance or the Reich.
+- 12b. Announce a raid with /advert "Raid" before you start. A raid lasts at most 10 minutes.
+- 12c. 10 minutes between raids, and 30 minutes before raiding the same base again.
+- 12d. The Reich raids only with a warrant.
+- 12e. While any faction or job is taxed above 50%, the Reich is raidable.
+- ( Breaking a raid rule: first warn, then kick, then ban ).
 
-# Punishments
-- Usually: a verbal warning, then a warning, then a kick, then a ban. Serious breaks (cheating, mass RDM, hate speech) skip steps.
-- Abusing a job's powers can mean a demotion or a ban from that job or faction.
+# 13. Mugging and kidnapping
+- 13. Announce a mugging and give at least 10 seconds to comply. Take at most RM 2,000.
+- 13a. The same player can't be mugged again for 20 minutes. No mugging at spawn or the market.
+- 13b. Kidnapping needs a reason and a demand. At most 10 minutes, ransom at most RM 5,000.
+- ( Breaking a mugging rule: first warn, then kick, then ban ).
 
-#staff Guideline lengths (staff only)
-- RDM / CDM: warning, then 1 day, then 3 days, then 1 week.
-- Mass RDM / spawn killing: 3 days to 1 week.
-- Random arrests, warrant abuse: demotion, then a Reich job ban (1 day to 1 week).
-- AFK farming: remove the printers or machines, then a warning.
-- Exploits, duping or cheating: permanent ban.
-- Hate speech, slurs, real-world extremist content: 1 week to permanent.
-- Prop abuse (blocking, surfing, killing): warning, then 1 day.
-- Job abuse / job hopping: warning, then a job ban.
-- Leaving to avoid an arrest or a raid: warning, then 1 day.
+# 14. The Führer
+- 14. Laws must be roleplay laws that can be followed. No kill-on-sight laws for the whole city, and no laws that target one player. ( First warn, then demotion ).
+- 14a. Martial law needs a reason and lasts at most 10 minutes, with 10 minutes before the next.
+- 14b. Draining the treasury on purpose before leaving office is forbidden. ( Demotion, then job ban ).
+
+# 15. Staff
+- 15. Staff decisions are final in the moment. Disagree on Discord afterwards, not in game.
+- 15a. Staff on Duty, noclip and staff tools are for handling reports, not your own roleplay. ( Removal from staff ).
+- 15b. Report rule breaks with @ in chat or on Discord. Don't take revenge yourself.
+
+#staff Ban lengths (staff only)
+- Where a rule says "then ban": first ban 1 day, then 3 days, then 1 week.
+- Mass RDM / mass RDA: instant ban, 3 days to 1 week.
+- Exploits, duping, cheating, alt accounts: permanent ban.
+- Hate speech and real-world extremist content: 1 week to permanent.
+- Reich abuse (RDA, warrants): demotion, then a Reich job ban of 1 day to 1 week.
 ]] },
 
     { tab = "RP Definitions", icon = "icon16/book_open.png", text = [[
@@ -168,6 +135,8 @@ OOC - Out of character. Type // before a message to talk in OOC chat.
 IC - In character. Anything you say normally is said by your character.
 NLR - New Life Rule. When you die you forget everything that led to your death, and stay away from where you died for 3 minutes.
 RDM - Random Death Match. Killing someone without a roleplay reason.
+RDA - Random Arrest. Arresting someone without a roleplay reason.
+Mass RDM / RDA - Doing it to several players.
 CDM - Car Death Match. Running people over (or shooting them from a vehicle) without a roleplay reason.
 FearRP - Valuing your life: complying when someone has a gun on you.
 FailRP - Acting in a way your character or your job couldn't or wouldn't.
@@ -253,7 +222,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Shift+E on your padlock: let in players by name, everyone in your faction or everyone with your job, or take the padlock off. Taking it off (or using the remover on it or its door) gives you the padlock back.
 - Raiding: a lockpick picks it (the owner is told). The Reich's battering ram breaks it open, but only with a warrant on the owner.
 - When the server allows it, padlocks show a health bar and can be shot off: the door then stays open for a minute before the padlock is whole again.
-- Base rules: one entrance per base, no maze or one-way bases, no doors blocking streets or other players' doors.
+- Base rules (Rules 7): at least one way in, at most 2 doors or padlocks to the inside, no mazes or one-way bases, no doors blocking streets or other players' doors.
 
 # Fire
 - Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, a printer or rig going up) can leave fires behind. Bazooka and Panzerschreck rockets burst into flame like a molotov, and now and then leave fires too. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
@@ -278,7 +247,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Economy and taxes
 - The economy bar at the bottom of the screen shows how the economy is doing. A better economy means higher wages.
 - The Führer sets the tax rates. Taxes come out of your wages and market sales and go to the Reich treasury.
-- Taxes can go up to 100%, but while any faction or job pays more than 50% the Reich can be raided for it (see Rules, The Führer).
+- Taxes can go up to 100%, but while any faction or job pays more than 50% the Reich can be raided for it (see Rules, 12e).
 - The economy, the tax rates and the treasury are kept when the server restarts: a new Führer inherits his predecessor's.
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
 - The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped.
