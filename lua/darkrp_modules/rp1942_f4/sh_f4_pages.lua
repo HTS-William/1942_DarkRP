@@ -81,45 +81,41 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 - 8. Prop surfing is forbidden. ( First warn, then kick, then ban ).
 - 8a. Prop pushing, prop climbing and prop killing are forbidden. ( First warn, then kick, then ban ).
 
-# 9. AFK farming
-- 9. Money printers and production machines must be tended. Leaving them running while you're AFK is forbidden. ( Machines removed, then warn, then kick ).
-- 9a. Macros or scripts to work machines are an exploit (see 10).
+# 9. Exploits and cheating
+- 9. Cheats, scripts, macros, duping and abusing bugs are no tolerance, and are a permanent ban.
+- 9a. Alt accounts used to get round a job limit, a vote, a cooldown or a ban are a permanent ban.
+- 9b. Scamming in OOC deals is forbidden. ( First warn, then kick, then ban ).
 
-# 10. Exploits and cheating
-- 10. Cheats, scripts, macros, duping and abusing bugs are no tolerance, and are a permanent ban.
-- 10a. Alt accounts used to get round a job limit, a vote, a cooldown or a ban are a permanent ban.
-- 10b. Scamming in OOC deals is forbidden. ( First warn, then kick, then ban ).
+# 10. Conduct
+- 10. Harassment, slurs and targeting people OOC are forbidden. ( First warn, then kick, then ban ).
+- 10a. Real-world hate speech, extremist symbols or propaganda OOC is no tolerance, and is an instant ban. Playing a Reich character is roleplay, not a platform.
+- 10b. Chat, mic, advert or /radio spam is forbidden. ( First warn, then kick, then ban ).
+- 10c. Impersonating staff is forbidden. ( First kick, then ban ).
 
-# 11. Conduct
-- 11. Harassment, slurs and targeting people OOC are forbidden. ( First warn, then kick, then ban ).
-- 11a. Real-world hate speech, extremist symbols or propaganda OOC is no tolerance, and is an instant ban. Playing a Reich character is roleplay, not a platform.
-- 11b. Chat, mic, advert or /radio spam is forbidden. ( First warn, then kick, then ban ).
-- 11c. Impersonating staff is forbidden. ( First kick, then ban ).
-
-# 12. Raiding
-- 12. Only jobs marked RAID = YES can raid. Production jobs cannot raid.
-- 12a. Civilian jobs who can raid can base with other jobs / factions that can raid. IE: Civilians / Doctors can side with either the Resistance or the Reich.
-- 12b. Announce a raid with /advert "Raid" before you start. A raid lasts at most 10 minutes.
-- 12c. 10 minutes between raids, and 30 minutes before raiding the same base again.
-- 12d. The Reich raids only with a warrant.
-- 12e. While any faction or job is taxed above 50%, the Reich is raidable.
+# 11. Raiding
+- 11. Only jobs marked RAID = YES can raid. Production jobs cannot raid.
+- 11a. Civilian jobs who can raid can base with other jobs / factions that can raid. IE: Civilians / Doctors can side with either the Resistance or the Reich.
+- 11b. Announce a raid with /advert "Raid" before you start. A raid lasts at most 10 minutes.
+- 11c. 10 minutes between raids, and 30 minutes before raiding the same base again.
+- 11d. The Reich raids only with a warrant.
+- 11e. While any faction or job is taxed above 50%, the Reich is raidable.
 - ( Breaking a raid rule: first warn, then kick, then ban ).
 
-# 13. Mugging and kidnapping
-- 13. Announce a mugging and give at least 10 seconds to comply. Take at most RM 2,000.
-- 13a. The same player can't be mugged again for 20 minutes. No mugging at spawn or the market.
-- 13b. Kidnapping needs a reason and a demand. At most 10 minutes, ransom at most RM 5,000.
+# 12. Mugging and kidnapping
+- 12. Announce a mugging and give at least 10 seconds to comply. Take at most RM 2,000.
+- 12a. The same player can't be mugged again for 20 minutes. No mugging at spawn or the market.
+- 12b. Kidnapping needs a reason and a demand. At most 10 minutes, ransom at most RM 5,000.
 - ( Breaking a mugging rule: first warn, then kick, then ban ).
 
-# 14. The Führer
-- 14. Laws must be roleplay laws that can be followed. No kill-on-sight laws for the whole city, and no laws that target one player. ( First warn, then demotion ).
-- 14a. Martial law needs a reason and lasts at most 10 minutes, with 10 minutes before the next.
-- 14b. Draining the treasury on purpose before leaving office is forbidden. ( Demotion, then job ban ).
+# 13. The Führer
+- 13. Laws must be roleplay laws that can be followed. No kill-on-sight laws for the whole city, and no laws that target one player. ( First warn, then demotion ).
+- 13a. Martial law needs a reason and lasts at most 10 minutes, with 10 minutes before the next.
+- 13b. Draining the treasury on purpose before leaving office is forbidden. ( Demotion, then job ban ).
 
-# 15. Staff
-- 15. Staff decisions are final in the moment. Disagree on Discord afterwards, not in game.
-- 15a. Staff on Duty, noclip and staff tools are for handling reports, not your own roleplay. ( Removal from staff ).
-- 15b. Report rule breaks with @ in chat or on Discord. Don't take revenge yourself.
+# 14. Staff
+- 14. Staff decisions are final in the moment. Disagree on Discord afterwards, not in game.
+- 14a. Staff on Duty, noclip and staff tools are for handling reports, not your own roleplay. ( Removal from staff ).
+- 14b. Report rule breaks with @ in chat or on Discord. Don't take revenge yourself.
 
 #staff Ban lengths (staff only)
 - Where a rule says "then ban": first ban 1 day, then 3 days, then 1 week.
@@ -141,7 +137,6 @@ CDM - Car Death Match. Running people over (or shooting them from a vehicle) wit
 FearRP - Valuing your life: complying when someone has a gun on you.
 FailRP - Acting in a way your character or your job couldn't or wouldn't.
 Job abuse - Taking a job for its gear or money, or to dodge a situation, and not playing it.
-AFK farming - Leaving printers or machines making money while you're away.
 Prop blocking - Using props to block players, doors or entities.
 Prop surfing - Riding props to reach places you otherwise couldn't.
 Prop pushing - Pushing players or entities around with props.
@@ -247,10 +242,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Economy and taxes
 - The economy bar at the bottom of the screen shows how the economy is doing. A better economy means higher wages.
 - The Führer sets the tax rates. Taxes come out of your wages and market sales and go to the Reich treasury.
-- Taxes can go up to 100%, but while any faction or job pays more than 50% the Reich can be raided for it (see Rules, 12e).
+- Taxes can go up to 100%, but while any faction or job pays more than 50% the Reich can be raided for it (see Rules, 11e).
 - The economy, the tax rates and the treasury are kept when the server restarts: a new Führer inherits his predecessor's.
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
-- The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped.
+- The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped. No payouts while the Reichsbank is being robbed.
 
 # Arms dealers
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.

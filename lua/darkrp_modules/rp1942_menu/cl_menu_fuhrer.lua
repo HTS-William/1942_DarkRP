@@ -342,6 +342,9 @@ function PANEL:AddPayout()
         end
         local text = string.format("%d %s  ·  %s each  ·  costs %s of the treasury", count, count == 1 and "player" or "players",
             DarkRP.formatMoney(each), DarkRP.formatMoney(total))
+        if RP1942.bankState and RP1942.bankState().active then
+            text = "The Reichsbank is being robbed: no payouts until the robbery is over."
+        end
         if s:GetText() ~= text then s:SetText(text) end
     end
 

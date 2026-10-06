@@ -64,12 +64,17 @@ end)
 -- factions. "each:500|...": pay 500 to each of them. From the treasury.
 -- Factions with nobody online are skipped; the Führer isn't paid. With a
 -- split, anything that doesn't divide evenly stays in the treasury.
+-- Refused while the Reichsbank vault is being robbed (rp1942_bank).
 local PAYOUT_MAX = 10000        -- most per player in one payout
 local PAYOUT_COOLDOWN = 30      -- seconds between payouts
 local PAYOUT_NAMES = { reich = "the Reich", civilian = "the civilians", resistance = "the Resistance" }
 
 RP1942.addMenuHandler("RP1942_FuhrerMenu", "payout", function(ply, arg)
     if not (RP1942.treasuryWithdraw and RP1942.getTreasury) then return end
+    -- No payouts while the Reichsbank vault is being robbed
+    if RP1942.bankState and RP1942.bankState().active then
+        return DarkRP.notify(ply, 1, 5, "The Reichsbank is being robbed: no payouts until the robbery is over.")
+    end
     local mode, amount, list = string.match(arg or "", "^(%a+):(%d+)|([%w_,]*)$")
     if not mode then   -- the old form: "500|reich" = 500 each
         mode = "each"
