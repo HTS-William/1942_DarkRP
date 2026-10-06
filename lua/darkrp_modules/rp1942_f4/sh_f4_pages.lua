@@ -299,8 +299,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Production
 - Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.
-- Machines have brass control panels: look at a button, lever or wheel and press E.
-- Ovens, oil rigs and factory lines have a POWER lever. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
+- Machines have control panels: look at a button and press E.
+- Ovens, oil rigs and factory lines have an ON / OFF button. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
 - Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
 - Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
 - E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).
@@ -308,7 +308,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Baker
 - Buy a Bread Oven and Sacks of Flour. Push sacks into the oven: it holds 3 and bakes them one at a time.
-- While it bakes the fire cools. STOKE FIRE to keep the needle in the green; too cold or too hot and the batch suffers.
+- While it bakes the fire cools. STOKE FIRE to keep the fire's marker in the green; too cold or too hot and the batch suffers.
 - More time in the green means more loaves (up to 3) and more stars. COLLECT BREAD when it's done, and the next sack goes in.
 
 # Winemaker
@@ -317,7 +317,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Petroleum Producer
 - Buy an Oil Rig. It isn't placed by hand: it's built on the nearest free oil site and bolted down, and it's marked on your screen once built. If every site is taken, it isn't for sale until one frees up.
-- It pumps on its own. With the valve shut the pressure climbs; turn the red valve wheel to open it and the pressure falls, then turn it again to shut it. Keep the needle in the green.
+- It pumps on its own. With the valve shut the pressure climbs; press OPEN VALVE and the pressure falls, then CLOSE VALVE to shut it. Keep the marker in the green.
 - More time in the green means more barrels of crude (up to 3, around R.M. 1,000 each at a market) and a better grade. FILL BARRELS when the tank is full, and it starts pumping again.
 - If the pressure drops to nothing with the valve open, the pump stalls and switches itself off. Switch it back on: the pressure builds up again from zero.
 - Don't leave it in the red. After a while an alarm sounds; if the pressure still isn't brought down, the rig explodes, and it's gone.

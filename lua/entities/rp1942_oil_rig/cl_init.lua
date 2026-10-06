@@ -1,143 +1,146 @@
 include("shared.lua")
 
 --[[---------------------------------------------------------------------------
-The rig's control plate, in brass & enamel (like the oven's). Where it
-sits on the prop: RP1942.PanelSpots.rp1942_oil_rig in sh_production.lua
-(fine-tune it in game with the rp1942_panel_* console commands).
+The rig's panel, in the Wine Barrel's style. It sits on the front of the tank
+(RP1942.PanelSpots.rp1942_oil_rig in sh_production.lua; fine-tune it in game
+with the rp1942_panel_* console commands).
+
+    OIL RIG
+    Pumping · tank full in 3:12                  [progress]
+    PRESSURE · RISING                  VALVE SHUT
+    [low | just right | too high]  with a marker and which way it's heading
+    (DANGER: a strip counting down to the blowout)
+    TANK (SO FAR)   ★★☆ 2 barrels · in the green 71% of the time
+    [ OPEN VALVE ] [ FILL BARRELS ] [ OFF ]
 ---------------------------------------------------------------------------]]
-ENT.PanelSize  = { w = 620, h = 640 }
+ENT.PanelSize  = { w = 560, h = 600 }
 ENT.PanelScale = 0.045
 ENT.PanelLift  = 12
-ENT.PanelNoBackground = true
 
-local ENAMEL = Color(34, 34, 36)
+local ACCENT = Color(200, 150, 50)
 local LOW, RIGHT, HIGH = Color(70, 90, 150), Color(60, 140, 70), Color(190, 50, 40)
-local OIL = Color(200, 150, 50)
-local AMBER_BTN = Color(170, 120, 30)
-local DIAL_FACE = Color(150, 140, 118)   -- aged, like the factory's: a white face glows on dark maps
-local IRON, IRON_LIGHT = Color(128, 36, 28), Color(176, 64, 48)
+local BLUE_TEXT, RED_TEXT, GREEN_TEXT = Color(120, 160, 240), Color(230, 110, 96), Color(140, 220, 140)
+local VALVE_BTN, FILL_BTN, POWER_BTN = Color(150, 40, 30), Color(90, 110, 60), Color(52, 48, 42)
+local DANGER = Color(255, 70, 50)
 
--- The valve wheel: an iron hand-wheel with five spokes, turning a full turn
--- (anticlockwise to open, clockwise to close) each time it's used
-local function valveWheel(P, ent, cx, cy, r, enabled)
-    local B = RP1942.Brass
-    local hot = P:Hot("wheel", cx - r - 14, cy - r - 14, (r + 14) * 2, (r + 14) * 2 + 56, enabled and not ent:WheelTurning())
-    local t = math.Clamp((CurTime() - ent:GetWheelTurnedAt()) / (ent:Config().wheelTime or 1.2), 0, 1)
-    local ease = t < 1 and (1 - (1 - t) ^ 3) or 1                     -- starts fast, settles
-    local turn = (ent:GetValveOpen() and -360 or 360) * ease          -- a full turn, so it ends where it started
-    local rim, rimLight = IRON, IRON_LIGHT   -- always red, even while it can't be turned
+-- A line from the foreman's log, picked once per rig by the tank's stars
+local NOTES = {
+    [1] = { "Thick and gritty. It'll burn, eventually.", "More sludge than oil. Strain it twice.", "The motor pool will complain. Loudly." },
+    [2] = { "Decent crude: it'll keep the trucks rolling.", "Fair yield, a little water in it. Nothing a filter can't fix.", "Steady work. Nobody's getting a medal for it." },
+    [3] = { "Clean and steady: the motor pool will be pleased.", "Light sweet crude. Berlin will hear about this one.", "Not a drop wasted. The foreman almost smiled." },
+}
 
-    if hot then B.Arc(cx, cy, r + 2, r + 9, 0, 360, B.WHITE) end
-    -- Spokes and their grips
-    for i = 0, 4 do
-        local a = math.rad(turn + i * 72 - 90)
-        local ex, ey = cx + math.cos(a) * (r - 6), cy + math.sin(a) * (r - 6)
-        B.Line(cx, cy, ex, ey, 9, rim)
-        B.Line(cx, cy, ex, ey, 3, rimLight)
-    end
-    -- The rim: dark outer ring, lighter inner edge
-    B.Arc(cx, cy, r - 12, r, 0, 360, rim)
-    B.Arc(cx, cy, r - 12, r - 8, 0, 360, rimLight)
-    -- Grip knobs on the rim, between the spokes
-    for i = 0, 4 do
-        local a = math.rad(turn + i * 72 - 54)
-        local kx, ky = cx + math.cos(a) * (r - 6), cy + math.sin(a) * (r - 6)
-        B.Circle(kx, ky, 8, rim)
-        B.Circle(kx - 2, ky - 2, 3, rimLight)
-    end
-    -- Hub, red like the rest
-    B.Circle(cx, cy, 17, Color(80, 20, 16))
-    B.Circle(cx, cy, 14, rim)
-    B.Circle(cx - 3, cy - 4, 5, rimLight)
-
-    B.Plaque(cx, cy + r + 16, 200, 38, ent:GetValveOpen() and "CLOSE VALVE" or "OPEN VALVE", "RP1942_BrassLabel")
-    return hot
-end
-
--- Repaint the panel quickly while the wheel turns or the alarm flashes
+-- Repaint the panel quickly while the valve turns or the alarm flashes
 function ENT:PanelFast()
     return self:WheelTurning() or (not self:GetOff() and self:Alarming())
 end
 
+-- "Excellent", "Fine", "Poor"
+local function qualityName(q)
+    local n = RP1942.qualityName(q)
+    return string.upper(string.sub(n, 1, 1)) .. string.sub(n, 2)
+end
+
 function ENT:PaintPanel(P, w, h)
-    local B = RP1942.Brass
+    local C = RP1942.PanelColors
     local c = self:Config()
-    local pumping, ready = self:IsPumping(), self:GetReady()
-    local off = self:GetOff()
+    local x, y, iw = 28, 76, w - 56
+    local pumping, ready, off = self:IsPumping(), self:GetReady(), self:GetOff()
+    local open = self:GetValveOpen()
+    local alarm = pumping and not off and self:Alarming()
+    P:Title("OIL RIG", ACCENT)
 
-    B.Plate(w, h, ENAMEL)
-    B.Plaque(w / 2, 24, 480, 46, "BOHRANLAGE  ·  OIL RIG")
+    ------------------------------------------------------------ status and progress
+    if ready > 0 then
+        P:Text("Tank full!  Fill the barrels.", "RP1942_PanelBody", x, y, C.gold)
+        P:Bar(x, y + 32, iw, 14, 1, ACCENT)
+    elseif pumping then
+        local left = math.max(self:GetDoneAt() - self:Now(), 0)
+        local line
+        if self:GetStalled() then line = "Stalled  ·  switch it back on"
+        elseif off then line = "Switched off  ·  pumping paused, " .. RP1942.clock(left) .. " left"
+        else line = "Pumping  ·  tank full in " .. RP1942.clock(left) end
+        P:Text(line, "RP1942_PanelBody", x, y, self:GetStalled() and RED_TEXT or C.dim)
+        P:Bar(x, y + 32, iw, 14, 1 - left / c.pumpTime, ACCENT)
+    else
+        P:Text(off and "Switched off" or "Starting...", "RP1942_PanelBody", x, y, C.dim)
+        P:Bar(x, y + 32, iw, 14, 0, ACCENT)
+    end
+    y = y + 70
 
-    -- The well: the needle is the pressure, the bands its zones
-    local p = pumping and self:Pressure() or 0
+    ------------------------------------------------------------ the pressure
+    local p = pumping and self:Pressure() or 50
     local pc = c.pressure
-    B.Dial(170, 222, 108, p, { { 0, pc.low, LOW }, { pc.low, pc.high, RIGHT }, { pc.high, 100, HIGH } }, "DRUCK / PRESSURE", pumping, DIAL_FACE)
+    local zone = pumping and self:PressureZone() or nil
+    local rate = self:GetPressRate()
+    if alarm then
+        local flashOn = math.floor(RealTime() * 4) % 2 == 0
+        P:Text("DANGER!  OPEN THE VALVE", "RP1942_PanelHead", x, y, flashOn and DANGER or Color(255, 200, 120))
+    elseif self:GetStalled() then
+        P:Text("STALLED  -  SWITCH IT BACK ON", "RP1942_PanelHead", x, y, RED_TEXT)
+    elseif ready > 0 or not pumping or off then
+        P:Text("PRESSURE", "RP1942_PanelHead", x, y, C.dim)
+    elseif zone == "low" then
+        P:Text(open and "LOW  -  CLOSE THE VALVE" or "LOW  ·  BUILDING UP", "RP1942_PanelHead", x, y, BLUE_TEXT)
+    elseif zone == "high" then
+        P:Text(open and "HIGH  ·  BLEEDING OFF" or "HIGH  -  OPEN THE VALVE", "RP1942_PanelHead", x, y, RED_TEXT)
+    else
+        P:Text(rate > 0 and "PRESSURE  ·  RISING" or "PRESSURE  ·  FALLING", "RP1942_PanelHead", x, y, GREEN_TEXT)
+    end
+    local right
+    if ready > 0 then right = "RESTING" elseif self:GetStalled() then right = nil elseif off then right = "SWITCHED OFF" elseif pumping then right = open and "VALVE OPEN" or "VALVE SHUT" end
+    if right then P:Text(right, "RP1942_PanelHead", x + iw, y, (ready > 0 or off) and C.faint or C.dim, TEXT_ALIGN_RIGHT) end
+    local live = pumping and not off and ready == 0
+    P:Zones(x, y + 52, iw, 22, p, { { 0, pc.low, LOW, "LOW" }, { pc.low, pc.high, RIGHT, "JUST RIGHT" }, { pc.high, 100, HIGH, "TOO HIGH" } },
+        { live = live, arrow = live and (math.abs(rate) > 0.05 and (rate > 0 and 1 or -1)) or nil })
+    y = y + 118
 
-    -- Which way it's heading: a small arrow beside the dial
-    if pumping then
-        local rate = self:GetPressRate()
-        if math.abs(rate) > 0.05 and p > 0.5 and p < 99.5 then
-            local ax, ay = 312, 222
-            draw.NoTexture()
-            surface.SetDrawColor(rate > 0 and HIGH or LOW)
-            if rate > 0 then B.Poly({ { x = ax - 11, y = ay + 8 }, { x = ax, y = ay - 10 }, { x = ax + 11, y = ay + 8 } })
-            else B.Poly({ { x = ax - 11, y = ay - 8 }, { x = ax + 11, y = ay - 8 }, { x = ax, y = ay + 10 } }) end
+    if alarm then
+        local blowIn = math.max(c.blowout.explodeAfter - self:RedTime(), 0)
+        P:Strip(x, y, iw, 44, "Explodes in " .. RP1942.clock(blowIn) .. " unless the pressure drops", DANGER)
+        y = y + 66
+    else
+        y = y + 8
+    end
+
+    ------------------------------------------------------------ the tank
+    if ready > 0 then
+        local q = self:GetReadyQuality()
+        P:Text("IN THE TANK", "RP1942_PanelHead", x, y, C.dim)
+        local sw = P:Stars(x, y + 30, q, 26)
+        P:Text(qualityName(q) .. "  ·  " .. ready .. (ready == 1 and " barrel" or " barrels"), "RP1942_PanelBody", x + sw + 8, y + 31, C.text)
+        y = y + 80
+        local notes = NOTES[q] or NOTES[2]
+        P:Text("FROM THE FOREMAN'S LOG", "RP1942_PanelHead", x, y, C.dim)
+        P:Text("\"" .. notes[(self:EntIndex() % #notes) + 1] .. "\"", "RP1942_PanelSmall", x, y + 30, C.dim)
+    elseif pumping then
+        local share = self:GetGreen() / math.max(self:Now() - self:GetPumpStart(), 1)
+        local cans = self:Grade(share)
+        P:Text("TANK (SO FAR)", "RP1942_PanelHead", x, y, C.dim)
+        local sw = P:Stars(x, y + 30, cans, 26)
+        P:Text(cans .. (cans == 1 and " barrel" or " barrels") .. "  ·  in the green " .. math.Round(math.Clamp(share, 0, 1) * 100) .. "% of the time",
+            "RP1942_PanelBody", x + sw + 8, y + 31, C.text)
+        y = y + 80
+        if not alarm then
+            P:Text("Turn the valve before it reaches the red:", "RP1942_PanelBody", x, y, C.dim)
+            P:Text("open, it falls; shut, it climbs.", "RP1942_PanelBody", x, y + 28, C.dim)
         end
     end
 
-    -- What to do now, under the dial
-    local zone = pumping and self:PressureZone() or nil
-    local msg, col
-    local blow = c.blowout
-    if not off and self:Alarming() then
-        local left = math.max(blow.explodeAfter - self:RedTime(), 0)
-        local flashOn = math.floor(RealTime() * 4) % 2 == 0
-        msg, col = "DANGER! OPEN THE VALVE  ·  " .. RP1942.clock(left), flashOn and Color(255, 70, 50) or Color(255, 200, 120)
-    elseif self:GetStalled() then msg, col = "STALLED  -  SWITCH IT BACK ON", Color(255, 130, 110)
-    elseif off then msg, col = "SWITCHED OFF", Color(170, 166, 150)
-    elseif ready > 0 then msg, col = "TANK FULL  -  FILL BARRELS", B.LIGHT
-    elseif not pumping then msg, col = "STARTING...", Color(170, 166, 150)
-    elseif zone == "low" then msg, col = self:GetValveOpen() and "PRESSURE LOW - CLOSE THE VALVE" or "PRESSURE LOW - BUILDING UP", Color(150, 180, 255)
-    elseif zone == "high" then msg, col = self:GetValveOpen() and "PRESSURE HIGH - BLEEDING OFF" or "PRESSURE HIGH - OPEN THE VALVE", Color(255, 130, 110)
-    else
-        msg, col = self:GetPressRate() > 0 and "IN THE GREEN  ·  RISING" or "IN THE GREEN  ·  FALLING", Color(140, 220, 140)
-    end
-    draw.SimpleText(msg, "RP1942_BrassLabel", 170, 356, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    ------------------------------------------------------------ buttons
+    local by, pw = h - 140, 110
+    local bw = (iw - 40 - pw) / 2
+    local turning = self:WheelTurning()
+    P:Button("wheel", x, by, bw, 58, turning and "TURNING..." or (open and "CLOSE VALVE" or "OPEN VALVE"),
+        { enabled = pumping and not off and not turning, color = VALVE_BTN })
+    P:Button("fill", x + bw + 20, by, bw, 58, ready > 0 and ("FILL (" .. ready .. ")") or "FILL BARRELS", { enabled = ready > 0, color = FILL_BTN })
+    P:Button("power", x + 2 * bw + 40, by, pw, 58, off and "ON" or "OFF", { color = POWER_BTN })
 
-    -- Right column: time, the tank, stars
-    local rx = 340
-    draw.SimpleText("TANK FULL IN", "RP1942_BrassSmall", rx, 102, B.LIGHT)
-    B.Counter(rx, 124, pumping and RP1942.clock(self:GetDoneAt() - self:Now()) or "0:00", 40)
-
-    local cans = ready
-    if pumping then cans = self:Grade(self:GetGreen() / math.max(self:Now() - self:GetPumpStart(), 1)) end
-    draw.SimpleText(ready > 0 and "IN THE TANK" or "TANK SO FAR", "RP1942_BrassSmall", rx, 196, B.LIGHT)
-    for i = 1, 3 do B.Lamp(rx + 18 + (i - 1) * 52, 236, 14, i <= cans, OIL) end
-
-    draw.SimpleText("GRADE", "RP1942_BrassSmall", rx, 276, B.LIGHT)
-    B.Stars(rx, 298, ready > 0 and self:GetReadyQuality() or cans, 26)
-    draw.SimpleText(cans .. (cans == 1 and " BARREL" or " BARRELS"), "RP1942_BrassSmall", rx, 334, B.WHITE)
-
-    -- The valve wheel, the valve's lamp, and FILL
-    local open = self:GetValveOpen()
-    valveWheel(P, self, 130, 452, 62, pumping and not off)
-
-    B.Lamp(262, 440, 16, pumping and open and not off, Color(240, 200, 90))
-    draw.SimpleText("VALVE", "RP1942_BrassSmall", 262, 472, B.LIGHT, TEXT_ALIGN_CENTER)
-    draw.SimpleText(open and "OPEN" or "SHUT", "RP1942_BrassSmall", 262, 492, open and B.WHITE or Color(170, 166, 150), TEXT_ALIGN_CENTER)
-
-    B.PushButton(P, "fill", 400, 446, 40, AMBER_BTN, ready > 0 and ("FILL (" .. ready .. ")") or "FILL BARRELS", ready > 0)
-    B.Toggle(P, "power", 548, 440, not off, true)
-
-    local hint = "LOOK AT THE WHEEL OR A BUTTON  ·  PRESS E"
-    if P.hover == "wheel" then
-        hint = (open and "CLOSE THE VALVE  (PRESSURE RISES)" or "OPEN THE VALVE  (PRESSURE FALLS)") .. "  ·  PRESS E"
-    elseif P.hover == "fill" then
-        hint = "FILL BARRELS  ·  PRESS E"
-    elseif P.hover == "power" then
-        hint = (off and "SWITCH ON" or "SWITCH OFF  (PAUSES PUMPING)") .. "  ·  PRESS E"
-    end
-    draw.SimpleText(hint, "RP1942_BrassSmall", w / 2, h - 28, P.hover and B.WHITE or B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    P:Hint(x, h, {
+        wheel = open and "CLOSE VALVE (PRESSURE RISES)" or "OPEN VALVE (PRESSURE FALLS)",
+        fill = "FILL BARRELS",
+        power = off and "SWITCH ON" or "SWITCH OFF (PAUSES PUMPING)",
+    })
 end
 
 function ENT:Draw()

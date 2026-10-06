@@ -112,7 +112,7 @@ P's helpers (all positions in canvas pixels):
     P:Text(text, font, x, y, color, alignX)
     P:Bar(x, y, w, h, fraction, color)
     P:Stars(x, y, quality, size)
-    P:Button(id, x, y, w, h, label, { enabled =, color = })
+    P:Button(id, x, y, w, h, label, { enabled =, color =, font = })
         pressing E while it's highlighted sends id to ENT:OnPanelPress(ply, id)
         on the server
 ---------------------------------------------------------------------------]]
@@ -203,7 +203,7 @@ function Painter:Button(id, x, y, w, h, label, opts)
         surface.SetDrawColor(COL.text)
         surface.DrawOutlinedRect(x, y, w, h, 3)
     end
-    draw.SimpleText(label, "RP1942_PanelButton", x + w / 2, y + h / 2, enabled and COL.text or COL.faint,
+    draw.SimpleText(label, opts.font or "RP1942_PanelButton", x + w / 2, y + h / 2, enabled and COL.text or COL.faint,
         TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
@@ -213,6 +213,100 @@ function Painter:Hot(id, x, y, w, h, enabled)
     local hot = enabled ~= false and self.cx and self.cx >= x and self.cx <= x + w and self.cy >= y and self.cy <= y + h
     if hot then self.hover = id end
     return hot
+end
+
+--[[---------------------------------------------------------------------------
+More helpers for the flat machine panels (the oven, the factory line, the
+oil rig; the wine barrel uses the ones above):
+    P:Zones(x, y, w, h, value, zones, opts)   a bar split into zones (each
+        { from, to, color, label } on 0-100), the zone the value is in lit,
+        a marker over the value. opts.live = false: all dim, no marker.
+        opts.arrow = 1 / -1: a small arrow beside the marker (rising / falling)
+    P:Slots(x, y, filled, total, color) -> width   small boxes (sacks, loads)
+    P:Chip(x, y, text, color, lit) -> width        a tag (a fault lamp)
+    P:Strip(x, y, w, h, text, color)               a warning strip
+    P:Hint(x, h, names)                            the bottom line: what E does
+---------------------------------------------------------------------------]]
+font("RP1942_PanelButtonSmall", 18, 800)
+
+local function dimmed(c, k) return Color(c.r * k, c.g * k, c.b * k) end
+
+local function tri(a, b, c, color)
+    draw.NoTexture()
+    surface.SetDrawColor(color)
+    surface.DrawPoly({ a, b, c })
+    surface.DrawPoly({ a, c, b })   -- either winding shows
+end
+
+function Painter:Zones(x, y, w, h, value, zones, opts)
+    opts = opts or {}
+    local live = opts.live ~= false
+    local function px(v) return x + math.floor(w * math.Clamp(v, 0, 100) / 100) end
+    for _, z in ipairs(zones) do
+        local inside = live and value >= z[1] and (value < z[2] or z[2] >= 100)
+        surface.SetDrawColor(inside and z[3] or dimmed(z[3], 0.38))
+        surface.DrawRect(px(z[1]), y, px(z[2]) - px(z[1]), h)
+        if z[4] then
+            draw.SimpleText(z[4], "RP1942_PanelSmall", (px(z[1]) + px(z[2])) / 2, y + h + 12, COL.faint, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        end
+    end
+    for i = 2, #zones do
+        surface.SetDrawColor(COL.bg)
+        surface.DrawRect(px(zones[i][1]) - 1, y, 3, h)
+    end
+    if not live then return end
+    local mx = px(value)
+    surface.SetDrawColor(COL.text)
+    surface.DrawRect(mx - 2, y - 7, 5, h + 14)
+    tri({ x = mx - 8, y = y - 18 }, { x = mx + 8, y = y - 18 }, { x = mx, y = y - 8 }, COL.text)
+    if opts.arrow and opts.arrow ~= 0 and value > 0.5 and value < 99.5 then
+        local cy = y + h / 2
+        if opts.arrow > 0 then
+            local ax = mx + 22
+            tri({ x = ax - 9, y = cy - 8 }, { x = ax + 9, y = cy }, { x = ax - 9, y = cy + 8 }, opts.upColor or Color(190, 50, 40))
+        else
+            local ax = mx - 22
+            tri({ x = ax + 9, y = cy - 8 }, { x = ax - 9, y = cy }, { x = ax + 9, y = cy + 8 }, opts.downColor or Color(120, 150, 240))
+        end
+    end
+end
+
+function Painter:Slots(x, y, filled, total, color)
+    for i = 1, total do
+        local bx = x + (i - 1) * 44
+        draw.RoundedBox(5, bx, y, 34, 34, i <= filled and color or COL.well)
+        if i <= filled then
+            surface.SetDrawColor(dimmed(color, 0.7))
+            surface.DrawRect(bx + 9, y + 7, 16, 3)
+        end
+    end
+    return total * 44
+end
+
+function Painter:Chip(x, y, text, color, lit)
+    surface.SetFont("RP1942_PanelHead")
+    local tw = surface.GetTextSize(text)
+    local cw = tw + (lit and 38 or 24)
+    draw.RoundedBox(4, x, y, cw, 30, lit and dimmed(color, 0.3) or COL.well)
+    if lit then draw.RoundedBox(4, x + 9, y + 11, 8, 8, color) end
+    draw.SimpleText(text, "RP1942_PanelHead", x + (lit and 26 or 12), y + 15, lit and color or COL.faint, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    return cw
+end
+
+function Painter:Strip(x, y, w, h, text, color)
+    surface.SetDrawColor(dimmed(color, 0.28))
+    surface.DrawRect(x, y, w, h)
+    surface.SetDrawColor(color)
+    surface.DrawRect(x, y, 8, h)
+    draw.SimpleText(text, "RP1942_PanelBody", x + 24, y + h / 2, COL.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+end
+
+function Painter:Hint(x, h, names)
+    if self.hover then
+        self:Text("Looking at: " .. (names[self.hover] or self.hover) .. "  —  press E", "RP1942_PanelBody", x, h - 44, COL.gold)
+    else
+        self:Text("Look at a button and press E.", "RP1942_PanelBody", x, h - 44, COL.faint)
+    end
 end
 
 -- Which way each side of the model's box faces (local yaw). Source props face +X.

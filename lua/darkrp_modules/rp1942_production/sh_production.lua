@@ -228,13 +228,13 @@ rp1942_panel_* console commands to fine-tune one in game and print its line).
 A class that isn't listed gets a panel floating above the prop instead.
 ---------------------------------------------------------------------------]]
 RP1942.PanelSpots = RP1942.PanelSpots or {}
--- kitchen_oven1: 31 deep x 70 wide x 50 tall, origin at the back. The brass
--- plate sits on the front of the oven (tuned in game with rp1942_panel_*).
+-- kitchen_oven1: 31 deep x 70 wide x 50 tall, origin at the back. The
+-- panel sits on the front of the oven (tuned in game with rp1942_panel_*).
 RP1942.PanelSpots.rp1942_oven = { mount = "face", face = "front", width = 0.46, top = 0.95, size = 0.86, nudge = { 17.5, 0.0, 0.0 } }
--- The factory line's control desk, flat on the side of the winch (tuned in game with rp1942_panel_*)
-RP1942.PanelSpots.rp1942_factory = { mount = "face", face = "right", width = 0.80, top = 0.80, size = 0.56, nudge = { 0.0, 15.0, 0.0 } }
--- The oil rig's brass plate, on the front of the tank (tuned in game with rp1942_panel_*)
-RP1942.PanelSpots.rp1942_oil_rig = { mount = "face", face = "front", width = 0.70, top = 0.75, size = 0.55, nudge = { 0.0, -85.0, 0.0 } }
+-- The factory line's panel, flat on the side of the winch (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_factory = { mount = "face", face = "right", width = 0.80, top = 0.80, size = 0.35, nudge = { 0.0, 15.0, 0.0 } }
+-- The oil rig's panel, on the front of the tank (tuned in game with rp1942_panel_*)
+RP1942.PanelSpots.rp1942_oil_rig = { mount = "face", face = "front", width = 0.70, top = 0.75, size = 0.53, nudge = { 0.0, -85.0, 0.0 } }
 -- The market's board, on its mailbox (tuned in game with rp1942_panel_*)
 RP1942.PanelSpots.rp1942_market = { mount = "backguard", face = "front", width = 0.45, top = 0.95, size = 1.00, nudge = { 0.0, -50.0, 12.0 } }
 

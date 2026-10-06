@@ -1,173 +1,157 @@
 include("shared.lua")
 
 --[[---------------------------------------------------------------------------
-The factory's control desk, in brass & enamel (like the oven's), laid out
-wide rather than tall so it sits on the winch. Where it sits on the prop:
-RP1942.PanelSpots.rp1942_factory in sh_production.lua (fine-tune it in game
-with the rp1942_panel_* console commands).
+The factory line's panel, in the Wine Barrel's style. It sits on the side of
+the winch (RP1942.PanelSpots.rp1942_factory in sh_production.lua; fine-tune
+it in game with the rp1942_panel_* console commands).
 
-    FABRIK  ·  FACTORY LINE
-    [ RUN dial ] RUN TIME LEFT / DOWNTIME / THIS RUN    SCRAP HOPPER
-                 RUNNING / HALTED lamps                 OUTPUT TRAY
-    THE LINE: a conveyor carrying crates (moves while it runs), with its
-              three stations; a fault's lamp flashes over its station
-    what to do now
-    [ the three repairs, under their stations ]  [ COLLECT ]  [ POWER ]
+    FACTORY LINE
+    Running · 2:10 left                         [progress]
+    LINE HALTED: BOILER FAULT   [BELT][BOILER][FUSE]   down 0:12
+      (or the output tray, once the run is done)
+    THIS RUN (SO FAR)   ★★☆ downtime 0:24 · 2 faults
+    SCRAP HOPPER        [loads waiting]
+    [ RETHREAD BELT ] [ VENT BOILER ] [ REPLACE FUSE ]
+    [ COLLECT                         ] [ OFF ]
 ---------------------------------------------------------------------------]]
-ENT.PanelSize  = { w = 960, h = 640 }
+ENT.PanelSize  = { w = 560, h = 600 }
 ENT.PanelScale = 0.045
-ENT.PanelLift  = 12
-ENT.PanelNoBackground = true
 
-local ENAMEL = Color(40, 44, 58)
-local WELL   = Color(24, 26, 34)                  -- the recessed parts (belt bed, bins, tray)
-local GREEN, RED, AMBER = Color(70, 170, 80), Color(210, 50, 40), Color(240, 170, 60)
-local STEEL, CRATE = Color(120, 124, 130), Color(150, 112, 62)
-local FIX_BTN, COLLECT_BTN = Color(196, 96, 36), Color(50, 120, 60)
-local DIM = Color(170, 166, 150)
+local ACCENT = Color(86, 128, 170)
+local RED_TEXT, GREEN_TEXT = Color(230, 110, 96), Color(140, 220, 140)
+local STEEL = Color(120, 124, 130)
+local FIX_BTN, COLLECT_BTN, POWER_BTN = Color(196, 96, 36), Color(90, 110, 60), Color(52, 48, 42)
 local RARITY_COL = {
     common = Color(200, 196, 180), uncommon = Color(120, 200, 120),
     rare = Color(110, 160, 255), ["very rare"] = Color(230, 150, 255),
 }
-local STATIONS = { 140, 340, 540 }               -- x of each station, its lamp and its repair button
-local DIAL_FACE = Color(150, 140, 118)            -- aged, darker than the oven's: an ivory face glows on dark maps
 
 -- Repaint the panel quickly while the fault lamp flashes
 function ENT:PanelFast()
     return self:GetState() == self.STATE_HALTED and not self:GetOff()
 end
 
--- The conveyor: crates ride along while the line runs and stand still otherwise
-local SPACING = 96
-function ENT:BeltOffset(moving)
-    local now = RealTime()
-    local last = self._beltT or now
-    self._beltT = now
-    if moving then self._belt = ((self._belt or 0) + math.min(now - last, 0.5) * 40) % SPACING end
-    return self._belt or 0
+-- "Excellent", "Fine", "Poor"
+local function qualityName(q)
+    local n = RP1942.qualityName(q)
+    return string.upper(string.sub(n, 1, 1)) .. string.sub(n, 2)
 end
 
-local function section(text, x, y) draw.SimpleText(text, "RP1942_BrassSmall", x, y, RP1942.Brass.LIGHT) end
-
 function ENT:PaintPanel(P, w, h)
-    local B = RP1942.Brass
+    local C = RP1942.PanelColors
     local c = self:Config()
+    local x, y, iw = 28, 76, w - 56
     local state = self:GetState()
-    local running, halted, done = state == self.STATE_RUNNING, state == self.STATE_HALTED, state == self.STATE_DONE
-    local idle = state == self.STATE_IDLE
+    local running, halted, done, idle = state == self.STATE_RUNNING, state == self.STATE_HALTED, state == self.STATE_DONE, state == self.STATE_IDLE
     local off = self:GetOff()
-    local live = running and not off
-    local flash = math.floor(RealTime() * 3) % 2 == 0
-
-    B.Plate(w, h, ENAMEL)
-    B.Plaque(w / 2, 22, 520, 46, "FABRIK  ·  FACTORY LINE")
-
-    ------------------------------------------------------------ the run (top left)
-    local pct = idle and 0 or (done and 100 or 100 * self:Progress() / c.runTime)
-    B.Dial(140, 192, 82, pct, { { 0, pct, GREEN } }, "LAUF  ·  RUN", live, DIAL_FACE)
-
-    local rx = 260
-    section("RUN TIME LEFT", rx, 90)
-    B.Counter(rx, 110, RP1942.clock(c.runTime - self:Progress()), 40)
-    section("DOWNTIME", rx, 168)
-    B.Counter(rx, 188, RP1942.clock(done and self:GetDownBase() or self:Downtime()), 40)
-    section(done and "THIS RUN" or "THIS RUN (SO FAR)", rx, 244)
-    B.Stars(rx, 264, done and self:GetReadyQuality() or (idle and 0 or self:Grade(self:Downtime())), 24)
-    B.Lamp(420, 116, 13, live, GREEN)
-    draw.SimpleText("RUNNING", "RP1942_BrassSmall", 420, 138, B.WHITE, TEXT_ALIGN_CENTER)
-    B.Lamp(420, 192, 13, halted and flash, RED)
-    draw.SimpleText("HALTED", "RP1942_BrassSmall", 420, 214, B.WHITE, TEXT_ALIGN_CENTER)
-
-    ------------------------------------------------------------ hopper and tray (top right)
-    local hx = 500
     local hopper, scrap = c.hopper or 4, self:GetScrap()
-    section("SCRAP HOPPER", hx, 84)
-    for i = 1, hopper do
-        local x = hx + (i - 1) * 46
-        draw.RoundedBox(4, x, 106, 40, 52, WELL)
-        if i <= scrap then
-            draw.RoundedBox(3, x + 4, 122, 32, 30, STEEL)
-            B.Line(x + 8, 131, x + 31, 143, 3, Color(80, 82, 88))
-        end
-    end
-    draw.SimpleText(scrap .. " / " .. hopper .. " LOADS", "RP1942_BrassSmall", hx + hopper * 46 + 8, 132,
-        scrap > 0 and B.WHITE or Color(255, 130, 110), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    P:Title("FACTORY LINE", ACCENT)
 
-    section("OUTPUT TRAY  ·  " .. c.items .. " GOODS PER LOAD", hx, 182)
-    local goods = done and self:ReadyGoods() or {}
-    local trayW = w - 40 - hx
-    local slotW = math.floor((trayW - (c.items - 1) * 8) / math.max(c.items, 1))
-    for i = 1, c.items do
-        local x = hx + (i - 1) * (slotW + 8)
-        draw.RoundedBox(4, x, 204, slotW, 60, WELL)
-        local good = goods[i] and RP1942.Goods[goods[i]]
-        if good then
-            local name = RP1942.fitText(string.upper(good.name), "RP1942_BrassSmall", slotW - 10)
-            draw.SimpleText(name, "RP1942_BrassSmall", x + slotW / 2, 224, B.WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-            draw.SimpleText(string.upper(good.rarity or ""), "RP1942_BrassSmall", x + slotW / 2, 246, RARITY_COL[good.rarity] or B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        else
-            draw.SimpleText(idle and "-" or "?", "RP1942_BrassLabel", x + slotW / 2, 234, Color(90, 92, 104), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        end
-    end
-
-    ------------------------------------------------------------ the line (middle)
-    section("THE LINE", 40, 296)
-    local by = 382                                   -- the belt's top
-    draw.RoundedBox(6, 40, by - 8, w - 80, 52, WELL)
-    local shift = self:BeltOffset(live)
-    for x = 40 - SPACING + shift, w - 40, SPACING do
-        if x > 34 and x < w - 74 then
-            draw.RoundedBox(2, x, by - 2, 34, 22, CRATE)
-            surface.SetDrawColor(110, 80, 40)
-            surface.DrawRect(x + 16, by - 2, 2, 22)
-        end
-    end
-    surface.SetDrawColor(STEEL)
-    surface.DrawRect(48, by + 22, w - 96, 4)
-    for x = 60, w - 60, 36 do B.Circle(x, by + 34, 7, Color(60, 62, 68)) B.Circle(x, by + 34, 3, STEEL) end
-    -- the stations, raised a little above the belt so the crates pass under them
-    local lift = 14
-    for i, f in ipairs(RP1942.FactoryFaults) do
-        local cx = STATIONS[i]
-        if not cx then break end
-        local on = halted and self:GetFault() == f.id
-        draw.RoundedBox(4, cx - 34, by - 30 - lift, 68, 30, B.DARK)
-        draw.RoundedBox(4, cx - 32, by - 28 - lift, 64, 26, on and Color(90, 30, 26) or Color(52, 56, 70))
-        draw.SimpleText(f.lamp, "RP1942_BrassSmall", cx, by - 15 - lift, on and B.WHITE or B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        B.Lamp(cx, by - 52 - lift, 10, on and flash, RED)
-    end
-    -- the machine end of the belt, where the goods come out
-    draw.RoundedBox(4, w - 230, by - 34 - lift, 170, 34, B.DARK)
-    draw.RoundedBox(4, w - 228, by - 32 - lift, 166, 30, Color(52, 56, 70))
-    draw.SimpleText("PRESSE  ·  PRESS", "RP1942_BrassSmall", w - 145, by - 17 - lift, B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-    ------------------------------------------------------------ what to do now
-    local msg, col
-    if done then msg, col = "RUN COMPLETE  -  COLLECT THE GOODS", B.LIGHT
-    elseif idle then msg, col = "IDLE  -  NO SCRAP  ·  PUSH SCRAP METAL INTO THE LINE", Color(255, 130, 110)
-    elseif off then msg, col = halted and "SWITCHED OFF  -  SWITCH ON TO REPAIR" or "SWITCHED OFF  -  RUN PAUSED", DIM
+    ------------------------------------------------------------ status and progress
+    local left = c.runTime - self:Progress()
+    if done then
+        P:Text("Run complete!  Collect the goods.", "RP1942_PanelBody", x, y, C.gold)
+    elseif idle then
+        P:Text("Idle  ·  " .. c.items .. " goods per load, " .. RP1942.clock(c.runTime) .. " a run", "RP1942_PanelBody", x, y, C.dim)
+    elseif off then
+        P:Text("Switched off  ·  run paused, " .. RP1942.clock(left) .. " left", "RP1942_PanelBody", x, y, C.dim)
     elseif halted then
-        local f
-        for _, x in ipairs(RP1942.FactoryFaults) do if x.id == self:GetFault() then f = x end end
-        msg, col = "HALTED: " .. (f and f.lamp or "?") .. " FAULT  -  " .. (f and f.button or "REPAIR IT"), Color(255, 130, 110)
+        P:Text("Halted  ·  " .. RP1942.clock(left) .. " of running left", "RP1942_PanelBody", x, y, C.dim)
     else
-        msg, col = "RUNNING  ·  WATCH FOR FAULTS", Color(140, 220, 140)
+        P:Text("Running  ·  " .. RP1942.clock(left) .. " left", "RP1942_PanelBody", x, y, C.dim)
     end
-    draw.SimpleText(msg, "RP1942_BrassLabel", w / 2, 452, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    P:Bar(x, y + 32, iw, 14, done and 1 or (idle and 0 or self:Progress() / c.runTime), ACCENT)
+    y = y + 66
 
-    ------------------------------------------------------------ the controls (bottom)
+    if idle then
+        ------------------------------------------------------------ waiting for scrap
+        P:Text("SCRAP HOPPER", "RP1942_PanelHead", x, y + 4, C.dim)
+        local sw = P:Slots(x, y + 34, scrap, hopper, STEEL)
+        P:Text(scrap == 0 and "Empty" or (scrap .. " / " .. hopper .. " loads"), "RP1942_PanelBody", x + sw + 8, y + 40, scrap == 0 and RED_TEXT or C.text)
+        y = y + 94
+        P:Text("HOW IT WORKS", "RP1942_PanelHead", x, y, C.dim)
+        P:Text("Each load of scrap metal makes one run. Now and", "RP1942_PanelBody", x, y + 30, C.dim)
+        P:Text("then the line halts with a fault: press the right", "RP1942_PanelBody", x, y + 58, C.dim)
+        P:Text("repair fast. Less downtime, better (and rarer) goods.", "RP1942_PanelBody", x, y + 86, C.dim)
+        y = y + 150
+        if not off then P:Text("PUSH SCRAP METAL INTO THE LINE", "RP1942_PanelHead", x, y, C.gold) end
+    else
+        if done then
+            ------------------------------------------------------------ the output tray
+            P:Text("OUTPUT TRAY", "RP1942_PanelHead", x, y, C.dim)
+            local goods = self:ReadyGoods()
+            local n = math.max(c.items, 1)
+            local sw = (iw - (n - 1) * 10) / n
+            for i = 1, n do
+                local bx = x + (i - 1) * (sw + 10)
+                draw.RoundedBox(4, bx, y + 30, sw, 66, C.well)
+                local good = goods[i] and RP1942.Goods[goods[i]]
+                if good then
+                    local name = RP1942.fitText and RP1942.fitText(string.upper(good.name), "RP1942_PanelButtonSmall", sw - 10) or string.upper(good.name)
+                    draw.SimpleText(name, "RP1942_PanelButtonSmall", bx + sw / 2, y + 52, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.SimpleText(string.upper(good.rarity or ""), "RP1942_PanelSmall", bx + sw / 2, y + 78, RARITY_COL[good.rarity] or C.dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                else
+                    draw.SimpleText("-", "RP1942_PanelHead", bx + sw / 2, y + 63, C.faint, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                end
+            end
+            y = y + 122
+        else
+            ------------------------------------------------------------ the line's lamps
+            local fault
+            for _, f in ipairs(RP1942.FactoryFaults) do if f.id == self:GetFault() then fault = f end end
+            if off then
+                P:Text(halted and "SWITCHED OFF  -  SWITCH ON TO REPAIR" or "SWITCHED OFF  -  RUN PAUSED", "RP1942_PanelHead", x, y, C.dim)
+            elseif halted then
+                P:Text("LINE HALTED: " .. (fault and fault.lamp or "?") .. " FAULT", "RP1942_PanelHead", x, y, RED_TEXT)
+            else
+                P:Text("RUNNING  ·  WATCH FOR FAULTS", "RP1942_PanelHead", x, y, GREEN_TEXT)
+            end
+            local flash = math.floor(RealTime() * 3) % 2 == 0
+            local cx = x
+            for _, f in ipairs(RP1942.FactoryFaults) do
+                local lit = halted and fault == f and (off or flash)
+                cx = cx + P:Chip(cx, y + 32, f.lamp, RED_TEXT, lit) + 10
+            end
+            if halted then
+                P:Text("down " .. RP1942.clock(self:Now() - self:GetHaltedAt()), "RP1942_PanelBody", x + iw, y + 36, RED_TEXT, TEXT_ALIGN_RIGHT)
+            end
+            y = y + 88
+        end
+
+        ------------------------------------------------------------ the run's grade
+        local down = done and self:GetDownBase() or self:Downtime()
+        local stars = done and self:GetReadyQuality() or self:Grade(down)
+        local faults = self:GetHalts()
+        P:Text(done and "THIS RUN" or "THIS RUN (SO FAR)", "RP1942_PanelHead", x, y, C.dim)
+        local sw = P:Stars(x, y + 30, stars, 26)
+        P:Text((done and qualityName(stars) or (stars .. (stars == 1 and " star" or " stars"))) .. "  ·  downtime " .. RP1942.clock(down)
+            .. "  ·  " .. faults .. (faults == 1 and " fault" or " faults"), "RP1942_PanelBody", x + sw + 8, y + 31, C.text)
+        y = y + 78
+
+        ------------------------------------------------------------ the hopper
+        P:Text("SCRAP HOPPER", "RP1942_PanelHead", x, y, C.dim)
+        local hw = P:Slots(x, y + 30, scrap, hopper, STEEL)
+        local note
+        if done then note = scrap > 0 and "Next run starts once collected" or "Empty: push in more scrap"
+        else note = scrap == 0 and "No more loads waiting" or (scrap .. (scrap == 1 and " more load waiting" or " more loads waiting")) end
+        P:Text(note, "RP1942_PanelBody", x + hw + 8, y + 36, (done and scrap == 0) and RED_TEXT or C.text)
+    end
+
+    ------------------------------------------------------------ buttons
+    local fy = h - 170
+    local n = #RP1942.FactoryFaults
+    local fw = (iw - (n - 1) * 20) / n
+    local names = { collect = "COLLECT THE GOODS", power = off and "SWITCH ON" or "SWITCH OFF (PAUSES THE RUN)" }
     for i, f in ipairs(RP1942.FactoryFaults) do
-        local cx = STATIONS[i]
-        if not cx then break end
-        B.PushButton(P, "fix:" .. f.id, cx, 512, 26, FIX_BTN, f.button, halted and not off)
+        P:Button("fix:" .. f.id, x + (i - 1) * (fw + 20), fy, fw, 50, f.button, { enabled = halted and not off, color = FIX_BTN, font = "RP1942_PanelButtonSmall" })
+        names["fix:" .. f.id] = f.button
     end
-    B.PushButton(P, "collect", 730, 512, 26, COLLECT_BTN, "COLLECT", done)
-    B.Toggle(P, "power", 880, 506, not off, true)
+    local pw = 110
+    local items = done and #self:ReadyGoods() or 0
+    P:Button("collect", x, fy + 66, iw - 20 - pw, 46, items > 0 and ("COLLECT (" .. items .. ")") or "COLLECT", { enabled = done, color = COLLECT_BTN })
+    P:Button("power", x + iw - pw, fy + 66, pw, 46, off and "ON" or "OFF", { color = POWER_BTN })
 
-    local names = { collect = "COLLECT THE GOODS", power = off and "SWITCH ON" or "SWITCH OFF  (PAUSES THE RUN)" }
-    for _, f in ipairs(RP1942.FactoryFaults) do names["fix:" .. f.id] = f.button end
-    draw.SimpleText(P.hover and ((names[P.hover] or P.hover) .. "  ·  PRESS E") or "LOOK AT A BUTTON  ·  PRESS E",
-        "RP1942_BrassSmall", w / 2, h - 22, P.hover and B.WHITE or B.LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    P:Hint(x, h, names)
 end
 
 function ENT:Draw()
