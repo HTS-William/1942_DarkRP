@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 text pages (Rules, RP Definitions, ...)
+1942 DarkRP - F4 text pages (Rules, Encyclopedia, ...)
 
 Every page here becomes its own tab in the F4 menu. Just type the text:
 
@@ -41,7 +41,7 @@ end
 RP1942.F4Pages = {
 
     { tab = "Rules", icon = "icon16/error.png", text = [[
-These rules apply to everyone. Staff may act on anything that breaks their spirit, even if it isn't written here. Terms are explained in RP Definitions. Punishments are listed with each rule; serious breaks can skip straight to a ban.
+These rules apply to everyone. Staff may act on anything that breaks their spirit, even if it isn't written here. Terms are explained in the Encyclopedia. Punishments are listed with each rule; serious breaks can skip straight to a ban.
 
 # 1. RDM
 - 1. RDM is prohibited. You must have a valid reason for killing someone. ( First warn, then kick, then ban ).
@@ -127,7 +127,7 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 - Reich abuse (RDA, warrants): demotion, then a Reich job ban of 1 day to 1 week.
 ]] },
 
-    { tab = "RP Definitions", icon = "icon16/book_open.png", text = [[
+    { tab = "Encyclopedia", icon = "icon16/book_open.png", text = [[
 # Roleplay terms
 OOC - Out of character. Type // before a message to talk in OOC chat.
 IC - In character. Anything you say normally is said by your character.

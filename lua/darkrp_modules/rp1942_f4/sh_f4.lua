@@ -12,6 +12,7 @@ Files:
     cl_f4_commands.lua  Commands: money, name, drop weapon, doors, ...
     cl/sv_f4_appearance.lua  Appearance: bodygroups and skin of your model
     cl_f4_pages.lua     one tab per text page in sh_f4_pages.lua (Rules, ...)
+    cl_f4_laws.lua      Law Board: the current laws (the same as every law board)
     sh_f4_pages.lua     the text of those pages            <- fill in
     sh_f4_shop.lua      items sold in the Shop tab           <- add items
     sh_f4_shop_core.lua / sv_f4_shop.lua   the shop's logic
@@ -26,7 +27,7 @@ RP1942.F4Config = {
     -- "pages" = every page in sh_f4_pages.lua, each as its own tab.
     -- "spawner" = the production spawner (rp1942_production/cl_prodspawn.lua),
     --             only shown to staff allowed !prodspawn.
-    tabs = { "commands", "jobs", "appearance", "shop", "pages", "spawner" },
+    tabs = { "commands", "jobs", "appearance", "shop", "pages", "laws", "spawner" },
 
     -- Appearance tab: change the bodygroups (and skin) of the model you wear.
     -- Choices are saved per model (cl_ / sv_f4_appearance.lua).
