@@ -5,7 +5,8 @@ Stops job abuse like fighting as the Resistance, switching to the Waffen-SS
 on the spot and carrying on from the same place. When you take a job that
 can raid (RAID = YES) and the last raiding job you held was in a different
 GROUP, you're sent back to spawn with the new job's gear (not killed: no
-death, no NLR, nothing dropped).
+death, no NLR, nothing dropped), after the 6 second respawn delay
+(sv_respawn.lua) during which you're held still and can't be hurt.
 
 The groups (a raiding job's group: the Reich, GROUP_OF below, else its branch):
     civilian       Civilian, Doctor
@@ -61,8 +62,14 @@ hook.Add("OnPlayerChangedTeam", "RP1942_SideSwitch", function(ply, oldTeam, newT
         if not IsValid(ply) or ply:Team() ~= newTeam then return end
         if not ply:Alive() then return end   -- dead: they respawn anyway
         if ply.isArrested and ply:isArrested() then return end
-        ply:Spawn()
-        DarkRP.notify(ply, 0, 6, "You've joined " .. (GROUP_NAMES[new] or new) .. ": you've been sent back to spawn.")
+        local name = GROUP_NAMES[new] or new
+        local function done(p) DarkRP.notify(p, 0, 6, "You've joined " .. name .. ": you've been sent back to spawn.") end
+        if RP1942.delayedRespawn then
+            RP1942.delayedRespawn(ply, "REPORTING FOR DUTY", done)   -- the 6 second fade (sv_respawn.lua)
+        else
+            ply:Spawn()
+            done(ply)
+        end
     end)
 end)
 
