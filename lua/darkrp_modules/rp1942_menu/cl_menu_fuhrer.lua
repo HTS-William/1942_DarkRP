@@ -70,6 +70,9 @@ function PANEL:Populate()
         local text = RP1942.getTreasury
             and ("Balance:  " .. DarkRP.formatMoney(RP1942.getTreasury()) .. "   (all income tax is paid in here)")
             or "Treasury module not loaded."
+        if RP1942.treasuryFrozen and RP1942.treasuryFrozen() then
+            text = text .. "\nFROZEN: the Reichsbank is being robbed. Nothing can be spent until it's over."
+        end
         if s:GetText() ~= text then s:SetText(text) end
     end
 
@@ -342,7 +345,7 @@ function PANEL:AddPayout()
         end
         local text = string.format("%d %s  ·  %s each  ·  costs %s of the treasury", count, count == 1 and "player" or "players",
             DarkRP.formatMoney(each), DarkRP.formatMoney(total))
-        if RP1942.bankState and RP1942.bankState().active then
+        if RP1942.treasuryFrozen and RP1942.treasuryFrozen() then
             text = "The Reichsbank is being robbed: no payouts until the robbery is over."
         end
         if s:GetText() ~= text then s:SetText(text) end

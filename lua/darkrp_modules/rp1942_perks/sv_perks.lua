@@ -280,6 +280,9 @@ local ALERT = {
 local function handler(ply, id)
     local perk, buy = RP1942.getPerk(id), BUY[id]
     if not (perk and buy) then return end
+    if RP1942.treasuryFrozen and RP1942.treasuryFrozen() then
+        return DarkRP.notify(ply, 1, 6, RP1942.TreasuryFrozenText)
+    end
     if RP1942.perkCooldown(id) > 0 then
         return DarkRP.notify(ply, 1, 5, perk.name .. " can be bought again in " .. RP1942.perkClock(RP1942.perkCooldown(id)) .. ".")
     end

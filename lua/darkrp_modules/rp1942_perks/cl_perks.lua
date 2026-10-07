@@ -3,6 +3,7 @@
 (rp1942_menu/cl_menu_fuhrer.lua calls RP1942.addPerkSection). Settings: sh_perks.lua
 ---------------------------------------------------------------------------]]
 local function status(p)
+    if RP1942.treasuryFrozen and RP1942.treasuryFrozen() then return "Frozen: the Reichsbank is being robbed" end
     local cd = RP1942.perkCooldown(p.id)
     if p.id == "apc" then
         local car = GetGlobal2Entity("RP1942_APC")

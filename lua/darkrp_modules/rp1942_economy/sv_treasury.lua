@@ -26,10 +26,15 @@ function RP1942.treasuryDeposit(amount, source)
     return setBalance(RP1942.getTreasury() + amount, source)
 end
 
--- Never goes below zero: returns false and changes nothing if funds are short
+-- Never goes below zero: returns false and changes nothing if funds are short.
+-- While the vault is being robbed only the robbers' haul ("bank robbery") and
+-- staff ("staff (...)") can take money out: returns false, "frozen".
 function RP1942.treasuryWithdraw(amount, reason)
     amount = math.floor(tonumber(amount) or 0)
     if amount <= 0 then return false end
+    if RP1942.treasuryFrozen() and reason ~= "bank robbery" and not string.find(reason or "", "^staff %(") then
+        return false, "frozen"
+    end
 
     local balance = RP1942.getTreasury()
     if amount > balance then return false end

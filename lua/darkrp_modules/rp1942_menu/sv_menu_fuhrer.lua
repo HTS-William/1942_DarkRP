@@ -72,8 +72,8 @@ local PAYOUT_NAMES = { reich = "the Reich", civilian = "the civilians", resistan
 RP1942.addMenuHandler("RP1942_FuhrerMenu", "payout", function(ply, arg)
     if not (RP1942.treasuryWithdraw and RP1942.getTreasury) then return end
     -- No payouts while the Reichsbank vault is being robbed
-    if RP1942.bankState and RP1942.bankState().active then
-        return DarkRP.notify(ply, 1, 5, "The Reichsbank is being robbed: no payouts until the robbery is over.")
+    if RP1942.treasuryFrozen and RP1942.treasuryFrozen() then
+        return DarkRP.notify(ply, 1, 5, RP1942.TreasuryFrozenText)
     end
     local mode, amount, list = string.match(arg or "", "^(%a+):(%d+)|([%w_,]*)$")
     if not mode then   -- the old form: "500|reich" = 500 each

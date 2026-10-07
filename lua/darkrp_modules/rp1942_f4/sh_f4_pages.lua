@@ -247,7 +247,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Taxes can go up to 100%, but while any faction or job pays more than 50% the Reich can be raided for it (see Rules, 11e).
 - The economy, the tax rates and the treasury are kept when the server restarts: a new Führer inherits his predecessor's.
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
-- The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped. No payouts while the Reichsbank is being robbed.
+- The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped. While the Reichsbank is being robbed the treasury is frozen: no payouts and no perks until the robbery is over.
 
 # Arms dealers
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
