@@ -169,6 +169,22 @@ local cw = register("clearwanted", ulx.rp1942clearwanted, "!clearwanted", ULib.A
     "Clear the wanted status of one or more players.")
 cw:addParam{ type = ULib.cmds.PlayersArg }
 
+function ulx.rp1942clearnlr(ply, targets)
+    if not RP1942.clearNLR then return ULib.tsayError(ply, "The NLR zone isn't loaded.", true) end
+    local cleared = {}
+    for _, t in ipairs(targets) do
+        if RP1942.clearNLR(t) then
+            cleared[#cleared + 1] = t
+            DarkRP.notify(t, 0, 5, "Staff lifted your NLR.")
+        end
+    end
+    if #cleared == 0 then return ULib.tsayError(ply, "Nobody there has an NLR running.", true) end
+    ulx.fancyLogAdmin(ply, true, "#A lifted the NLR of #T", cleared)
+end
+local cn = register("clearnlr", ulx.rp1942clearnlr, "!clearnlr", ULib.ACCESS_ADMIN,
+    "Lift the NLR of one or more players: their NLR zone and timer go, and anyone held at spawn for it can move again. For deaths caused by someone breaking a rule.")
+cn:addParam{ type = ULib.cmds.PlayersArg }
+
 --[[---------------------------------------------------------------------------
 Map setup (saved per map). Aim first.
 ---------------------------------------------------------------------------]]

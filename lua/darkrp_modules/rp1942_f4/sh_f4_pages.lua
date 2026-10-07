@@ -56,6 +56,7 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 
 # 3. NLR
 - 3. NLR ( New Life Rule ) is 3 minutes long and must be respected (unless a rule was broken, resulting in your death). After you die you forget what led to it, can't take revenge for it, and must stay away from where you died. ( First warn, then kick, then ban ).
+- 3a. Where you died is marked as your NLR zone (a red ring only you can see). Go back into it and you have 10 seconds to leave, or you're sent back to spawn and held there until your NLR is over.
 
 # 4. FearRP
 - 4. FearRP: you must value your character's life. You cannot pull a gun while already held at gunpoint during a mugging. ( First warn, then kick, then ban ).
@@ -66,6 +67,7 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 - 5. You must act according to your chosen job's description and rules. Changing your job just to get access to a specific weapon or self-supply items is forbidden. ( First warn, then kick, then ban ).
 - 5a. Logging off, changing job or suiciding to avoid an arrest, a robbery or a raid is forbidden. ( First warn, then kick, then ban ).
 - 5b. Your roleplay name must be a first and last name that fits 1942. No meme, offensive or modern names. ( Staff rename you, then kick ).
+- 5c. Switching to a raiding job (RAID = YES) on a different side sends you back to spawn. Moving up within your own side (Rifleman to Machinegunner, Resistance to Resistance Medic) doesn't.
 
 # 6. Metagaming
 - 6. Using information obtained out-of-character (such as reading a player's overhead name/title or hearing voice comms via Discord) during in-character situations is not allowed. ( First warn, then kick, then ban ).
@@ -129,7 +131,7 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 # Roleplay terms
 OOC - Out of character. Type // before a message to talk in OOC chat.
 IC - In character. Anything you say normally is said by your character.
-NLR - New Life Rule. When you die you forget everything that led to your death, and stay away from where you died for 3 minutes.
+NLR - New Life Rule. When you die you forget everything that led to your death, and stay away from where you died for 3 minutes. The place you died is shown as a red ring (your NLR zone) with a timer at the top of the screen.
 RDM - Random Death Match. Killing someone without a roleplay reason.
 RDA - Random Arrest. Arresting someone without a roleplay reason.
 Mass RDM / RDA - Doing it to several players.
@@ -357,6 +359,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !treasury 5000 - Add money to the Reich treasury (a negative amount takes it away)
 !makewanted <player> <reason> - Make someone wanted by the Reich
 !clearwanted <player> - Clear someone's wanted status
+!clearnlr <player> - Lift someone's NLR (their NLR zone and timer), e.g. when they died to a rule break
 
 #staff Staff: production
 !prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, wine barrels, factory lines, scrap metal, oil rigs, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
