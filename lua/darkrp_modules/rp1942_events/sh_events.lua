@@ -6,6 +6,7 @@ one at random (by weight) from the events that are allowed to run right now.
 
 Staff can also run one by hand (ULX 42Bros; who may: ULX menu > Groups):
     !train                    start the supply train now
+    !airraid                  start an air raid now
     !event train              the same, by the event's id
     !stopevent                end the running event
     !eventsettings            the settings menu (timer, player minimum, each event on/off)
@@ -14,6 +15,7 @@ Files:
     sh_events.lua        this config
     sv_events.lua        the scheduler
     sv_event_train.lua   the supply train event
+    sv_event_airraid.lua / cl_event_airraid.lua   the air raid
     (the "hold E" progress bar is rp1942_core/cl_holdbar.lua)
     lua/entities/rp1942_supply_train/   the train itself
 ---------------------------------------------------------------------------]]
@@ -116,6 +118,55 @@ RP1942.Events.train = {
     msgRobbed   = "The supply train is being robbed!",     -- to the Reich, once per train
     msgDone     = "The supply train has arrived. %d Reichsmark reached the treasury.",
     msgEmpty    = "The supply train was stripped bare before it arrived.",
+}
+
+--[[---------------------------------------------------------------------------
+Air raid
+The siren (sound/42_airraid.wav) plays for the whole server, and for as long
+as it lasts bombs whistle down on the OUTSIDE parts of the map: only places
+with open sky above them, so anyone under a roof is safe. Most bombs fall
+near players who are outdoors; the rest land at random around the map.
+Staff: !airraid starts one, !stopevent calls it off (the siren stops too).
+---------------------------------------------------------------------------]]
+RP1942.Events.airraid = {
+    enabled    = true,
+    weight     = 1,          -- as likely as the train
+    minPlayers = 4,
+    map        = nil,
+
+    sound      = "42_airraid.wav",   -- in sound/; plays for everyone, start to finish
+    duration   = 54,         -- seconds; the siren's length (the real length is read from
+                             -- the file when it can be, this is the fallback)
+    warning    = 8,          -- seconds of siren before the first bomb (time to take cover)
+    endQuiet   = 4,          -- no new bombs in the last seconds
+
+    bombEvery  = { min = 0.5, max = 1.4 },   -- seconds between bombs
+    nearPlayers = 70,        -- % of bombs aimed near a player who's outside (the rest anywhere outdoors)
+    spread     = 900,        -- how far from that player they can land (units; ~17 m)
+    roam       = 3500,       -- "anywhere": how far from a random player they can land
+
+    damage     = 160,        -- at the centre of each blast
+    radius     = 320,        -- blast radius (units; ~6 m)
+    -- The sounds come from the Military Conflict: Vietnam pack (its airstrike
+    -- sounds), which every player already has with the weapons.
+    -- As it falls: a real falling-bomb whistle. One is picked at random.
+    -- (For artillery shells instead, use Binoculars_Airstrike_ArtilleryIncoming_01 to _05.)
+    whistles   = { "mcv/weapons/weapon_binoculars/Binoculars_NapalmStrike_Incoming_Bomb_01.wav" },
+    whistleLevel = 110,      -- how far the whistle carries (decibels)
+    -- The bombs aren't seen: the whistle plays where one will land, then it
+    -- explodes. Seconds from whistle to bang: "sound" = the whistle's own
+    -- length, so it lands as the whistle ends (fallTime if that can't be read)
+    fallTimeFrom = "sound",
+    fallTime   = 4,
+    -- The bang when it lands (one at random, heard a long way off)
+    boomSounds = { "mcv/weapons/weapon_binoculars/Binoculars_Airstrike_ArtilleryExplosion_01.wav",
+                   "mcv/weapons/weapon_binoculars/Binoculars_Airstrike_ArtilleryExplosion_02.wav",
+                   "mcv/weapons/weapon_binoculars/Binoculars_Airstrike_ArtilleryExplosion_03.wav",
+                   "mcv/weapons/weapon_binoculars/Binoculars_Airstrike_ArtilleryExplosion_04.wav" },
+
+    safeFromSpawn = 900,     -- no bombs within this many units of a spawn point
+    msgStart   = "Find Shelter!",   -- under the AIR RAID title
+    msgEnd     = "The all-clear has sounded. The bombers have gone.",
 }
 
 -- Reason text for robbing the train, added to the wanted system's reasons

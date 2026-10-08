@@ -53,6 +53,15 @@ end
 register("train", ulx.rp1942train, "!train", ULib.ACCESS_ADMIN,
     "Start the Reich supply train now. It rolls into the station, waits, then carries on. Doesn't change the automatic timer.")
 
+function ulx.rp1942airraid(ply)
+    if not RP1942.startEvent then return ULib.tsayError(ply, "World events aren't loaded.", true) end
+    local ok, why = RP1942.startEvent("airraid", true)
+    if not ok then return ULib.tsayError(ply, "Can't start the air raid: " .. tostring(why), true) end
+    ulx.fancyLogAdmin(ply, true, "#A started an air raid")
+end
+register("airraid", ulx.rp1942airraid, "!airraid", ULib.ACCESS_ADMIN,
+    "Start an air raid now: the siren plays for everyone and bombs fall on the outside parts of the map until it ends. !stopevent calls it off. Doesn't change the automatic timer.")
+
 function ulx.rp1942event(ply, id)
     if not RP1942.startEvent then return ULib.tsayError(ply, "World events aren't loaded.", true) end
     local ok, why = RP1942.startEvent(string.lower(id), true)
@@ -60,8 +69,8 @@ function ulx.rp1942event(ply, id)
     ulx.fancyLogAdmin(ply, true, "#A started the world event #s", id)
 end
 local ev = register("event", ulx.rp1942event, "!event", ULib.ACCESS_ADMIN,
-    "Start a world event by its id (train is the only one so far). Ignores the player minimum.")
-ev:addParam{ type = ULib.cmds.StringArg, hint = "event id", completes = { "train" } }
+    "Start a world event by its id (train, airraid). Ignores the player minimum.")
+ev:addParam{ type = ULib.cmds.StringArg, hint = "event id", completes = { "train", "airraid" } }
 
 function ulx.rp1942stopevent(ply)
     local active = RP1942.activeEvent and RP1942.activeEvent()
@@ -70,7 +79,7 @@ function ulx.rp1942stopevent(ply)
     ulx.fancyLogAdmin(ply, true, "#A stopped the world event #s", active.id or "?")
 end
 register("stopevent", ulx.rp1942stopevent, "!stopevent", ULib.ACCESS_ADMIN,
-    "End the world event that's running now (e.g. send the train away).")
+    "End the world event that's running now (send the train away, call off an air raid: the siren stops and falling bombs vanish).")
 
 function ulx.rp1942eventsettings(ply)
     if not IsValid(ply) then return ULib.tsayError(ply, "Use this in game.", true) end

@@ -313,6 +313,11 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Reich is expected to guard it. Whatever isn't stolen goes to the Reich treasury.
 - Stay off the tracks while it's moving.
 
+# Air raids
+- Every so often the air raid siren sounds across the whole city. For as long as it wails (about a minute), bombs fall on the outside parts of the map.
+- Get under a roof: bombs only land where there's open sky above. Indoors, tunnels and the spawn are safe.
+- You get a few seconds of siren before the first bomb. The all-clear shows when it's over.
+
 # Undercover (Gestapo and Resistance Operative)
 - Press F3 to open your wardrobe. Its tabs list the jobs you can pass as: civilians and the Resistance for the Gestapo, civilians and the Reich for the Operative.
 - Picking one puts on that job's clothes and takes its title. Nobody is told. Jobs with several outfits open a model selection: click an outfit to preview it, then Wear This (or double-click).
@@ -354,7 +359,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !setfuhrer <player> - Make someone Führer now, without an election (cancels a running one, replaces the sitting Führer)
 !removefuhrer - Remove the sitting Führer from office
 !train - Start the supply train now
-!event <id> - Start a world event (train). !stopevent ends the running one
+!airraid - Start an air raid now (!stopevent calls it off)
+!event <id> - Start a world event (train, airraid). !stopevent ends the running one
 !seteconomy 50 - Set the economy bar (1-110)
 !treasury 5000 - Add money to the Reich treasury (a negative amount takes it away)
 !makewanted <player> <reason> - Make someone wanted by the Reich
