@@ -74,6 +74,7 @@ end
 local function offered(job, cfg)
     if cfg.jobs[job.command] then return false end   -- never another undercover job
     if cfg.allowLeaders then return true end
+    if job.whitelistOnly then return false end   -- staff-whitelisted jobs (the Elite Guard) are never a disguise
     return not (job.whitelisted or (cfg.leaderJobs and cfg.leaderJobs[job.command]))
 end
 

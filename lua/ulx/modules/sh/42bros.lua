@@ -186,6 +186,103 @@ local cn = register("clearnlr", ulx.rp1942clearnlr, "!clearnlr", ULib.ACCESS_ADM
 cn:addParam{ type = ULib.cmds.PlayersArg }
 
 --[[---------------------------------------------------------------------------
+Job whitelists (rp1942_whitelist): jobs like the Elite Guard that only
+whitelisted players can see and take. <job> is the job's command.
+---------------------------------------------------------------------------]]
+local WL_JOBS = {}
+for command in pairs(RP1942.Whitelist and RP1942.Whitelist.jobs or { eliteguard = true }) do WL_JOBS[#WL_JOBS + 1] = command end
+table.sort(WL_JOBS)
+
+local function wlReady(ply)
+    if RP1942.whitelistAdd then return true end
+    ULib.tsayError(ply, "Job whitelists aren't loaded.", true)
+    return false
+end
+
+local function jobName(command)
+    local job = RP1942.getJobByCommand and RP1942.getJobByCommand(command)
+    return job and job.name or command
+end
+
+function ulx.rp1942whitelist(ply, target, command)
+    if not wlReady(ply) then return end
+    command = string.lower(command)
+    local ok, why = RP1942.whitelistAdd(target:SteamID(), command, target:Nick())
+    if not ok then return ULib.tsayError(ply, target:Nick() .. ": " .. why .. ".", true) end
+    DarkRP.notify(target, 0, 6, "You've been whitelisted for " .. jobName(command) .. ". Find it in the F4 Jobs tab.")
+    ulx.fancyLogAdmin(ply, true, "#A whitelisted #T for #s", target, jobName(command))
+end
+local wl = register("whitelist", ulx.rp1942whitelist, "!whitelist", ULib.ACCESS_SUPERADMIN,
+    "Whitelist a player for a whitelisted job (e.g. eliteguard): they can see it in F4 and take it. Saved.")
+wl:addParam{ type = ULib.cmds.PlayerArg }
+wl:addParam{ type = ULib.cmds.StringArg, hint = "job", completes = WL_JOBS }
+
+function ulx.rp1942unwhitelist(ply, target, command)
+    if not wlReady(ply) then return end
+    command = string.lower(command)
+    local ok, why = RP1942.whitelistRemove(target:SteamID(), command)
+    if not ok then return ULib.tsayError(ply, target:Nick() .. ": " .. why .. ".", true) end
+    ulx.fancyLogAdmin(ply, true, "#A removed #T from the #s whitelist", target, jobName(command))
+end
+local uwl = register("unwhitelist", ulx.rp1942unwhitelist, "!unwhitelist", ULib.ACCESS_SUPERADMIN,
+    "Take a player off a job's whitelist. If they're on that job now, they're moved off it. Saved.")
+uwl:addParam{ type = ULib.cmds.PlayerArg }
+uwl:addParam{ type = ULib.cmds.StringArg, hint = "job", completes = WL_JOBS }
+
+local function validSteamID(sid)
+    return string.match(sid or "", "^STEAM_%d:%d:%d+$") ~= nil
+end
+
+function ulx.rp1942whitelistid(ply, sid, command)
+    if not wlReady(ply) then return end
+    sid, command = string.upper(string.Trim(sid)), string.lower(command)
+    if not validSteamID(sid) then return ULib.tsayError(ply, "That isn't a SteamID (like STEAM_0:0:12345678).", true) end
+    local ok, why = RP1942.whitelistAdd(sid, command)
+    if not ok then return ULib.tsayError(ply, sid .. ": " .. why .. ".", true) end
+    ulx.fancyLogAdmin(ply, true, "#A whitelisted #s for #s", sid, jobName(command))
+end
+local wlid = register("whitelistid", ulx.rp1942whitelistid, "!whitelistid", ULib.ACCESS_SUPERADMIN,
+    "Whitelist someone by SteamID (they don't need to be online) for a whitelisted job. Saved.")
+wlid:addParam{ type = ULib.cmds.StringArg, hint = "SteamID" }
+wlid:addParam{ type = ULib.cmds.StringArg, hint = "job", completes = WL_JOBS }
+
+function ulx.rp1942unwhitelistid(ply, sid, command)
+    if not wlReady(ply) then return end
+    sid, command = string.upper(string.Trim(sid)), string.lower(command)
+    local ok, why = RP1942.whitelistRemove(sid, command)
+    if not ok then return ULib.tsayError(ply, sid .. ": " .. why .. ".", true) end
+    ulx.fancyLogAdmin(ply, true, "#A removed #s from the #s whitelist", sid, jobName(command))
+end
+local uwlid = register("unwhitelistid", ulx.rp1942unwhitelistid, "!unwhitelistid", ULib.ACCESS_SUPERADMIN,
+    "Take someone off a job's whitelist by SteamID. Saved.")
+uwlid:addParam{ type = ULib.cmds.StringArg, hint = "SteamID" }
+uwlid:addParam{ type = ULib.cmds.StringArg, hint = "job", completes = WL_JOBS }
+
+function ulx.rp1942whitelists(ply, who)
+    if not wlReady(ply) then return end
+    who = string.Trim(who or "")
+    local list = RP1942.whitelistList()
+    if who ~= "" then   -- one player: a SteamID, or part of their name
+        local q, keep = string.lower(who), {}
+        for _, e in ipairs(list) do
+            if string.upper(who) == e.sid or string.find(string.lower(e.name), q, 1, true) then keep[#keep + 1] = e end
+        end
+        list = keep
+    end
+    if #list == 0 then return ULib.tsayError(ply, "Nobody " .. (who ~= "" and "matching that " or "") .. "is whitelisted.", true) end
+    local function say(text) if IsValid(ply) then ply:ChatPrint(text) else print(text) end end
+    say("Whitelisted players:")
+    for _, e in ipairs(list) do
+        local names = {}
+        for _, c in ipairs(e.jobs) do names[#names + 1] = jobName(c) end
+        say("  " .. e.name .. " (" .. e.sid .. "): " .. table.concat(names, ", "))
+    end
+end
+local wls = register("whitelists", ulx.rp1942whitelists, "!whitelists", ULib.ACCESS_SUPERADMIN,
+    "List who's whitelisted for which jobs in your chat: everyone, or one player (part of a name or a SteamID).")
+wls:addParam{ type = ULib.cmds.StringArg, hint = "name or SteamID", ULib.cmds.optional, ULib.cmds.takeRestOfLine, default = "" }
+
+--[[---------------------------------------------------------------------------
 Map setup (saved per map). Aim first.
 ---------------------------------------------------------------------------]]
 local FACTIONS = { "reich", "resistance", "civilian", "wehrmacht", "waffen_ss", "leibstandarte", "none" }

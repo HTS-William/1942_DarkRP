@@ -507,7 +507,9 @@ RP1942.F4Tabs.jobs = {
 
             local jobs = {}
             for _, job in ipairs(cat.members or {}) do
-                if CFG.showLockedJobs or jobState(job) ~= "locked" then jobs[#jobs + 1] = job end
+                -- (hidden whitelisted jobs only show to those whitelisted: rp1942_whitelist)
+                local visible = not RP1942.canSeeJob or RP1942.canSeeJob(LocalPlayer(), job)
+                if visible and (CFG.showLockedJobs or jobState(job) ~= "locked") then jobs[#jobs + 1] = job end
             end
             if #jobs == 0 then return end
 

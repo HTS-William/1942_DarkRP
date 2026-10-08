@@ -80,6 +80,7 @@ rules decide both the F4 button (client) and the actual job change (server).
 Job fields read here:
     vip         = true
     whitelisted = true
+    whitelistOnly = true   (set from RP1942.Whitelist.jobs: staff whitelist players in game)
     requires    = { faction = "reich" }                  must currently be in the faction
     requires    = { branch = "wehrmacht" }               must currently be in the branch
     requires    = { branch = { "wehrmacht", "waffen_ss" } }
@@ -104,6 +105,11 @@ function RP1942.jobGateFailure(ply, job)
 
     if job.whitelisted and not RP1942.hasWhitelist(ply, job.command) then
         return "You are not whitelisted for this rank."
+    end
+
+    -- Jobs staff whitelist players for in game (rp1942_whitelist)
+    if job.whitelistOnly and RP1942.isWhitelistedFor and not RP1942.isWhitelistedFor(ply, job.command) then
+        return "Only players whitelisted for this job can take it."
     end
 
     local req = job.requires

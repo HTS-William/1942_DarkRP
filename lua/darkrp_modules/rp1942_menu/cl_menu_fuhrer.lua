@@ -106,7 +106,7 @@ function PANEL:Populate()
         self:AddSection("Job rates: " .. (FACTION_NAMES[faction] or faction))
 
         for _, job in ipairs(RPExtraTeams) do
-            if (job.faction or "civilian") == faction then
+            if (job.faction or "civilian") == faction and (not RP1942.canSeeJob or RP1942.canSeeJob(LocalPlayer(), job)) then
                 local cmd = job.command
                 self:TaxRow(
                     function()

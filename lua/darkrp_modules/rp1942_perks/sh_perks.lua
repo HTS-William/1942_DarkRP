@@ -21,7 +21,7 @@ Files: sh_perks.lua (this), sv_perks.lua (buying, the APC), cl_perks.lua
 RP1942 = RP1942 or {}
 
 RP1942.Perks = {
-    soldierBranches = { wehrmacht = true, waffen_ss = true, leibstandarte = true },
+    soldierBranches = { wehrmacht = true, waffen_ss = true, leibstandarte = true, eliteguard = true },
 
     list = {   -- shown in this order
         {

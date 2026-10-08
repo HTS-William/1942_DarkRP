@@ -228,4 +228,5 @@ RP1942.Models = {
     officer      = { "models/d42rp/player/wehrmacht_kommandant.mdl" },   -- (old shared key, kept for anything still using it)
     scientist    = { "models/player/magnusson.mdl" },
     fuhrer       = { "models/d42rp/player/derfuhrer_alt.mdl" },
+    eliteguard   = { "models/d42rp/player/eliteguard_01.mdl" },   -- Elite Guard (whitelisted)
 }

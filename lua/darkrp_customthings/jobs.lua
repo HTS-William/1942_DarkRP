@@ -104,12 +104,16 @@ local function job(tbl)
         if tbl.canRaid and not tbl.noRam and not table.HasValue(tbl.weapons, W.ram) then table.insert(tbl.weapons, W.ram) end
     end
 
+    -- Jobs in RP1942.Whitelist.jobs (rp1942_whitelist/sh_whitelist.lua): only
+    -- for players staff have whitelisted (!whitelist), and optionally hidden
+    if RP1942.Whitelist and RP1942.Whitelist.jobs[tbl.command] then tbl.whitelistOnly = true end
+
     -- A job's own customCheck becomes the last gate
     if tbl.customCheck then
         tbl.gate, tbl.gateFailMsg = tbl.customCheck, tbl.CustomCheckFailMsg
     end
 
-    if tbl.vip or tbl.whitelisted or tbl.requires or tbl.subOf or tbl.gate then
+    if tbl.vip or tbl.whitelisted or tbl.whitelistOnly or tbl.requires or tbl.subOf or tbl.gate then
         tbl.customCheck = function(ply) return RP1942.jobGateFailure(ply, tbl) == nil end
         tbl.CustomCheckFailMsg = function(ply) return RP1942.jobGateFailure(ply, tbl) or "" end
     end
@@ -734,6 +738,30 @@ Only for those already serving the Reich: take it from any Reich job.]],
     branch = "leibstandarte", requires = { faction = "reich" },   -- must CURRENTLY hold a Reich job (so no vote)
     category = "Reich",
     sortOrder = 3,
+}
+
+--[[===========================================================================
+ELITE GUARD (in "Reich"): whitelisted. Only players staff have whitelisted
+(!whitelist <player> eliteguard) can see or take it. The list of who's
+whitelisted to start with: RP1942.Whitelist in rp1942_whitelist/sh_whitelist.lua.
+===========================================================================]]
+TEAM_ELITE_GUARD = job{
+    name = "Elite Guard",
+    color = Color(35, 35, 40),
+    model = M.eliteguard,
+    description = [[The Reich's hand-picked Elite Guard. Carries an StG 44 and a Walther P38.
+Whitelisted: only those chosen by staff can serve.]],
+    weapons = { W.stg44, W.p38, W.stun, W.arrest, W.unarrest },
+    command = "eliteguard",   -- /eliteguard
+    max = 0,
+    salary = SAL * 1.5,
+    admin = 0,
+    faction = "reich",
+    arrests = true,
+    branch = "eliteguard",
+    RequiresVote = function() return false end,   -- whitelisted: no vote to join from outside the Reich
+    category = "Reich",
+    sortOrder = 4,
 }
 
 --[=[ Commented out: the Leibstandarte is a single job now

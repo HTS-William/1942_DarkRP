@@ -360,6 +360,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !makewanted <player> <reason> - Make someone wanted by the Reich
 !clearwanted <player> - Clear someone's wanted status
 !clearnlr <player> - Lift someone's NLR (their NLR zone and timer), e.g. when they died to a rule break
+!whitelist <player> <job> - Whitelist someone for a whitelisted job (e.g. eliteguard): they can see it in F4 and take it
+!unwhitelist <player> <job> - Take them off it (moves them off the job if they're on it)
+!whitelistid / !unwhitelistid <SteamID> <job> - The same for someone who's offline
+!whitelists [name or SteamID] - Who's whitelisted for what
 
 #staff Staff: production
 !prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, wine barrels, factory lines, scrap metal, oil rigs, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
