@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - RP1942_MenuBase (client)
+42Bros - RP1942_MenuBase (client)
 
 The boilerplate every job menu inherits: window, faction theme, header,
 scrolling content area, helper widgets, and sending actions to the server.
@@ -257,7 +257,7 @@ function RP1942.openJobMenu()
         return
     end
     if not vgui.GetControlTable(class) then
-        MsgC(Color(255, 170, 0), "[1942] Job '", job.name, "' uses menu '", class,
+        MsgC(Color(255, 170, 0), "[42Bros] Job '", job.name, "' uses menu '", class,
             "' but no panel with that name is registered. Check the cl_menu_*.lua file.\n")
         return
     end

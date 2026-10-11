@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - release from jail
+42Bros - release from jail
 
 OFF at the moment (RESPAWN_ON_RELEASE below): released players get DarkRP's
 plain teleport out of jail. Switched on, someone unarrested (by a baton, an

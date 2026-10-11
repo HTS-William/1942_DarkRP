@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - factory line (Factory Owner). Settings: RP1942.Production.factory
+42Bros - factory line (Factory Owner). Settings: RP1942.Production.factory
 (rp1942_production/sh_production.lua).
 
     It runs on scrap metal (rp1942_scrap, bought in the F4 shop): push loads

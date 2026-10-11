@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - world events (shared config)
+42Bros - world events (shared config)
 
 Random events that happen on their own every so often. The scheduler picks
 one at random (by weight) from the events that are allowed to run right now.

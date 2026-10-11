@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Padlock (what you buy, and fit to a prop)
+42Bros - the Padlock (what you buy, and fit to a prop)
 
 Left click a prop you own: the padlock goes on it and the prop becomes a
 door (darkrp_modules/rp1942_padlocks). The padlock is used up.
@@ -9,9 +9,9 @@ makes a staff lock (no owner, opened by faction / Reich unit).
 AddCSLuaFile()
 
 SWEP.PrintName    = "Padlock"
-SWEP.Author       = "1942 DarkRP"
+SWEP.Author       = "42Bros"
 SWEP.Instructions = "Left click a prop you own to fit the padlock. The prop becomes a door."
-SWEP.Category     = "1942 DarkRP"
+SWEP.Category     = "42Bros"
 SWEP.Spawnable    = true
 SWEP.AdminOnly    = true
 

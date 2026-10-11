@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Spreading fire (shared: the settings)
+42Bros - Spreading fire (shared: the settings)
 
 Fire that catches, spreads along the ground, burns people, and dies down on
 its own unless it's put out. It's made of "fire nodes"

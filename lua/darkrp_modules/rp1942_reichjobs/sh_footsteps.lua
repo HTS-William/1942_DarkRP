@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich boots: Day of Defeat: Source footsteps (shared)
+42Bros - Reich boots: Day of Defeat: Source footsteps (shared)
 
 Every Reich job walks with DoD:S's hobnailed-boot footsteps instead of the
 Half-Life 2 ones, except the jobs in NOT_THESE below. The surface still

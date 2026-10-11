@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - faction doors (shared)
+42Bros - faction doors (shared)
 
 Doors that belong to a whole faction (or a Reich unit): anyone in it can lock
 and unlock them with their keys, nobody can buy them, and the group name
@@ -59,7 +59,7 @@ function RP1942.createFactionDoorGroups()
         if #teams > 0 then
             DarkRP.createEntityGroup(g.name, unpack(teams))
         else
-            MsgC(Color(255, 180, 60), "[1942] Faction door group '" .. g.name .. "' has no jobs; skipped.\n")
+            MsgC(Color(255, 180, 60), "[42Bros] Faction door group '" .. g.name .. "' has no jobs; skipped.\n")
         end
     end
 end

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - one fire (a "node" of the spreading fire system)
+42Bros - one fire (a "node" of the spreading fire system)
 
 Made by rp1942_fire/sv_fire.lua (RP1942.startFire) or by another fire
 spreading. Don't spawn it by hand; use !fire.
@@ -23,7 +23,7 @@ AddCSLuaFile()
 ENT.Type      = "anim"
 ENT.Base      = "base_anim"
 ENT.PrintName = "Fire"
-ENT.Author    = "1942 DarkRP"
+ENT.Author    = "42Bros"
 ENT.Spawnable = false
 
 -- set by whoever spawns it (see RP1942.startFire)

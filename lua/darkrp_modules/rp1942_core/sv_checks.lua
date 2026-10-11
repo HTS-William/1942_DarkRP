@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - startup sanity checks (server)
+42Bros - startup sanity checks (server)
 
 Warns in the server console about job weapons or models that don't exist,
 which is what happens while RP1942.Weapons / RP1942.Models still hold
@@ -24,9 +24,9 @@ hook.Add("InitPostEntity", "RP1942_SanityChecks", function()
     end
 
     for class, jobName in SortedPairs(missingWeapons) do
-        MsgC(Color(255, 170, 0), "[1942] Missing weapon class '", class, "' (first used by ", jobName, ")\n")
+        MsgC(Color(255, 170, 0), "[42Bros] Missing weapon class '", class, "' (first used by ", jobName, ")\n")
     end
     for mdl, jobName in SortedPairs(missingModels) do
-        MsgC(Color(255, 170, 0), "[1942] Missing model '", mdl, "' (first used by ", jobName, ")\n")
+        MsgC(Color(255, 170, 0), "[42Bros] Missing model '", mdl, "' (first used by ", jobName, ")\n")
     end
 end)

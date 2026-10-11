@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Radio (server): the menu's messages
+42Bros - Radio (server): the menu's messages
     RP1942_RadioOpen   server -> client   open the tuning menu for that radio
     RP1942_RadioTune   client -> server   station index or link, volume
 ---------------------------------------------------------------------------]]
@@ -24,6 +24,10 @@ net.Receive("RP1942_RadioTune", function(_, ply)
     local url = net.ReadString()
     local name = net.ReadString()
     local volume = net.ReadFloat()
+    if volume ~= volume then volume = 1 end                              -- NaN
+    name = string.Trim((string.gsub(name, "%c", " ")))                   -- one line of text
+    local chars = utf8.len(name)
+    if not chars then name = "" elseif chars > 40 then name = string.sub(name, 1, utf8.offset(name, 41) - 1) end
     if not RP1942.isRadio(radio) then return end
     if radio:GetPos():DistToSqr(ply:GetPos()) > 300 * 300 then return end
     if not RP1942.radioCanTune(ply, radio) then return DarkRP.notify(ply, 1, 4, "That isn't your radio.") end
@@ -44,5 +48,5 @@ net.Receive("RP1942_RadioTune", function(_, ply)
     else
         DarkRP.notify(ply, 0, 4, "Tuned to " .. radio:GetStation() .. ".")
     end
-    ServerLog(string.format("[1942] %s tuned a radio to %s\n", ply:Nick(), url == "" and "off" or url))
+    ServerLog(string.format("[42Bros] %s tuned a radio to %s\n", ply:Nick(), url == "" and "off" or url))
 end)

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Führer election (shared)
+42Bros - Führer election (shared)
 
 How an election runs:
     1. The office is vacant. Anyone opens the ballot (/election, or clicks

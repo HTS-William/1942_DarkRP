@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 Appearance tab (client)
+42Bros - F4 Appearance tab (client)
 
     [ your model, turning slowly ]   SKIN            < 2 / 3 >
                                      BODYGROUPS

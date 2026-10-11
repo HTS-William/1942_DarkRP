@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - income tax (shared)
+42Bros - income tax (shared)
 
 Tax is taken from the AFTER-ECONOMY wage:
     base salary  ->  x economy multiplier  ->  - tax  ->  paid

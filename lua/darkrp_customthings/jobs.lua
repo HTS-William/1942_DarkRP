@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - jobs
+42Bros - jobs
 
 Custom fields used by the rp1942 modules (DarkRP ignores unknown fields):
     faction  = "civilian" | "resistance" | "reich"   (faction balance, radio, orders)

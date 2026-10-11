@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Hands (shared: the settings)
+42Bros - Hands (shared: the settings)
 
 Everyone spawns with Hands (slot 1, weapon rp1942_hands) and holds them by
 default. Hands down, nothing happens: you can walk around without fists up.

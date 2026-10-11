@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - HUD (client). Settings: RP1942.HUDConfig in sh_hud.lua.
+42Bros - HUD (client). Settings: RP1942.HUDConfig in sh_hud.lua.
 
     ┌▌ player panel ────────┐      ┌ economy ─────────────┐      ┌ ammo ┐
     │▌ name                 │      │ ECONOMY · AVERAGE ×… │      │ KAR  │

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - air raid (client): the siren for everyone, and the banner.
+42Bros - air raid (client): the siren for everyone, and the banner.
 Server: sv_event_airraid.lua
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.Events.airraid

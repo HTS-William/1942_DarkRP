@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - padlocks (client): the lock's menu (Shift+E)
+42Bros - padlocks (client): the lock's menu (Shift+E)
 ---------------------------------------------------------------------------]]
 local frame
 

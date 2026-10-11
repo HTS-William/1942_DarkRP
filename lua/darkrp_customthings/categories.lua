@@ -1,5 +1,5 @@
 --[[-----------------------------------------------------------------------
-1942 DarkRP - F4 categories
+42Bros - F4 categories
 
 Category names must match the `category` field in jobs.lua exactly
 (case-sensitive). Lower sortOrder = higher in the F4 menu.

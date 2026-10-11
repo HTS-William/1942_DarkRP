@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 menu window (client)
+42Bros - F4 menu window (client)
 
 Tabs register themselves (any load order):
     RP1942.F4Tabs.jobs = { name = "Jobs", icon = "icon16/group.png", build = function(page) ... end }
@@ -217,7 +217,7 @@ function PANEL:SelectTab(id)
         page:Dock(FILL)
         self.pages[id] = page
         local ok, err = pcall(RP1942.F4Tabs[id].build, page)
-        if not ok then ErrorNoHalt("[1942] F4 tab '" .. id .. "' failed: " .. tostring(err) .. "\n") end
+        if not ok then ErrorNoHalt("[42Bros] F4 tab '" .. id .. "' failed: " .. tostring(err) .. "\n") end
     end
 end
 

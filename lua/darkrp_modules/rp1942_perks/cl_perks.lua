@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's perks (client): the "Perks" section of his menu
+42Bros - the Führer's perks (client): the "Perks" section of his menu
 (rp1942_menu/cl_menu_fuhrer.lua calls RP1942.addPerkSection). Settings: sh_perks.lua
 ---------------------------------------------------------------------------]]
 local function status(p)

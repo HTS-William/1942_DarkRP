@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - economy (shared)
+42Bros - economy (shared)
 
 The economy is one whole number from 1 to 110, owned by the server and
 automatically synced to every client.

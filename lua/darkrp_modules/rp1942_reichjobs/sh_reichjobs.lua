@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich jobs: joining by vote, and each unit's own music
+42Bros - Reich jobs: joining by vote, and each unit's own music
 
 VOTE
 Joining the Reich from outside it (a Rifleman, the Supplier, the Scientist,

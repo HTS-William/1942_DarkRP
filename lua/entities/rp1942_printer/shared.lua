@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - money printer, the shared base of rp1942_printer_bank (Banker,
+42Bros - money printer, the shared base of rp1942_printer_bank (Banker,
 legal) and rp1942_printer_illegal. Settings: RP1942.Printers
 (rp1942_printers/sh_printers.lua).
 ---------------------------------------------------------------------------]]

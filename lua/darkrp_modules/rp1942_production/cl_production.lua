@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - production (client): the drunk effect after a bottle of wine
+42Bros - production (client): the drunk effect after a bottle of wine
 The server sends how many seconds; more bottles stack (up to a minute).
 ---------------------------------------------------------------------------]]
 local drunkUntil = 0
@@ -499,7 +499,7 @@ local function paint(ent, P, w, h)
     end
     if not ok and err ~= ent._panelError then
         ent._panelError = err
-        ErrorNoHalt("[1942] Panel error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
+        ErrorNoHalt("[42Bros] Panel error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
     end
 end
 
@@ -626,7 +626,7 @@ printed line into RP1942.PanelSpots in sh_production.lua). Look at the prop:
 local function lookedClass()
     local ent = LocalPlayer():GetEyeTrace().Entity
     if IsValid(ent) and ent.PanelSize then return ent:GetClass() end
-    print("[1942] Look at a prop with a panel (oven, barrel, market) first.")
+    print("[42Bros] Look at a prop with a panel (oven, barrel, market) first.")
 end
 
 local function tune(fn)
@@ -635,7 +635,7 @@ local function tune(fn)
         if not class then return end
         RP1942.PanelSpots[class] = RP1942.PanelSpots[class] or { mount = "backguard", face = "front", width = 0.45 }
         fn(RP1942.PanelSpots[class], args, class)
-        print("[1942] " .. class .. " panel updated. rp1942_panel_print shows the config line.")
+        print("[42Bros] " .. class .. " panel updated. rp1942_panel_print shows the config line.")
     end
 end
 
@@ -649,7 +649,7 @@ concommand.Add("rp1942_panel_size", tune(function(spot, a) spot.size = (spot.siz
 concommand.Add("rp1942_panel_top", tune(function(spot, a) spot.top = math.Clamp(tonumber(a[1]) or 0.95, 0, 1) end))
 concommand.Add("rp1942_panel_float", function()
     local class = lookedClass()
-    if class then RP1942.PanelSpots[class] = nil print("[1942] " .. class .. " panel now floats.") end
+    if class then RP1942.PanelSpots[class] = nil print("[42Bros] " .. class .. " panel now floats.") end
 end)
 concommand.Add("rp1942_panel_print", function()
     local class = lookedClass()

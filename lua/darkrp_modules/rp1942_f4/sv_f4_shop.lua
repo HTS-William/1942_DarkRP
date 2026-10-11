@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 shop purchases (server)
+42Bros - F4 shop purchases (server)
 
 The client only sends an item id; everything is checked here. Money is taken
 only after the item was actually given or spawned.
@@ -73,12 +73,12 @@ net.Receive("RP1942_F4Buy", function(_, ply)
 
     if not deliver(ply, item) then
         DarkRP.notify(ply, 1, 5, item.name .. " isn't available on this server. You were not charged.")
-        MsgC(Color(255, 170, 0), "[1942] F4 shop item '", item.name, "': class '", tostring(item.class), "' does not exist.\n")
+        MsgC(Color(255, 170, 0), "[42Bros] F4 shop item '", item.name, "': class '", tostring(item.class), "' does not exist.\n")
         return
     end
 
     ply:addMoney(-price)
     local what = item.type == "ammo" and (item.amount .. " x " .. item.name) or item.name
     DarkRP.notify(ply, 0, 4, "You bought " .. what .. " for " .. DarkRP.formatMoney(price) .. ".")
-    hook.Run("RP1942_F4ShopPurchase", ply, item)
+    hook.Run("RP1942_F4ShopPurchase", ply, item, price)
 end)

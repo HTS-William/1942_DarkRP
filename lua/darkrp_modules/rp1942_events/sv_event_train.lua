@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - supply train event (server)
+42Bros - supply train event (server)
 The train entity (lua/entities/rp1942_supply_train) does the driving and the
 robbing; this just places it and hooks it into the scheduler.
 ---------------------------------------------------------------------------]]
@@ -34,7 +34,7 @@ RP1942.registerEvent("train", {
 
         local ent = ents.Create("rp1942_supply_train")
         if not IsValid(ent) then
-            ErrorNoHalt("[1942] Supply train: couldn't create rp1942_supply_train\n")
+            ErrorNoHalt("[42Bros] Supply train: couldn't create rp1942_supply_train\n")
             return false
         end
         ent:SetRoute(a, s, b)
@@ -56,10 +56,10 @@ RP1942.registerEvent("train", {
 hook.Add("InitPostEntity", "RP1942_TrainCheck", function()
     for class in pairs(CFG.weapons) do
         if not weapons.GetStored(class) then
-            MsgC(Color(255, 180, 60), "[1942] Supply train: weapon '" .. class .. "' isn't installed; it will never drop.\n")
+            MsgC(Color(255, 180, 60), "[42Bros] Supply train: weapon '" .. class .. "' isn't installed; it will never drop.\n")
         end
     end
     if not util.IsValidModel(CFG.model) then
-        MsgC(Color(255, 180, 60), "[1942] Supply train: model '" .. CFG.model .. "' is missing; the event can't run.\n")
+        MsgC(Color(255, 180, 60), "[42Bros] Supply train: model '" .. CFG.model .. "' is missing; the event can't run.\n")
     end
 end)

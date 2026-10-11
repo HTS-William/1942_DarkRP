@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - changing sides sends you back to spawn (server)
+42Bros - changing sides sends you back to spawn (server)
 
 Stops job abuse like fighting as the Resistance, switching to the Waffen-SS
 on the spot and carrying on from the same place. When you take a job that
@@ -71,6 +71,31 @@ hook.Add("OnPlayerChangedTeam", "RP1942_SideSwitch", function(ply, oldTeam, newT
             done(ply)
         end
     end)
+end)
+
+--[[---------------------------------------------------------------------------
+No changing sides to get out of a fight. Going back to spawn makes you
+untouchable for the 6 seconds, so a losing Resistance fighter could type
+/civilian and vanish. Changing sides is refused while you're wanted or
+within FIGHT_SECONDS of being hurt by another player (RP1942_LastHurt is set
+in rp1942_sit_rules.lua). Moves inside your side are never affected.
+---------------------------------------------------------------------------]]
+local FIGHT_SECONDS = 20
+
+hook.Add("playerCanChangeTeam", "RP1942_SideSwitchFight", function(ply, newTeam, force)
+    if force or not IsValid(ply) then return end
+    local job = RPExtraTeams[newTeam]
+    local new = groupOf(job)
+    if not new or job.requires then return end
+    local last = groupOf(RPExtraTeams[ply:Team()]) or ply.RP1942_RaidGroup
+    if not last or last == new then return end
+    if ply.getDarkRPVar and ply:getDarkRPVar("wanted") then
+        return false, "You can't change sides while you're wanted."
+    end
+    local since = CurTime() - (ply.RP1942_LastHurt or -1000)
+    if since < FIGHT_SECONDS then
+        return false, "You can't change sides in the middle of a fight. Wait " .. math.ceil(FIGHT_SECONDS - since) .. " seconds."
+    end
 end)
 
 -- A new player starts with no raiding job behind them

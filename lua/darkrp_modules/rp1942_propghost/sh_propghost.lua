@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - prop ghosting (shared config)
+42Bros - prop ghosting (shared config)
 
 While a prop is held with the physgun it turns see-through and passes through
 players and other props (it still hits the world), so a held prop can't

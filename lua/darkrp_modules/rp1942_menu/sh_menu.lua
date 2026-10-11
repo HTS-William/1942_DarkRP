@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - job menus (shared)
+42Bros - job menus (shared)
 
 How it fits together:
     cl_menu_base.lua     RP1942_MenuBase: the boilerplate panel every menu inherits

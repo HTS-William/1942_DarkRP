@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich treasury (server)
+42Bros - Reich treasury (server)
 
 The balance is kept across restarts and map changes: data/rp1942/treasury.json.
 It's saved a few seconds after it changes (taxes come in often, so changes are
@@ -40,7 +40,7 @@ function RP1942.treasuryWithdraw(amount, reason)
     if amount > balance then return false end
 
     setBalance(balance - amount, reason)
-    ServerLog(string.format("[1942] Treasury paid %d (%s). Balance: %d\n", amount, reason or "no reason given", balance - amount))
+    ServerLog(string.format("[42Bros] Treasury paid %d (%s). Balance: %d\n", amount, reason or "no reason given", balance - amount))
     return true
 end
 

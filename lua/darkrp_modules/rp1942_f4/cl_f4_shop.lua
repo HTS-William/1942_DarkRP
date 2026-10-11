@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 Shop tab (client)
+42Bros - F4 Shop tab (client)
 
 Lists, in this order:
     1. items from sh_f4_shop.lua (including the automatic ammo)

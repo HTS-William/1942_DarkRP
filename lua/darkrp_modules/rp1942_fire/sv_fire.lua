@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Spreading fire (server)
+42Bros - Spreading fire (server)
 
     RP1942.startFire(pos, opts)      light a patch of fire around pos
         opts.spots      how many fires (default 3)
@@ -77,8 +77,8 @@ end
 
 --[[ Server convars: rp1942_fire, rp1942_fire_spreading (mirror two settings)]]
 local CVARS = {
-    rp1942_fire           = { key = "enabled",   help = "1942 spreading fire: 1 = on, 0 = no fires at all (saved)" },
-    rp1942_fire_spreading = { key = "spreading", help = "1942 fire spreads along the ground (1) or only burns where it was lit (0) (saved)" },
+    rp1942_fire           = { key = "enabled",   help = "42Bros spreading fire: 1 = on, 0 = no fires at all (saved)" },
+    rp1942_fire_spreading = { key = "spreading", help = "42Bros fire spreads along the ground (1) or only burns where it was lit (0) (saved)" },
 }
 local syncing = false
 for name, c in pairs(CVARS) do
@@ -335,7 +335,7 @@ function F.reward(ply, node)
         return
     end
     ply:addMoney(amount)
-    ServerLog(string.format("[1942] %s put out a fire: +%d\n", ply:Nick(), amount))
+    ServerLog(string.format("[42Bros] %s put out a fire: +%d\n", ply:Nick(), amount))
     ply.RP1942_FireRewarded = (ply.RP1942_FireRewarded or 0) + amount
     -- one message for a burst of fires, not one per fire
     if not timer.Exists("RP1942_FireReward_" .. ply:EntIndex()) then
@@ -428,7 +428,7 @@ local function allowed(ply, access)
 end
 
 local function say(ply, msg)
-    if IsValid(ply) then DarkRP.notify(ply, 0, 5, msg) else print("[1942 fire] " .. msg) end
+    if IsValid(ply) then DarkRP.notify(ply, 0, 5, msg) else print("[42Bros fire] " .. msg) end
 end
 
 RP1942.defineStaffCommand("fire", function(ply, args)
@@ -443,7 +443,7 @@ RP1942.defineStaffCommand("fire", function(ply, args)
     local n = RP1942.startFire(tr.HitPos, { spots = spots, radius = 60 + spots * 15, attacker = ply, staff = true })
     F.settings.enabled = was
     say(ply, n > 0 and (n .. " fire(s) lit.") or "No fire would take there (water, a slope, or the cap is reached).")
-    ServerLog(string.format("[1942] %s lit %d fire(s) at %s\n", ply:Nick(), n, tostring(tr.HitPos)))
+    ServerLog(string.format("[42Bros] %s lit %d fire(s) at %s\n", ply:Nick(), n, tostring(tr.HitPos)))
     return ""
 end)
 
@@ -466,6 +466,6 @@ RP1942.defineStaffCommand("firesetting", function(ply, args)
     end
     local ok, msg = RP1942.setFireSetting(key, value)
     say(ply, msg)
-    if ok then ServerLog(string.format("[1942] %s set fire setting %s\n", IsValid(ply) and ply:Nick() or "console", msg)) end
+    if ok then ServerLog(string.format("[42Bros] %s set fire setting %s\n", IsValid(ply) and ply:Nick() or "console", msg)) end
     return ""
 end)

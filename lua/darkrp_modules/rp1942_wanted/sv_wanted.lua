@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - wanted by the Reich (server)
+42Bros - wanted by the Reich (server)
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_Alert")
 
@@ -47,7 +47,7 @@ hook.Add("playerWanted", "RP1942_WantedAlert", function(ply, actor, reason)
 
     RP1942.alert(string.format(CFG.wantedText, ply:Nick()), "wanted")
     local by = IsValid(actor) and actor:Nick() or "the Reich"
-    ServerLog(string.format("[1942] %s (%s) is wanted, by %s: %s\n", ply:Nick(), ply:SteamID(), by, tostring(reason)))
+    ServerLog(string.format("[42Bros] %s (%s) is wanted, by %s: %s\n", ply:Nick(), ply:SteamID(), by, tostring(reason)))
     return true
 end)
 

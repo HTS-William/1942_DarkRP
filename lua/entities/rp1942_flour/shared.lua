@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - a sack of flour (Baker). Push it into an oven to bake bread.
+42Bros - a sack of flour (Baker). Push it into an oven to bake bread.
 E picks it up and carries it.
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"

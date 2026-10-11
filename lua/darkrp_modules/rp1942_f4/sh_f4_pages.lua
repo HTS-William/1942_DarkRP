@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 text pages (Rules, Encyclopedia, ...)
+42Bros - F4 text pages (Rules, Encyclopedia, ...)
 
 Every page here becomes its own tab in the F4 menu. Just type the text:
 
@@ -307,6 +307,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Printers start at 1,000 R.M. a print. Money waits in the tray: COLLECT takes it, and anyone can, so guard your printers.
 - They heat up while they run and explode at 100 degrees, taking the money with them. Switch one OFF to let it cool, then back ON. At Cooling tier 5 it stays cool.
 - UPGRADES (5 tiers each, bought by the owner): Output (+40% a tier on the Banking Printer, +35% on the Money Printer), Speed (prints sooner), Cooling (heats slower) and Muffler (quieter, but never silent).
+- When you leave the server, everything you own goes with you: props, text screens, printers, machines, padlocks and food with your name on it. Nothing is kept for when you come back.
 - If you join the Reich or become the Reich Banker, your illegal printers are dismantled. Leaving the Reich Banker job returns the Banking Printers.
 
 # Supply train
@@ -372,6 +373,9 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !unwhitelist <player> <job> - Take them off it (moves them off the job if they're on it)
 !whitelistid / !unwhitelistid <SteamID> <job> - The same for someone who's offline
 !whitelists [name or SteamID] - Who's whitelisted for what
+!serverstatus - Players per side, treasury, economy, money in wallets and the richest players (also printed to the server console every 10 minutes)
+!setupcheck - Check this map: markets, vault, dumpsters, saved machines, APC garage, oil sites, train route, common server mistakes (results in your console)
+- Server logs: kills (flagged SAME SIDE, UNARMED, KILLER ON NLR, STAFF ON DUTY...), money between players, [BIG] payments, and what was removed when someone left. In the server console and in garrysmod/data/rp1942/logs/<date>.txt
 
 #staff Staff: production
 !prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, wine barrels, factory lines, scrap metal, oil rigs, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.
@@ -402,6 +406,13 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 !removedumpster - Remove the dumpster you're looking at
 !getdumpsterpos - Copy every dumpster on this map to your clipboard as code, to hardcode them in the dumpster's config.lua
 !testexplosion <damage> <radius> - Set off a test explosion where you're aiming (it does real damage)
+
+#staff Staff: server logs
+The server console tags every line, so you can search it: [42Bros][KILL] (with flags like SAME SIDE, UNARMED, KILLER ON NLR, PROP KILL), [42Bros][DEATH], [42Bros][MONEY], [42Bros][BIG] (a payment of $10,000+ or $25,000 earned in 10 minutes: check these first), [42Bros][STATUS] (every 10 minutes), [42Bros][SETUP], [42Bros][WARN], [42Bros][LEAVE]
+Each day's lines are also saved to garrysmod/data/rp1942/logs/<date>.txt (download it from the host's file manager)
+rp1942_status (console) - Print the status line now: players per side, treasury, economy, money in wallets, the richest players
+rp1942_setupcheck (console) - Check what's placed on this map and what's missing (also runs by itself 30 seconds after every map load)
+When a player leaves, everything they own is removed straight away (props, text screens, printers, machines, padlocks, their food). Staff-placed and saved things stay
 
 #staff Staff: the Führer's decisions
 !fuhrerquestion [number] - Send the Führer a decision now (to you, if nobody is in office, to test it). A number picks that question; empty = the next from the deck. Answering it really moves the economy

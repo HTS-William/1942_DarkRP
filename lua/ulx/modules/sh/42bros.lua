@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - staff commands for ULX, in the "42Bros" category
+42Bros - staff commands for ULX, in the "42Bros" category
 
 ULX loads this file by itself (it loads every lua/ulx/modules/sh/*.lua). Find
 them in the ULX menu (!menu) under Cmds > 42Bros, each with its description,
@@ -40,6 +40,30 @@ local function register(name, fn, say, access, help)
     cmd:help(help)
     return cmd
 end
+
+--[[---------------------------------------------------------------------------
+Server logs (rp1942_logs): the same lines as the server console, shown to you
+---------------------------------------------------------------------------]]
+local function showLog(ply, fn, what)
+    if not RP1942.captureLog then return ULib.tsayError(ply, "The server logs aren't loaded.", true) end
+    local lines = RP1942.captureLog(fn)
+    if IsValid(ply) then
+        for _, l in ipairs(lines) do ULib.console(ply, l) end
+        ULib.tsay(ply, lines[1] and (what .. ": " .. #lines .. " line(s) in your console (~). " .. (#lines == 1 and lines[1] or "")) or (what .. ": nothing to report."), true)
+    end
+end
+
+function ulx.rp1942serverstatus(ply)
+    showLog(ply, RP1942.logStatus, "Server status")
+end
+register("serverstatus", ulx.rp1942serverstatus, "!serverstatus", ULib.ACCESS_ADMIN,
+    "Players per side, the treasury, the economy, money in wallets and the richest players (the line the console prints every 10 minutes).")
+
+function ulx.rp1942setupcheck(ply)
+    showLog(ply, RP1942.logSetup, "Setup check")
+end
+register("setupcheck", ulx.rp1942setupcheck, "!setupcheck", ULib.ACCESS_SUPERADMIN,
+    "Checks this map: markets, vault, dumpsters, saved machines, APC garage, oil sites, the train route, and common server mistakes. Results go to your console.")
 
 --[[---------------------------------------------------------------------------
 World events

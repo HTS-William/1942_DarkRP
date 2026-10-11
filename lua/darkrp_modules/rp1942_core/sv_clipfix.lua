@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - magazines hold a magazine (server)
+42Bros - magazines hold a magazine (server)
 
 A weapon pack SWEP is created with its whole DefaultClip (a magazine plus
 the starting reserve, e.g. 40 rounds for a K98k with a 5-round magazine)

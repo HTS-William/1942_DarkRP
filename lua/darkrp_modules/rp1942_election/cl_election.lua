@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Führer election (client)
+42Bros - Führer election (client)
 
 The ballot window, the HUD notice while an election runs, and the chat
 announcements. Nothing here decides anything - buttons only ask the server.
@@ -443,7 +443,7 @@ local function playElectionSound(key)
     if not file.Exists(path, "GAME") then
         -- An addon file this player doesn't have: it wasn't downloaded on join
         if string.find(path, "^sounds?/") then
-            MsgC(Color(255, 170, 0), "[1942] Can't play election sound '", key, "': ", path,
+            MsgC(Color(255, 170, 0), "[42Bros] Can't play election sound '", key, "': ", path,
                 " was not downloaded to this computer. See the server's content/download setup.\n")
             return
         end
@@ -460,7 +460,7 @@ local function playElectionSound(key)
     if IsValid(channels[key]) then channels[key]:Stop() end   -- never two anthems at once
     sound.PlayFile(path, "noplay", function(ch, _, err)
         if not IsValid(ch) then
-            MsgC(Color(255, 170, 0), "[1942] Election sound '", key, "' failed to play: ", tostring(err), "\n")
+            MsgC(Color(255, 170, 0), "[42Bros] Election sound '", key, "' failed to play: ", tostring(err), "\n")
             return
         end
         channels[key] = ch

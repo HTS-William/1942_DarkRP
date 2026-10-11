@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - playing a radio's stream (client, shared by every radio entity)
+42Bros - playing a radio's stream (client, shared by every radio entity)
 
 Both the wireless set (rp1942_radio) and the factory's Radio Set good
 (rp1942_good with Good = "radio") play the same way. An entity with

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F2 on doors (client)
+42Bros - F2 on doors (client)
 
     F2 on a door you can buy     buys it, straight away (no menu)
     F2 on a door you own         DarkRP's door menu (sell, co-owners, title)

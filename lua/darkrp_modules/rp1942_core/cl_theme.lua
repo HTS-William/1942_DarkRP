@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the colours (client)
+42Bros - the colours (client)
 
     RP1942.col(key)   -> a Color
 

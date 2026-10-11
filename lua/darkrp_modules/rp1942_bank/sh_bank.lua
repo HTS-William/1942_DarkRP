@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reichsbank robbery (shared)
+42Bros - Reichsbank robbery (shared)
 
 HOW IT PLAYS
     1. START   Someone outside the Reich presses E on the Reichsbank vault

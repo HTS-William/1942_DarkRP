@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - men's and women's models that fit the name (shared)
+42Bros - men's and women's models that fit the name (shared)
 
 A job with both men's and women's models (the civilians, the Resistance...)
 gives you one that fits you:

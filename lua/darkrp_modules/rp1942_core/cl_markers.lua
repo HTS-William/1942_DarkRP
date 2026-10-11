@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - markers (client): labels on the screen over places in the
+42Bros - markers (client): labels on the screen over places in the
 world, for a while. The server sends them with RP1942.showMarkers
 (lua/autorun/rp1942_util.lua): your new oil rig, every oil site, saved
 machines (!prodsaves), every padlock (!doorlocks)...

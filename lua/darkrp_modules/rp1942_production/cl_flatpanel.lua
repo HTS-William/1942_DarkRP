@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - flat machine panels (client)
+42Bros - flat machine panels (client)
 
 The look of the F4 menu and the HUD, for the panels on the producers'
 machines: dark cards, a title bar with the red underline, gold headings,

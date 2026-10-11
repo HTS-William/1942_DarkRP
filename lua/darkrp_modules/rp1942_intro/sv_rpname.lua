@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - /register (server): tells the player's game to open the form
+42Bros - /register (server): tells the player's game to open the form
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_OpenRPName")
 

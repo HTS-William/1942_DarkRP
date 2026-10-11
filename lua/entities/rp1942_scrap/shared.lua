@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - scrap metal (Factory Owner). Push it into a factory line: each
+42Bros - scrap metal (Factory Owner). Push it into a factory line: each
 load runs the line once. E picks it up and carries it.
 Settings: RP1942.Production.scrap (rp1942_production/sh_production.lua).
 ---------------------------------------------------------------------------]]

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's decisions (shared: the settings)
+42Bros - the Führer's decisions (shared: the settings)
 
 While a Führer is in office, every 3-5 minutes a window pops up for him with
 one situation and three answers. Each answer has an impact level: the

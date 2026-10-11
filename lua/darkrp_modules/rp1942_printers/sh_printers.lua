@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - money printers (shared config)
+42Bros - money printers (shared config)
 
 Two printers, bought in the F4 Shop (3 of each per player at most):
 

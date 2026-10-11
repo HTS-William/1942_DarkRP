@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - roleplay name registration (client)
+42Bros - roleplay name registration (client)
 
 When the intro has faded (cl_intro.lua fires RP1942_IntroFinished), a player
 who hasn't got a proper roleplay name yet is asked for one: a first and a

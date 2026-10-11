@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - shop lookups (shared)
+42Bros - shop lookups (shared)
 
     RP1942.getShopCatalog(key)          -> catalog table or nil
     RP1942.getShopItem(key, itemId)     -> item table or nil

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - demote groups
+42Bros - demote groups
 
 Demoted from ANY job in a group = temporarily banned from EVERY job in it,
 so a demoted soldier can't simply re-enlist in another posting.

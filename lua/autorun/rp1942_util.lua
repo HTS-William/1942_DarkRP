@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - small shared helpers (both realms)
+42Bros - small shared helpers (both realms)
 
 In lua/autorun so every module and entity can use them while it loads
 (DarkRP modules load in an order we don't control; autorun comes first).

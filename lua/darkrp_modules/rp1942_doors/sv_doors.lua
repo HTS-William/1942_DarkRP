@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - faction doors (server): the !factiondoor command
+42Bros - faction doors (server): the !factiondoor command
 Does exactly what DarkRP's own "set door group" does, with friendlier names.
 ---------------------------------------------------------------------------]]
 local function lookedAtDoor(ply)
@@ -53,7 +53,7 @@ local function setFactionDoor(ply, args)
     DarkRP.storeTeamDoorOwnability(ent)
 
     DarkRP.notify(ply, 0, 5, groupName and ("Door set to: " .. groupName) or "Door is a normal door again.")
-    ServerLog(string.format("[1942] %s set door %d to %s\n", ply:Nick(), ent:MapCreationID(), groupName or "none"))
+    ServerLog(string.format("[42Bros] %s set door %d to %s\n", ply:Nick(), ent:MapCreationID(), groupName or "none"))
     return ""
 end
 

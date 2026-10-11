@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reichsbank robbery (server). How it plays and the settings:
+42Bros - Reichsbank robbery (server). How it plays and the settings:
 sh_bank.lua. The HUD, pop-ups and settings menu: cl_bank.lua.
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_BankSettings")     -- server -> client: the live settings
@@ -104,14 +104,14 @@ function RP1942.setBankSettings(t, byPly)
     sendSettings()
     applyModel()
     if file.Exists(S("alarm"), "GAME") then resource.AddFile(S("alarm")) end
-    ServerLog(string.format("[1942] Bank settings changed by %s\n", IsValid(byPly) and byPly:Nick() or "Console"))
+    ServerLog(string.format("[42Bros] Bank settings changed by %s\n", IsValid(byPly) and byPly:Nick() or "Console"))
 end
 
 loadSettings()
 if file.Exists(S("alarm"), "GAME") then
     resource.AddFile(S("alarm"))
 elseif string.find(S("alarm"), "^sounds?/") then
-    MsgC(Color(255, 170, 0), "[1942] Bank alarm not found at '", S("alarm"), "' (rp1942_bank settings).\n")
+    MsgC(Color(255, 170, 0), "[42Bros] Bank alarm not found at '", S("alarm"), "' (rp1942_bank settings).\n")
 end
 hook.Add("PlayerInitialSpawn", "RP1942_BankSettings", function(ply)
     timer.Simple(3, function() if IsValid(ply) then sendSettings(ply) end end)
@@ -161,7 +161,7 @@ RP1942.defineStaffCommand("addvault", function(ply)
     writeVaults(list)
     v.saveId = id
     DarkRP.notify(ply, 0, 5, "Reichsbank vault placed and saved for this map.")
-    ServerLog(string.format("[1942] %s placed the bank vault at %s\n", ply:Nick(), tostring(pos)))
+    ServerLog(string.format("[42Bros] %s placed the bank vault at %s\n", ply:Nick(), tostring(pos)))
     return ""
 end)
 
@@ -294,7 +294,7 @@ local function finish(success, reason, opts)
     else
         broadcastEvent("lost", reason or "", opts.silent and "silent" or "")
     end
-    ServerLog(string.format("[1942] Bank robbery %s (%s)%s\n", success and "SUCCEEDED" or "failed", tostring(reason),
+    ServerLog(string.format("[42Bros] Bank robbery %s (%s)%s\n", success and "SUCCEEDED" or "failed", tostring(reason),
         success and (": " .. total .. " paid to " .. #paid) or ""))
 end
 RP1942.bankFinish = finish
@@ -354,7 +354,7 @@ function RP1942.bankStart(ply, vault, forced)
     DarkRP.notify(ply, 0, 10, "Hold the bank for " .. fmtTime(S("duration")) .. ". Stay alive and stay near the vault!")
     timer.Create("RP1942_BankTick", 0.5, 0, tick)
     timer.Create("RP1942_BankJoinEnd", math.max(S("joinWindow"), 0.1), 1, endJoinWindow)
-    ServerLog(string.format("[1942] %s started a bank robbery%s\n", ply:Nick(), forced and " (forced by staff)" or ""))
+    ServerLog(string.format("[42Bros] %s started a bank robbery%s\n", ply:Nick(), forced and " (forced by staff)" or ""))
     return true
 end
 
@@ -443,6 +443,12 @@ local function reward(actor)
     local amount = S("killReward")
     if amount <= 0 or not IsValid(actor) or not actor:IsPlayer() then return end
     if not (RP1942.getFaction and RP1942.getFaction(actor) == "reich") then return end
+    -- Only once the robbery is properly under way (past the crew window):
+    -- otherwise an alt could start one for a friend to "stop" right away
+    if CurTime() < (R.joinEnds or 0) then
+        DarkRP.notify(actor, 0, 6, "You stopped the bank robbery before it got going: no reward.")
+        return
+    end
     actor:addMoney(amount)
     DarkRP.notify(actor, 0, 8, "You stopped the bank robbery: " .. DarkRP.formatMoney(amount) .. " reward.")
 end
@@ -529,7 +535,7 @@ function RP1942.bankForceStart(admin, target)
     if not IsValid(target) then return false, "Nobody to start it with." end
     local v = firstVault(target)
     local ok, why = RP1942.bankStart(target, v, true)
-    if ok then ServerLog(string.format("[1942] %s force-started a bank robbery for %s\n", IsValid(admin) and admin:Nick() or "Console", target:Nick())) end
+    if ok then ServerLog(string.format("[42Bros] %s force-started a bank robbery for %s\n", IsValid(admin) and admin:Nick() or "Console", target:Nick())) end
     return ok, why
 end
 

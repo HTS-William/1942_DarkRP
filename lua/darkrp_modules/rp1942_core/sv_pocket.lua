@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - putting loot straight into DarkRP pockets (server)
+42Bros - putting loot straight into DarkRP pockets (server)
 
 Used by the dumpster, dead drops and the supply train. A pocketed item works
 exactly like one the player pocketed themselves: take it out with the pocket

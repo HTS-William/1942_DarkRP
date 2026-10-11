@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 shop logic (shared; the items are in sh_f4_shop.lua)
+42Bros - F4 shop logic (shared; the items are in sh_f4_shop.lua)
 
     RP1942.getF4ShopItems()        every item, each with a unique .id
     RP1942.getF4ShopItem(id)
@@ -156,7 +156,7 @@ concommand.Add("rp1942_listammo", function(ply)
     local found = scanAmmo((RP1942.F4Shop or {}).ammo or {})
     local types = table.GetKeys(found)
     table.sort(types)
-    print(string.format("[1942] %d ammo types found:", #types))
+    print(string.format("[42Bros] %d ammo types found:", #types))
     for _, ammo in ipairs(types) do
         local f = found[ammo]
         print(string.format("  %-28s magazine %3d   used by: %s", ammo, f.clip, table.concat(f.users, ", ")))

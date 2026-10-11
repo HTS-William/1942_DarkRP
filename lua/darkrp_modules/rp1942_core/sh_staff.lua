@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - who may use a staff command (shared)
+42Bros - who may use a staff command (shared)
 
 RP1942.staffCan(ply, access, fallback)
     access    the ULX command it belongs to, e.g. "ulx addmarket"

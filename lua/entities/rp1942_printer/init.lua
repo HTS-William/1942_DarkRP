@@ -94,7 +94,7 @@ function ENT:ReichTakedown(officer, how)
         DarkRP.notify(officer, 0, 7, "You " .. how .. " an illegal printer" .. (reward > 0 and (" and earned " .. DarkRP.formatMoney(reward)) or "")
             .. (fine > 0 and (". Its owner was fined " .. DarkRP.formatMoney(fine) .. " for the treasury.") or "."))
     end
-    ServerLog(string.format("[1942] %s %s %s's illegal printer (fine %d to the treasury)\n",
+    ServerLog(string.format("[42Bros] %s %s %s's illegal printer (fine %d to the treasury)\n",
         IsValid(officer) and officer:Nick() or "?", how, IsValid(owner) and owner:Nick() or "?", fine))
 end
 
@@ -140,6 +140,7 @@ function ENT:OnPanelPress(ply, id)
         if money <= 0 then return end
         self:SetStored(0)
         ply:addMoney(money)
+        hook.Run("RP1942_PrinterCollected", ply, self, money, owner)   -- (rp1942_logs)
         DarkRP.notify(ply, 0, 4, "You took " .. DarkRP.formatMoney(money) .. " from the " .. self.PrintName .. ".")
         if IsValid(owner) and owner ~= ply then
             DarkRP.notify(owner, 1, 6, "Someone emptied your " .. self.PrintName .. "!")
@@ -186,7 +187,7 @@ function ENT:FineReich(attacker)
         .. (paid < fine and (" (all you had; the fine is " .. DarkRP.formatMoney(fine) .. ")") or "") .. ".")
     local owner = self:Getowning_ent()
     if IsValid(owner) then DarkRP.notify(owner, 1, 6, attacker:Nick() .. " destroyed your Banking Printer and was fined " .. DarkRP.formatMoney(paid) .. ".") end
-    ServerLog(string.format("[1942] %s destroyed a Banking Printer and paid %d to the treasury\n", attacker:Nick(), paid))
+    ServerLog(string.format("[42Bros] %s destroyed a Banking Printer and paid %d to the treasury\n", attacker:Nick(), paid))
 end
 
 -- Shot to pieces: a small blast. A Reich member who destroys an illegal one

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - notifications in the HUD's style (client)
+42Bros - notifications in the HUD's style (client)
 
 Every bottom-right notification (DarkRP.notify from any of our systems,
 DarkRP's own, Garry's Mod's, other addons') is drawn like the rest of the

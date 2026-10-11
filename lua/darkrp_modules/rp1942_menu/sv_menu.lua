@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - job menus (server)
+42Bros - job menus (server)
 
 One entry point for every button in every job menu.
 ---------------------------------------------------------------------------]]
@@ -26,6 +26,10 @@ net.Receive("RP1942_MenuAction", function(_, ply)
     local handlers = menuClass and RP1942.MenuHandlers[menuClass]
     local handler = handlers and handlers[action]
     if not handler then return end
+    -- No running the Reich (or a shop) from a cell or from beyond the grave
+    if not ply:Alive() or (ply.isArrested and ply:isArrested()) then
+        return DarkRP.notify(ply, 1, 4, "You can't do that right now.")
+    end
 
     handler(ply, arg)
 end)

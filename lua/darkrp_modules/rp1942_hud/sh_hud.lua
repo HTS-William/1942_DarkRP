@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - HUD (shared config)
+42Bros - HUD (shared config)
 
 Replaces DarkRP's bottom-left player panel and the HL2 ammo counter, in the
 F4 menu's style. DarkRP's other HUD parts stay: names above heads, the

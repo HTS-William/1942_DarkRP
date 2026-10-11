@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - scoreboard (client)
+42Bros - scoreboard (client)
 
 Hold TAB. Everyone in one list, A to Z, in the same look as the F4 menu.
 Click a player to see their card on the right: SteamID, Steam profile, a
@@ -39,7 +39,7 @@ local ACTIONS = {
     { title = "Chat & voice", items = {
         { "Gag", "gag" }, { "Ungag", "ungag" }, { "Mute", "mute" }, { "Unmute", "unmute" },
     } },
-    { title = "1942", items = {
+    { title = "42Bros", items = {
         { "Make wanted", "makewanted", prompt = "Why are they wanted by the Reich?" },
         { "Clear wanted", "clearwanted" },
         { "Make Führer", "setfuhrer", danger = true },

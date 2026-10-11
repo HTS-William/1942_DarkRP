@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - world events scheduler (server)
+42Bros - world events scheduler (server)
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.Events
 local TIMER = "RP1942_WorldEvents"
@@ -31,7 +31,7 @@ function RP1942.startEvent(id, ignorePlayers)
     local ok, why = RP1942.canStartEvent(ev, ignorePlayers)
     if not ok then return false, why end
     if ev.start() == false then return false, "failed to start (see the server console)" end
-    ServerLog("[1942] World event started: " .. id .. "\n")
+    ServerLog("[42Bros] World event started: " .. id .. "\n")
     return true
 end
 
@@ -119,7 +119,7 @@ function RP1942.setEventSettings(t, who)
     -- A shorter gap takes effect now, not after the old timer runs out
     local left = timer.TimeLeft(TIMER)
     if not left or left > CFG.interval.max then scheduleNext(math.random(CFG.interval.min, CFG.interval.max)) end
-    ServerLog(string.format("[1942] %s changed the world event settings\n", IsValid(who) and who:Nick() or "Console"))
+    ServerLog(string.format("[42Bros] %s changed the world event settings\n", IsValid(who) and who:Nick() or "Console"))
 end
 
 hook.Add("InitPostEntity", "RP1942_WorldEvents", function()

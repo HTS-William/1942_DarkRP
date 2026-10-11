@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the "hold E" progress bar (client)
+42Bros - the "hold E" progress bar (client)
 Shown under the crosshair while holding E on something that takes time:
 searching a dumpster, robbing the supply train, and anything later. Lives in
 core so it works no matter which of those are installed. From the server:

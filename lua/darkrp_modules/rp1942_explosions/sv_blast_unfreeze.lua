@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - explosions unfreeze props (server)
+42Bros - explosions unfreeze props (server)
 
 A frozen prop caught in an explosion (grenades, rockets, the oil rig
 blowing up, RP1942.explode...) is knocked loose: it unfreezes and gets

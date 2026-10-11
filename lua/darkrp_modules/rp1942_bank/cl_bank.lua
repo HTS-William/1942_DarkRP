@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reichsbank robbery (client): banner, alarm, the robbery HUD,
+42Bros - Reichsbank robbery (client): banner, alarm, the robbery HUD,
 the Reich's marker on the vault, the start / join pop-ups, the initiator's
 "let them in?" pop-ups and the staff settings menu.
 ---------------------------------------------------------------------------]]

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - world event settings menu (client). Opened by the server
+42Bros - world event settings menu (client). Opened by the server
 (sv_event_menu.lua) with the current settings; in the F4 menu's style.
 Times are shown in minutes.
 ---------------------------------------------------------------------------]]

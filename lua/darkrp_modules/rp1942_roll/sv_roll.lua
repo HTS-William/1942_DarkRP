@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - /roll (server). Settings: RP1942.RollConfig in sh_roll.lua.
+42Bros - /roll (server). Settings: RP1942.RollConfig in sh_roll.lua.
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.RollConfig
 local USAGE = "Usage: /roll, /roll 20, /roll 5 50 or /roll 2d6"
@@ -69,6 +69,6 @@ DarkRP.defineChatCommand("roll", function(ply, args)
             DarkRP.talkToPerson(target, CFG.color, text, nil, nil, ply)
         end
     end
-    ServerLog("[1942] Roll: " .. text .. "\n")
+    ServerLog("[42Bros] Roll: " .. text .. "\n")
     return ""
 end, CFG.cooldown)

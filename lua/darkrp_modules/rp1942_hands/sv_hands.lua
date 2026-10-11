@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Hands (server): spawn holding them, and the push gesture
+42Bros - Hands (server): spawn holding them, and the push gesture
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_HandsPush")
 

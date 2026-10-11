@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the NLR zone (server). Settings: sh_nlr.lua
+42Bros - the NLR zone (server). Settings: sh_nlr.lua
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.NLR
 
@@ -24,10 +24,19 @@ function RP1942.clearNLR(ply)
     return had
 end
 
-hook.Add("PlayerDeath", "RP1942_NLR", function(victim)
+hook.Add("PlayerDeath", "RP1942_NLR", function(victim, _, attacker)
     if not CFG.enabled or not IsValid(victim) then return end
     local job = victim.getJobTable and victim:getJobTable()
     if job and CFG.exempt[job.command] then return end
+    -- Killing yourself (or a fall) during an NLR doesn't move the zone: it
+    -- would let you "kill" at spawn and walk straight back where you died.
+    -- The zone stays, the clock starts again, a hold stays a hold.
+    local killedByPlayer = IsValid(attacker) and attacker:IsPlayer() and attacker ~= victim
+    if not killedByPlayer and victim:GetNW2Float("RP1942_NLREnd", 0) > CurTime() then
+        victim:SetNW2Float("RP1942_NLREnd", CurTime() + CFG.time)
+        victim:SetNW2Float("RP1942_NLRWarn", 0)
+        return
+    end
     release(victim, true)   -- a new death replaces the old zone
     victim:SetNW2Vector("RP1942_NLRPos", victim:GetPos())
     victim:SetNW2Float("RP1942_NLREnd", CurTime() + CFG.time)
@@ -82,3 +91,10 @@ hook.Add("PlayerSpawn", "RP1942_NLR", function(ply)
     end
 end)
 
+-- No "kill" in the console to get out of being held at spawn
+hook.Add("CanPlayerSuicide", "RP1942_NLR", function(ply)
+    if ply.RP1942_NLRHeld then
+        DarkRP.notify(ply, 1, 4, "You can't do that while you're held for breaking NLR.")
+        return false
+    end
+end)

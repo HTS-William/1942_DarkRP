@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - admin ESP (server)
+42Bros - admin ESP (server)
 
     !esp  (ULX 42Bros, or !esp)   toggles it for yourself
 Who may: "ulx esp" in ULX Groups (admins by default; without ULX, admins).
@@ -27,7 +27,7 @@ function RP1942.toggleESP(ply, on)
     net.WriteBool(on)
     net.Send(ply)
     DarkRP.notify(ply, 0, 3, on and "ESP on." or "ESP off.")
-    ServerLog(string.format("[1942] %s turned ESP %s\n", ply:Nick(), on and "on" or "off"))
+    ServerLog(string.format("[42Bros] %s turned ESP %s\n", ply:Nick(), on and "on" or "off"))
 end
 
 

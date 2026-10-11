@@ -166,7 +166,7 @@ function ENT:CreateItems( ply )
 
 	--> Per-entity timer name, so searches on different dumpsters never cancel each other.
 	--> Items come out 0.2 s apart so props don't spawn inside each other.
-	local spawnTimer = "rp1942_dumpsters_spawn_" .. self:EntIndex()
+	local spawnTimer = "rp1942_dumpsters_spawn_" .. self:EntIndex() .. "_" .. ply:EntIndex()   --> and per searcher
 	local count = math.random( CFG.MinItemsToCreate, CFG.MaxItemsToCreate )
 	local done, pocketed, dropped = 0, {}, {}
 	timer.Create( spawnTimer, 0.2, count, function()
@@ -318,6 +318,7 @@ end
 --> in the drop for the next member.
 function ENT:CollectDrop( ply )
 	local got, left = {}, {}
+	hook.Run( "RP1942_DeadDropTaken", ply, self.drop.money, #self.drop.weapons )   --> (rp1942_logs)
 	if self.drop.money > 0 then
 		ply:addMoney( self.drop.money )
 		got[ #got + 1 ] = DarkRP.formatMoney( self.drop.money )
@@ -395,6 +396,7 @@ local function deadDrop( ply, args )
 		local name = wep:GetPrintName() or wep:GetClass()
 		ply:StripWeapon( wep:GetClass() )
 		ent:UpdateDropCount()
+		hook.Run( "RP1942_DeadDrop", ply, 0, name )   --> (rp1942_logs)
 		DarkRP.notify( ply, 0, 5, "You hid your " .. name .. " in the dumpster." )
 		return ""
 	end
@@ -415,6 +417,7 @@ local function deadDrop( ply, args )
 	ply:addMoney( -amount )
 	ent.drop.money = ent.drop.money + amount
 	ent:UpdateDropCount()
+	hook.Run( "RP1942_DeadDrop", ply, amount )   --> (rp1942_logs)
 	DarkRP.notify( ply, 0, 5, "You hid " .. DarkRP.formatMoney( amount ) .. " in the dumpster." )
 	return ""
 end
@@ -540,7 +543,7 @@ RP1942.defineStaffCommand("adddumpster", function( ply )
 	d.saveId = id
 
 	DarkRP.notify( ply, 0, 5, "Dumpster placed and saved for this map." )
-	ServerLog( string.format( "[1942] %s placed a dumpster at %s\n", ply:Nick(), tostring( pos ) ) )
+	ServerLog( string.format( "[42Bros] %s placed a dumpster at %s\n", ply:Nick(), tostring( pos ) ) )
 	return ""
 end )
 
@@ -560,7 +563,7 @@ RP1942.defineStaffCommand("removedumpster", function( ply )
 	else
 		DarkRP.notify( ply, 0, 8, "Dumpster removed until the next restart. It's listed in config.lua (AddSpawnPos); delete it there to remove it for good." )
 	end
-	ServerLog( string.format( "[1942] %s removed a dumpster at %s\n", ply:Nick(), tostring( d:GetPos() ) ) )
+	ServerLog( string.format( "[42Bros] %s removed a dumpster at %s\n", ply:Nick(), tostring( d:GetPos() ) ) )
 	d:Remove()
 	return ""
 end )

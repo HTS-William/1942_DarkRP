@@ -1,13 +1,13 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the wireless set. Press E to tune it (a station from the list
+42Bros - the wireless set. Press E to tune it (a station from the list
 or any direct stream link). Plays for everyone near it. Settings, stations
 and the menu: darkrp_modules/rp1942_radio.
 ---------------------------------------------------------------------------]]
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.PrintName = "Radio"
-ENT.Author = "1942 DarkRP"
-ENT.Category = "1942 DarkRP"
+ENT.Author = "42Bros"
+ENT.Category = "42Bros"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 

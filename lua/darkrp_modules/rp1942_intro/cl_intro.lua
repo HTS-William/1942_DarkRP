@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - intro card + vignette (client)
+42Bros - intro card + vignette (client)
 
 On first spawn:
     black screen -> title card fades in, holds, fades out
@@ -239,7 +239,7 @@ local function startMusic()
             return
         end
         if not IsValid(ch) then
-            MsgC(Color(255, 170, 0), "[1942] Intro music failed to play: ", tostring(errName), "\n")
+            MsgC(Color(255, 170, 0), "[42Bros] Intro music failed to play: ", tostring(errName), "\n")
             return
         end
 

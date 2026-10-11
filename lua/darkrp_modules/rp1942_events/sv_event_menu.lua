@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - world event settings menu (server)
+42Bros - world event settings menu (server)
 
     !eventsettings  (ULX 42Bros)  or  !eventsettings
 Opens a menu to change the automatic event timer, the player minimum and

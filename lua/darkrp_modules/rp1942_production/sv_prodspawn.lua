@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - production spawner for staff (server)
+42Bros - production spawner for staff (server)
 
 A debug menu to spawn production things without buying them or working for
 them: machines, flour, markets and every good at any quality, plus tools for
@@ -95,7 +95,7 @@ local function spawnMachine(ply, class)
         if IsValid(phys) then phys:EnableMotion(false) end
     end
     addUndo(ply, ent, "Production: " .. (ent.PrintName or class))
-    ServerLog(string.format("[1942] %s spawned %s (production spawner)\n", ply:Nick(), class))
+    ServerLog(string.format("[42Bros] %s spawned %s (production spawner)\n", ply:Nick(), class))
 end
 
 local function spawnGoods(ply, id, q, count, pocket)
@@ -119,7 +119,7 @@ local function spawnGoods(ply, id, q, count, pocket)
         undo.SetPlayer(ply)
         undo.Finish()
     end
-    ServerLog(string.format("[1942] %s spawned %dx %s (%d stars, production spawner)\n", ply:Nick(), count, id, q))
+    ServerLog(string.format("[42Bros] %s spawned %dx %s (%d stars, production spawner)\n", ply:Nick(), count, id, q))
 end
 
 -- Finish the timer of the machine you're looking at
@@ -150,7 +150,7 @@ end
 local function remove(ply)
     local ent = aim(ply).Entity
     if IsValid(ent) and (MACHINES[ent:GetClass()] or ent:GetClass() == "rp1942_good") then
-        ServerLog(string.format("[1942] %s removed %s (production spawner)\n", ply:Nick(), ent:GetClass()))
+        ServerLog(string.format("[42Bros] %s removed %s (production spawner)\n", ply:Nick(), ent:GetClass()))
         if ent.RP1942_SaveId then
             DarkRP.notify(ply, 0, 5, "That one was saved: it's gone for now but comes back on restart. Use !unsaveprod to remove it for good.")
         end
@@ -206,7 +206,7 @@ local function spawnAllSaved()
     for id, v in pairs(loadSaves()) do
         if IsValid(spawnSaved(id, v)) then n = n + 1 end
     end
-    if n > 0 then MsgC(Color(160, 220, 120), "[1942] Production: spawned " .. n .. " saved machine(s).\n") end
+    if n > 0 then MsgC(Color(160, 220, 120), "[42Bros] Production: spawned " .. n .. " saved machine(s).\n") end
 end
 hook.Add("InitPostEntity", "RP1942_ProdSaves", function() timer.Simple(1, spawnAllSaved) end)
 hook.Add("PostCleanupMap", "RP1942_ProdSaves", function() timer.Simple(0.5, spawnAllSaved) end)   -- after the dumpsters' and markets' own respawns
@@ -254,7 +254,7 @@ function RP1942.prodSave(ply)
     if not saveOne(ent, list) then return DarkRP.notify(ply, 1, 4, "That " .. (ent.PrintName or "machine") .. " is already saved.") end
     writeSaves(list)
     DarkRP.notify(ply, 0, 5, (ent.PrintName or "Machine") .. " saved: it will be here after every restart. (!unsaveprod to undo)")
-    ServerLog(string.format("[1942] %s saved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
+    ServerLog(string.format("[42Bros] %s saved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
 end
 
 function RP1942.prodSaveAll(ply)
@@ -266,7 +266,7 @@ function RP1942.prodSaveAll(ply)
     if n == 0 then return DarkRP.notify(ply, 1, 4, "You have no unsaved machines placed from the production spawner.") end
     writeSaves(list)
     DarkRP.notify(ply, 0, 5, "Saved " .. n .. " machine(s) for this map.")
-    ServerLog(string.format("[1942] %s saved %d production machine(s)\n", ply:Nick(), n))
+    ServerLog(string.format("[42Bros] %s saved %d production machine(s)\n", ply:Nick(), n))
 end
 
 function RP1942.prodUnsave(ply)
@@ -279,7 +279,7 @@ function RP1942.prodUnsave(ply)
     end
     list[ent.RP1942_SaveId] = nil
     writeSaves(list)
-    ServerLog(string.format("[1942] %s unsaved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
+    ServerLog(string.format("[42Bros] %s unsaved a %s at %s\n", ply:Nick(), ent:GetClass(), tostring(ent:GetPos())))
     ent:Remove()
     DarkRP.notify(ply, 0, 5, "Removed, and from this map's save.")
 end

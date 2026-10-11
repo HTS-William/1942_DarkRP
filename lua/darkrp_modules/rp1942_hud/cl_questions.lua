@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - DarkRP's yes / no questions in our style (client)
+42Bros - DarkRP's yes / no questions in our style (client)
 
 DarkRP asks players things with a little grey Derma box: above all the
 lottery ("There is a lottery! Participate for RM250?"), and anything else

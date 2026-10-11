@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - padlocks (shared: the settings and DarkRP's lockpick and ram)
+42Bros - padlocks (shared: the settings and DarkRP's lockpick and ram)
 
 Our answer to keypads. A padlock turns a prop you own into a door:
     E                 open it (5 s), if you're allowed. It closes by itself,

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - players who join before Steam has confirmed them (server)
+42Bros - players who join before Steam has confirmed them (server)
 
 ULib only knows a player's ULX rank once the engine's PlayerAuthed hook has
 fired, which needs Steam to validate them. Until then, any ULX permission
@@ -34,12 +34,12 @@ local function authIfNeeded(ply)
 
     if localGame() then
         ucl.probe(ply)
-        MsgC(Color(201, 168, 92), "[1942] Local test game: ", Color(236, 228, 212),
+        MsgC(Color(201, 168, 92), "[42Bros] Local test game: ", Color(236, 228, 212),
             ply:Nick() .. " (" .. ply:SteamID() .. ") was never Steam-authenticated, so ULX was set up for them directly.\n")
     else
         ucl.authed[uid] = table.Copy(ULib.DEFAULT_GRANT_ACCESS)   -- "user", nothing more
         hook.Call(ULib.HOOK_UCLCHANGED)
-        MsgC(Color(201, 168, 92), "[1942] ", Color(236, 228, 212),
+        MsgC(Color(201, 168, 92), "[42Bros] ", Color(236, 228, 212),
             ply:Nick() .. " (" .. ply:SteamID() .. ") spawned before Steam confirmed them: treated as a user until it does.\n")
     end
 end

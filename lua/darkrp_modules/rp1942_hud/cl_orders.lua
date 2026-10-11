@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Orders (DarkRP agendas: "Reich Orders", "Resistance Plans")
+42Bros - Orders (DarkRP agendas: "Reich Orders", "Resistance Plans")
 
 Replaces DarkRP's big agenda box with a compact panel in the top-left
 corner, in the HUD's style. It keeps clear of everything else on screen:

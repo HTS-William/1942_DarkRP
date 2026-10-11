@@ -35,7 +35,8 @@ if SERVER then
 	local config = default_config
 	EasyChat.Config = config
 
-	concommand.Add("easychat_purge_config", function()
+	concommand.Add("easychat_purge_config", function(ply)
+		if IsValid(ply) then return end   -- 42Bros: server console only (any player could run it)
 		config.OverrideClientSettings = true
 		config.AllowTagsInNames = true
 		config.AllowTagsInMessages = true

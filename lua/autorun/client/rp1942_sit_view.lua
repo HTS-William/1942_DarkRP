@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - third person while sitting (client)
+42Bros - third person while sitting (client)
 
 Sitting players are kept hittable (lua/autorun/server/rp1942_sit_rules.lua:
 a seat is no shield). Garry's Mod's seat third-person camera pulls back from

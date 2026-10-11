@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the NLR zone (client). Settings: sh_nlr.lua
+42Bros - the NLR zone (client). Settings: sh_nlr.lua
 
 While your NLR runs:
     - a small tag at the top of the screen:  NEW LIFE RULE  2:31

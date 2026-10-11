@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - a padlock, fixed to a prop it turns into a door.
+42Bros - a padlock, fixed to a prop it turns into a door.
 Fitted with the Padlock (rp1942_padlock_kit); everything it does is in
 darkrp_modules/rp1942_padlocks. Removing it (remover tool, !removelock)
 turns the prop back into a plain prop.
@@ -9,7 +9,7 @@ AddCSLuaFile()
 ENT.Type      = "anim"
 ENT.Base      = "base_anim"
 ENT.PrintName = "Padlock"
-ENT.Author    = "1942 DarkRP"
+ENT.Author    = "42Bros"
 ENT.Spawnable = false
 ENT.DoNotDuplicate = true
 

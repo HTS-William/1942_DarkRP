@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's perks (server). Settings: sh_perks.lua
+42Bros - the Führer's perks (server). Settings: sh_perks.lua
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.Perks
 local MENU = "RP1942_FuhrerMenu"
@@ -23,7 +23,7 @@ RP1942.defineStaffCommand("setapcspot", function(ply)
     local yaw = math.Round(ply:EyeAngles().y + 180)
     store.save({ x = tr.HitPos.x, y = tr.HitPos.y, z = tr.HitPos.z, yaw = yaw })
     DarkRP.notify(ply, 0, 5, "APC garage set for this map. A bought armoured car appears here, facing you.")
-    ServerLog(string.format("[1942] %s set the APC garage at %s\n", ply:Nick(), tostring(tr.HitPos)))
+    ServerLog(string.format("[42Bros] %s set the APC garage at %s\n", ply:Nick(), tostring(tr.HitPos)))
 end)
 
 local function apcSpot()
@@ -107,7 +107,7 @@ local function destroyAPC(car, attacker)
     local p = RP1942.getPerk("apc")
     setCooldown("apc", p and p.cooldown or 0)
     if RP1942.alert then RP1942.alert("The Reich's armoured car has been destroyed!", "wanted") end
-    ServerLog(string.format("[1942] The APC was destroyed%s\n", IsValid(attacker) and attacker:IsPlayer() and (" by " .. attacker:Nick()) or ""))
+    ServerLog(string.format("[42Bros] The APC was destroyed%s\n", IsValid(attacker) and attacker:IsPlayer() and (" by " .. attacker:Nick()) or ""))
 end
 
 -- Its own health (Source vehicles don't take damage by themselves)
@@ -265,7 +265,12 @@ local BUY = {
     end,
     paybonus = function(ply, perk)
         local now = CurTime()
-        local untilT = math.max(GetGlobal2Float("RP1942_PayBonusUntil", 0), now) + perk.minutes * 60
+        local left = math.max(GetGlobal2Float("RP1942_PayBonusUntil", 0) - now, 0)
+        local cap = (perk.maxMinutes or perk.minutes) * 60
+        if left + perk.minutes * 60 > cap then
+            return false, "The pay bonus already runs for " .. RP1942.perkClock(left) .. ": it can't be extended past " .. (perk.maxMinutes or perk.minutes) .. " minutes."
+        end
+        local untilT = now + left + perk.minutes * 60
         SetGlobal2Float("RP1942_PayBonusUntil", untilT)
         return true, string.format("Soldiers' pay raised by %d%% for %s.", math.Round((perk.mult - 1) * 100), RP1942.perkClock(untilT - now))
     end,
@@ -302,7 +307,7 @@ local function handler(ply, id)
     local reich = {}
     for _, p in ipairs(player.GetAll()) do if RP1942.getFaction(p) == "reich" then reich[#reich + 1] = p end end
     if RP1942.alert and #reich > 0 then RP1942.alert(ALERT[id], "clear", reich) end
-    ServerLog(string.format("[1942] %s bought the perk %s for %d\n", ply:Nick(), id, perk.price))
+    ServerLog(string.format("[42Bros] %s bought the perk %s for %d\n", ply:Nick(), id, perk.price))
 end
 
 -- rp1942_menu loads after this module, so its handler table may not exist yet

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Q menu: only the Military Conflict: Vietnam weapons the dealers
+42Bros - Q menu: only the Military Conflict: Vietnam weapons the dealers
 sell (client)
 
 Only the MCV weapons (mcv_...) are touched. Of those, the Weapons tab of the

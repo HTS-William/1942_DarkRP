@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich supply train (world event)
+42Bros - Reich supply train (world event)
 Settings live in darkrp_modules/rp1942_events/sh_events.lua
 (RP1942.Events.train). Started by the world events scheduler or by staff
 with !train; not meant to be spawned from the Q menu.

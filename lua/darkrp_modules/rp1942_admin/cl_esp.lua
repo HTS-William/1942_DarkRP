@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - admin ESP (client)
+42Bros - admin ESP (client)
 
 Every player, through walls: their name, REAL job (with their cover if
 they're undercover), rank, health and distance, in their job's colour.

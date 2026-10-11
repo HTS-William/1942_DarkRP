@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - shortening text to fit (client)
+42Bros - shortening text to fit (client)
 
     RP1942.fitText(text, font, maxW)  -> text, or text cut short with "..."
 

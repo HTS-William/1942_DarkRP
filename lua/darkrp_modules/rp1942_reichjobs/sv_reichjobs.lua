@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich jobs (server): sends a player their unit's music when they join it
+42Bros - Reich jobs (server): sends a player their unit's music when they join it
 (settings: sh_reichjobs.lua)
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_JobMusic")
@@ -12,7 +12,7 @@ for _, path in pairs(RP1942.ReichJobs.music) do
         if file.Exists(path, "GAME") then
             resource.AddFile(path)
         else
-            MsgC(Color(255, 170, 0), "[1942] Reich job music not found at '", path, "'. Check RP1942.ReichJobs.music (sh_reichjobs.lua).\n")
+            MsgC(Color(255, 170, 0), "[42Bros] Reich job music not found at '", path, "'. Check RP1942.ReichJobs.music (sh_reichjobs.lua).\n")
         end
     end
 end

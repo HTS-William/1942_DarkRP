@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Money Printer: an illegal printer: not for the Reich or the Banker.
+42Bros - Money Printer: an illegal printer: not for the Reich or the Banker.
 Everything is in the base, lua/entities/rp1942_printer.
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"

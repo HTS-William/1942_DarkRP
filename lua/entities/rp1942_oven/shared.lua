@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - bread oven (Baker). Settings: RP1942.Production.oven
+42Bros - bread oven (Baker). Settings: RP1942.Production.oven
 (rp1942_production/sh_production.lua).
 
     Push sacks of flour in: it holds a queue and bakes them one at a time.

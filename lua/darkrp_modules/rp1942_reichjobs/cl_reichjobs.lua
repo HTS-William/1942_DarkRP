@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich jobs (client): plays your unit's music, for you only
+42Bros - Reich jobs (client): plays your unit's music, for you only
 (settings: sh_reichjobs.lua)
 
 The client watches its own job, so the music starts whatever changed it
@@ -42,20 +42,20 @@ local function play(path, verbose)
     if path == playing and (not IsValid(channel) or channel:GetState() == GMOD_CHANNEL_PLAYING) then return end
     stop()
     if not musicOn:GetBool() then
-        if verbose then print("[1942] Job music is turned off for you (rp1942_job_music 0).") end
+        if verbose then print("[42Bros] Job music is turned off for you (rp1942_job_music 0).") end
         return
     end
 
     local vol, musicSlider = volume()
     if verbose then
-        print("[1942] Job music: " .. path .. "  file found: " .. tostring(file.Exists(path, "GAME"))
+        print("[42Bros] Job music: " .. path .. "  file found: " .. tostring(file.Exists(path, "GAME"))
             .. "  volume: " .. string.format("%.2f", vol) .. " (music slider " .. tostring(musicSlider) .. ")")
     end
     playing = path
     local mine = token
     sound.PlayFile(path, "noplay", function(ch, errId, err)
         if not IsValid(ch) then
-            MsgC(Color(255, 170, 0), "[1942] Job music '", path, "' failed to play: ", tostring(err or errId),
+            MsgC(Color(255, 170, 0), "[42Bros] Job music '", path, "' failed to play: ", tostring(err or errId),
                 file.Exists(path, "GAME") and "\n" or " (the file isn't on this computer: it wasn't downloaded from the server)\n")
             if mine == token then playing = nil end
             return
@@ -64,7 +64,7 @@ local function play(path, verbose)
         channel = ch
         ch:SetVolume(vol)
         ch:Play()
-        if verbose then print("[1942] Job music playing.") end
+        if verbose then print("[42Bros] Job music playing.") end
     end)
 end
 
@@ -73,7 +73,7 @@ concommand.Add("rp1942_job_music_test", function()
     local ply = LocalPlayer()
     local job = RPExtraTeams and RPExtraTeams[ply:Team()]
     local path = trackFor(ply:Team())
-    print("[1942] Your job: " .. tostring(job and job.name) .. " (" .. tostring(job and job.command) .. ")  track: " .. tostring(path or "none (only the Riflemen have one)"))
+    print("[42Bros] Your job: " .. tostring(job and job.name) .. " (" .. tostring(job and job.command) .. ")  track: " .. tostring(path or "none (only the Riflemen have one)"))
     if path then stop() play(path, true) end
 end, nil, "Play your current job's music and print diagnostics")
 

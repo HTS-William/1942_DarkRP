@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - oil rig (Petroleum Producer). Settings: RP1942.Production.oil
+42Bros - oil rig (Petroleum Producer). Settings: RP1942.Production.oil
 (rp1942_production/sh_production.lua).
 
     Bought in the F4 Shop, but not placed by hand: it's built on a free oil

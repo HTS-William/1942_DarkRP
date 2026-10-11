@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - economy (server)
+42Bros - economy (server)
 
 The only place the economy value is changed. Everything that changes it
 (the Führer's menu, later: taxes, supply trains, air raids...) goes through
@@ -27,7 +27,7 @@ function RP1942.setEconomy(value, reason)
 
     SetGlobal2Int(E.KEY, value)   -- networked to every client automatically
 
-    ServerLog(string.format("[1942] Economy %d -> %d (%s)\n", old, value, reason or "no reason given"))
+    ServerLog(string.format("[42Bros] Economy %d -> %d (%s)\n", old, value, reason or "no reason given"))
     hook.Run("RP1942_EconomyChanged", old, value, reason)
     return value
 end

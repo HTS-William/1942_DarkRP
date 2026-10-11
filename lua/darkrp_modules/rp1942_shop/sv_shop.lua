@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - shop purchases (server)
+42Bros - shop purchases (server)
 
     RP1942.buyShopItem(ply, itemId, amount)
     amount 1 = one weapon; more = a crate of them (RP1942.ShopShipments)
@@ -77,11 +77,11 @@ function RP1942.buyShopItem(ply, itemId, amount)
     local ent = amount > 1 and spawnCrate(ply, item, amount) or spawnItem(ply, item)
     if not IsValid(ent) then
         DarkRP.notify(ply, 1, 5, item.name .. " isn't available on this server yet. You were not charged.")
-        MsgC(Color(255, 170, 0), "[1942] Shop '", key, "' item '", item.id, "': class '", item.class, "' does not exist.\n")
+        MsgC(Color(255, 170, 0), "[42Bros] Shop '", key, "' item '", item.id, "': class '", item.class, "' does not exist.\n")
         return
     end
 
     ply:addMoney(-price)
     DarkRP.notify(ply, 0, 4, "You bought " .. (amount > 1 and ("a crate of " .. amount .. "x ") or "") .. item.name .. " for " .. DarkRP.formatMoney(price) .. ".")
-    hook.Run("RP1942_ShopPurchase", ply, item, ent)
+    hook.Run("RP1942_ShopPurchase", ply, item, ent, price, amount)
 end

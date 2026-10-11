@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 SHOP ITEMS  (this is the file you edit)
+42Bros - F4 SHOP ITEMS  (this is the file you edit)
 
 Two things are sold in the F4 Shop tab from here:
 

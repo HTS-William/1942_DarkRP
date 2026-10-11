@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - handcuffs (server): grabbing, the 8 seconds, the arrest
+42Bros - handcuffs (server): grabbing, the 8 seconds, the arrest
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.HandcuffsConfig
 local CUFFS = "rp1942_handcuffs"
@@ -115,7 +115,7 @@ hook.Add("PlayerDisconnected", "RP1942_Handcuffs", function(ply)
     if active[ply] then stop(ply) end
     local by = RP1942.cuffedBy(ply)
     if by and active[by] then
-        ServerLog(string.format("[1942] %s (%s) left while being handcuffed by %s\n", ply:Nick(), ply:SteamID(), by:Nick()))
+        ServerLog(string.format("[42Bros] %s (%s) left while being handcuffed by %s\n", ply:Nick(), ply:SteamID(), by:Nick()))
         stop(by)
         DarkRP.notify(by, 1, 6, ply:Nick() .. " left the server while being handcuffed.")
     end

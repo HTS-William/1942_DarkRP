@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - disguises (server)
+42Bros - disguises (server)
 
 The difference this module relies on:
     changeTeam(t)    changes the REAL job (weapons, powers, faction)
@@ -108,8 +108,22 @@ undercover jobs, it's done here instead and nobody is told. The title must be
 a civilian trade (unless freeform is on); typing your real job name reveals you.
 canChatCommand runs before DarkRP's /job, and returning false stops it.
 ---------------------------------------------------------------------------]]
+-- Titles nobody may hide behind (lower case, matched anywhere in the title)
+local FORBIDDEN_WORDS = { "staff", "admin", "moderator", "owner", "führer", "fuhrer", "fuehrer", "hitler", "elite guard" }
+
+local function forbiddenCover(text)
+    local low = string.lower(text)
+    for _, w in ipairs(FORBIDDEN_WORDS) do
+        if string.find(low, w, 1, true) then return true end
+    end
+    -- the name of a real job that isn't a civilian trade (Gestapo, a rank...)
+    for _, job in pairs(RPExtraTeams) do
+        if string.lower(job.name) == low and job.faction ~= "civilian" then return true end
+    end
+end
+
 local function setCover(ply, text)
-    text = string.Trim(text or "")
+    text = string.Trim((string.gsub(text or "", "%c", " ")))
     local job = RPExtraTeams[ply:Team()]
 
     if job and string.lower(text) == string.lower(job.name) then
@@ -122,6 +136,10 @@ local function setCover(ply, text)
     if RP1942.Config.Disguise.freeform then
         if #text < 3 or #text > 25 then
             DarkRP.notify(ply, 1, 4, "A cover title must be 3-25 characters.")
+            return
+        end
+        if forbiddenCover(text) then
+            DarkRP.notify(ply, 1, 5, "You can't use that as a cover title.")
             return
         end
         title = text
@@ -149,6 +167,9 @@ end)
 
 hook.Add("canChatCommand", "RP1942_SilentCover", function(ply, cmd, args)
     if cmd ~= "job" or not RP1942.canDisguise(ply) then return end
+    local now = CurTime()
+    if (ply.RP1942_NextCover or 0) > now then return false end
+    ply.RP1942_NextCover = now + 2
     setCover(ply, args)
     return false
 end)

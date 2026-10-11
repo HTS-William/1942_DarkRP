@@ -46,7 +46,7 @@ if (CLIENT) then
 	end)
 end
 
--- 1942 DarkRP: keep the legs dressed like the player. Gmod Legs copies the
+-- 42Bros: keep the legs dressed like the player. Gmod Legs copies the
 -- model, bodygroups and skin only when it (re)builds the legs, so changing
 -- bodygroups in the F4 Appearance tab (or a wardrobe/skin change that keeps
 -- the same model) left the old legs on. Checked ten times a second.

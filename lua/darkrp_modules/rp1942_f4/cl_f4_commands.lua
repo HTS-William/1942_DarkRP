@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 Commands tab (client)
+42Bros - F4 Commands tab (client)
 
     Money             give / drop money, write a cheque
     Actions           roleplay name, drop weapon, player info, doors, prop owner
@@ -21,7 +21,7 @@ local function askAmount(title, fn)
 end
 
 local function say(...)
-    chat.AddText(UI().C.gold, "[1942] ", UI().C.text, ...)
+    chat.AddText(UI().C.gold, "[42Bros] ", UI().C.text, ...)
 end
 
 -- Cheque: pick who it's for, then how much

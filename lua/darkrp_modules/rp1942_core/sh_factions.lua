@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - faction helpers (shared)
+42Bros - faction helpers (shared)
 
 Every job in jobs.lua carries a custom `faction` field:
     "civilian" | "resistance" | "reich"

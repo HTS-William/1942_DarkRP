@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's decisions (server)
+42Bros - the Führer's decisions (server)
 
     RP1942.decisionForce(caller, number)   (!fuhrerquestion) -> ok, why
     RP1942.decisionPending()               -> { ply, index, endsAt } or nil
@@ -72,7 +72,7 @@ local function ask(ply, index, test)
     pending = { ply = ply, index = index, endsAt = CurTime() + S.answerTime, test = test }
     sendOpen(ply)
     ply:EmitSound("buttons/bell1.wav", 60, 90)
-    ServerLog(string.format("[1942] Decision '%s' put to %s%s\n", D.questions[index].id, ply:Nick(), test and " (test)" or ""))
+    ServerLog(string.format("[42Bros] Decision '%s' put to %s%s\n", D.questions[index].id, ply:Nick(), test and " (test)" or ""))
 end
 
 local function close(reason, ignored)
@@ -116,7 +116,7 @@ timer.Create("RP1942_Decisions", 1, 0, function()
                 net.WriteUInt(moved, 8)
                 if IsValid(p) then net.SendOmit(p) else net.Broadcast() end
             end
-            ServerLog(string.format("[1942] %s ignored decision '%s': economy %d -> %d\n", IsValid(p) and p:Nick() or "?", q and q.id or "?", old, new))
+            ServerLog(string.format("[42Bros] %s ignored decision '%s': economy %d -> %d\n", IsValid(p) and p:Nick() or "?", q and q.id or "?", old, new))
             schedule()
         end
         return
@@ -166,7 +166,7 @@ net.Receive("RP1942_DecisionAnswer", function(_, ply)
     net.WriteUInt(moved, 8)
     net.SendOmit(ply)
 
-    ServerLog(string.format("[1942] %s answered '%s' with %d (%s, %d%% odds): %s, economy %d -> %d%s\n",
+    ServerLog(string.format("[42Bros] %s answered '%s' with %d (%s, %d%% odds): %s, economy %d -> %d%s\n",
         ply:Nick(), q.id, choice, answer.impact, math.Round(chance * 100), success and "SUCCESS" or "FAILURE", old, new, test and " (test)" or ""))
     hook.Run("RP1942_FuhrerDecision", ply, q, answer, success, new - old)
 end)

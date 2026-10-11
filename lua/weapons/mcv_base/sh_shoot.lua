@@ -11,7 +11,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetSafe() then self:ToggleSafe(true) return end
 
-    // 1942 DarkRP: a weapon flagged SWEP.DestroyDoor = 1 now fires as normal, and its shot
+    // 42Bros: a weapon flagged SWEP.DestroyDoor = 1 now fires as normal, and its shot
     // blasts open a rotating door it hits within DestroyDoorRange (BulletAttack's callback
     // below). It used to skip the shot and open the door without firing (TryBreakDoor).
 
@@ -204,7 +204,7 @@ function SWEP:TryBreakDoor()
     return true
 end
 
-// 1942 DarkRP: called when a breaching shot hits a door (BulletAttack). TryBreakDoor above is
+// 42Bros: called when a breaching shot hits a door (BulletAttack). TryBreakDoor above is
 // no longer used. The shot blows the lock and the door swings open (away from the shooter).
 // It used to be taken off its hinges (swapped for a flying physics prop, the real door
 // hidden for 25 seconds); now it just opens, so the doorway can be shut again.
@@ -637,7 +637,7 @@ function SWEP:BulletAttack(shootPos, shootDir)
             TracerName = "mcv_tracer",
             Callback = function(attacker, tr, dmginfo)
                 local distance = state.distance + (tr.HitPos - tr.StartPos):Length()
-                // 1942 DarkRP: breaching shot - the pellets that hit a door close enough open it
+                // 42Bros: breaching shot - the pellets that hit a door close enough open it
                 if SERVER and (self.DestroyDoor or 0) != 0 and IsValid(tr.Entity)
                     and tr.Entity:GetClass() == "prop_door_rotating"
                     and distance <= (self.DestroyDoorRange or 200)   -- shotguns: about 4 m

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - /register: opens the roleplay name form again (cl_rpname.lua)
+42Bros - /register: opens the roleplay name form again (cl_rpname.lua)
 ---------------------------------------------------------------------------]]
 DarkRP.declareChatCommand{
     command     = "register",

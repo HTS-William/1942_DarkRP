@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - disguise commands and helpers (shared)
+42Bros - disguise commands and helpers (shared)
 
 Declared shared so they show in the F1 command list with the right condition.
 Conditions only run at call time, so it doesn't matter that rp1942_core

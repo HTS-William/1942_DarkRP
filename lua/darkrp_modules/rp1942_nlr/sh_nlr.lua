@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the NLR zone (shared: settings)
+42Bros - the NLR zone (shared: settings)
 
 When you die, a bubble (the NLR zone) is left where you died, for the length
 of the New Life Rule. Only you see it. Walk into it and you're warned to get

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - padlocks (server). How it plays: sh_padlocks.lua.
+42Bros - padlocks (server). How it plays: sh_padlocks.lua.
 
     RP1942.padlockFit(ply, trace, staffKit)   fit one (the Padlock SWEP)
     RP1942.padlockCanOpen(ply, lock)
@@ -210,7 +210,7 @@ function RP1942.padlockFit(ply, tr, staffKit)
     DarkRP.notify(ply, 0, 7, staffKit
         and "Staff padlock fitted. Shift+E on it to choose who can open it, then !savelock to keep it on this map."
         or "Padlock fitted: the prop is now a door. Shift+E on the padlock to choose who else can open it.")
-    ServerLog(string.format("[1942] %s fitted a %spadlock on %s at %s\n", ply:Nick(), staffKit and "staff " or "", door:GetModel(), tostring(door:GetPos())))
+    ServerLog(string.format("[42Bros] %s fitted a %spadlock on %s at %s\n", ply:Nick(), staffKit and "staff " or "", door:GetModel(), tostring(door:GetPos())))
     return true
 end
 
@@ -251,7 +251,7 @@ end
 function RP1942.padlockPicked(lock, ply)
     RP1942.padlockOpen(lock)
     tellOwner(lock, "Someone picked the padlock on your door!")
-    ServerLog(string.format("[1942] %s picked a padlock (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
+    ServerLog(string.format("[42Bros] %s picked a padlock (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
 end
 
 -- Shooting it (only with the "shootable" setting)
@@ -279,7 +279,7 @@ function RP1942.padlockDamaged(lock, dmg)
     RP1942.padlockOpen(lock, S("brokenTime"))
     tellOwner(lock, "Your padlock has been shot off! The door is open.")
     local attacker = dmg:GetAttacker()
-    ServerLog(string.format("[1942] %s shot off a padlock (owner %s)\n",
+    ServerLog(string.format("[42Bros] %s shot off a padlock (owner %s)\n",
         IsValid(attacker) and attacker:IsPlayer() and attacker:Nick() or "something", lock:GetOwnerName()))
 end
 
@@ -324,7 +324,7 @@ function RP1942.padlockRammed(lock, ply)
     end
     RP1942.padlockOpen(lock)
     tellOwner(lock, "Your door has been broken open!")
-    ServerLog(string.format("[1942] %s rammed a padlocked door (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
+    ServerLog(string.format("[42Bros] %s rammed a padlocked door (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
     return true
 end
 
@@ -370,7 +370,7 @@ net.Receive("RP1942_PadlockEdit", function(_, ply)
     local a = lock.access
 
     if action == "remove" then
-        ServerLog(string.format("[1942] %s removed a padlock (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
+        ServerLog(string.format("[42Bros] %s removed a padlock (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
         if lock.saveId then writeSave(lock.saveId, nil) end
         if ply == owner then lock.refundTo = ply end   -- the owner gets it back (not when staff take it off)
         lock:Remove()
@@ -508,14 +508,14 @@ local function spawnAllSaved()
     for id, e in pairs(loadSaves()) do
         if IsValid(spawnSaved(id, e)) then n = n + 1 end
     end
-    if n > 0 then MsgC(Color(160, 220, 120), "[1942] Padlocks: " .. n .. " saved staff lock(s) placed.\n") end
+    if n > 0 then MsgC(Color(160, 220, 120), "[42Bros] Padlocks: " .. n .. " saved staff lock(s) placed.\n") end
 end
 hook.Add("InitPostEntity", "RP1942_Padlocks", function() timer.Simple(2, spawnAllSaved) end)
 hook.Add("PostCleanupMap", "RP1942_Padlocks", function() timer.Simple(1, spawnAllSaved) end)
 
 --[[ Staff commands (ULX 42Bros) ---------------------------------------------]]
 local function say(ply, msg, bad)
-    if IsValid(ply) then DarkRP.notify(ply, bad and 1 or 0, 6, msg) else print("[1942 padlocks] " .. msg) end
+    if IsValid(ply) then DarkRP.notify(ply, bad and 1 or 0, 6, msg) else print("[42Bros padlocks] " .. msg) end
 end
 
 local function lookedAtLock(ply)
@@ -552,7 +552,7 @@ RP1942.defineStaffCommand("savelock", function(ply)
     local fresh = spawnSaved(id, loadSaves()[id])
     if IsValid(fresh) and IsValid(old) then old:Remove() end
     say(ply, "Saved: this door and its padlock come back after every restart and cleanup.")
-    ServerLog(string.format("[1942] %s saved a staff padlock on %s\n", ply:Nick(), game.GetMap()))
+    ServerLog(string.format("[42Bros] %s saved a staff padlock on %s\n", ply:Nick(), game.GetMap()))
 end)
 
 RP1942.defineStaffCommand("removelock", function(ply)
@@ -568,7 +568,7 @@ RP1942.defineStaffCommand("removelock", function(ply)
         lock:Remove()
         say(ply, "Padlock removed. The prop is a plain prop again.")
     end
-    ServerLog(string.format("[1942] %s removed a padlock (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
+    ServerLog(string.format("[42Bros] %s removed a padlock (owner %s)\n", ply:Nick(), lock:GetOwnerName()))
 end)
 
 RP1942.defineStaffCommand("doorlocks", function(ply)
@@ -596,5 +596,5 @@ RP1942.defineStaffCommand("locksettings", function(ply, args)
     if value == "" then return say(ply, key .. " = " .. tostring(S(key)) .. " (default " .. tostring(P.defaults[key]) .. ")") end
     local ok, msg = RP1942.setPadlockSetting(key, value)
     say(ply, msg, not ok)
-    if ok then ServerLog(string.format("[1942] %s set padlock setting %s\n", IsValid(ply) and ply:Nick() or "console", msg)) end
+    if ok then ServerLog(string.format("[42Bros] %s set padlock setting %s\n", IsValid(ply) and ply:Nick() or "console", msg)) end
 end)

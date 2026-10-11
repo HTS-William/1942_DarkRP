@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - group chats (/g)
+42Bros - group chats (/g)
 
 DarkRP calls these as f(listener, speaker); speaker can be nil when it only
 asks whether the listener has access at all.

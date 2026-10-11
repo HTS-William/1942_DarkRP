@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - where the "who's talking" panels sit
+42Bros - where the "who's talking" panels sit
 
 Both voice HUDs (Garry's Mod's own g_VoicePanelList and EasyChat's
 EasyChat.GUI.VoiceList) sit 300 pixels in from the right edge, which leaves

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - wine barrel (Winemaker). Settings: RP1942.Production.wine
+42Bros - wine barrel (Winemaker). Settings: RP1942.Production.wine
 (rp1942_production/sh_production.lua).
 
     START on its panel sets it fermenting. Now and then along the way the must

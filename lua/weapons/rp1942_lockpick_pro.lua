@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Professional Lockpick (the Pro Thief's)
+42Bros - Professional Lockpick (the Pro Thief's)
 
 DarkRP's lockpick, only much faster: it IS DarkRP's lockpick underneath
 (SWEP.Base), so it opens the same things, fails the same way (look away,
@@ -15,10 +15,10 @@ local PICK_TIME = { 3, 8 }   -- seconds: a random time between these, per lock
 SWEP.Base         = "lockpick"
 SWEP.PrintName    = "Professional Lockpick"
 SWEP.Instructions = "Left or right click to pick a lock. Much faster than a common lockpick."
-SWEP.Author       = "1942 DarkRP"
+SWEP.Author       = "42Bros"
 SWEP.Spawnable    = true
 SWEP.AdminOnly    = true
-SWEP.Category     = "1942 DarkRP"
+SWEP.Category     = "42Bros"
 
 if CLIENT then
     SWEP.Slot    = 5

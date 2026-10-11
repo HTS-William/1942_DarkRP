@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's perks (shared)                       <- edit prices here
+42Bros - the Führer's perks (shared)                       <- edit prices here
 
 The Führer buys perks for the Reich from the treasury, in his menu (F3,
 "Perks"). Each costs treasury money and has a cooldown before it can be
@@ -39,6 +39,7 @@ RP1942.Perks = {
             desc = "Reich soldiers' wages are raised by half for 20 minutes.",
             price = 25000, cooldown = 0,            -- can be bought again while running: it adds the time on
             minutes = 20, mult = 1.5,
+            maxMinutes = 60,                        -- but never more than this much bonus time queued up
         },
     },
 

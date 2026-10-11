@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - generic explosions (server)
+42Bros - generic explosions (server)
 
 One function any system can call to make an explosion:
 
@@ -37,7 +37,7 @@ local DEFAULTS = {
 
 function RP1942.explode(pos, opts)
     if not isvector(pos) then
-        ErrorNoHalt("[1942] RP1942.explode needs a position (Vector), got " .. type(pos) .. "\n")
+        ErrorNoHalt("[42Bros] RP1942.explode needs a position (Vector), got " .. type(pos) .. "\n")
         return false
     end
 

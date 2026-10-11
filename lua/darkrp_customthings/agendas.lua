@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - agendas ("Orders")
+42Bros - agendas ("Orders")
 
 Managers can set the text, listeners see it on their HUD.
 A job can only be part of ONE agenda.

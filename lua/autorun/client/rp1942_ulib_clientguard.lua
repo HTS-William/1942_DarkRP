@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - no "[ULIB] Unauthed player" errors while joining (client)
+42Bros - no "[ULIB] Unauthed player" errors while joining (client)
 
 When you join, the ULX menu (XGUI) builds itself as soon as your game has
 loaded and asks "may I use this?" for every tab and command. Your rank list

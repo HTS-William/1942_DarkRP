@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's decisions: THE QUESTIONS (edit freely)
+42Bros - the Führer's decisions: THE QUESTIONS (edit freely)
 
 Each question: `id` (never change it once live: it's how repeats are
 tracked), the situation `text`, and three `answers`. Each answer:

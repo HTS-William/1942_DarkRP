@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Radio (client): the tuning menu (press E on a radio)
+42Bros - Radio (client): the tuning menu (press E on a radio)
 ---------------------------------------------------------------------------]]
 local frame
 

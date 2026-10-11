@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's laws are kept across restarts (server)
+42Bros - the Führer's laws are kept across restarts (server)
 
 DarkRP keeps its laws in memory only, so a restart put them back to the fixed
 ones (GM.Config.DefaultLaws). This saves the laws the Führer added in

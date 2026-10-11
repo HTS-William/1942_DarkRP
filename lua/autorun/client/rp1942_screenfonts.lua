@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - fonts sized from the screen (client)
+42Bros - fonts sized from the screen (client)
 
     RP1942.screenFont(name, scale, weight, opts)
 

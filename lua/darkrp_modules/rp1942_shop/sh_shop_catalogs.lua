@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - SHOP CATALOGS  (this is the file you edit)
+42Bros - SHOP CATALOGS  (this is the file you edit)
 
 Each catalog is a list of things a dealer can buy. A job uses one with:
     menu = "RP1942_ShopMenu",

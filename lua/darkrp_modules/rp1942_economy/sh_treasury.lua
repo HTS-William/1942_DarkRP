@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Reich treasury (shared)
+42Bros - Reich treasury (shared)
 
 One pot. Every income tax is deposited into it automatically. The balance is
 kept across restarts (sv_treasury.lua).

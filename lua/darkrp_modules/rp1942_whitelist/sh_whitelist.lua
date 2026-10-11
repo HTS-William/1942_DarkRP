@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - job whitelists (shared: settings)
+42Bros - job whitelists (shared: settings)
 
 Jobs listed in RP1942.Whitelist.jobs can only be taken by players staff have
 whitelisted for them. With hidden = true the job doesn't even show (F4 Jobs

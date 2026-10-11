@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - income tax (server)
+42Bros - income tax (server)
 
     RP1942.applyTax(ply, gross, source) -> net, tax, rate
     RP1942.setFactionTax(faction, rate)

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - RP1942.Floater: floating world labels (client)
+42Bros - RP1942.Floater: floating world labels (client)
 
 A base class for any 3D2D panel that floats over an entity (dumpsters,
 ovens, oil rigs, door locks...). It handles the shared parts:
@@ -119,7 +119,7 @@ function Floater:Draw(ent)
     -- Report each distinct error once, not every frame
     if not ok and err ~= self._lastError then
         self._lastError = err
-        ErrorNoHalt("[1942] Floater Paint error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
+        ErrorNoHalt("[42Bros] Floater Paint error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
     end
 end
 

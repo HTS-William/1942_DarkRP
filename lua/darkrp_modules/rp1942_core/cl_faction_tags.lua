@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - faction tags (client)
+42Bros - faction tags (client)
 
 A small label above undercover jobs' heads that only their own side sees:
 the Reich sees "GESTAPO" over Gestapo agents, the Resistance sees

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Hands (client): the push gesture, seen by everyone nearby
+42Bros - Hands (client): the push gesture, seen by everyone nearby
 ---------------------------------------------------------------------------]]
 net.Receive("RP1942_HandsPush", function()
     local ply = net.ReadEntity()

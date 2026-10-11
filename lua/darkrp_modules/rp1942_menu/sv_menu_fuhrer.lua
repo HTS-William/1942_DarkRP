@@ -15,9 +15,27 @@ local function lawCommand(ply, name, arg)
     end
     cmd.callback(ply, arg or "")
 end
-RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_add",    function(ply, text) lawCommand(ply, "addlaw", string.Trim(text or "")) end)
-RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_remove", function(ply, i) if tonumber(i) then lawCommand(ply, "removelaw", tostring(math.floor(tonumber(i)))) end end)
-RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_reset",  function(ply) lawCommand(ply, "resetlaws") end)
+-- Law and tax changes reach every player (and are saved to disk), so the
+-- Führer gets one every OFFICE_RATE seconds, not one per click spam
+local OFFICE_RATE = 1.5
+local function tooSoon(ply)
+    local now = CurTime()
+    if (ply.RP1942_NextOffice or 0) > now then return true end
+    ply.RP1942_NextOffice = now + OFFICE_RATE
+end
+
+local MAX_LAW = 100   -- characters
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_add", function(ply, text)
+    if tooSoon(ply) then return end
+    -- one line of plain text, like typing it in chat
+    text = string.Trim((string.gsub(text or "", "%c", " ")))
+    local len = utf8.len(text)
+    if not len or len == 0 then return end
+    if len > MAX_LAW then return DarkRP.notify(ply, 1, 4, "A law can be at most " .. MAX_LAW .. " characters.") end
+    lawCommand(ply, "addlaw", text)
+end)
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_remove", function(ply, i) if tonumber(i) and not tooSoon(ply) then lawCommand(ply, "removelaw", tostring(math.floor(tonumber(i)))) end end)
+RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_reset",  function(ply) if not tooSoon(ply) then lawCommand(ply, "resetlaws") end end)
 RP1942.addMenuHandler("RP1942_FuhrerMenu", "law_place",  function(ply) lawCommand(ply, "placelaws") end)
 
 --[[ Taxes ]]---------------------------------------------------------------------------
@@ -35,7 +53,7 @@ RP1942.addMenuHandler("RP1942_FuhrerMenu", "tax_faction", function(ply, arg)
     if not faction or RP1942.TaxRates.factions[faction] == nil then return end
 
     local rate = RP1942.setFactionTax(faction, RP1942.TaxRates.factions[faction] + delta)
-    ServerLog(string.format("[1942] %s set %s income tax to %d%%\n", ply:Nick(), faction, rate))
+    ServerLog(string.format("[42Bros] %s set %s income tax to %d%%\n", ply:Nick(), faction, rate))
 end)
 
 RP1942.addMenuHandler("RP1942_FuhrerMenu", "tax_job", function(ply, arg)
@@ -47,7 +65,7 @@ RP1942.addMenuHandler("RP1942_FuhrerMenu", "tax_job", function(ply, arg)
     -- The first change starts from whatever the job pays now (its faction rate)
     local current = RP1942.getTaxRate(job)
     local rate = RP1942.setJobTax(cmd, current + delta)
-    ServerLog(string.format("[1942] %s set %s income tax to %d%%\n", ply:Nick(), job.name, rate))
+    ServerLog(string.format("[42Bros] %s set %s income tax to %d%%\n", ply:Nick(), job.name, rate))
 end)
 
 RP1942.addMenuHandler("RP1942_FuhrerMenu", "tax_job_reset", function(ply, cmd)
@@ -56,7 +74,7 @@ RP1942.addMenuHandler("RP1942_FuhrerMenu", "tax_job_reset", function(ply, cmd)
     if not job then return end
 
     RP1942.setJobTax(cmd, nil)
-    ServerLog(string.format("[1942] %s reset %s income tax to its faction rate\n", ply:Nick(), job.name))
+    ServerLog(string.format("[42Bros] %s reset %s income tax to its faction rate\n", ply:Nick(), job.name))
 end)
 
 --[[ Reich payout ]]---------------------------------------------------------------------
@@ -136,6 +154,6 @@ RP1942.addMenuHandler("RP1942_FuhrerMenu", "payout", function(ply, arg)
     if RP1942.alert then
         RP1942.alert("The Führer has paid " .. DarkRP.formatMoney(amount) .. " to " .. table.concat(paidFactions, " and ") .. ".", "clear")
     end
-    ServerLog(string.format("[1942] %s paid %d each to %d players (%s), total %d\n", ply:Nick(), amount, #recipients, table.concat(paidFactions, ", "), total))
+    ServerLog(string.format("[42Bros] %s paid %d each to %d players (%s), total %d\n", ply:Nick(), amount, #recipients, table.concat(paidFactions, ", "), total))
 end)
 

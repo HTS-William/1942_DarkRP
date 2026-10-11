@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - air raid event (server). Settings: RP1942.Events.airraid (sh_events.lua)
+42Bros - air raid event (server). Settings: RP1942.Events.airraid (sh_events.lua)
 
 Finding "outside": a spot counts as outdoors when a trace straight up from it
 reaches the sky (the skybox). Each bomb picks a spot near an outdoor player

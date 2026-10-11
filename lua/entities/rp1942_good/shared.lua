@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - a good (bread, wine, ...). Which one is its "Good" value, a key
+42Bros - a good (bread, wine, ...). Which one is its "Good" value, a key
 of RP1942.Goods (rp1942_production/sh_production.lua); its quality is 1-3 stars.
     E           pick it up and carry it
     Shift + E   eat / drink it

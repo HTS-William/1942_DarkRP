@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Hands (everyone spawns with them)
+42Bros - Hands (everyone spawns with them)
 
     LEFT CLICK    raise your fists; click again to punch
     RIGHT CLICK   push the player in front of you
@@ -9,9 +9,9 @@ Settings: RP1942.HandsConfig in darkrp_modules/rp1942_hands/sh_hands.lua.
 AddCSLuaFile()
 
 SWEP.PrintName     = "Hands"
-SWEP.Author        = "1942 DarkRP"
+SWEP.Author        = "42Bros"
 SWEP.Instructions  = "Left click: raise your fists, then punch. Right click: push. R: raise or lower your fists."
-SWEP.Category      = "1942 DarkRP"
+SWEP.Category      = "42Bros"
 SWEP.Spawnable     = true
 SWEP.AdminOnly     = false
 

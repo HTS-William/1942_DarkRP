@@ -669,7 +669,7 @@ if CLIENT then
 		return EasyChat.GUI and IsValid(EasyChat.GUI.ChatBox) and EasyChat.GUI.ChatBox:IsVisible()
 	end
 
-	-- 1942 DarkRP: the chatbox sits at the left, centred vertically, so it
+	-- 42Bros: the chatbox sits at the left, centred vertically, so it
 	-- stays clear of the HUD in the bottom left corner
 	function EasyChat.GetDefaultBounds()
 		local coef_w = ScrW() / 2560
@@ -795,7 +795,7 @@ if CLIENT then
 		if not json then return x, y, w, h end
 
 		local bounds = util.JSONToTable(json)
-		-- 1942 DarkRP: a chatbox saved over the bottom-left HUD (the old default)
+		-- 42Bros: a chatbox saved over the bottom-left HUD (the old default)
 		-- moves to the new default once; anywhere else it stays where it was put
 		if bounds and bounds.y and bounds.h and not cookie.GetString("rp1942_chat_moved")
 			and bounds.y + bounds.h > ScrH() - 260 and bounds.x < ScrW() / 3 then
@@ -3171,4 +3171,8 @@ function EasyChat.Reload()
 	end
 end
 
-concommand.Add("easychat_reload", EasyChat.Reload)
+concommand.Add("easychat_reload", function(ply)
+	-- 42Bros: on the server only the console or a superadmin may reload (it reloads every player's chat)
+	if SERVER and IsValid(ply) and not ply:IsSuperAdmin() then return end
+	EasyChat.Reload()
+end)

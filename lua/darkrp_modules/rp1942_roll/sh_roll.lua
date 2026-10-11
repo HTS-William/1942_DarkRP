@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - /roll (shared)
+42Bros - /roll (shared)
 
     /roll          a number from 1 to 100
     /roll 20       1 to 20

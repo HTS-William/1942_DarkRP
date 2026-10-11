@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Handcuffs (instead of DarkRP's arrest baton)
+42Bros - Handcuffs (instead of DarkRP's arrest baton)
 
 Left click a player: they're held still while a bar fills (8 s), then
 arrested. Right click: let go. The rules and settings are in
@@ -15,9 +15,9 @@ Models from the server's content pack (models/weapons/spy):
 AddCSLuaFile()
 
 SWEP.PrintName     = "Handcuffs"
-SWEP.Author        = "1942 DarkRP"
+SWEP.Author        = "42Bros"
 SWEP.Instructions  = "Left click a player to handcuff them: they're held still, and arrested when the bar fills. Right click to let go."
-SWEP.Category      = "1942 DarkRP"
+SWEP.Category      = "42Bros"
 SWEP.Spawnable     = true
 SWEP.AdminOnly     = true
 

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the respawn countdown (client). Server: sv_respawn.lua
+42Bros - the respawn countdown (client). Server: sv_respawn.lua
 
     Dead:            the screen darkens, RESPAWNING IN 5
     Changing sides:  the screen fades out, REPORTING FOR DUTY IN 5

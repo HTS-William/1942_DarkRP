@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Radio (shared: the settings and the stations)
+42Bros - Radio (shared: the settings and the stations)
 
 A wireless set (rp1942_radio) that plays internet radio. Press E on it to
 tune it: pick a station from the list below or type a stream link. The

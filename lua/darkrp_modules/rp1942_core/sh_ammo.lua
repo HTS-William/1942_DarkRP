@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the period ammo types (shared)
+42Bros - the period ammo types (shared)
 
 Replaces Half-Life 2's ammo (Pistol, SMG1, AR2...) for the weapon pack. Each
 type is registered with the game (if nothing registered it already) and gets

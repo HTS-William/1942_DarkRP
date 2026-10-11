@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - oil sites (server)
+42Bros - oil sites (server)
 
 Oil rigs aren't placed by hand. Admins mark OIL SITES on the map, and a
 bought rig is built on the free site nearest the buyer, bolted down.
@@ -40,7 +40,7 @@ hook.Add("InitPostEntity", "RP1942_OilSites", function()
     sites = loadSites()
     RP1942.updateOilSites()
     if table.Count(sites) == 0 then
-        MsgC(Color(255, 180, 60), "[1942] Production: no oil sites on this map yet. Mark some with !addoilsite, or Petroleum Producers can't buy rigs.\n")
+        MsgC(Color(255, 180, 60), "[42Bros] Production: no oil sites on this map yet. Mark some with !addoilsite, or Petroleum Producers can't buy rigs.\n")
     end
 end)
 hook.Add("PostCleanupMap", "RP1942_OilSites", function() timer.Simple(0, RP1942.updateOilSites) end)
@@ -143,7 +143,7 @@ RP1942.defineStaffCommand("addoilsite", function(ply)
     RP1942.updateOilSites()
     local n = showAll(ply)
     DarkRP.notify(ply, 0, 5, "Oil site marked and saved for this map (" .. n .. " in all).")
-    ServerLog(string.format("[1942] %s marked an oil site at %s\n", ply:Nick(), tostring(tr.HitPos)))
+    ServerLog(string.format("[42Bros] %s marked an oil site at %s\n", ply:Nick(), tostring(tr.HitPos)))
     return ""
 end)
 
@@ -161,7 +161,7 @@ RP1942.defineStaffCommand("removeoilsite", function(ply)
     end
     local rig = taken()[best]
     if IsValid(rig) then rig:Remove() end
-    ServerLog(string.format("[1942] %s removed the oil site at %s\n", ply:Nick(), tostring(sitePos(sites[best]))))
+    ServerLog(string.format("[42Bros] %s removed the oil site at %s\n", ply:Nick(), tostring(sitePos(sites[best]))))
     sites[best] = nil
     saveSites(sites)
     RP1942.updateOilSites()

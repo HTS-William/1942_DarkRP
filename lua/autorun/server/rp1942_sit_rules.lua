@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - how SitAnywhere fits the gamemode (server)
+42Bros - how SitAnywhere fits the gamemode (server)
 
 SitAnywhere itself (lua/sitanywhere, lua/autorun/sitanywhere.lua) is stock.
 These are the rules that make it behave in DarkRP:
@@ -29,10 +29,28 @@ end
 
 local NO_RESIT_SECONDS = 8   -- after being hurt by a player
 
+local function cantSit(ply)
+    if ply.isArrested and ply:isArrested() then return true end
+    if RP1942.isBeingCuffed and RP1942.isBeingCuffed(ply) then return true end
+    if (ply.RP1942_LastHurt or 0) > CurTime() - NO_RESIT_SECONDS then return true end
+    if ply:IsFrozen() or ply.RP1942_NLRHeld or ply.RP1942_Delaying then return true end
+end
+
 hook.Add("ShouldAllowSit", "RP1942_SitRules", function(ply)
-    if ply.isArrested and ply:isArrested() then return false end
-    if RP1942.isBeingCuffed and RP1942.isBeingCuffed(ply) then return false end
-    if (ply.RP1942_LastHurt or 0) > CurTime() - NO_RESIT_SECONDS then return false end
+    if cantSit(ply) then return false end
+end)
+
+-- Every way of sitting ends up here, including SitAnywhere's "hold to pick a
+-- facing" message, which skips ShouldAllowSit (that let someone being
+-- handcuffed sit down and cancel the cuffing). Same rules, plus a short
+-- cooldown so seats can't be spammed into existence.
+local SIT_COOLDOWN = 1
+hook.Add("OnPlayerSit", "RP1942_SitRules", function(ply)
+    if not (IsValid(ply) and ply:IsPlayer()) then return end
+    if cantSit(ply) then return false end
+    local now = CurTime()
+    if (ply.RP1942_NextSit or 0) > now then return false end
+    ply.RP1942_NextSit = now + SIT_COOLDOWN
 end)
 
 hook.Add("CheckValidSit", "RP1942_SitRules", function(ply, tr)

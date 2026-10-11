@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - money printers (server): who may keep which printer
+42Bros - money printers (server): who may keep which printer
 ---------------------------------------------------------------------------]]
 
 -- Printers a player owns, of one class

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - handcuffs (shared: the settings, and holding the prisoner still)
+42Bros - handcuffs (shared: the settings, and holding the prisoner still)
 
 Replaces DarkRP's arrest baton (one hit, instantly arrested) for every job
 that has W.arrest (rp1942_core/sh_config.lua: arrest = "rp1942_handcuffs").

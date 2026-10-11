@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 menu (shared config)
+42Bros - F4 menu (shared config)
 
 Replaces DarkRP's F4 menu. DarkRP's own F4 module stays loaded underneath (so
 nothing that expects it breaks); it just never opens.

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - Führer election (server)
+42Bros - Führer election (server)
 
 Every rule lives here. The client only ever asks ("enter", "vote for X");
 the server checks everything again before doing it.
@@ -21,7 +21,7 @@ for _, key in ipairs({ "voting", "anthem", "fuhrerKilled", "broadcast", "lockdow
         if file.Exists(path, "GAME") then
             resource.AddFile(path)
         elseif string.find(path, "^sounds?/") then
-            MsgC(Color(255, 170, 0), "[1942] Election sound '", key, "' not found at '", path,
+            MsgC(Color(255, 170, 0), "[42Bros] Election sound '", key, "' not found at '", path,
                 "'. Check the path in RP1942.ElectionSounds (sh_election.lua).\n")
         end
     end
@@ -355,7 +355,7 @@ local function fuhrerBroadcast(ply, text)
     local cfg = RP1942.FuhrerBroadcast
 
     -- One line of plain text: no control characters, no surrounding spaces
-    text = string.Trim(string.gsub(text or "", "%c", " "))
+    text = string.Trim((string.gsub(text or "", "%c", " ")))   -- (brackets: gsub also returns a count)
     local len = utf8.len(text)
     if not len then
         return DarkRP.notify(ply, 1, 4, "That message contains characters that can't be sent.")
@@ -378,7 +378,7 @@ local function fuhrerBroadcast(ply, text)
     net.WriteString(text)
     net.Broadcast()
     playSound("broadcast")
-    ServerLog(string.format("[1942] Führer broadcast by %s (%s): %s\n", ply:Nick(), ply:SteamID(), text))
+    ServerLog(string.format("[42Bros] Führer broadcast by %s (%s): %s\n", ply:Nick(), ply:SteamID(), text))
 end
 
 hook.Add("canChatCommand", "RP1942_FuhrerBroadcast", function(ply, cmd, arg)
@@ -409,7 +409,7 @@ function RP1942.appointFuhrer(ply, admin)
     ply:changeTeam(TEAM_FUHRER, true, true)   -- forced: skips the election-only rule
     announce(ply:Nick() .. " has been appointed Führer.")
     playSound("anthem")
-    ServerLog(string.format("[1942] %s appointed %s (%s) Führer\n", IsValid(admin) and admin:Nick() or "Console", ply:Nick(), ply:SteamID()))
+    ServerLog(string.format("[42Bros] %s appointed %s (%s) Führer\n", IsValid(admin) and admin:Nick() or "Console", ply:Nick(), ply:SteamID()))
     return true
 end
 
@@ -419,7 +419,7 @@ function RP1942.removeFuhrer(admin)
     old:changeTeam(GAMEMODE.DefaultTeam, true, true)
     DarkRP.notify(old, 1, 6, "You have been removed as Führer.")
     announce(old:Nick() .. " is no longer the Führer.")
-    ServerLog(string.format("[1942] %s removed %s (%s) as Führer\n", IsValid(admin) and admin:Nick() or "Console", old:Nick(), old:SteamID()))
+    ServerLog(string.format("[42Bros] %s removed %s (%s) as Führer\n", IsValid(admin) and admin:Nick() or "Console", old:Nick(), old:SteamID()))
     return true
 end
 

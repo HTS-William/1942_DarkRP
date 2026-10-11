@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - prop ghosting (server). Settings: sh_propghost.lua
+42Bros - prop ghosting (server). Settings: sh_propghost.lua
 ---------------------------------------------------------------------------]]
 local CFG = RP1942.PropGhost
 local held = setmetatable({}, { __mode = "k" })   -- props someone is holding right now

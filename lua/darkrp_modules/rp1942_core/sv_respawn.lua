@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the respawn delay (server)
+42Bros - the respawn delay (server)
 
     Dying: you wait DELAY seconds (a countdown on screen), then you're
     respawned by yourself: no clicking. Clicking earlier does nothing.

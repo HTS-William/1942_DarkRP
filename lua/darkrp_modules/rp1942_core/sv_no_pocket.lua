@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - things that can't go in a pocket (server)
+42Bros - things that can't go in a pocket (server)
 
 The machines and fixtures are far too big for a coat pocket. Trying to pocket
 one just shows the reason below. Add or remove classes in the list.

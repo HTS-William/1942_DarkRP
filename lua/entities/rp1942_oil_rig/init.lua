@@ -64,7 +64,7 @@ function ENT:Blowout()
     if IsValid(owner) then
         DarkRP.notify(owner, 1, 8, "Your oil rig was left in the red too long and exploded.")
     end
-    ServerLog(string.format("[1942] An oil rig (owner: %s) exploded at %s\n", IsValid(owner) and owner:Nick() or "none", tostring(pos)))
+    ServerLog(string.format("[42Bros] An oil rig (owner: %s) exploded at %s\n", IsValid(owner) and owner:Nick() or "none", tostring(pos)))
     SafeRemoveEntity(self)
 end
 

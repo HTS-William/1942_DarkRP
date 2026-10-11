@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - staff commands (the ! ones)
+42Bros - staff commands (the ! ones)
 
 Every staff command is a ULX command in the 42Bros tab (lua/ulx/modules/sh/
 42bros.lua): typed with ! in chat (!addmarket), ulx in console, or clicked in

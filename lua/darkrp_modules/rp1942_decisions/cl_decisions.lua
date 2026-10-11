@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - the Führer's decisions (client)
+42Bros - the Führer's decisions (client)
 
 The window: the situation, three answers tagged by impact, a countdown.
 Closing it ("Decide later") leaves a reminder at the top of the screen;

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - an air raid bomb (rp1942_events/sv_event_airraid.lua drops them)
+42Bros - an air raid bomb (rp1942_events/sv_event_airraid.lua drops them)
 
 Nothing to see: an invisible point where the bomb will land. It plays the
 falling whistle there and, as the whistle ends, explodes. Not spawnable.

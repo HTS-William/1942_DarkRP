@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 text pages (client)
+42Bros - F4 text pages (client)
 One tab per page in sh_f4_pages.lua. In the text:
     # Heading   -> red bar        - Point  -> bullet        empty line -> space
     #staff Heading -> a section only staff see (RP1942.isF4Staff)

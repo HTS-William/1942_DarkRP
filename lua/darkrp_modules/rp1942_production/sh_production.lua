@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - production (shared config)
+42Bros - production (shared config)
 
 Producing jobs make GOODS: small physical items that can be carried, pocketed,
 handed over, eaten or drunk, and sold. Every good has a QUALITY of 1-3 stars,

@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - faction balance (server)
+42Bros - faction balance (server)
 
 DarkRP's `max` only caps a single job. This caps whole factions so the Reich
 can't swallow the server (and vice versa). Rules live in RP1942.Config.Balance.

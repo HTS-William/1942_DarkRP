@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - production (server): goods, selling, the economy nudge, markets
+42Bros - production (server): goods, selling, the economy nudge, markets
 
     RP1942.spawnGood(goodId, pos, ang)  -> a good lying at pos
     RP1942.sellGoods(ply, goodIds)      -> pays ply for a list of good ids at market price
@@ -13,8 +13,45 @@ util.AddNetworkString("RP1942_PocketGoods")
 --[[---------------------------------------------------------------------------
 Panel buttons (look + E). The client says which entity and which button; the
 entity's ENT:OnPanelPress(ply, id) does the rest and checks what it needs.
-Here: it must be close, alive, and not spamming.
+Here: it must be close, in sight (not through a wall or door), alive, not
+spamming, and the machine's controls are its owner's alone.
+
+Anyone may press the "take" buttons (collect, bottle, fill - raiding a base
+and taking the stock is RP, like emptying a printer), the market's sell
+buttons and a printer's seize. Everything else (power, stoke, the rig's
+valve, the factory's repairs, starting / stirring a barrel, printer
+upgrades) only works for the owner. A machine nobody owns (placed by staff,
+or its owner left) is anyone's.
 ---------------------------------------------------------------------------]]
+local PUBLIC_BUTTONS = { collect = true, bottle = true, fill = true, seize = true, sellall = true }
+
+local function publicButton(id)
+    return PUBLIC_BUTTONS[id] or string.sub(id, 1, 5) == "sell:"
+end
+
+function RP1942.canOperate(ent, ply)
+    if ent.RP1942_SaveId or ent.RP1942_ProdSpawnedBy then return true end   -- staff-placed: public
+    local owner = ent.Getowning_ent and ent:Getowning_ent()
+    return not IsValid(owner) or owner == ply
+end
+
+-- Nothing solid (walls, doors, props) between the player's eyes and the machine.
+-- Players and the gamemode's own small things (goods, sacks) don't block.
+local function inSight(ply, ent)
+    local tr = util.TraceLine({
+        start = ply:EyePos(),
+        endpos = ent:WorldSpaceCenter(),
+        mask = MASK_SOLID,
+        filter = function(e)
+            if e == ply or e == ent or e:IsPlayer() then return false end
+            local class = e:GetClass()
+            if class == "rp1942_good" or class == "rp1942_flour" or class == "rp1942_scrap" then return false end
+            return true
+        end,
+    })
+    return not tr.Hit or tr.Entity == ent
+end
+
 net.Receive("RP1942_PanelPress", function(_, ply)
     local ent, id = net.ReadEntity(), net.ReadString()
     if not (IsValid(ply) and ply:Alive() and IsValid(ent) and ent.OnPanelPress) then return end
@@ -24,6 +61,10 @@ net.Receive("RP1942_PanelPress", function(_, ply)
     ply.RP1942_NextPanel = now + 0.25
     local reach = (CFG.useDistance or 120) + 60   -- a little slack for lag and big props
     if ply:EyePos():DistToSqr(ent:WorldSpaceCenter()) > reach * reach then return end
+    if not inSight(ply, ent) then return end
+    if not publicButton(id) and not RP1942.canOperate(ent, ply) then
+        return DarkRP.notify(ply, 1, 3, "That isn't yours: only its owner can work the controls.")
+    end
     ent:OnPanelPress(ply, id)
 end)
 
@@ -118,7 +159,9 @@ hook.Add("GravGunPickupAllowed", "RP1942_GoodsForSale", function(ply, ent) if ot
 hook.Add("GravGunPunt", "RP1942_GoodsForSale", function(ply, ent) if othersForSale(ply, ent) then return false end end)
 hook.Add("PhysgunPickup", "RP1942_GoodsForSale", function(ply, ent) if othersForSale(ply, ent) then return false end end)
 
-hook.Add("PhysgunPickup", "RP1942_GoodsHolder", function(ply, ent) holder(ply, ent) end)   -- no return: doesn't change who may pick up
+-- OnPhysgunPickup: only once the pickup was actually allowed (PhysgunPickup
+-- also runs for refused grabs, which let anyone "claim" a good they couldn't touch)
+hook.Add("OnPhysgunPickup", "RP1942_GoodsHolder", holder)
 hook.Add("OnPlayerPhysicsPickup", "RP1942_GoodsHolder", holder)
 hook.Add("onPocketItemDropped", "RP1942_GoodsHolder", function(ply, ent) holder(ply, ent) end)
 
@@ -311,7 +354,7 @@ RP1942.defineStaffCommand("addmarket", function(ply)
     writeSaved(list)
     m.saveId = id
     DarkRP.notify(ply, 0, 5, "Market placed and saved for this map.")
-    ServerLog(string.format("[1942] %s placed a market at %s\n", ply:Nick(), tostring(pos)))
+    ServerLog(string.format("[42Bros] %s placed a market at %s\n", ply:Nick(), tostring(pos)))
     return ""
 end)
 
@@ -328,7 +371,7 @@ RP1942.defineStaffCommand("removemarket", function(ply)
         list[m.saveId] = nil
         writeSaved(list)
     end
-    ServerLog(string.format("[1942] %s removed a market at %s\n", ply:Nick(), tostring(m:GetPos())))
+    ServerLog(string.format("[42Bros] %s removed a market at %s\n", ply:Nick(), tostring(m:GetPos())))
     m:Remove()
     DarkRP.notify(ply, 0, 5, "Market removed.")
     return ""
@@ -338,7 +381,7 @@ end)
 hook.Add("InitPostEntity", "RP1942_ProductionCheck", function()
     local function check(model, what)
         if model and not util.IsValidModel(model) then
-            MsgC(Color(255, 180, 60), "[1942] Production: the " .. what .. " model '" .. model .. "' isn't installed; it will show as an error model.\n")
+            MsgC(Color(255, 180, 60), "[42Bros] Production: the " .. what .. " model '" .. model .. "' isn't installed; it will show as an error model.\n")
         end
     end
     for id, g in pairs(RP1942.Goods) do
@@ -347,6 +390,6 @@ hook.Add("InitPostEntity", "RP1942_ProductionCheck", function()
     check(CFG.oven.model, "oven"); check(CFG.flour.model, "flour"); check(CFG.wine.model, "wine barrel"); check(CFG.market.model, "market")
     check(CFG.oil.model, "oil rig"); check(CFG.factory.model, "factory")
     if #table.GetKeys(loadSaved()) == 0 then
-        MsgC(Color(255, 180, 60), "[1942] Production: no markets on this map yet. Place some with !addmarket.\n")
+        MsgC(Color(255, 180, 60), "[42Bros] Production: no markets on this map yet. Place some with !addmarket.\n")
     end
 end)

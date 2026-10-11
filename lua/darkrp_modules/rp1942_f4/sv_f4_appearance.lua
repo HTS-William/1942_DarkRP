@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - F4 Appearance tab (server)
+42Bros - F4 Appearance tab (server)
 
 Players change the bodygroups (helmet, gear, sleeves...) and skin of the
 model they're wearing right now. The choices are remembered per model, in
@@ -85,5 +85,9 @@ net.Receive("RP1942_Appearance", function(_, ply)
         return
     end
     ply.RP1942_LookModel = ply:GetModel()
-    save(ply)
+    -- Saved a moment after the last change (each save is a database write;
+    -- clicking through options, or spamming them, would hammer the disk)
+    timer.Create("RP1942_LookSave" .. ply:EntIndex(), 1, 1, function()
+        if IsValid(ply) and ply.RP1942_LookModel == ply:GetModel() then save(ply) end
+    end)
 end)

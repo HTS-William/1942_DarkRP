@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - men's and women's models that fit the name (server). See sh_sex.lua
+42Bros - men's and women's models that fit the name (server). See sh_sex.lua
 ---------------------------------------------------------------------------]]
 util.AddNetworkString("RP1942_SetSex")
 

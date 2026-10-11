@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - wanted by the Reich (shared config)
+42Bros - wanted by the Reich (shared config)
 
 Built on DarkRP's own wanted status, so everything DarkRP already does with
 it keeps working: police can arrest wanted players, /unwanted clears it, and

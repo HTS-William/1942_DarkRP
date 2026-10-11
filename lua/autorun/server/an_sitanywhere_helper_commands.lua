@@ -102,6 +102,22 @@ local function IsSafePlayerPosition(ply, pos)
     return true, groundPos
 end
 
+-- Nothing solid (wall, door, prop) between the player and pos, apart from
+-- whatever they're stuck in right now (that's what !sitstuck gets them out of)
+local function CanReach(ply, pos)
+    local mins, maxs = ply:GetHull()
+    local here = ply:GetPos()
+    local ignore = {}
+    for _, e in ipairs(ents.FindInBox(here + mins, here + maxs)) do ignore[e] = true end
+    local center = Vector(0, 0, (maxs.z - mins.z) / 2)
+    local tr = util.TraceLine({
+        start = here + center, endpos = pos + center,
+        mask = MASK_PLAYERSOLID,
+        filter = function(e) return not ignore[e] and e ~= ply and not e:IsPlayer() end,
+    })
+    return not tr.Hit
+end
+
 local function FindNearbySafePosition(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return nil end
 
@@ -123,7 +139,9 @@ local function FindNearbySafePosition(ply)
                 local testPos = origin + offset + Vector(0, 0, height)
                 local safe, safePos = IsSafePlayerPosition(ply, testPos)
 
-                if safe then
+                -- 42Bros: only somewhere you could have walked to (no hopping
+                -- through a wall or door into a building or a base)
+                if safe and CanReach(ply, safePos) then
                     return safePos
                 end
             end
@@ -158,8 +176,8 @@ local function SendToSitStuck(ply)
         SafeTeleport(ply, safePos, ply:EyeAngles())
         ply:ChatPrint("[SitAnywhere] Safe nearby unstuck position found.")
     else
-        ply:Spawn()
-        ply:ChatPrint("[SitAnywhere] No nearby safe place was found, so you were respawned.")
+        -- 42Bros: no free respawn (it healed you to full) - !spawn is there for this
+        ply:ChatPrint("[SitAnywhere] No safe place nearby. Type !spawn to go back to spawn.")
     end
 end
 
@@ -184,8 +202,13 @@ hook.Add("PlayerSay", "AN_SitAnywhere_Helper_Commands", function(ply, text)
     local msg = string.lower(string.Trim(text or ""))
 
     if msg == "!sitstuck" or msg == "/sitstuck" then
-        -- 1942 DarkRP: no escaping jail, a wanted status, a robbery or a fight this way
+        -- 42Bros: no escaping jail, a wanted status, a robbery or a fight this way
         if RP1942 and RP1942.canUseSitTeleport and not RP1942.canUseSitTeleport(ply, msg) then return "" end
+        if (ply.RP1942_NextSitStuck or 0) > CurTime() then
+            ply:ChatPrint("[SitAnywhere] Wait " .. math.ceil(ply.RP1942_NextSitStuck - CurTime()) .. "s before using " .. msg .. " again.")
+            return ""
+        end
+        ply.RP1942_NextSitStuck = CurTime() + 30
         SendToSitStuck(ply)
         return ""
     end

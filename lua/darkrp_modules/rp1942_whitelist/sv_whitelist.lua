@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - job whitelists (server). Settings: sh_whitelist.lua
+42Bros - job whitelists (server). Settings: sh_whitelist.lua
 
 data/rp1942/whitelist.json:
     { players = { ["STEAM_0:0:1"] = { name = "Hans", jobs = { eliteguard = true } } },

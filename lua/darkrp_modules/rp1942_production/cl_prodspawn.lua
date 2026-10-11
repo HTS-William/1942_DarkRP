@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - production spawner for staff (client)
+42Bros - production spawner for staff (client)
 Two ways in, the same spawner:
     !prodspawn      its own window (the server opens it, sv_prodspawn.lua)
     F4 > Spawner    a tab in the F4 menu, only for staff allowed !prodspawn

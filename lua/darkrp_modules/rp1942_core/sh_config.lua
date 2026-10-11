@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - core configuration (shared)
+42Bros - core configuration (shared)
 
 Everything that jobs.lua, shipments.lua etc. need to look up lives here, so
 swapping a weapon pack or model pack means editing ONE file.

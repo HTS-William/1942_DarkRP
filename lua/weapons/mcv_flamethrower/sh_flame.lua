@@ -99,7 +99,7 @@ function SWEP:FlameTick()
         end
     end
 
-    // the ground where the stream lands can catch (1942 spreading fire, rp1942_fire)
+    // the ground where the stream lands can catch (42Bros spreading fire, rp1942_fire)
     if tr.HitWorld and RP1942 and RP1942.startFire and RP1942.fireSetting
         and math.random() < (RP1942.fireSetting("flamethrowerChance") or 0) then
         RP1942.startFire(tr.HitPos, { spots = 1, attacker = owner, inflictor = self })
