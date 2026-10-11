@@ -9,7 +9,15 @@ function ENT:LabelInfo()
         "Market price  ·  " .. DarkRP.formatMoney(RP1942.marketPrice(self:GetGood(), q)),
     }
     if good.eat then
-        lines[#lines + 1] = "E carry  ·  Shift+E " .. (good.eat.verb or "eat")
+        local lp = LocalPlayer()
+        if self:IsForSale() and not self:IsOwnedBy(lp) then
+            -- someone else's: for sale
+            lines[2] = "For sale by " .. self:GetOwnerName() .. "  ·  " .. DarkRP.formatMoney(self:SalePrice())
+            lines[#lines + 1] = "E buy  ·  it goes into your pocket"
+        else
+            if self:IsForSale() then lines[#lines + 1] = "Yours  ·  others pay you " .. DarkRP.formatMoney(self:SalePrice()) .. " with E" end
+            lines[#lines + 1] = "E carry  ·  Shift+E " .. (good.eat.verb or "eat")
+        end
     end
     if self:IsRadio() then
         local st = self:GetStation()

@@ -28,7 +28,7 @@ the panel and press E.
 
 Selling:
     - At a MARKET (placed by admins with !addmarket). Its board shows today's
-      prices, with trend arrows and one good "in demand" for a bonus. SELL a
+      prices, with arrows showing each price against normal and one good "in demand" for a bonus. SELL a
       kind of good from your pocket, SELL EVERYTHING, or push goods into it.
       Prices are scaled by the economy and quality, taxed like wages, and every
       market sale nudges the economy bar up a little.
@@ -215,7 +215,7 @@ RP1942.Production = {
     market = {
         model       = "models/props_furniture/inn_mailbox1.mdl",   -- the market's mailbox
         demandBonus = 0.20,           -- the good in demand sells for 20% more
-        demandEvery = 3600,           -- seconds between new "in demand" picks (and trend resets)
+        demandEvery = 3600,           -- seconds between new "in demand" picks
         -- Who may place markets with !addmarket and !removemarket when ULX
         -- isn't running (with ULX: per rank, ULX menu > Groups > 42Bros)
         adminCheck  = function(ply) return ply:IsSuperAdmin() end,
@@ -267,15 +267,14 @@ function RP1942.marketPrice(goodId, quality)
     return RP1942.applyEconomy and RP1942.applyEconomy(value, "goods_sale") or math.floor(value)
 end
 
--- Price change since the last demand pick, as a fraction (+0.06 = up 6%)
+-- How a good's price compares to its normal price, as a fraction (+0.20 =
+-- 20% above normal, -0.49 = 49% below). Normal is the price at an average
+-- economy (multiplier 1.0, economy 55); the economy and "in demand" move it.
+-- This is what the market's arrows show.
 function RP1942.marketTrend(goodId)
-    local snap = GetGlobal2Int("RP1942_EconSnapshot", 0)
-    if snap <= 0 or not RP1942.getEconomy then return 0 end
-    local now = RP1942.getEconomy()
-    local trend = now / snap - 1
-    local demand = RP1942.goodInDemand()
-    if demand == goodId then trend = trend + RP1942.Production.market.demandBonus end
-    return trend
+    local mult = RP1942.getEconomyMultiplier and RP1942.getEconomyMultiplier() or 1
+    if RP1942.goodInDemand() == goodId then mult = mult * (1 + RP1942.Production.market.demandBonus) end
+    return mult - 1
 end
 
 -- "excellent", "fine", "poor" (panels draw the stars themselves)

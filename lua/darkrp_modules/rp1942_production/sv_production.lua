@@ -82,6 +82,7 @@ function RP1942.giveGoods(ply, goodId, quality, count, dropPos)
         local ent = RP1942.spawnGood(goodId, dropPos + Vector((i - 2) * 6, 0, i * 4), nil, quality)
         if IsValid(ent) then
             ent.RP1942_Holder = ply
+            if ent.SetOwnerPlayer then ent:SetOwnerPlayer(ply) end   -- food and drink belong to whoever made it
             if RP1942.pocketOrLeave and RP1942.pocketOrLeave(ply, ent) then
                 pocketed = pocketed + 1
             else
@@ -101,6 +102,22 @@ local function holder(ply, ent)
     end
 end
 hook.Add("GravGunOnPickedUp", "RP1942_GoodsHolder", holder)
+-- Someone else's food or drink (rp1942_good: IsForSale) can't be taken: E buys it
+local function othersForSale(ply, ent)
+    if not (IsValid(ent) and ent:GetClass() == "rp1942_good" and ent.IsForSale and ent:IsForSale()) then return false end
+    if ent:IsOwnedBy(ply) or not ent:OwnerOnline() then return false end
+    return true
+end
+
+hook.Add("canPocket", "RP1942_GoodsForSale", function(ply, ent)
+    if othersForSale(ply, ent) then
+        return false, "That's " .. ent:GetOwnerName() .. "'s: press E to buy it (" .. DarkRP.formatMoney(ent:SalePrice()) .. ")."
+    end
+end)
+hook.Add("GravGunPickupAllowed", "RP1942_GoodsForSale", function(ply, ent) if othersForSale(ply, ent) then return false end end)
+hook.Add("GravGunPunt", "RP1942_GoodsForSale", function(ply, ent) if othersForSale(ply, ent) then return false end end)
+hook.Add("PhysgunPickup", "RP1942_GoodsForSale", function(ply, ent) if othersForSale(ply, ent) then return false end end)
+
 hook.Add("PhysgunPickup", "RP1942_GoodsHolder", function(ply, ent) holder(ply, ent) end)   -- no return: doesn't change who may pick up
 hook.Add("OnPlayerPhysicsPickup", "RP1942_GoodsHolder", holder)
 hook.Add("onPocketItemDropped", "RP1942_GoodsHolder", function(ply, ent) holder(ply, ent) end)

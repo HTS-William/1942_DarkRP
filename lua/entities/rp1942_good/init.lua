@@ -20,10 +20,63 @@ function ENT:Initialize()
     if IsValid(phys) then phys:Wake() end
 end
 
+-- Make ply the owner (food and drink only)
+function ENT:SetOwnerPlayer(ply)
+    if not (IsValid(ply) and self:GoodInfo() and self:GoodInfo().eat) then return end
+    self:SetOwnerID(ply:SteamID())
+    self:SetOwnerName(ply:Nick())
+end
+
+-- The owner, if they're still on the server (otherwise it's free to take)
+function ENT:OwnerOnline()
+    local id = self:GetOwnerID()
+    if id == "" then return nil end
+    local owner = player.GetBySteamID(id)
+    if IsValid(owner) then return owner end
+    self:SetOwnerID("")
+    self:SetOwnerName("")
+end
+
+-- Someone who isn't the owner pressed E: buy it into their pocket
+function ENT:Buy(ply, seller)
+    local good = self:GoodInfo()
+    local price = self:SalePrice()
+    if RP1942.pocketRoom and RP1942.pocketRoom(ply) <= 0 then
+        DarkRP.notify(ply, 1, 4, "Your pocket is full: make room before buying.")
+        return
+    end
+    if price > 0 and not ply:canAfford(price) then
+        DarkRP.notify(ply, 1, 4, good.name .. " costs " .. DarkRP.formatMoney(price) .. ": you can't afford it.")
+        return
+    end
+    ply:addMoney(-price)
+    local net, tax = price, 0
+    if RP1942.applyTax then net, tax = RP1942.applyTax(seller, price, "goods_sale") end
+    seller:addMoney(net)
+
+    self:SetOwnerPlayer(ply)
+    self.RP1942_Holder = ply
+    local what = RP1942.qualityName(self:GetQuality()) .. " " .. good.name
+    if not RP1942.pocketOrLeave(ply, self) then
+        self:SetPos(ply:GetPos() + Vector(0, 0, 40))   -- (pocket filled in the meantime: at their feet)
+    end
+    DarkRP.notify(ply, 0, 5, "Bought " .. what .. " from " .. seller:Nick() .. " for " .. DarkRP.formatMoney(price) .. ". It's in your pocket.")
+    DarkRP.notify(seller, 0, 5, ply:Nick() .. " bought your " .. what .. ": " .. DarkRP.formatMoney(net)
+        .. (tax > 0 and (" (" .. DarkRP.formatMoney(tax) .. " tax)") or "") .. ".")
+    hook.Run("RP1942_GoodBought", ply, seller, self:GetGood(), self:GetQuality(), price)
+end
+
 function ENT:Use(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return end
     local good = self:GoodInfo()
     if not good then return end
+
+    -- Someone else's food or drink: E buys it
+    if good.eat and not self:IsOwnedBy(ply) then
+        local seller = self:OwnerOnline()
+        if seller then return self:Buy(ply, seller) end
+        self:SetOwnerPlayer(ply)   -- the owner left: it's yours now
+    end
 
     -- Shift + E: eat or drink it
     if ply:KeyDown(IN_SPEED) and good.eat then

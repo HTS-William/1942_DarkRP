@@ -270,6 +270,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
 - Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
 - E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).
+- Food and drink (bread, wine, tinned rations) belong to whoever made them. Set them out to sell: anyone else who presses E on one buys it at today's market price. The money goes to you (taxed like a market sale) and it goes into the buyer's pocket.
+- Once bought it's the buyer's: they can eat it, sell it on the same way, or take it to a market. Nobody can pocket, carry or eat food that isn't theirs without buying it. If the owner leaves the server, it's free to take.
 - Anyone can press a machine's buttons, so keep an eye on yours.
 
 # Baker
@@ -296,7 +298,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Markets
 - Sell goods at a market: SELL one kind of good from your pocket, SELL EVERYTHING, or push goods into the mailbox.
 - Scroll the price board with its arrows or your mouse wheel. Goods you carry are listed first.
-- Prices follow the economy, and one good is in demand each hour for a bonus. Arrows show how prices have moved. Sales are taxed like wages.
+- Prices follow the economy, and one good is in demand each hour for a bonus. The arrow beside each price shows how far it is above or below normal (normal = an average economy). Sales are taxed like wages.
 - Every market sale helps the economy a little, and a better economy means higher wages for everyone. Selling privately to other players doesn't move the economy.
 
 # Money printers
