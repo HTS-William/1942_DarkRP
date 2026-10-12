@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-1942 DarkRP - disabled defaults
+42Bros - disabled defaults
 
 Everything stock DarkRP ships that doesn't belong in 1942 is switched off
 here. true = disabled, false = enabled.
