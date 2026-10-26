@@ -1,4 +1,4 @@
-# 1942 DarkRP
+# 42Bros
 ## Scope and Description
 - Just like the 2012 - 2018 era of [1942RP](https://steamcommunity.com/groups/gca1/discussions/0/3371531159452731486/) but just... better
   - A passion project to bring back what the POG community once hosted
