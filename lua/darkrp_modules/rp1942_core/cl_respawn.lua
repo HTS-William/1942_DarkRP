@@ -2,7 +2,8 @@
 42Bros - the respawn countdown (client). Server: sv_respawn.lua
 
     Dead:            the screen darkens, RESPAWNING IN 5
-    Changing sides:  the screen fades out, REPORTING FOR DUTY IN 5
+    Sent to spawn by the server (RP1942.delayedRespawn): the screen fades
+                     out with that call's own text
 ---------------------------------------------------------------------------]]
 RP1942.screenFont("RP1942_RespawnBig", 0.034, 800, { min = 22 })
 RP1942.screenFont("RP1942_RespawnSmall", 0.018, 500, { min = 13 })

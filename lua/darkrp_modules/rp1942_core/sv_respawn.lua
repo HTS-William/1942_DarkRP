@@ -3,8 +3,8 @@
 
     Dying: you wait DELAY seconds (a countdown on screen), then you're
     respawned by yourself: no clicking. Clicking earlier does nothing.
-    Changing sides (sv_side_switch.lua): the same DELAY before you're sent
-    back to spawn, held still and unhurt while the screen fades out.
+    RP1942.delayedRespawn(ply, text, after): the same fade and countdown
+    for any other code that needs to send someone back to spawn.
 
 DarkRP's GM.Config.respawntime (darkrp_config/settings.lua) is set to the
 same number, so DarkRP doesn't let anyone respawn sooner either.

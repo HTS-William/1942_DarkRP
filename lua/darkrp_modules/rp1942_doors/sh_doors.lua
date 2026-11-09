@@ -27,13 +27,15 @@ RP1942.FactionDoors = {
     -- name: shown on the door. Doors are saved by this name, so renaming a
     --       group later means setting its doors again.
     -- faction / branch: which jobs are in it (the fields in jobs.lua)
+    -- color: the box on the door ("Owned By: Reich", cl_door_plates.lua);
+    --        the jobs' own colours from jobs.lua
     groups = {
-        { id = "reich",         name = "Reich",         faction = "reich" },
-        { id = "resistance",    name = "Resistance",    faction = "resistance" },
-        { id = "civilian",      name = "Civilians",     faction = "civilian" },
-        { id = "wehrmacht",     name = "Wehrmacht",     branch = "wehrmacht" },
-        { id = "waffen_ss",     name = "Waffen-SS",     branch = "waffen_ss" },
-        { id = "leibstandarte", name = "Leibstandarte", branch = "leibstandarte" },
+        { id = "reich",         name = "Reich",         faction = "reich",         color = Color(93, 101, 82) },
+        { id = "resistance",    name = "Resistance",    faction = "resistance",    color = Color(150, 44, 36) },
+        { id = "civilian",      name = "Civilians",     faction = "civilian",      color = Color(120, 120, 110) },
+        { id = "wehrmacht",     name = "Wehrmacht",     branch = "wehrmacht",      color = Color(93, 101, 82) },
+        { id = "waffen_ss",     name = "Waffen-SS",     branch = "waffen_ss",      color = Color(60, 64, 50) },
+        { id = "leibstandarte", name = "Leibstandarte", branch = "leibstandarte",  color = Color(45, 45, 45) },
     },
 
     -- Jobs (by command) added to every Reich unit's doors as well,

@@ -67,7 +67,8 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 - 5. You must act according to your chosen job's description and rules. Changing your job just to get access to a specific weapon or self-supply items is forbidden. ( First warn, then kick, then ban ).
 - 5a. Logging off, changing job or suiciding to avoid an arrest, a robbery or a raid is forbidden. ( First warn, then kick, then ban ).
 - 5b. Your roleplay name must be a first and last name that fits 1942. No meme, offensive or modern names. ( Staff rename you, then kick ).
-- 5c. Switching to a raiding job (RAID = YES) on a different side sends you back to spawn. Moving up within your own side (Rifleman to Machinegunner, Resistance to Resistance Medic) doesn't.
+- 5c. No job abuse during active roleplay. Don't change jobs in the middle of a fight, raid, robbery, arrest, chase or any other situation to change how it ends, such as switching sides mid-firefight, becoming a civilian to get away, or joining the Reich to stop a robbery you were part of. Finish the situation first. ( First warn, then kick, then ban ).
+- 5d. The server won't let you change sides while you're wanted or within 20 seconds of being hurt. Getting around that is still covered by 5c.
 
 # 6. Metagaming
 - 6. Using information obtained out-of-character (such as reading a player's overhead name/title or hearing voice comms via Discord) during in-character situations is not allowed. ( First warn, then kick, then ban ).
@@ -157,6 +158,7 @@ Raiding - Breaking into someone's property to take their valuables.
 - Sitting: hold your walk key (Alt by default) and press E while looking at a bench, a chair, the ground or a prop to sit there; press E again to get up. Sitting is no shield: you can still be shot, blown up or handcuffed, and getting hurt by a player stands you up (no sitting back down for a few seconds). Plain E never sits, so doors, machines, dumpsters and crates keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
 F4 - Jobs, Appearance (your model's bodygroups and skin, remembered per model), the shop, commands and these pages
 F2 - Look at a door: buys it if it's for sale. On a door you own, opens its menu (sell it, add co-owners, give it a title). Shift+F2 always opens the menu
+- Doors: who owns a door is written on the door itself: "Owned By:" and the owner, or the faction in its colour on a faction door. A door nobody owns says "For Sale" and its price. A title (from the door menu) shows above the owner.
 F3 - Your job's own menu, if it has one (the wardrobe for undercover jobs, the Führer's office...)
 TAB - The scoreboard, with the five fullest wallets at the top (rp1942_scoreboard_richest 0 in the console hides them). Hold it to look; click a player to see their card (copy SteamID, Steam profile, mute their voice, send a message). Once you click, it stays open until you press TAB again.
 E - Use things, and press buttons on machine panels (look at the button)
@@ -329,7 +331,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - On the scoreboard you show as your cover. Only your own side and staff see that you're undercover.
 
 # Faction doors
-- Some doors belong to a faction or a Reich unit. Its name shows on the door.
+- Some doors belong to a faction or a Reich unit. The door says "Owned By:" and the faction, in the faction's colour.
 - Only members can lock and unlock them, and nobody can buy them.
 
 # Props
@@ -410,8 +412,6 @@ rp1942_panel_move / _size / _face / _mount / _print (console) - Fine-tune where 
 #staff Staff: server logs
 The server console tags every line, so you can search it: [42Bros][KILL] (with flags like SAME SIDE, UNARMED, KILLER ON NLR, PROP KILL), [42Bros][DEATH], [42Bros][MONEY], [42Bros][BIG] (a payment of $10,000+ or $25,000 earned in 10 minutes: check these first), [42Bros][STATUS] (every 10 minutes), [42Bros][SETUP], [42Bros][WARN], [42Bros][LEAVE]
 Each day's lines are also saved to garrysmod/data/rp1942/logs/<date>.txt (download it from the host's file manager)
-rp1942_status (console) - Print the status line now: players per side, treasury, economy, money in wallets, the richest players
-rp1942_setupcheck (console) - Check what's placed on this map and what's missing (also runs by itself 30 seconds after every map load)
 When a player leaves, everything they own is removed straight away (props, text screens, printers, machines, padlocks, their food). Staff-placed and saved things stay
 
 #staff Staff: the Führer's decisions
