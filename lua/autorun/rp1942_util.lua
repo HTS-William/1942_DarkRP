@@ -79,4 +79,47 @@ if SERVER then
     function RP1942.mapStore(name)
         return store(function() return "rp1942/" .. name .. "_" .. game.GetMap() .. ".json" end)
     end
+
+    --[[-----------------------------------------------------------------------
+    RP1942.standOnFloor(ent [, reach]) -> true if it found the floor
+    Stands an upright entity on the ground under it: its bottom (OBBMins)
+    exactly on the floor, whether it starts sunk into the ground or hanging
+    in the air. Looks from `reach` units above its bottom (default 48) to 128
+    below. The floor is the map (brushes, displacements, its solid props);
+    players, loose items and the thing itself don't count. Works however the
+    model's origin sits (a dumpster's is in its middle).
+    DarkRP's DropToFloor can't do this: it gives up when the thing already
+    starts inside the floor, which left saved dumpsters sunk on every restart.
+    -------------------------------------------------------------------------]]
+    function RP1942.standOnFloor(ent, reach)
+        if not IsValid(ent) then return false end
+        reach = reach or 48
+        local pos = ent:GetPos()
+        local bottom = pos.z + ent:OBBMins().z
+        local mins, maxs = ent:OBBMins(), ent:OBBMaxs()
+        -- a thin square from the middle of its footprint: traces aren't turned
+        -- with the entity, so this stays inside it at any angle and a wall
+        -- right beside it never counts as the floor
+        local half = math.max(1, math.min(-mins.x, maxs.x, -mins.y, maxs.y) * 0.6)
+        local start = Vector(pos.x, pos.y, bottom + reach)
+        local stop = Vector(pos.x, pos.y, bottom - 128)
+        local function notFloor(e)
+            if e == ent or e:IsPlayer() or e:IsNPC() or e:IsWeapon() then return false end
+            local class = e:GetClass()
+            return not (class == "rp1942_good" or class == "spawned_weapon" or class == "spawned_money" or class == ent:GetClass())
+        end
+        local tr = util.TraceHull({
+            start = start, endpos = stop, mins = Vector(-half, -half, 0), maxs = Vector(half, half, 1),
+            mask = MASK_SOLID, filter = notFloor,
+        })
+        if tr.StartSolid or not tr.Hit then
+            -- doesn't fit there (a tight corner): fall back to its middle
+            tr = util.TraceLine({ start = start, endpos = stop, mask = MASK_SOLID, filter = notFloor })
+            if tr.StartSolid or not tr.Hit then return false end
+        end
+        ent:SetPos(Vector(pos.x, pos.y, tr.HitPos.z - mins.z + 0.25))
+        local phys = ent:GetPhysicsObject()
+        if IsValid(phys) then phys:SetPos(ent:GetPos()) end
+        return true
+    end
 end

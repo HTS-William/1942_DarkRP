@@ -84,6 +84,7 @@ local function spawnMachine(ply, class)
     ent:Activate()
     -- Stand it on what you're aiming at
     if tr.HitNormal.z > 0.5 then ent:SetPos(tr.HitPos - Vector(0, 0, ent:OBBMins().z) + Vector(0, 0, 1)) end
+    if class == "rp1942_dumpster" and RP1942.standOnFloor then RP1942.standOnFloor(ent) end
     own(ent, ply)
     ent.RP1942_ProdSpawnedBy = ply
 
@@ -196,16 +197,23 @@ local function spawnSaved(id, v)
         ent:Anchor(pos, ang)
         ent:StartPump()
     else
+        -- a saved dumpster always stands on the floor (an old save may have it sunk in)
+        if v.class == "rp1942_dumpster" and RP1942.standOnFloor then
+            RP1942.standOnFloor(ent)
+            if math.abs(ent:GetPos().z - v.z) > 1 then v.z = ent:GetPos().z; v.RP1942_Moved = true end
+        end
         freeze(ent)
     end
     return ent
 end
 
 local function spawnAllSaved()
-    local n = 0
-    for id, v in pairs(loadSaves()) do
+    local n, list, moved = 0, loadSaves(), false
+    for id, v in pairs(list) do
         if IsValid(spawnSaved(id, v)) then n = n + 1 end
+        if v.RP1942_Moved then v.RP1942_Moved = nil moved = true end
     end
+    if moved then writeSaves(list) end   -- corrected dumpster heights
     if n > 0 then MsgC(Color(160, 220, 120), "[42Bros] Production: spawned " .. n .. " saved machine(s).\n") end
 end
 hook.Add("InitPostEntity", "RP1942_ProdSaves", function() timer.Simple(1, spawnAllSaved) end)

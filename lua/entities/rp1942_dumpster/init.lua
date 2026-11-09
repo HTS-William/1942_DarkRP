@@ -430,16 +430,20 @@ Placing dumpsters: fixed ones from config.lua, plus ones placed in game with
 local store = RP1942.mapStore( "dumpsters" )   -- lua/autorun/rp1942_util.lua
 local loadSaved, writeSaved = store.load, store.save
 
+--> Spawns one standing on the floor (RP1942.standOnFloor: its bottom on the
+--> ground, never sunk in it), frozen. Returns it and how far it had to move.
 local function spawnDumpster( pos, ang, saveId )
 	local d = ents.Create( "rp1942_dumpster" )
 	if not IsValid( d ) then return end
 	d:SetPos( pos )
 	d:SetAngles( ang )
 	d:Spawn()
+	d:Activate()
 	d.saveId = saveId
+	if RP1942.standOnFloor then RP1942.standOnFloor( d ) end
 	local phys = d:GetPhysicsObject()
-	if IsValid( phys ) then phys:EnableMotion( false ) end
-	return d
+	if IsValid( phys ) then phys:EnableMotion( false ) phys:Sleep() end
+	return d, math.abs( d:GetPos().z - pos.z )
 end
 
 --> Is pos next to one of the fixed dumpsters for this map? (so a saved one
@@ -456,19 +460,25 @@ function spawn_rp1942_dumpsters()
 	for _, v in pairs( get_dumpsters_spawn_pos() ) do
 		if not v.map or v.map == map then   --> no map = every map
 			local d = spawnDumpster( v.pos, v.ang )
-			if IsValid( d ) then
-				d:DropToFloor()
-				local phys = d:GetPhysicsObject()
-				if IsValid( phys ) then phys:EnableMotion( false ) end
-				fixed[ #fixed + 1 ] = v.pos
+			if IsValid( d ) then fixed[ #fixed + 1 ] = v.pos end
+		end
+	end
+	--> Saved ones: one that had to move to reach the floor (saved sunk into
+	--> the ground, as !adddumpster used to do) gets its corrected spot saved
+	local saved, fixedSaves = loadSaved(), 0
+	for id, v in pairs( saved ) do
+		local pos = Vector( v.x, v.y, v.z )
+		if not nearFixed( pos, fixed ) then
+			local d, moved = spawnDumpster( pos, Angle( 0, v.yaw, 0 ), id )
+			if IsValid( d ) and moved > 1 then
+				v.z = d:GetPos().z
+				fixedSaves = fixedSaves + 1
 			end
 		end
 	end
-	for id, v in pairs( loadSaved() ) do
-		local pos = Vector( v.x, v.y, v.z )
-		if not nearFixed( pos, fixed ) then
-			spawnDumpster( pos, Angle( 0, v.yaw, 0 ), id )
-		end
+	if fixedSaves > 0 then
+		writeSaved( saved )
+		MsgC( Color( 160, 220, 120 ), "[42Bros] Dumpsters: stood ", fixedSaves, " saved dumpster(s) back on the floor and saved their corrected spots.\n" )
 	end
 end
 
@@ -529,11 +539,8 @@ RP1942.defineStaffCommand("adddumpster", function( ply )
 	end
 
 	local ang = Angle( 0, ply:EyeAngles().y + 180, 0 )   --> facing you
-	local d = spawnDumpster( tr.HitPos + Vector( 0, 0, 4 ), ang )
+	local d = spawnDumpster( tr.HitPos, ang )   --> stood on the floor where you're looking
 	if not IsValid( d ) then return "" end
-	d:DropToFloor()
-	local phys = d:GetPhysicsObject()
-	if IsValid( phys ) then phys:EnableMotion( false ) end
 
 	local list = loadSaved()
 	local id = tostring( os.time() ) .. "_" .. math.random( 1000, 9999 )
