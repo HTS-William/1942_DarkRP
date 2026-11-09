@@ -172,3 +172,5 @@ SWEP.TracerParticle2 = "vietnam_tracer_machinegun_green_secondary"
 
 SWEP.TracerRandomness = 6
 SWEP.TracerFrequency = 1
+
+SWEP.MuzzleVelocity = 853 // m/s, the same as the Workshop's MG 43 belt (used when mcv_physbullets is on)
