@@ -8,7 +8,23 @@ util.AddNetworkString("RP1942_F4Buy")
 
 local function spawnPos(ply) return RP1942.spawnInFront(ply, 85) end   -- rp1942_core/sv_pocket.lua
 
+-- Bought ammo arrives as a labelled box on the ground (rp1942_ammo_box), not
+-- straight into your weapon. At most this many unopened boxes each, so the
+-- shop can't be spammed into a pile of them.
+local MAX_AMMO_BOXES = 5
+
+local function ammoBoxesOf(ply)
+    local n = 0
+    for _, e in ipairs(ents.FindByClass("rp1942_ammo_box")) do
+        if e.RP1942_ShopOwner == ply then n = n + 1 end
+    end
+    return n
+end
+
 local function owned(ply, item)
+    -- a Radio Set: every radio they have, pocket and inventory included (rp1942_radio)
+    local good = item.type == "good" and RP1942.Goods and RP1942.Goods[item.good]
+    if good and good.radio and RP1942.radiosHeld then return RP1942.radiosHeld(ply) end
     local n = 0
     local class = item.type == "good" and "rp1942_good" or item.class
     for _, e in ipairs(ents.FindByClass(class)) do
@@ -20,7 +36,10 @@ end
 -- Gives or spawns the item. Returns true if it worked.
 local function deliver(ply, item)
     if item.type == "ammo" then
-        ply:GiveAmmo(item.amount, item.ammo)
+        local box = RP1942.makeAmmoBox and RP1942.makeAmmoBox(item.ammo, item.amount, spawnPos(ply))
+        if not IsValid(box) then return false end
+        box.RP1942_ShopOwner = ply   -- only the buyer opens it (rp1942_ammo_box)
+        if box.CPPISetOwner then box:CPPISetOwner(ply) end   -- and it goes when they leave
         return true
     end
 
@@ -63,8 +82,15 @@ net.Receive("RP1942_F4Buy", function(_, ply)
     local ok, why = RP1942.canBuyF4Item(ply, item)
     if not ok then return DarkRP.notify(ply, 1, 4, why) end
 
-    if (item.type == "entity" or item.type == "good") and item.max and owned(ply, item) >= item.max then
-        return DarkRP.notify(ply, 1, 4, "You can't have more than " .. item.max .. " of " .. item.name .. ".")
+    local max = item.max
+    local good = item.type == "good" and RP1942.Goods and RP1942.Goods[item.good]
+    if good and good.radio and RP1942.radioSetting then max = RP1942.radioSetting("perPlayer") or max end
+    if (item.type == "entity" or item.type == "good") and max and owned(ply, item) >= max then
+        return DarkRP.notify(ply, 1, 4, "You can't have more than " .. max .. " of " .. item.name
+            .. (good and good.radio and " (counting the ones in your pocket and inventory)." or "."))
+    end
+    if item.type == "ammo" and ammoBoxesOf(ply) >= MAX_AMMO_BOXES then
+        return DarkRP.notify(ply, 1, 4, "Pick up the ammo you've already bought first (" .. MAX_AMMO_BOXES .. " boxes are waiting for you).")
     end
     local price = RP1942.f4ItemPrice(item)
     if not ply:canAfford(price) then
@@ -79,6 +105,6 @@ net.Receive("RP1942_F4Buy", function(_, ply)
 
     ply:addMoney(-price)
     local what = item.type == "ammo" and (item.amount .. " x " .. item.name) or item.name
-    DarkRP.notify(ply, 0, 4, "You bought " .. what .. " for " .. DarkRP.formatMoney(price) .. ".")
+    DarkRP.notify(ply, 0, 4, "You bought " .. what .. " for " .. DarkRP.formatMoney(price) .. "." .. (item.type == "ammo" and " Press E on the box to take it." or ""))
     hook.Run("RP1942_F4ShopPurchase", ply, item, price)
 end)

@@ -14,6 +14,11 @@ end
 
 function ENT:Use(ply)
     if not (IsValid(ply) and ply:IsPlayer()) or self.used then return end
+    -- a box bought in the F4 shop is the buyer's (a found one is anyone's)
+    local buyer = self.RP1942_ShopOwner
+    if IsValid(buyer) and buyer ~= ply then
+        return DarkRP.notify(ply, 1, 3, "That ammo belongs to " .. buyer:Nick() .. ".")
+    end
     self.used = true
     ply:GiveAmmo(self:GetAmount(), self:GetAmmoType())
     self:EmitSound("items/ammo_pickup.wav", 60)
@@ -36,3 +41,12 @@ function RP1942.makeAmmoBox(ammoType, amount, pos)
     box:Spawn()
     return box
 end
+
+-- Nobody else can pocket a box someone bought (it would keep its owner, but
+-- it'd be gone from where the buyer left it)
+hook.Add("canPocket", "RP1942_AmmoBoxOwner", function(ply, ent)
+    if IsValid(ent) and ent:GetClass() == "rp1942_ammo_box" then
+        local buyer = ent.RP1942_ShopOwner
+        if IsValid(buyer) and buyer ~= ply then return false, "That ammo belongs to " .. buyer:Nick() .. "." end
+    end
+end)

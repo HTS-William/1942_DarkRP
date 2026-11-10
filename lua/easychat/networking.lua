@@ -270,7 +270,10 @@ if SERVER then
 				return false
 			end
 
-			if is_local and listener:GetPos():Distance(speaker:GetPos()) > speaker:GetInfoNum("easychat_local_msg_distance", 150) then
+			-- 42Bros: the speaker sets this themselves (a convar), so it's capped:
+			-- otherwise "local" chat could reach the whole map
+			local max_dist = math.Clamp(speaker:GetInfoNum("easychat_local_msg_distance", 150), 0, EasyChat.MaxLocalDistance or 300)
+			if is_local and listener:GetPos():Distance(speaker:GetPos()) > max_dist then
 				return false
 			end
 		end

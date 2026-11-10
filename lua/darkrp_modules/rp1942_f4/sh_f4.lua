@@ -27,7 +27,7 @@ RP1942.F4Config = {
     -- "pages" = every page in sh_f4_pages.lua, each as its own tab.
     -- "spawner" = the production spawner (rp1942_production/cl_prodspawn.lua),
     --             only shown to staff allowed !prodspawn.
-    tabs = { "commands", "jobs", "appearance", "shop", "pages", "laws", "spawner" },
+    tabs = { "commands", "jobs", "appearance", "shop", "inventory", "pages", "laws", "spawner" },
 
     -- Appearance tab: change the bodygroups (and skin) of the model you wear.
     -- Choices are saved per model (cl_ / sv_f4_appearance.lua).

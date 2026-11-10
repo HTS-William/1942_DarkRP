@@ -3,13 +3,18 @@
 ---------------------------------------------------------------------------]]
 local frame
 
-local function send(radio, url, name, volume)
+-- index: the station's number in RP1942.Radio.stations (0 = off)
+local function send(radio, index, volume)
     net.Start("RP1942_RadioTune")
     net.WriteEntity(radio)
-    net.WriteString(url or "")
-    net.WriteString(name or "")
+    net.WriteUInt(math.Clamp(index or 0, 0, 255), 8)
     net.WriteFloat(volume or 1)
     net.SendToServer()
+end
+
+local function currentIndex(radio)
+    local _, i = RP1942.radioStation(radio:GetURL())
+    return i or 0
 end
 
 local function open(radio)
@@ -72,20 +77,9 @@ local function open(radio)
         if not IsValid(radio) or radio:GetURL() == "" then return end
         -- sent a moment after the knob stops moving
         timer.Create("RP1942_RadioVol", 0.4, 1, function()
-            if IsValid(radio) then send(radio, radio:GetURL(), radio:GetStation(), v) end
+            if IsValid(radio) then send(radio, currentIndex(radio), v) end
         end)
     end
-
-    -- Custom link
-    local linkBar = UI.categoryBar(body, "STREAM LINK", "http(s)://... straight to the stream", C.tab)
-    linkBar:Dock(TOP)
-    linkBar:DockMargin(0, pad, 0, 4)
-    linkBar:SetTall(math.floor(28 * s))
-    local entry = UI.textEntry(body, "", function(text)
-        send(radio, text, "", vol:GetValue())
-    end)
-    entry:Dock(TOP)
-    entry:SetPlaceholderText("Paste a stream link and press Enter")
 
     -- Stations
     local bar = UI.categoryBar(body, "STATIONS", nil, C.tab)
@@ -95,8 +89,8 @@ local function open(radio)
     local list = vgui.Create("DScrollPanel", body)
     list:Dock(FILL)
     UI.styleScroll(list)
-    local function stationButton(text, url, name, isCurrent)
-        local b = UI.button(list, text, function() send(radio, url, name, vol:GetValue()) end)
+    local function stationButton(text, index, isCurrent)
+        local b = UI.button(list, text, function() send(radio, index, vol:GetValue()) end)
         b:Dock(TOP)
         b:DockMargin(0, 0, 0, 3)
         b:SetTall(math.floor(32 * s))
@@ -109,9 +103,9 @@ local function open(radio)
             end
         end
     end
-    stationButton("Off", "", "", function() return IsValid(radio) and radio:GetURL() == "" end)
-    for _, st in ipairs(RP1942.Radio.stations) do
-        stationButton(st.name, st.url, st.name, function() return IsValid(radio) and radio:GetURL() == st.url end)
+    stationButton("Off", 0, function() return IsValid(radio) and radio:GetURL() == "" end)
+    for i, st in ipairs(RP1942.Radio.stations) do
+        stationButton(st.name, i, function() return IsValid(radio) and radio:GetURL() == st.url end)
     end
 end
 

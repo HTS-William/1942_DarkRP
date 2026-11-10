@@ -93,6 +93,7 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 - 10. Harassment, slurs and targeting people OOC are forbidden. ( First warn, then kick, then ban ).
 - 10a. Real-world hate speech, extremist symbols or propaganda OOC is no tolerance, and is an instant ban. Playing a Reich character is roleplay, not a platform.
 - 10b. Chat, mic, advert or /radio spam is forbidden. ( First warn, then kick, then ban ).
+- 10d. No chat box minging: getting around the chat filter (fake markup, walls of symbols, invisible characters, flooding) counts as spam under 10b. ( First warn, then kick, then ban ).
 - 10c. Impersonating staff is forbidden. ( First kick, then ban ).
 
 # 11. Raiding
@@ -229,9 +230,16 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. It never runs out. Every fire you put out pays 20 RM, unless you lit it yourself.
 
 # Radios
-- Press E on a radio to tune it: pick a station or paste a direct stream link (http:// or https://, straight to the stream, not a web page). It plays for everyone nearby, from the set itself.
+- Press E on a radio to tune it to one of the server's stations. It plays for everyone nearby, from the set itself. Only those stations can be played: nobody can put on their own link.
 - The Radio Set the factory makes is a working radio: E tunes it, Shift+E carries it, and it sells at the market like any other good. The F4 shop sells one too, always for more than the market pays for it. Fixed sets placed by staff can be tuned by anyone.
+- One radio per player: a Radio Set you have in the world, your pocket or your inventory all count.
 - rp1942_radio_volume 0-1 (console) sets how loud radios are for you; rp1942_radio 0 silences them all.
+
+# Inventory (F4)
+- The Inventory tab in F4 is storage that stays with you: through death, leaving and server restarts.
+- STORE moves something from your pocket into your inventory (STORE ALL does the whole pocket). TO POCKET takes one back out, DROP puts one on the ground in front of you.
+- Goods (bread, wine, oil, parts and the rest) and weapons can be stored, up to 10 of the same good at the same quality, or the same gun, per slot. 24 slots. A gun keeps exactly the ammo it went in with.
+- It's locked while you're dead, arrested, being handcuffed, and for 15 seconds after you're hurt: it can't save loot from a fight.
 
 # Orders
 - Your faction's orders (Reich Orders, Resistance Plans) show in the top-left corner; Reich alerts appear below them. The Führer and the Reich officers set the Reich's; the Resistance Leader sets the Resistance's (/agenda). rp1942_orders_hud 0 in the console hides the panel.
@@ -254,6 +262,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Arms dealers
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
 - Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Each dealer's menu shows which ammo a weapon takes. Grenades, molotovs, mines, explosive charges, flamethrower fuel, crossbow bolts and flare rounds are sold there too. One grenade refill fits any grenade.
+- Bought ammo is put down in front of you as a box with what it is written above it: press E on it to take the rounds. Only you can open or pocket a box you bought, and you can have 5 waiting at most.
 - Weapons come loaded: guns with a full magazine; a grenade, molotov, dynamite bundle or mine comes with itself to throw or place; the flamethrower with a tank of fuel.
 - Buying more than one (set the amount next to Buy, up to 20) brings a crate: press E on it to take one weapon out at a time. Shoot a crate to pieces and what's left inside is lost.
 - Black Market: anti-tank launchers, explosives and grenades, silenced guns, submachine guns and more. Cherkesov: Soviet and Allied rifles, machine guns, anti-tank rifles and more. Their prices are fixed: the economy doesn't change them.
@@ -376,6 +385,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !whitelistid / !unwhitelistid <SteamID> <job> - The same for someone who's offline
 !whitelists [name or SteamID] - Who's whitelisted for what
 !serverstatus - Players per side, treasury, economy, money in wallets and the richest players (also printed to the server console every 10 minutes)
+!inventory <player> - What a player has stored in their F4 inventory (look only)
 !setupcheck - Check this map: markets, vault, dumpsters, saved machines, APC garage, oil sites, train route, common server mistakes (results in your console)
 - Server logs: kills (flagged SAME SIDE, UNARMED, KILLER ON NLR, STAFF ON DUTY...), money between players, [BIG] payments, and what was removed when someone left. In the server console and in garrysmod/data/rp1942/logs/<date>.txt
 

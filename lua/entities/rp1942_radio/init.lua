@@ -25,7 +25,8 @@ function ENT:Tune(url, name, volume)
     url = string.Trim(url or "")
     if url ~= "" and not RP1942.radioValidUrl(url) then return false end
     self:SetURL(url)
-    self:SetStation(url == "" and "" or (name and name ~= "" and name or "Custom station"))
+    local st = RP1942.radioStation and RP1942.radioStation(url)
+    self:SetStation(url == "" and "" or (st and st.name) or name or "")
     if volume then self:SetVolume(math.Clamp(tonumber(volume) or 1, 0, 1)) end
     if RP1942.prodUpdateSave then RP1942.prodUpdateSave(self) end   -- a saved set remembers its station
     return true
@@ -37,8 +38,10 @@ function ENT:RP1942_SaveData()
 end
 function ENT:RP1942_LoadData(d)
     if not istable(d) then return end
-    self:SetURL(d.url or "")
-    self:SetStation(d.station or "")
+    -- only a station that's still in the list (an old save may hold a typed-in link)
+    local st = RP1942.radioStation and RP1942.radioStation(d.url)
+    self:SetURL(st and st.url or "")
+    self:SetStation(st and st.name or "")
     self:SetVolume(math.Clamp(tonumber(d.volume) or 1, 0, 1))
 end
 

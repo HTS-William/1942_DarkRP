@@ -1,8 +1,9 @@
 local TAG = "EasyChatModuleVoiceHUD"
 local EC_VOICE_HUD = CreateClientConVar("easychat_voice_hud", "1", true, false, "Should we use EasyChat's voice hud")
-local EC_VOICE_RINGS = CreateClientConVar("easychat_voice_rings", "1", true, false, "Should we draw voice rings under the player")
+-- 42Bros: the voice rings (a circle in the player's job colour on the ground under
+-- whoever is talking) are switched off for everyone. They gave away a disguised
+-- player's real job. The drawing code below is kept but never hooked in.
 EasyChat.RegisterConvar(EC_VOICE_HUD, "Use EasyChat's voice HUD")
-EasyChat.RegisterConvar(EC_VOICE_RINGS, "Draw voice rings under players")
 
 local ply_voice_panels = {}
 cvars.RemoveChangeCallback(EC_VOICE_HUD:GetName(), TAG)
@@ -228,13 +229,12 @@ local function draw_voice_ring(ply)
 	render.DrawQuadEasy(tr.HitPos + tr.HitNormal, tr.HitNormal, 128, 128, color)
 end
 
-hook.Add("PostDrawTranslucentRenderables", TAG, function()
-	if not EC_VOICE_RINGS:GetBool() then return end
-
-	for _, ply in ipairs(player.GetAll()) do
-		draw_voice_ring(ply)
-	end
-end)
+-- (42Bros: not hooked in, see the top of this file)
+-- hook.Add("PostDrawTranslucentRenderables", TAG, function()
+-- 	for _, ply in ipairs(player.GetAll()) do
+-- 		draw_voice_ring(ply)
+-- 	end
+-- end)
 
 hook.Add("ECResolutionChanged", TAG, function()
 	if IsValid(EasyChat.GUI.VoiceList) then

@@ -111,7 +111,8 @@ function ENT:Tune(url, name, volume)
     url = string.Trim(url or "")
     if url ~= "" and not RP1942.radioValidUrl(url) then return false end
     self:SetURL(url)
-    self:SetStation(url == "" and "" or (name and name ~= "" and name or "Custom station"))
+    local st = RP1942.radioStation and RP1942.radioStation(url)
+    self:SetStation(url == "" and "" or (st and st.name) or name or "")
     if volume then self:SetVolume(math.Clamp(tonumber(volume) or 1, 0, 1)) end
     return true
 end

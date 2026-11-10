@@ -66,6 +66,23 @@ register("setupcheck", ulx.rp1942setupcheck, "!setupcheck", ULib.ACCESS_SUPERADM
     "Checks this map: markets, vault, dumpsters, saved machines, APC garage, oil sites, the train route, and common server mistakes. Results go to your console.")
 
 --[[---------------------------------------------------------------------------
+Inventories (rp1942_inventory)
+---------------------------------------------------------------------------]]
+function ulx.rp1942inventory(ply, target)
+    if not (RP1942.Inventory and RP1942.Inventory.describe) then return ULib.tsayError(ply, "The inventory isn't loaded.", true) end
+    local text = target:Nick() .. "'s inventory: " .. RP1942.Inventory.describe(target)
+    if IsValid(ply) then
+        ULib.console(ply, text)
+        ULib.tsay(ply, text, true)
+    else
+        print(text)
+    end
+end
+local inv = register("inventory", ulx.rp1942inventory, "!inventory", ULib.ACCESS_ADMIN,
+    "Shows what a player has stored in their inventory (the F4 Inventory tab). Look only: nothing is changed.")
+inv:addParam{ type = ULib.cmds.PlayerArg }
+
+--[[---------------------------------------------------------------------------
 World events
 ---------------------------------------------------------------------------]]
 function ulx.rp1942train(ply)
