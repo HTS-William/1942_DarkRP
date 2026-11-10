@@ -163,6 +163,7 @@ F2 - Look at a door: buys it if it's for sale. On a door you own, opens its menu
 F3 - Your job's own menu, if it has one (the wardrobe for undercover jobs, the Führer's office...)
 TAB - The scoreboard, with the five fullest wallets at the top (rp1942_scoreboard_richest 0 in the console hides them). Hold it to look; click a player to see their card (copy SteamID, Steam profile, mute their voice, send a message). Once you click, it stays open until you press TAB again.
 E - Use things, and press buttons on machine panels (look at the button)
+- Animations: with your keys out, press R (not at a door) for the animation wheel. Point at one and click it, or hold R, flick toward one and let go. Right click closes it. While it plays the camera swings out into third person: move the mouse to look around yourself and the mouse wheel to move it closer or further. It comes back to first person when the animation ends; attacking or pressing E brings it back early.
 
 # Chat commands
 // - Talk to everyone out of character (OOC)
