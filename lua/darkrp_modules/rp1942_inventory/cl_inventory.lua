@@ -155,7 +155,7 @@ RP1942.F4Tabs.inventory = {
             local n, free = #st.pocket, st.pocketRoom or 0
             bar(pocketList, "Your pocket", n .. (n == 1 and " item" or " items") .. ", " .. free .. " free")
             if n == 0 then
-                note(pocketList, "Your pocket is empty. Pocket goods or a weapon (the pocket SWEP, or R with it) and store them here.")
+                note(pocketList, "Your pocket is empty. Pocket goods, a weapon or an ammo box (the pocket SWEP, or R with it) and store them here.")
             end
             for _, p in ipairs(st.pocket) do
                 row(pocketList, p.label .. (p.ok and "" or "   (can't be stored)"), not p.ok, {
@@ -174,8 +174,9 @@ RP1942.F4Tabs.inventory = {
             invList:Clear()
             bar(invList, "Your inventory", (#st.items) .. "/" .. (st.slots or 0) .. " slots")
             if #st.items == 0 then
-                note(invList, "Nothing stored yet. Goods (bread, wine, oil, parts...) and weapons can be stored, up to "
-                    .. (RP1942.Inventory.config.stack) .. " of the same in a slot. What's in here stays when you die, leave or the server restarts.")
+                note(invList, "Nothing stored yet. Goods (bread, wine, oil, parts...), weapons and ammo can be stored. Goods and ammo merge: up to "
+                    .. (RP1942.Inventory.config.stack) .. " of the same good in a slot, or " .. RP1942.Inventory.config.ammoStack
+                    .. " rounds of the same ammo. A gun takes a slot to itself. What's in here stays when you die, leave or the server restarts.")
             end
             for i, it in ipairs(st.items) do
                 row(invList, RP1942.Inventory.label(it), false, {

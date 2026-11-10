@@ -45,7 +45,7 @@ local function inSight(ply, ent)
         filter = function(e)
             if e == ply or e == ent or e:IsPlayer() then return false end
             local class = e:GetClass()
-            if class == "rp1942_good" or class == "rp1942_flour" or class == "rp1942_scrap" then return false end
+            if class == "rp1942_good" or class == "rp1942_goods_crate" or class == "rp1942_flour" or class == "rp1942_scrap" then return false end
             return true
         end,
     })
@@ -145,7 +145,9 @@ end
 hook.Add("GravGunOnPickedUp", "RP1942_GoodsHolder", holder)
 -- Someone else's food or drink (rp1942_good: IsForSale) can't be taken: E buys it
 local function othersForSale(ply, ent)
-    if not (IsValid(ent) and ent:GetClass() == "rp1942_good" and ent.IsForSale and ent:IsForSale()) then return false end
+    if not IsValid(ent) then return false end
+    local class = ent:GetClass()
+    if not ((class == "rp1942_good" or class == "rp1942_goods_crate") and ent.IsForSale and ent:IsForSale()) then return false end
     if ent:IsOwnedBy(ply) or not ent:OwnerOnline() then return false end
     return true
 end
@@ -168,9 +170,11 @@ hook.Add("onPocketItemDropped", "RP1942_GoodsHolder", function(ply, ent) holder(
 -- Goods left lying around too long disappear (checked every 30 s, cheap)
 timer.Create("RP1942_GoodsLifetime", 30, 0, function()
     local now = CurTime()
-    for _, ent in ipairs(ents.FindByClass("rp1942_good")) do
-        if ent.RP1942_Expires and ent.RP1942_Expires < now and not ent:IsPlayerHolding() then
-            ent:Remove()
+    for _, class in ipairs({ "rp1942_good", "rp1942_goods_crate" }) do
+        for _, ent in ipairs(ents.FindByClass(class)) do
+            if ent.RP1942_Expires and ent.RP1942_Expires < now and not ent:IsPlayerHolding() then
+                ent:Remove()
+            end
         end
     end
 end)
@@ -183,9 +187,11 @@ from us whenever the pocket changes.
 local function pocketGoods(ply)
     local list = {}
     for index, item in pairs(ply.darkRPPocket or {}) do
-        local id = item.Class == "rp1942_good" and item.DT and item.DT.Good
+        local crate = item.Class == "rp1942_goods_crate"
+        local id = (item.Class == "rp1942_good" or crate) and item.DT and item.DT.Good
         if id and RP1942.Goods[id] then
-            list[#list + 1] = { index = index, id = id, q = math.Clamp(tonumber(item.DT.Quality) or 2, 1, 3) }
+            list[#list + 1] = { index = index, id = id, q = math.Clamp(tonumber(item.DT.Quality) or 2, 1, 3),
+                n = crate and math.max(1, math.floor(tonumber(item.DT.Count) or 1)) or 1 }
         end
     end
     return list
@@ -196,7 +202,7 @@ local function sendPocketGoods(ply)
     local counts = {}
     for _, g in ipairs(pocketGoods(ply)) do
         local key = g.id .. "|" .. g.q
-        counts[key] = (counts[key] or 0) + 1
+        counts[key] = (counts[key] or 0) + g.n
     end
     net.Start("RP1942_PocketGoods")
     net.WriteTable(counts)
@@ -281,9 +287,11 @@ function RP1942.sellGoodEntity(ent)
     local ply = ent.RP1942_Holder
     if not IsValid(ply) then return end   -- nobody to pay: leave it
     ent.RP1942_Sold = true
-    local q = ent:GetQuality()
+    local q, n = ent:GetQuality(), RP1942.goodCount(ent)
     ent:Remove()
-    RP1942.sellGoods(ply, { { id = id, q = q } })
+    local items = {}
+    for i = 1, n do items[i] = { id = id, q = q } end
+    RP1942.sellGoods(ply, items)
 end
 
 -- Sell goods from a player's pocket: all of them, or only one good (and quality)
@@ -291,7 +299,7 @@ function RP1942.sellPocketGoods(ply, onlyId, onlyQ)
     local items = {}
     for _, g in ipairs(pocketGoods(ply)) do
         if (not onlyId or g.id == onlyId) and (not onlyQ or g.q == onlyQ) then
-            items[#items + 1] = { id = g.id, q = g.q }
+            for _ = 1, g.n do items[#items + 1] = { id = g.id, q = g.q } end
             ply:removePocketItem(g.index)
         end
     end

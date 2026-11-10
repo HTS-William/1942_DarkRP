@@ -117,12 +117,18 @@ function ENT:Tune(url, name, volume)
     return true
 end
 
--- Pushed into a market: sold (a tick later, never inside the physics callback)
+-- Pushed into a market: sold. Bumped into the same good (or a crate of it):
+-- they merge into a crate (sv_goods_stack.lua). A tick later, never inside
+-- the physics callback.
 function ENT:PhysicsCollide(data)
     local other = data.HitEntity
-    if IsValid(other) and other:GetClass() == "rp1942_market" and not self.RP1942_Sold then
+    if not IsValid(other) or self.RP1942_Sold or self.RP1942_Stacked then return end
+    local class = other:GetClass()
+    if class == "rp1942_market" then
         timer.Simple(0, function()
             if IsValid(self) and RP1942.sellGoodEntity then RP1942.sellGoodEntity(self) end
         end)
+    elseif class == "rp1942_good" or class == "rp1942_goods_crate" then
+        timer.Simple(0, function() if RP1942.stackGoods then RP1942.stackGoods(self, other) end end)
     end
 end

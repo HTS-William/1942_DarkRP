@@ -5,6 +5,8 @@ of RP1942.Goods (rp1942_production/sh_production.lua); its quality is 1-3 stars.
     Shift + E   eat / drink it
     Radio Set   E tunes it (it's a working radio), Shift + E carries it
     pocket it, hand it over, or push it into a market to sell it
+    bump it into the same good (same quality and owner): they merge into a
+                crate (rp1942_goods_crate, rp1942_production/sv_goods_stack.lua)
 
 Food and drink (goods that can be eaten: bread, wine, rations) have an
 OWNER: whoever made them, or last bought them. Anyone else can't pocket,

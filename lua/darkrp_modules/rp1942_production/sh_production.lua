@@ -29,7 +29,8 @@ the panel and press E.
 Selling:
     - At a MARKET (placed by admins with !addmarket). Its board shows today's
       prices, with arrows showing each price against normal and one good "in demand" for a bonus. SELL a
-      kind of good from your pocket, SELL EVERYTHING, or push goods into it.
+      kind of good from your pocket, SELL EVERYTHING, or push goods (or a
+      crate of them) into it.
       Prices are scaled by the economy and quality, taxed like wages, and every
       market sale nudges the economy bar up a little.
     - To other players, privately, for whatever they'll pay (/give, trades).
@@ -37,13 +38,21 @@ Selling:
 
 Eating / drinking: hold Shift and press E on a good. E alone picks it up.
 
+Crates: goods of the same kind and quality (and owner) that touch merge into
+a crate, up to 20, like DarkRP's shipments (sv_goods_stack.lua). E on a crate
+takes one into your pocket, Shift+E carries it, a market sells all of it, and
+it's one pocket item. Radio Sets never go in a crate. The goods in it are
+counted everywhere goods are: market pocket sales, the F4 shop limits, the
+inventory (rp1942_inventory) and the leave cleanup.
+
 Files:
     sh_production.lua     this config
     sv_production.lua     selling, quality, demand, the economy nudge, markets (!addmarket)
+    sv_goods_stack.lua    goods merging into crates (RP1942.canStackGoods / stackGoods)
     cl_production.lua     the interactive panels, labels and the drunk effect
     sv_oil_sites.lua      oil sites (!addoilsite) and building rigs on them
     sv/cl_prodspawn.lua   the staff production spawner (!prodspawn)
-    lua/entities/rp1942_good, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
+    lua/entities/rp1942_good, rp1942_goods_crate, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
         rp1942_oil_rig, rp1942_factory, rp1942_scrap
     darkrp_customthings/entities.lua   the F4 shop entries (prices, limits, jobs)
 ---------------------------------------------------------------------------]]
@@ -245,8 +254,17 @@ function RP1942.rollCount(v)
 end
 
 -- The good id of an entity, or nil
+-- The good an entity is (a single good, or a crate of them), or nil
 function RP1942.goodOf(ent)
-    return IsValid(ent) and ent:GetClass() == "rp1942_good" and ent.GetGood and ent:GetGood() or nil
+    if not IsValid(ent) then return nil end
+    local class = ent:GetClass()
+    return (class == "rp1942_good" or class == "rp1942_goods_crate") and ent.GetGood and ent:GetGood() or nil
+end
+
+-- How many goods an entity is: a crate's count, 1 for a single good
+function RP1942.goodCount(ent)
+    if IsValid(ent) and ent:GetClass() == "rp1942_goods_crate" then return ent:GetCount() end
+    return 1
 end
 
 -- The good in demand right now ("" = none yet)

@@ -4,7 +4,7 @@
 The moment someone disconnects, everything they own in the world is removed:
 props, text screens and other tool things, F4 entities (printers, ovens,
 barrels...), their oil rig, their padlocks, for-sale food with their name on
-it, dropped guns they own.
+it (single or in a crate), F4 shop goods and ammo boxes, dropped guns they own.
 
 Why: DarkRP's prop protection keeps a leaver's props for 2 minutes and hands
 them back if they rejoin in time, so leaving and rejoining kept everything.
@@ -29,7 +29,8 @@ local function ownedBy(e, ply, sid)
     if e.SID and ply.SID and e.SID == ply.SID then return true end            -- DarkRP's bought things
     if e.RP1942_ShopOwner == ply then return true end                         -- F4 shop goods
     if e.GetLockOwner and e:GetLockOwner() == ply then return true end        -- padlocks
-    if e:GetClass() == "rp1942_good" and e.GetOwnerID and e:GetOwnerID() == sid then return true end   -- food with their name
+    local class = e:GetClass()
+    if (class == "rp1942_good" or class == "rp1942_goods_crate") and e.GetOwnerID and e:GetOwnerID() == sid then return true end   -- food with their name
     return false
 end
 
@@ -58,7 +59,7 @@ end
 -- "12 props, 1 text screen, 1 printer"
 local NICE = {
     prop_physics = "prop", gmod_textscreen = "text screen", sammyservers_textscreen = "text screen",
-    rp1942_good = "good", rp1942_padlock = "padlock", spawned_weapon = "dropped weapon",
+    rp1942_good = "good", rp1942_goods_crate = "crate of goods", rp1942_padlock = "padlock", spawned_weapon = "dropped weapon",
 }
 local function summary(list)
     local counts, order = {}, {}

@@ -237,8 +237,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Inventory (F4)
 - The Inventory tab in F4 is storage that stays with you: through death, leaving and server restarts.
-- STORE moves something from your pocket into your inventory (STORE ALL does the whole pocket). TO POCKET takes one back out, DROP puts one on the ground in front of you.
-- Goods (bread, wine, oil, parts and the rest) and weapons can be stored, up to 10 of the same good at the same quality, or the same gun, per slot. 24 slots. A gun keeps exactly the ammo it went in with.
+- Store moves something from your pocket into your inventory (Store all does the whole pocket). To pocket takes one back out, Drop puts one on the ground in front of you.
+- Goods (bread, wine, oil, parts and the rest), crates of goods, weapons and ammo boxes can be stored. 24 slots: up to 10 of the same good at the same quality in a slot, and up to 300 rounds of the same ammo. Guns don't stack: each gun takes a slot, with exactly the ammo it went in with.
+- Goods and ammo always merge: what goes in fills the slots already holding the same thing first.
+- Ammo comes back out as one box with all the rounds in that slot.
 - It's locked while you're dead, arrested, being handcuffed, and for 15 seconds after you're hurt: it can't save loot from a fight.
 
 # Orders
@@ -263,6 +265,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
 - Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Each dealer's menu shows which ammo a weapon takes. Grenades, molotovs, mines, explosive charges, flamethrower fuel, crossbow bolts and flare rounds are sold there too. One grenade refill fits any grenade.
 - Bought ammo is put down in front of you as a box with what it is written above it: press E on it to take the rounds. Only you can open or pocket a box you bought, and you can have 5 waiting at most.
+- Boxes of the same ammo merge into one when they touch. Ammo boxes can be stored in your inventory (F4).
 - Weapons come loaded: guns with a full magazine; a grenade, molotov, dynamite bundle or mine comes with itself to throw or place; the flamethrower with a tank of fuel.
 - Buying more than one (set the amount next to Buy, up to 20) brings a crate: press E on it to take one weapon out at a time. Shoot a crate to pieces and what's left inside is lost.
 - Black Market: anti-tank launchers, explosives and grenades, silenced guns, submachine guns and more. Cherkesov: Soviet and Allied rifles, machine guns, anti-tank rifles and more. Their prices are fixed: the economy doesn't change them.
@@ -281,6 +284,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
 - Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
 - E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).
+- Goods of the same kind and quality merge into a crate when they touch (up to 20), like shipments do. E on a crate takes one into your pocket, Shift+E carries the crate, and pushing it into a market sells everything in it. A crate in your pocket takes one space. Radio Sets never go in a crate.
+- Someone else's food in a crate is bought one at a time with E, the same as a single one.
 - Food and drink (bread, wine, tinned rations) belong to whoever made them. Set them out to sell: anyone else who presses E on one buys it at today's market price. The money goes to you (taxed like a market sale) and it goes into the buyer's pocket.
 - Once bought it's the buyer's: they can eat it, sell it on the same way, or take it to a market. Nobody can pocket, carry or eat food that isn't theirs without buying it. If the owner leaves the server, it's free to take.
 - Anyone can press a machine's buttons, so keep an eye on yours.
@@ -307,7 +312,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The less downtime, the better the run, and the better the odds of rare goods: common (rations, boots), uncommon (pots, kettles), rare (clocks) and very rare (radios). COLLECT when the run is done.
 
 # Markets
-- Sell goods at a market: SELL one kind of good from your pocket, SELL EVERYTHING, or push goods into the mailbox.
+- Sell goods at a market: SELL one kind of good from your pocket, SELL EVERYTHING, or push goods (or a whole crate of them) into the mailbox.
 - Scroll the price board with its arrows or your mouse wheel. Goods you carry are listed first.
 - Prices follow the economy, and one good is in demand each hour for a bonus. The arrow beside each price shows how far it is above or below normal (normal = an average economy). Sales are taxed like wages.
 - Every market sale helps the economy a little, and a better economy means higher wages for everyone. Selling privately to other players doesn't move the economy.

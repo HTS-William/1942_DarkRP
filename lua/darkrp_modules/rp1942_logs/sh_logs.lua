@@ -19,6 +19,8 @@ searched by kind:
     [42Bros][SETUP]   once after the map loads: what's placed on this map and
                     what's missing
     [42Bros][LEAVE]   what was removed when a player left (sv_disconnect_cleanup)
+    [42Bros][INVENTORY] what players store, take out and drop from their F4
+                    inventory (rp1942_inventory): "Anna stored Bread (fine)  x3"
 
 Lines also go to a file per day: garrysmod/data/rp1942/logs/YYYY-MM-DD.txt
 (download it from your host's file manager). Old files are not deleted.

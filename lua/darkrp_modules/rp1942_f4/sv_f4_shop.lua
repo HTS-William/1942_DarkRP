@@ -10,13 +10,14 @@ local function spawnPos(ply) return RP1942.spawnInFront(ply, 85) end   -- rp1942
 
 -- Bought ammo arrives as a labelled box on the ground (rp1942_ammo_box), not
 -- straight into your weapon. At most this many unopened boxes each, so the
--- shop can't be spammed into a pile of them.
+-- shop can't be spammed into a pile of them. Boxes that merged count as all
+-- the boxes in them, and a crate of shop goods as all the goods in it.
 local MAX_AMMO_BOXES = 5
 
 local function ammoBoxesOf(ply)
     local n = 0
     for _, e in ipairs(ents.FindByClass("rp1942_ammo_box")) do
-        if e.RP1942_ShopOwner == ply then n = n + 1 end
+        if e.RP1942_ShopOwner == ply then n = n + (e.RP1942_Boxes or 1) end   -- merged boxes still count
     end
     return n
 end
@@ -26,9 +27,13 @@ local function owned(ply, item)
     local good = item.type == "good" and RP1942.Goods and RP1942.Goods[item.good]
     if good and good.radio and RP1942.radiosHeld then return RP1942.radiosHeld(ply) end
     local n = 0
-    local class = item.type == "good" and "rp1942_good" or item.class
-    for _, e in ipairs(ents.FindByClass(class)) do
-        if e.RP1942_ShopOwner == ply and (item.type ~= "good" or e:GetGood() == item.good) then n = n + 1 end
+    local classes = item.type == "good" and { "rp1942_good", "rp1942_goods_crate" } or { item.class }
+    for _, class in ipairs(classes) do
+        for _, e in ipairs(ents.FindByClass(class)) do
+            if e.RP1942_ShopOwner == ply and (item.type ~= "good" or e:GetGood() == item.good) then
+                n = n + (RP1942.goodCount and RP1942.goodCount(e) or 1)   -- a crate counts what's in it
+            end
+        end
     end
     return n
 end

@@ -106,7 +106,7 @@ if SERVER then
         local function notFloor(e)
             if e == ent or e:IsPlayer() or e:IsNPC() or e:IsWeapon() then return false end
             local class = e:GetClass()
-            return not (class == "rp1942_good" or class == "spawned_weapon" or class == "spawned_money" or class == ent:GetClass())
+            return not (class == "rp1942_good" or class == "rp1942_goods_crate" or class == "spawned_weapon" or class == "spawned_money" or class == ent:GetClass())
         end
         local tr = util.TraceHull({
             start = start, endpos = stop, mins = Vector(-half, -half, 0), maxs = Vector(half, half, 1),

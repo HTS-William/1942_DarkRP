@@ -1,6 +1,7 @@
 --[[---------------------------------------------------------------------------
 42Bros - a box of period ammo (rp1942_core/sh_ammo.lua), e.g. found in
-a dumpster. Press E to take the rounds. Can be pocketed.
+a dumpster. Press E to take the rounds. Can be pocketed and stored in the
+inventory. Boxes of the same ammo merge when they touch.
     RP1942.makeAmmoBox(ammoType, amount, pos)   (server)
 ---------------------------------------------------------------------------]]
 ENT.Type = "anim"

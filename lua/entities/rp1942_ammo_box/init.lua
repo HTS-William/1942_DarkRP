@@ -25,6 +25,30 @@ function ENT:Use(ply)
     self:Remove()
 end
 
+-- Two boxes of the same ammo that touch become one, like DarkRP's shipments
+-- (and only the same buyer's, or two that nobody bought). A tick later,
+-- never inside the physics callback.
+local MAX_ROUNDS = 999
+
+function ENT:PhysicsCollide(data)
+    local other = data.HitEntity
+    if not IsValid(other) or other:GetClass() ~= "rp1942_ammo_box" then return end
+    timer.Simple(0, function()
+        if not (IsValid(self) and IsValid(other)) or self.used or other.used then return end
+        if self:GetAmmoType() ~= other:GetAmmoType() or self.RP1942_ShopOwner ~= other.RP1942_ShopOwner then return end
+        if self:IsPlayerHolding() or other:IsPlayerHolding() then return end
+        local total = self:GetAmount() + other:GetAmount()
+        if total > MAX_ROUNDS then return end
+        -- the fuller box stays
+        local keep, gone = self, other
+        if other:GetAmount() > self:GetAmount() then keep, gone = other, self end
+        gone.used = true
+        keep:SetAmount(total)
+        keep.RP1942_Boxes = (keep.RP1942_Boxes or 1) + (gone.RP1942_Boxes or 1)   -- the F4 shop's box limit still counts both
+        gone:Remove()
+    end)
+end
+
 -- The box model the F4 Shop uses for that ammo type
 local function boxModel(ammoType)
     local o = RP1942.F4Shop and RP1942.F4Shop.ammo and RP1942.F4Shop.ammo.overrides and RP1942.F4Shop.ammo.overrides[ammoType]

@@ -150,7 +150,7 @@ end
 
 local function remove(ply)
     local ent = aim(ply).Entity
-    if IsValid(ent) and (MACHINES[ent:GetClass()] or ent:GetClass() == "rp1942_good") then
+    if IsValid(ent) and (MACHINES[ent:GetClass()] or ent:GetClass() == "rp1942_good" or ent:GetClass() == "rp1942_goods_crate") then
         ServerLog(string.format("[42Bros] %s removed %s (production spawner)\n", ply:Nick(), ent:GetClass()))
         if ent.RP1942_SaveId then
             DarkRP.notify(ply, 0, 5, "That one was saved: it's gone for now but comes back on restart. Use !unsaveprod to remove it for good.")
