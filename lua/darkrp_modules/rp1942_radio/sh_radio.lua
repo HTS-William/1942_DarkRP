@@ -44,9 +44,14 @@ R.settings = {
     -- (its price in the F4 shop: rp1942_f4/sh_f4_shop.lua, "Radio Set")
 }
 
--- The stations in the menu. name / url (a direct stream link).
+-- The stations in the menu. name / url (a direct stream link), and
+-- optionally backups = { other links }: tried in order if the url can't be
+-- reached. Keep the url the same once radios use it (they're saved with it).
+-- Live365 stations: use https://streaming.live365.com/<id>, not a
+-- das-edge...cdnstream.com link (those are one server of theirs, and they move).
 R.stations = {
-    { name = "Radio 1942", url = "https://das-edge13-live365-dal02.cdnstream.com/a21441" },
+    { name = "Radio 1942", url = "https://streaming.live365.com/a21441",
+      backups = { "https://das-edge13-live365-dal02.cdnstream.com/a21441" } },
     { name = "1940s Radio", url = "https://uk3.internet-radio.com/proxy/1940sradio/stream" },
     -- { name = "Another station", url = "http://your.stream.here:8000/stream" },
 }
@@ -58,6 +63,10 @@ function RP1942.radioStation(url)
     if not isstring(url) then return nil end
     for i, st in ipairs(R.stations) do
         if st.url == url then return st, i end
+        -- (a backup link counts too: radios saved with a station's old link keep it)
+        for _, b in ipairs(st.backups or {}) do
+            if b == url then return st, i end
+        end
     end
 end
 

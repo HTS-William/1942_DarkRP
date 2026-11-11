@@ -370,6 +370,8 @@ GM.Config.DisallowDrop = {
     ["weapon_physcannon"] = true,
     ["weapon_physgun"] = true,
     ["weaponchecker"] = true,
+    ["rp1942_weapon_checker"] = true,
+    ["rp1942_newsreel_camera"] = true,
 }
 
 -- The list of weapons people spawn with.

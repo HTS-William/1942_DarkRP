@@ -85,7 +85,7 @@ local RAID_JOBS = {
     thief = true, prothief = true,
     resistance = true, resmedic = true, resoperative = true, resleader = true,
 }
-local NO_RAID_REICH = { gersupplier = true, scientist = true, fuhrer = true }   -- (the Reich Banker is a civilian job: NO)
+local NO_RAID_REICH = { gersupplier = true, scientist = true, fuhrer = true, propaganda = true }   -- (the Reich Banker is a civilian job: NO)
 
 
 local function job(tbl)
@@ -838,6 +838,31 @@ TEAM_FUHRER = job(whitelisted{
     menu = "RP1942_FuhrerMenu",
     demoteOnDeath = true,
 })
+-- The Propaganda Minister: newsreels and broadcasts. Carries the hand-held
+-- Newsreel Camera, and is the only job that can buy the Cinema Screen (F4 Shop,
+-- Tools: rp1942_broadcast).
+TEAM_PROPAGANDA = job(whitelisted{
+    name = "Propaganda Minister",
+    color = Color(150, 40, 30),
+    model = M.officer,
+    description = [[Reich Minister of Propaganda. Runs the newsreels: films with the hand-held
+Newsreel Camera (left click: on air, right click: zoom) and shows it live on a
+Cinema Screen (F4 Shop, Tools), in the cinema or the town square. Films speeches,
+parades and arrests; keeps the people watching. An official, not police: no
+arrests, no raids.]],
+    weapons = { W.p38, "rp1942_newsreel_camera" },
+    command = "propaganda",
+    max = 1,
+    salary = SAL * 1.8,
+    admin = 0,
+    faction = "reich",
+    arrests = false,   -- no police powers (no batons, no checker)
+    noChecker = true,
+    branch = "command",
+    category = "Reich Command",
+    sortOrder = 20,
+})
+
 --[[###########################################################################
                                    STAFF
 ###########################################################################]]
@@ -850,7 +875,7 @@ TEAM_STAFF = job{
     color = Color(40, 110, 160),
     model = M.staff or M.civilian,
     description = [[On duty as staff. Carries the admin tools. Handle reports, sits and events; don't roleplay in this job.]],
-    weapons = { "weapon_keypadchecker", "door_ram", "arrest_stick", "unarrest_stick", "stunstick", "weaponchecker" },
+    weapons = { "weapon_keypadchecker", "door_ram", "arrest_stick", "unarrest_stick", "stunstick", "rp1942_weapon_checker" },
     command = "staffduty",
     max = 0,
     salary = 0,

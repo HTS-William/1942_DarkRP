@@ -16,6 +16,7 @@ local COLORS = {
     SETUP  = Color(201, 168, 92),
     WARN   = Color(255, 170, 0),
     LEAVE  = Color(170, 160, 142),
+    SEARCH = Color(215, 150, 90),
 }
 local TAG_COLOR = Color(201, 168, 92)
 

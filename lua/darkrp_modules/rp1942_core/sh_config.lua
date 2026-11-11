@@ -148,7 +148,7 @@ RP1942.Weapons = {
     stun        = "stunstick",           -- every Reich job carries stun + handcuffs + unarrest
     arrest      = "rp1942_handcuffs",    -- handcuffs: 8 s holding them still, then arrested (rp1942_handcuffs); "arrest_stick" = the instant baton
     unarrest    = "unarrest_stick",
-    checker     = "weaponchecker",
+    checker     = "rp1942_weapon_checker",   -- pat down / pocket search / confiscate (lua/weapons/rp1942_weapon_checker.lua)
     ram         = "door_ram",
     lockpick    = "lockpick",
     lockpick_pro = "rp1942_lockpick_pro", -- the Pro Thief's fast lockpick (lua/weapons/rp1942_lockpick_pro.lua)

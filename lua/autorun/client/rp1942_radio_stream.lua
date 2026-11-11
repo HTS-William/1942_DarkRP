@@ -33,20 +33,34 @@ local function setting(key, default)
     return RP1942.radioSetting and RP1942.radioSetting(key) or default
 end
 
-local function start(ent, url)
+local RETRY = 30   -- seconds before trying a station that couldn't be reached again
+
+-- Plays the station `url`. A station can list backup links (sh_radio.lua,
+-- `backups`): if one can't be reached the next is tried, and if none can,
+-- the whole lot again after RETRY seconds.
+local function start(ent, url, attempt)
     local range = setting("range", 900)
+    attempt = attempt or 1
+    local st = RP1942.radioStation and RP1942.radioStation(url)
+    local links = { st and st.url or url }   -- the station's main link first, even on a radio saved with an old one
+    for _, b in ipairs(st and st.backups or {}) do links[#links + 1] = b end
+    local link = links[attempt]
     ent.radioLoading = true
     ent.radioPlaying = url
-    sound.PlayURL(url, "3d noblock", function(chan, err, errName)
+    sound.PlayURL(link, "3d noblock", function(chan, err, errName)
         if not IsValid(ent) or ent.radioPlaying ~= url then
             if IsValid(chan) then chan:Stop() end
             return
         end
-        ent.radioLoading = false
         if not IsValid(chan) then
+            MsgC(Color(255, 170, 0), "[42Bros] Radio: couldn't play " .. (st and st.name or "a station") .. " (" .. tostring(errName or err) .. ")\n")
+            if links[attempt + 1] then return start(ent, url, attempt + 1) end
+            ent.radioLoading = false
             ent.radioFailed = errName or tostring(err)
+            ent.radioRetryAt = RealTime() + RETRY
             return
         end
+        ent.radioLoading = false
         ent.radioFailed = nil
         -- 3D only for direction: its own fade starts far beyond our range
         chan:Set3DFadeDistance(range * 4, range * 8)
@@ -104,6 +118,9 @@ hook.Add("Think", "RP1942_RadioStreams", function()
             elseif ent.radioPlaying ~= url then
                 RP1942.radioStop(ent)
                 start(ent, url)
+            elseif ent.radioFailed and RealTime() >= (ent.radioRetryAt or 0) then
+                RP1942.radioStop(ent)   -- the station was off: try it again
+                start(ent, url)
             end
 
             local chan = ent.radioChannel
@@ -118,7 +135,7 @@ end)
 function RP1942.radioStatus(ent)
     if ent:GetURL() == "" then return "Off" end
     if not enabled:GetBool() then return "Muted (rp1942_radio 0)" end
-    if ent.radioFailed then return "No signal (" .. tostring(ent.radioFailed) .. ")" end
+    if ent.radioFailed then return "No signal: the station is off the air, trying again" end
     if ent.radioLoading or not IsValid(ent.radioChannel) then return "Tuning in..." end
     return "Playing"
 end

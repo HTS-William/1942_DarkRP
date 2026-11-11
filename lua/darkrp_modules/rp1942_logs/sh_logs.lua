@@ -19,6 +19,8 @@ searched by kind:
     [42Bros][SETUP]   once after the map loads: what's placed on this map and
                     what's missing
     [42Bros][LEAVE]   what was removed when a player left (sv_disconnect_cleanup)
+    [42Bros][SEARCH]  weapon checker searches, what was confiscated and given
+                    back (rp1942_search)
     [42Bros][INVENTORY] what players store, take out and drop from their F4
                     inventory (rp1942_inventory): "Anna stored Bread (fine)  x3"
 
@@ -45,7 +47,7 @@ RP1942.Logs = {
     harmless = {
         keys = true, pocket = true, weapon_physgun = true, weapon_physcannon = true,
         gmod_tool = true, gmod_camera = true, rp1942_hands = true,
-        arrest_stick = true, unarrest_stick = true, weaponchecker = true, med_kit = true,
+        arrest_stick = true, unarrest_stick = true, weaponchecker = true, rp1942_weapon_checker = true, rp1942_newsreel_camera = true, med_kit = true,
         door_ram = true, lockpick = true, rp1942_lockpick_pro = true,
     },
 }

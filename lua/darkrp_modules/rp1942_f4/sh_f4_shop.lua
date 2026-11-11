@@ -106,13 +106,21 @@ RP1942.F4Shop = {
         -- below `price`. So buying one to sell it always loses money.
         { name = "Radio Set", type = "good", good = "radio", quality = 3, markup = 1.5, price = 600, max = 1,
           category = "Supplies", model = "models/props_lab/citizenradio.mdl",
-          description = "A wireless set. Press E on it to tune in a station or any stream link; Shift+E to carry it." },
+          description = "A wireless set. Press E on it to tune in one of the server's stations; Shift+E to carry it." },
 
         -- Padlock (rp1942_padlocks): fit it to a prop you own and the prop becomes
         -- a door. Our answer to keypads: no codes.
         { name = "Padlock", type = "weapon", class = "rp1942_padlock_kit", price = 250,
           category = "Tools", model = "models/props_wasteland/prison_padlock001a.mdl",
           description = "Fit it to a prop you own: the prop becomes a door that opens for you and whoever you let in (Shift+E on the lock)." },
+
+        -- Live broadcasts (rp1942_broadcast): the Propaganda Minister films with
+        -- the hand-held Newsreel Camera (it comes with the job) and shows it on
+        -- a Cinema Screen, in black and white, with what's heard around them.
+        -- Only the Propaganda Minister (jobs.lua) can buy the screen.
+        { name = "Cinema Screen", type = "entity", class = "rp1942_cinema_screen", price = 3000, max = 1,
+          category = "Tools", model = "models/hunter/plates/plate3x5.mdl", jobs = { "propaganda" },
+          description = "Shows a Newsreel Camera that's on air, live in black and white, with what's heard around it. E changes channel." },
 
         -- More examples - remove the -- in front of a line to switch it on:
 

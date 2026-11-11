@@ -196,6 +196,13 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Being arrested or killed clears it, and so does joining the Reich. Otherwise it runs out on its own.
 - Members of the Reich can't be arrested. (Undercover agents can, so their cover holds.)
 
+# Weapon checker (searches)
+- Every Reich job carries a weapon checker. Look at a player up close: left click pats them down (3 seconds) and lists the weapons they carry; right click searches their pockets too (8 seconds) and lists everything in them.
+- Stay next to them while the bar fills: if either of you moves away, the search stops. They see who's searching them.
+- The list lets you confiscate weapons, shipments and ammo, one at a time or all at once. Confiscated things are kept, not destroyed: R with the checker on the player gives everything back. They're lost if the player leaves.
+- Tools aren't weapons and aren't listed: keys, hands, physgun, toolgun, camera, batons, handcuffs.
+- Searching is roleplay: give a reason, and don't search the same player over and over.
+
 # Handcuffs (arrests)
 - The Reich arrests with handcuffs. Left click a player to grab them: they're held still (no moving, shooting, sitting or changing job) and a bar fills for both of you. After 8 seconds they're arrested and taken to jail.
 - The arrest is stopped if the officer walks away, puts the handcuffs away or right clicks to let go, or if either of them dies. Shooting the officer is how comrades break someone free.
@@ -235,6 +242,13 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The Radio Set the factory makes is a working radio: E tunes it, Shift+E carries it, and it sells at the market like any other good. The F4 shop sells one too, always for more than the market pays for it. Fixed sets placed by staff can be tuned by anyone.
 - One radio per player: a Radio Set you have in the world, your pocket or your inventory all count.
 - rp1942_radio_volume 0-1 (console) sets how loud radios are for you; rp1942_radio 0 silences them all.
+
+# Newsreel camera and cinema screen
+- The Propaganda Minister (Reich Command) carries a hand-held Newsreel Camera, and is the only job that can buy a Cinema Screen in the F4 shop (Tools). The screen stands up facing you.
+- With the camera out, left click goes on air (a red ON AIR light shows on it), left click again goes off. Hold right click to zoom: the screen zooms too. Putting it away, dropping it or dying takes it off air.
+- E on the screen changes channel: the nearest camera on air, the next one, then off.
+- The screen shows what the camera films, live in black and white like an old newsreel. Everyone near the screen hears what's said near the camera (voice chat) and the sounds made there: gunshots, doors, footsteps.
+- Filming people is roleplay like anything else: the rules still apply.
 
 # Inventory (F4)
 - The Inventory tab in F4 is storage that stays with you: through death, leaving and server restarts.
