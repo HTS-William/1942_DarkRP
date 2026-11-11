@@ -108,3 +108,23 @@ function RP1942.broadcastCanUse(ent, ply)
     if ent.CPPIGetOwner and ent:CPPIGetOwner() == ply then return true end
     return false
 end
+
+-- The screen and the placed camera belong to the job (the shop only sells them
+-- to the Propaganda Minister): changing to any other job takes them away.
+local JOB_ONLY = { rp1942_cinema_screen = true, rp1942_film_camera = true }
+hook.Add("OnPlayerChangedTeam", "RP1942_Broadcast", function(ply, before, after)
+    local job = RPExtraTeams and RPExtraTeams[after]
+    if job and job.command == "propaganda" then return end
+    local removed = 0
+    for class in pairs(JOB_ONLY) do
+        for _, ent in ipairs(ents.FindByClass(class)) do
+            if ent.RP1942_ShopOwner == ply then
+                ent:Remove()
+                removed = removed + 1
+            end
+        end
+    end
+    if removed > 0 then
+        DarkRP.notify(ply, 0, 5, "Your cinema screen and film camera were taken down: they go with the Propaganda Minister's job.")
+    end
+end)

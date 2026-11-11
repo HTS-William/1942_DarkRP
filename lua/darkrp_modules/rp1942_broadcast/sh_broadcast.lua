@@ -22,6 +22,9 @@ what's going on around the camera:
     Cinema screen    E            change channel: the next camera that's on
                                   air, then off (its owner, or staff)
 
+The screen and the placed camera go with the job: they're removed when their
+owner changes to any other job (or leaves the server).
+
 A camera on air shows a red ON AIR light, so everyone can see they're being
 filmed and heard. People standing at the camera don't hear the screen as well.
 

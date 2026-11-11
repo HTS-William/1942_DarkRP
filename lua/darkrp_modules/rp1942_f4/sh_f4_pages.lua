@@ -248,6 +248,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - With the camera out, left click goes on air (a red ON AIR light shows on it), left click again goes off. Hold right click to zoom: the screen zooms too. Putting it away, dropping it or dying takes it off air.
 - The placed Film Camera films where its lens points (aim it with the physgun). E on it goes on air or off.
 - E on the screen changes channel: the nearest camera on air (hand-held or placed), the next one, then off.
+- The screen and the placed camera go with the job: change to another job and they're taken down.
 - The screen shows what the camera films, live in black and white like an old newsreel. Everyone near the screen hears what's said near the camera (voice chat) and the sounds made there: gunshots, doors, footsteps.
 - Filming people is roleplay like anything else: the rules still apply.
 
