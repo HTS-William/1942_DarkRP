@@ -109,18 +109,30 @@ function RP1942.searchFinish(checker, target, kind)
 end
 
 --[[---------------------------------------------------------------------------
-Confiscating
+Confiscating: it goes into the checker's pocket (or at their feet if it's full)
 ---------------------------------------------------------------------------]]
-local function keep(target, item)
-    target.RP1942_Confiscated = target.RP1942_Confiscated or {}
-    table.insert(target.RP1942_Confiscated, item)
+local full = {}   -- [checker] = true when something had to be left at their feet this time
+
+local function toChecker(checker, ent)
+    if not IsValid(ent) then return end
+    ent.RP1942_ShopOwner = nil   -- (a shop ammo box is the checker's now)
+    if not RP1942.pocketOrLeave(checker, ent) then
+        ent:SetPos(RP1942.spawnInFront and RP1942.spawnInFront(checker, 40) or (checker:GetPos() + Vector(0, 0, 40)))
+        full[checker] = true
+    end
 end
 
 local function takeCarried(checker, target, class)
     if RP1942.searchHidden(class) or not target:HasWeapon(class) then return nil end
     local w = target:GetWeapon(class)
-    keep(target, { kind = "weapon", class = class, clip = IsValid(w) and w:Clip1() or nil })
+    local clip = IsValid(w) and w:Clip1() or nil
     target:StripWeapon(class)
+    if RP1942.weaponExists and not RP1942.weaponExists(class) then return RP1942.weaponName(class) end
+    local ent = RP1942.makeSpawnedWeapon(class, checker:GetPos() + Vector(0, 0, 40), clip and math.max(clip, 0) or nil)
+    if IsValid(ent) then
+        ent.ammoadd = 0   -- just what was in the magazine, no fresh spare rounds
+        toChecker(checker, ent)
+    end
     return RP1942.weaponName(class)
 end
 
@@ -128,8 +140,10 @@ local function takePocket(checker, target, idx, s)
     local entry = target.darkRPPocket and target.darkRPPocket[idx]
     if not entry or entry ~= s.refs[idx] or not canTake(entry) then return nil end
     local name = pocketName(entry)
-    target:removePocketItem(idx)
-    keep(target, { kind = "pocket", entry = entry })
+    -- out of their pocket as the real thing, straight into the checker's
+    local ok, ent = pcall(target.dropPocketItem, target, idx)
+    if not ok or not IsValid(ent) then return nil end
+    toChecker(checker, ent)
     return name
 end
 
@@ -168,40 +182,13 @@ net.Receive("RP1942_SearchTake", function(_, checker)
 
     if #taken > 0 then
         local list = table.concat(taken, ", ")
-        DarkRP.notify(checker, 0, 5, "Confiscated from " .. target:Nick() .. ": " .. list .. ".")
+        DarkRP.notify(checker, 0, 5, "Confiscated from " .. target:Nick() .. ": " .. list .. ". "
+            .. (full[checker] and "Your pocket is full: what didn't fit is at your feet." or "It's in your pocket."))
         DarkRP.notify(target, 1, 6, checker:Nick() .. " confiscated: " .. list .. ".")
         log("%s confiscated from %s: %s", who(checker), who(target), list)
     end
+    full[checker] = nil
     sendList(checker)   -- the list again, without what's gone
 end)
 
---[[---------------------------------------------------------------------------
-Giving it back (Reload on them)
----------------------------------------------------------------------------]]
-function RP1942.searchGiveBack(checker, target)
-    local items = target.RP1942_Confiscated
-    if not items or #items == 0 then
-        return DarkRP.notify(checker, 1, 3, target:Nick() .. " has nothing confiscated.")
-    end
-    target.RP1942_Confiscated = nil
-    local names = {}
-    for _, it in ipairs(items) do
-        if it.kind == "weapon" then
-            local w = target:Give(it.class, true)   -- (no extra ammo with it)
-            if IsValid(w) and it.clip and it.clip >= 0 then w:SetClip1(it.clip) end
-            names[#names + 1] = RP1942.weaponName(it.class)
-        elseif it.kind == "pocket" then
-            -- back through their pocket, put down at their feet
-            target.darkRPPocket = target.darkRPPocket or {}
-            local idx = table.insert(target.darkRPPocket, it.entry) or #target.darkRPPocket
-            local ok = pcall(target.dropPocketItem, target, idx)
-            if ok then names[#names + 1] = pocketName(it.entry) end
-        end
-    end
-    local list = table.concat(names, ", ")
-    DarkRP.notify(checker, 0, 5, "Gave back to " .. target:Nick() .. ": " .. list .. ".")
-    DarkRP.notify(target, 0, 6, checker:Nick() .. " gave back: " .. list .. " (pocket items are at your feet).")
-    log("%s gave back to %s: %s", who(checker), who(target), list)
-end
-
-hook.Add("PlayerDisconnected", "RP1942_Search", function(ply) ply.RP1942_Confiscated = nil end)
+hook.Add("PlayerDisconnected", "RP1942_Search", function(ply) full[ply] = nil end)

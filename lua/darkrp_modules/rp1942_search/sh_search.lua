@@ -6,7 +6,6 @@ Look at a player up close and:
     Left click      PAT DOWN (patTime seconds): the weapons they're carrying
     Right click     SEARCH THEIR POCKETS (searchTime seconds): the weapons
                     they're carrying, and everything in their pocket
-    Reload          give back everything that was confiscated from them
 
 Hold still next to them while the bar fills: if either of you moves away
 (more than `range`), the search stops. They see who's searching them.
@@ -16,12 +15,13 @@ pocket item) by name. Weapons, shipments and ammo can be CONFISCATED, one by
 one or all at once. Tools that aren't weapons (keys, hands, physgun, the
 toolgun, the camera, batons, handcuffs...) aren't listed: see `hidden`.
 
-Confiscated things are kept for the player (not destroyed): Reload with the
-checker on them gives them all back. They're gone if the player leaves.
-Every search and confiscation is logged ([42Bros][SEARCH], rp1942_logs).
+Confiscated things go into the CHECKER's pocket (a gun with just what was in
+its magazine), or at their feet if the pocket is full. To give something
+back, drop it from your pocket. Every search and confiscation is logged
+([42Bros][SEARCH], rp1942_logs).
 
     sh_search.lua    these settings
-    sv_search.lua    the searching, confiscating and giving back
+    sv_search.lua    the searching and confiscating
     cl_search.lua    the list
     lua/weapons/rp1942_weapon_checker.lua   the SWEP itself
 ---------------------------------------------------------------------------]]

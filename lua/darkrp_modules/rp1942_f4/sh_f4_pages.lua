@@ -199,7 +199,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Weapon checker (searches)
 - Every Reich job carries a weapon checker. Look at a player up close: left click pats them down (3 seconds) and lists the weapons they carry; right click searches their pockets too (8 seconds) and lists everything in them.
 - Stay next to them while the bar fills: if either of you moves away, the search stops. They see who's searching them.
-- The list lets you confiscate weapons, shipments and ammo, one at a time or all at once. Confiscated things are kept, not destroyed: R with the checker on the player gives everything back. They're lost if the player leaves.
+- The list lets you confiscate weapons, shipments and ammo, one at a time or all at once. What you confiscate goes into your pocket (at your feet if it's full); a gun keeps only what was in its magazine. To give something back, drop it from your pocket.
 - Tools aren't weapons and aren't listed: keys, hands, physgun, toolgun, camera, batons, handcuffs.
 - Searching is roleplay: give a reason, and don't search the same player over and over.
 

@@ -4,16 +4,15 @@
 Look at a player up close:
     Left click    pat them down: the weapons they carry
     Right click   search their pockets too (takes longer)
-    Reload        give back what was confiscated from them
 Stay next to them while the bar fills. The list that opens lets you
-confiscate weapons, shipments and ammo. Settings and the rest:
+confiscate weapons, shipments and ammo: they go into your pocket. Settings and the rest:
 darkrp_modules/rp1942_search.
 ---------------------------------------------------------------------------]]
 AddCSLuaFile()
 
 SWEP.PrintName     = "Weapon Checker"
 SWEP.Author        = "42Bros"
-SWEP.Instructions  = "Left click: pat down. Right click: search pockets. Reload: give back what was confiscated."
+SWEP.Instructions  = "Left click: pat down. Right click: search pockets. What you confiscate goes into your pocket."
 SWEP.Category      = "42Bros"
 SWEP.Spawnable     = true
 SWEP.AdminOnly     = true
@@ -72,12 +71,7 @@ end
 function SWEP:PrimaryAttack() self:Begin(false) end
 function SWEP:SecondaryAttack() self:Begin(true) end
 
-function SWEP:Reload()
-    if CLIENT or (self.nextReload or 0) > CurTime() then return end
-    self.nextReload = CurTime() + 1
-    local target = self:Aimed()
-    if target then RP1942.searchGiveBack(self:GetOwner(), target) end
-end
+function SWEP:Reload() end
 
 function SWEP:Cancel(reason)
     local target = self:GetTarget()
@@ -122,7 +116,7 @@ if CLIENT then
             draw.SimpleText((self:GetPockets() and "Searching the pockets of " or "Patting down ") .. target:Nick(), "RP1942_F4Body",
                 ScrW() / 2, y - 4, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
         elseif self:Aimed() then
-            draw.SimpleText("Left click: pat down    Right click: search pockets    R: give back", "RP1942_F4Body",
+            draw.SimpleText("Left click: pat down    Right click: search pockets", "RP1942_F4Body",
                 ScrW() / 2, y, C.sub, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
         end
     end
