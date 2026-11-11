@@ -19,6 +19,8 @@ searched by kind:
     [42Bros][SETUP]   once after the map loads: what's placed on this map and
                     what's missing
     [42Bros][LEAVE]   what was removed when a player left (sv_disconnect_cleanup)
+    [42Bros][REPORT]  player reports: sent, claimed, closed (rp1942_reports)
+    [42Bros][CLEANUP] staff removing a player's things (!cleanplayer)
     [42Bros][SEARCH]  weapon checker searches, what was confiscated and given
                     back (rp1942_search)
     [42Bros][INVENTORY] what players store, take out and drop from their F4

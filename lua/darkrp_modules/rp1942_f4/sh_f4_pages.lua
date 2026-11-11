@@ -119,7 +119,7 @@ These rules apply to everyone. Staff may act on anything that breaks their spiri
 # 14. Staff
 - 14. Staff decisions are final in the moment. Disagree on Discord afterwards, not in game.
 - 14a. Staff on Duty, noclip and staff tools are for handling reports, not your own roleplay. ( Removal from staff ).
-- 14b. Report rule breaks with @ in chat or on Discord. Don't take revenge yourself.
+- 14b. Report rule breaks with @ in chat (or /report for a form) or on Discord. Don't take revenge yourself.
 
 #staff Ban lengths (staff only)
 - Where a rule says "then ban": first ban 1 day, then 3 days, then 1 week.
@@ -408,8 +408,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 !whitelists [name or SteamID] - Who's whitelisted for what
 !serverstatus - Players per side, treasury, economy, money in wallets and the richest players (also printed to the server console every 10 minutes)
 !inventory <player> - What a player has stored in their F4 inventory (look only)
+!reports - The open player reports (players send them with @ or /report): claim one, go to the reporter, bring them, clean up the reported player's things, close it with a note
+!cleanplayer <player> - Remove everything one player owns in the world (props, text screens, entities, padlocks, dropped guns), as if they'd left. They're told
 !setupcheck - Check this map: markets, vault, dumpsters, saved machines, APC garage, oil sites, train route, common server mistakes (results in your console)
-- Server logs: kills (flagged SAME SIDE, UNARMED, KILLER ON NLR, STAFF ON DUTY...), money between players, [BIG] payments, and what was removed when someone left. In the server console and in garrysmod/data/rp1942/logs/<date>.txt
+- Server logs: kills (flagged SAME SIDE, UNARMED, KILLER ON NLR, STAFF ON DUTY...), money between players, [BIG] payments, and what was removed when someone left, reports and staff clean-ups. In the server console and in garrysmod/data/rp1942/logs/<date>.txt
 
 #staff Staff: production
 !prodspawn - The production spawner (also the Spawner tab in F4, for staff allowed !prodspawn): ovens, flour, wine barrels, factory lines, scrap metal, oil rigs, markets, both printers, dumpsters, the bank vault, radios and every good at any quality (into your pocket or at your crosshair). Also Finish its timer, Remove it and Save / Unsave it for the machine you're looking at. Z undoes a spawn.

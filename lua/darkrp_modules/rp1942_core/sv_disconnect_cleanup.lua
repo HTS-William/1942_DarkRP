@@ -16,6 +16,13 @@ passes to the next driver).
 
 GRACE: seconds to wait before removing (0 = right away). With a grace time,
 someone who crashes and rejoins in time keeps their things.
+
+Staff can do the same to a player who's still on the server:
+    !cleanplayer <name>     (ULX, 42Bros) removes everything they own in the
+                            world, as if they'd left, and tells them so. Also
+                            the "Clean up" button in the report list (!reports).
+    RP1942.playerStuff(ply)          what they own (the list, and "3 props, 1 printer")
+    RP1942.cleanupPlayer(ply, by)    removes it; returns how many and the summary
 ---------------------------------------------------------------------------]]
 local GRACE = 0
 
@@ -83,6 +90,32 @@ local function removeAll(name, sid, list)
     if n > 0 and RP1942.log then
         RP1942.log("LEAVE", "%s (%s) left: removed %d thing(s) (%s)", name, sid, n, summary(list))
     end
+end
+
+-- What a player owns in the world: the list, and "12 props, 1 printer"
+function RP1942.playerStuff(ply)
+    if not IsValid(ply) then return {}, "" end
+    local list = collect(ply, ply:SteamID())
+    return list, summary(list)
+end
+
+-- Staff clean-up of a player who's still here (by = the staff member, or nil
+-- for the console). Returns how many things were removed and what they were.
+function RP1942.cleanupPlayer(ply, by)
+    local list, what = RP1942.playerStuff(ply)
+    local n = 0
+    for _, e in ipairs(list) do
+        if IsValid(e) then e:Remove() n = n + 1 end
+    end
+    if n > 0 then
+        local who = IsValid(by) and by:Nick() or "Staff"
+        DarkRP.notify(ply, 1, 8, who .. " removed your things: " .. what .. ".")
+        if RP1942.log then
+            RP1942.log("CLEANUP", "%s cleaned up %s (%s): removed %d thing(s) (%s)",
+                IsValid(by) and (by:Nick() .. " (" .. by:SteamID() .. ")") or "Console", ply:Nick(), ply:SteamID(), n, what)
+        end
+    end
+    return n, what
 end
 
 hook.Add("PlayerDisconnected", "RP1942_RemoveStuff", function(ply)

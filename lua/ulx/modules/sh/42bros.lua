@@ -83,6 +83,27 @@ local inv = register("inventory", ulx.rp1942inventory, "!inventory", ULib.ACCESS
 inv:addParam{ type = ULib.cmds.PlayerArg }
 
 --[[---------------------------------------------------------------------------
+Reports (rp1942_reports) and cleaning up after one player
+---------------------------------------------------------------------------]]
+function ulx.rp1942reports(ply)
+    if not inGameOnly(ply) then return end
+    if not RP1942.sendReports then return ULib.tsayError(ply, "Reports aren't loaded.", true) end
+    RP1942.sendReports({ ply }, true)
+end
+register("reports", ulx.rp1942reports, "!reports", ULib.ACCESS_OPERATOR,
+    "Opens the list of open player reports (players send them with @ or /report): claim, go to, bring, clean up, close. Also lets you see new reports as they come in.")
+
+function ulx.rp1942cleanplayer(ply, target)
+    if not RP1942.cleanupPlayer then return ULib.tsayError(ply, "The clean-up isn't loaded.", true) end
+    local n, what = RP1942.cleanupPlayer(target, ply)
+    if n == 0 then return ULib.tsay(ply, target:Nick() .. " owns nothing in the world.", true) end
+    ulx.fancyLogAdmin(ply, true, "#A removed everything #T owned (" .. what .. ")", target)
+end
+local cp = register("cleanplayer", ulx.rp1942cleanplayer, "!cleanplayer", ULib.ACCESS_ADMIN,
+    "Removes everything one player owns in the world (props, text screens, F4 entities, machines, padlocks, dropped guns...), as if they'd left. Staff-placed and saved things stay. They're told.")
+cp:addParam{ type = ULib.cmds.PlayerArg }
+
+--[[---------------------------------------------------------------------------
 World events
 ---------------------------------------------------------------------------]]
 function ulx.rp1942train(ply)
