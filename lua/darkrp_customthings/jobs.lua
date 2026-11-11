@@ -839,15 +839,16 @@ TEAM_FUHRER = job(whitelisted{
     demoteOnDeath = true,
 })
 -- The Propaganda Minister: newsreels and broadcasts. Carries the hand-held
--- Newsreel Camera, and is the only job that can buy the Cinema Screen (F4 Shop,
--- Tools: rp1942_broadcast).
+-- Newsreel Camera, and is the only job that can buy the placed Film Camera and
+-- the Cinema Screen (F4 Shop, Tools: rp1942_broadcast).
 TEAM_PROPAGANDA = job(whitelisted{
     name = "Propaganda Minister",
     color = Color(150, 40, 30),
     model = M.officer,
     description = [[Reich Minister of Propaganda. Runs the newsreels: films with the hand-held
 Newsreel Camera (left click: on air, right click: zoom) and shows it live on a
-Cinema Screen (F4 Shop, Tools), in the cinema or the town square. Films speeches,
+Cinema Screen (F4 Shop, Tools), in the cinema or the town square. A placed
+Film Camera (F4 Shop) films a stage or the square on its own. Films speeches,
 parades and arrests; keeps the people watching. An official, not police: no
 arrests, no raids.]],
     weapons = { W.p38, "rp1942_newsreel_camera" },

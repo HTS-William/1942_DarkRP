@@ -5,6 +5,7 @@ surface.CreateFont("RP1942_BcastLabel", { font = "Roboto", size = 26, weight = 7
 local glow = Material("sprites/light_glow02_add")
 
 function ENT:Draw()
+    if RP1942.broadcastFilming == self then return end   -- (not in its own picture)
     self:DrawModel()
     local eye = LocalPlayer():EyePos()
     if self:GetOnAir() then

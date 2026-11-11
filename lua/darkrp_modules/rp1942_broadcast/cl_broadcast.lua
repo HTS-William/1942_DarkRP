@@ -42,6 +42,7 @@ local function film(camera, f)   -- (not `cam`: that's the cam library)
     render.PushRenderTarget(f.rt)
     render.Clear(0, 0, 0, 255, true, true)
     rendering = true
+    RP1942.broadcastFilming = camera   -- (the camera itself isn't drawn in its own picture)
     local origin, angles, fov = camera:BroadcastView()
     render.RenderView({
         origin = origin,
@@ -53,6 +54,7 @@ local function film(camera, f)   -- (not `cam`: that's the cam library)
         znear = 4,
     })
     rendering = false
+    RP1942.broadcastFilming = nil
 
     -- black and white, with a slight flicker
     BW["$pp_colour_brightness"] = math.Rand(-0.04, 0.02)

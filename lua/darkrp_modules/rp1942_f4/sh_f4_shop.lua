@@ -117,7 +117,10 @@ RP1942.F4Shop = {
         -- Live broadcasts (rp1942_broadcast): the Propaganda Minister films with
         -- the hand-held Newsreel Camera (it comes with the job) and shows it on
         -- a Cinema Screen, in black and white, with what's heard around them.
-        -- Only the Propaganda Minister (jobs.lua) can buy the screen.
+        -- Only the Propaganda Minister (jobs.lua) can buy the placed camera and the screen.
+        { name = "Film Camera", type = "entity", class = "rp1942_film_camera", price = 2000, max = 1,
+          category = "Tools", model = "models/dav0r/camera.mdl", jobs = { "propaganda" },
+          description = "A camera to leave standing somewhere: a stage, the square, a courtroom. E puts it on air; aim it with the physgun." },
         { name = "Cinema Screen", type = "entity", class = "rp1942_cinema_screen", price = 3000, max = 1,
           category = "Tools", model = "models/hunter/plates/plate3x5.mdl", jobs = { "propaganda" },
           description = "Shows a Newsreel Camera that's on air, live in black and white, with what's heard around it. E changes channel." },

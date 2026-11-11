@@ -10,8 +10,9 @@ It goes off air when you put it away, drop it or die. While it's on air a
 red ON AIR light shows on the camera for everyone. The screens, the sound and
 the settings: darkrp_modules/rp1942_broadcast.
 
-The model (models/dav0r/camera.mdl) is held up in the right hand; if it sits
-wrong in someone's hand, move it with HOLD below.
+The model (models/dav0r/camera.mdl) is held up in the right hand, seen in
+third person only: not in your own first person view, and not in the
+picture it films. If it sits wrong in someone's hand, move it with HOLD below.
 ---------------------------------------------------------------------------]]
 AddCSLuaFile()
 
@@ -36,10 +37,8 @@ SWEP.Secondary = { ClipSize = -1, DefaultClip = -1, Automatic = false, Ammo = "n
 
 local FOV_WIDE, FOV_ZOOM = 62, 28   -- the picture's field of view, normal and zoomed all the way
 
--- Where the camera sits in the right hand (world model), and in front of
--- your eyes (first person)
+-- Where the camera sits in the right hand (seen in third person only)
 local HOLD  = { pos = Vector(6, -3, -2), ang = Angle(0, 0, 180) }
-local FIRST = { forward = 14, right = 6, up = -6 }   -- from the view model's position
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 0, "OnAir")
@@ -56,6 +55,12 @@ function SWEP:BroadcastView()
     if not IsValid(owner) then return self:GetPos(), self:GetAngles(), FOV_WIDE end
     local ang = owner:EyeAngles()
     return owner:EyePos() + ang:Forward() * 16, ang, Lerp(self:GetZoom(), FOV_WIDE, FOV_ZOOM)
+end
+
+-- Whose camera, for the screen's "Showing ...'s camera"
+function SWEP:BroadcastName()
+    local owner = self:GetOwner()
+    return IsValid(owner) and owner:Nick() or "a"
 end
 
 -- On air only while it's out in someone's hands
@@ -118,8 +123,9 @@ if CLIENT then
         end
     end
 
-    -- In someone's hand
+    -- In someone's hand: seen in third person only, never in the picture it's filming
     function SWEP:DrawWorldModel()
+        if RP1942.broadcastFilming == self then return end
         local owner = self:GetOwner()
         local m = cameraModel()
         if not IsValid(m) then return end
@@ -141,23 +147,8 @@ if CLIENT then
         if self:GetOnAir() then redLight(pos + ang:Up() * 7 - ang:Forward() * 2) end
     end
 
-    -- In front of your own eyes. Drawn in the view model's own pass (its own
-    -- depth range, like any weapon in your hands), so it never pokes into
-    -- walls, and it follows the view model's bob and sway as you move.
-    -- The arms aren't drawn: just the camera.
-    function SWEP:PreDrawViewModel(vm)
-        local m = cameraModel()
-        if IsValid(m) and IsValid(vm) then
-            local base, ang = vm:GetPos(), vm:GetAngles()
-            local pos = base + ang:Forward() * FIRST.forward + ang:Right() * FIRST.right + ang:Up() * FIRST.up
-            m:SetPos(pos)
-            m:SetAngles(ang)
-            m:SetupBones()
-            m:DrawModel()
-            if self:GetOnAir() then redLight(pos + ang:Up() * 7 - ang:Forward() * 2) end
-        end
-        return true   -- (not the empty arms model)
-    end
+    -- Not drawn in first person (just the viewfinder, below)
+    function SWEP:PreDrawViewModel() return true end
 
     -- Zooming your own view along with the picture
     function SWEP:TranslateFOV(fov)

@@ -16,9 +16,9 @@ local relay = {}     -- relay[listener][talker] = true
 local function onAir(cam) return IsValid(cam) and cam.Broadcasting and cam:Broadcasting() end
 RP1942.broadcastOnAir = onAir
 
--- Where a camera is (its holder)
+-- Where a camera is: a hand-held one is where its holder is
 local function camPos(cam)
-    local owner = cam:GetOwner()
+    local owner = cam:IsWeapon() and cam:GetOwner()
     return IsValid(owner) and owner:GetPos() or cam:GetPos()
 end
 

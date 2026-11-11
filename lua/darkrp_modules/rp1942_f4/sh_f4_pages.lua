@@ -244,9 +244,10 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - rp1942_radio_volume 0-1 (console) sets how loud radios are for you; rp1942_radio 0 silences them all.
 
 # Newsreel camera and cinema screen
-- The Propaganda Minister (Reich Command) carries a hand-held Newsreel Camera, and is the only job that can buy a Cinema Screen in the F4 shop (Tools). The screen stands up facing you.
+- The Propaganda Minister (Reich Command) carries a hand-held Newsreel Camera, and is the only job that can buy a placed Film Camera and a Cinema Screen in the F4 shop (Tools). The screen stands up facing you.
 - With the camera out, left click goes on air (a red ON AIR light shows on it), left click again goes off. Hold right click to zoom: the screen zooms too. Putting it away, dropping it or dying takes it off air.
-- E on the screen changes channel: the nearest camera on air, the next one, then off.
+- The placed Film Camera films where its lens points (aim it with the physgun). E on it goes on air or off.
+- E on the screen changes channel: the nearest camera on air (hand-held or placed), the next one, then off.
 - The screen shows what the camera films, live in black and white like an old newsreel. Everyone near the screen hears what's said near the camera (voice chat) and the sounds made there: gunshots, doors, footsteps.
 - Filming people is roleplay like anything else: the rules still apply.
 
