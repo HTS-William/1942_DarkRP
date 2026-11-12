@@ -1,7 +1,7 @@
 --[[---------------------------------------------------------------------------
 42Bros - the Führer's perks (shared)                       <- edit prices here
 
-The Führer buys perks for the Reich from the treasury, in his menu (F3,
+The Führer buys perks for the Reich from the treasury, in his F4 tab (Führer's Office,
 "Perks"). Each costs treasury money and has a cooldown before it can be
 bought again.
 

@@ -11,7 +11,7 @@
 
 The same laws as every law board in the city (DarkRP.getLaws()). The first
 ones are the fixed laws (GM.Config.DefaultLaws in settings.lua); the rest
-were added by the Führer (F3). It updates by itself when a law changes.
+were added by the Führer (F4, Führer's Office). It updates by itself when a law changes.
 ---------------------------------------------------------------------------]]
 RP1942.F4Tabs = RP1942.F4Tabs or {}
 
@@ -100,7 +100,7 @@ RP1942.F4Tabs.laws = {
             note:SetTextColor(C.sub)
             note:SetWrap(true)
             note:SetAutoStretchVertical(true)
-            note:SetText("The same laws are posted on every law board in the city. The fixed laws always apply; the Führer adds and removes the others from his office (F3).")
+            note:SetText("The same laws are posted on every law board in the city. The fixed laws always apply; the Führer adds and removes the others from his office (his F4 tab).")
         end
 
         -- Follow law changes (and martial law) while the tab is open

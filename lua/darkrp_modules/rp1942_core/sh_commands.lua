@@ -20,7 +20,7 @@ DarkRP.declareChatCommand{
 }
 
 --[[---------------------------------------------------------------------------
-Disguise models for the F3 wardrobe of ply's job.
+Disguise models for the wardrobe (F4 Wardrobe tab) of ply's job.
 RP1942.Config.Disguise.models[job command], if it has any; otherwise every
 model used by a civilian job, so an agent can look like any resident.
 (A plain list instead of per-job lists is also accepted, shared by all.)

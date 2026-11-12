@@ -72,10 +72,10 @@ function ENT:Think()
 
         if now >= self:GetDoneAt() then
             local c = self:Config()
-            local loaves = self:Grade(self:GetGreen() / c.bakeTime)
+            local stars = self:Grade(self:GetGreen() / c.bakeTime)
             self:SetDoneAt(0)
-            self:SetReady(loaves)
-            self:SetReadyQuality(loaves)
+            self:SetReady(stars + (c.outputTier or 0))   -- Output upgrade: +1 loaf per tier
+            self:SetReadyQuality(stars)
             self:FireSound(false)
             self:EmitSound("buttons/bell1.wav", 70, 110)
         end
@@ -88,6 +88,9 @@ end
 function ENT:OnPanelPress(ply, id)
     if id == "power" then
         self:SetPower(self:GetOff())
+
+    elseif string.StartWith(id, "buy:") then
+        RP1942.buyMachineUpgrade(self, ply, "oven", string.sub(id, 5))
 
     elseif id == "stoke" then
         if not self:IsBaking() or self:GetOff() then return end

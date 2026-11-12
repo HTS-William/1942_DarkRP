@@ -15,16 +15,23 @@ the panel and press E.
     Winemaker   buys a wine barrel and presses START. While it ferments, the
                 barrel calls for stirring a few times: STIR before the timer
                 runs out. Every stir it gets raises the vintage. Then BOTTLE.
-    Petroleum   buys an oil rig. It isn't placed by hand: it's built on a
+    Petroleum   buys an oil rig (up to 2). It isn't placed by hand: it's built on a
     Producer    free OIL SITE (placed by admins with !addoilsite) and can't be
                 moved. It pumps on its own. With the valve shut the pressure
                 climbs; turn the wheel to open it and the pressure falls. Keep
                 it in the green: more time there = more barrels of crude and
-                more stars. FILL BARRELS when the tank is full.
-    Factory     buys a factory line. It runs on scrap metal, and now and then
+                more stars. FILL BARRELS when the tank is full. It runs on
+                car batteries: push one in to charge it.
+    Factory     buys a factory line (up to 2). It runs on scrap metal and
+                car batteries (push them in), and now and then
     Owner       halts with a fault (BELT, BOILER or FUSE): press the matching
                 repair button. The less downtime, the better the run, and the
                 better the odds of rare goods (clocks, radios). COLLECT.
+
+Upgrades: the oven, the factory line and the oil rig have UPGRADES on their
+panel (top right): Speed, Output, Steadier, and Fuel efficiency on the
+battery-powered ones. 3 tiers each, kept by that machine. Batteries and
+upgrades: sh_machine_upgrades.lua.
 
 Selling:
     - At a MARKET (placed by admins with !addmarket). Its board shows today's
@@ -48,11 +55,12 @@ inventory (rp1942_inventory) and the leave cleanup.
 Files:
     sh_production.lua     this config
     sv_production.lua     selling, quality, demand, the economy nudge, markets (!addmarket)
+    sh_machine_upgrades.lua   machine upgrades and battery power
     sv_goods_stack.lua    goods merging into crates (RP1942.canStackGoods / stackGoods)
     cl_production.lua     the interactive panels, labels and the drunk effect
     sv_oil_sites.lua      oil sites (!addoilsite) and building rigs on them
     sv/cl_prodspawn.lua   the staff production spawner (!prodspawn)
-    lua/entities/rp1942_good, rp1942_goods_crate, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
+    lua/entities/rp1942_good, rp1942_goods_crate, rp1942_battery, rp1942_flour, rp1942_oven, rp1942_wine_barrel, rp1942_market,
         rp1942_oil_rig, rp1942_factory, rp1942_scrap
     darkrp_customthings/entities.lua   the F4 shop entries (prices, limits, jobs)
 ---------------------------------------------------------------------------]]
@@ -96,11 +104,14 @@ RP1942.Goods = {
         economy = 0.15,
     },
 
-    -- Factory Owner (which one comes out is rolled: RP1942.Production.factory.odds)
+    -- Factory Owner (which one comes out is rolled: RP1942.Production.factory.odds).
+    -- Worth about 340 an item on average at fine quality: a run of 3 is ~1,000,
+    -- ~12,000 an hour after scrap and batteries (raised 3x in Nov 2026; before,
+    -- a factory made less than an oven).
     rations = {
         name    = "Tinned Rations",
         model   = "models/props_junk/garbage_metalcan001a.mdl",
-        value   = 60,
+        value   = 180,
         economy = 0.08,
         rarity  = "common",
         eat     = { verb = "eat", heal = 10 },
@@ -108,35 +119,35 @@ RP1942.Goods = {
     boots = {
         name    = "Pair of Boots",
         model   = "models/props_junk/Shoe001a.mdl",
-        value   = 70,
+        value   = 200,
         economy = 0.08,
         rarity  = "common",
     },
     pot = {
         name    = "Cooking Pot",
         model   = "models/props_interiors/pot02a.mdl",
-        value   = 120,
+        value   = 350,
         economy = 0.12,
         rarity  = "uncommon",
     },
     kettle = {
         name    = "Kettle",
         model   = "models/props_interiors/pot01a.mdl",
-        value   = 130,
+        value   = 380,
         economy = 0.12,
         rarity  = "uncommon",
     },
     clock = {
         name    = "Alarm Clock",
         model   = "models/props_c17/clock01.mdl",
-        value   = 250,
+        value   = 750,
         economy = 0.20,
         rarity  = "rare",
     },
     radio = {
         name    = "Radio Set",
         model   = "models/props_lab/citizenradio.mdl",
-        value   = 450,
+        value   = 1200,
         economy = 0.30,
         rarity  = "very rare",
         radio   = true,     -- a working radio: E tunes it (rp1942_radio module), Shift+E carries it
@@ -184,6 +195,7 @@ RP1942.Production = {
         model     = "models/props_mining/oiltank01.mdl",
         icon      = "models/props_mining/oiltank01.mdl",          -- its picture in the F4 shop / spawner
         pumpTime  = 300,              -- seconds to fill the tank
+        powerMinutes = 8,             -- minutes of pumping one battery gives (sh_machine_upgrades.lua)
         good      = "oil",
         -- Well pressure 0-100. With the valve closed it climbs (rise per
         -- second); turning the wheel opens the valve and it falls (fall per
@@ -204,6 +216,7 @@ RP1942.Production = {
         model     = "models/props_mining/elevator_winch_empty.mdl",
         hopper    = 4,                -- loads of scrap it holds waiting
         runTime   = 240,              -- seconds of running per run (halts don't count)
+        powerMinutes = 8,             -- minutes of running one battery gives (sh_machine_upgrades.lua)
         items     = 3,                -- goods per run (one load of scrap)
         halts     = { 1, 3 },         -- faults per run: a random number in this range, at random times (kept secret)
         wrongFix  = 10,               -- seconds of downtime added for pressing the wrong repair

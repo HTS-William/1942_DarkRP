@@ -157,10 +157,11 @@ Raiding - Breaking into someone's property to take their valuables.
 # Keys and menus
 - Hands (slot 1, what you spawn holding): left click raises your fists, click again to punch; right click pushes the player in front of you; R raises or lowers your fists. With your hands down you're harmless, and the fists drop by themselves after a few seconds without a punch.
 - Sitting: hold your walk key (Alt by default) and press E while looking at a bench, a chair, the ground or a prop to sit there; press E again to get up. Sitting is no shield: you can still be shot, blown up or handcuffed, and getting hurt by a player stands you up (no sitting back down for a few seconds). Plain E never sits, so doors, machines, dumpsters and crates keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
-F4 - Jobs, Appearance (your model's bodygroups and skin, remembered per model), the shop, commands and these pages
+F4 - Jobs, your job's own tab if it has one (Wardrobe, Führer's Office), Appearance (your model's bodygroups and skin, remembered per model), the shop, commands and these pages
+F4 Shop - What only your job can buy is at the top (green bars). Type in the search box to filter; click a bar to fold that section away.
 F2 - Look at a door: buys it if it's for sale. On a door you own, opens its menu (sell it, add co-owners, give it a title). Shift+F2 always opens the menu
 - Doors: who owns a door is written on the door itself: "Owned By:" and the owner, or the faction in its colour on a faction door. A door nobody owns says "For Sale" and its price. A title (from the door menu) shows above the owner.
-F3 - Your job's own menu, if it has one (the wardrobe for undercover jobs, the Führer's office...)
+F3 - Frees the cursor (job menus are now a tab in F4: Wardrobe, Führer's Office...)
 TAB - The scoreboard, with the five fullest wallets at the top (rp1942_scoreboard_richest 0 in the console hides them). Hold it to look; click a player to see their card (copy SteamID, Steam profile, mute their voice, send a message). Once you click, it stays open until you press TAB again.
 E - Use things, and press buttons on machine panels (look at the button)
 - Animations: with your keys out, press R (not at a door) for the animation wheel. Point at one and click it, or hold R, flick toward one and let go. Right click closes it. While it plays the camera swings out into third person: move the mouse to look around yourself and the mouse wheel to move it closer or further. It comes back to first person when the animation ends; attacking or pressing E brings it back early.
@@ -175,7 +176,7 @@ E - Use things, and press buttons on machine panels (look at the button)
 /radio - Talk on the radio
 /election - Open the Führer election ballot
 /roll - Roll a random number (/roll, /roll 20, /roll 5 50, /roll 2d6)
-/jobmenu - Open your job's menu (same as F3)
+/jobmenu - Open your job's tab in the F4 menu
 
 # The factions
 Civilians - Everyday people of the town: doctors, bankers, hobos and the like.
@@ -208,7 +209,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The arrest is stopped if the officer walks away, puts the handcuffs away or right clicks to let go, or if either of them dies. Shooting the officer is how comrades break someone free.
 
 # The Führer's perks
-- The Führer buys perks for the Reich from the treasury, in his menu (F3, Perks). Reich soldiers are the Wehrmacht, Waffen-SS and Leibstandarte.
+- The Führer buys perks for the Reich from the treasury, in his F4 tab (Führer's Office, Perks). Reich soldiers are the Wehrmacht, Waffen-SS and Leibstandarte.
 - Armoured car (R.M. 60,000): an Sd.Kfz. 222 appears at the APC garage, owned by the Wehrmacht Driver (his keys lock and unlock it; if none is on duty, the next one gets it). Only the Wehrmacht Driver can drive it. Its gun fires Panzerschreck rockets where the driver looks (left click, 6 seconds to reload, R.M. 500 a shot from the driver's own money). One at a time; it stays until it's destroyed, and another can be bought 10 minutes after.
 - Kevlar issue (R.M. 20,000): every Reich soldier online gets full armour at once. 10 minutes before it can be bought again.
 - Soldiers' pay bonus (R.M. 25,000): Reich soldiers' wages are raised by half for 20 minutes. Buying it again adds another 20 minutes.
@@ -264,7 +265,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Your faction's orders (Reich Orders, Resistance Plans) show in the top-left corner; Reich alerts appear below them. The Führer and the Reich officers set the Reich's; the Resistance Leader sets the Resistance's (/agenda). rp1942_orders_hud 0 in the console hides the panel.
 
 # Laws
-- The Führer makes the laws from his menu (F3, Laws): add, remove, reset, or place a law board. Every law board shows them. The first laws are fixed and can't be removed.
+- The Führer makes the laws from his F4 tab (Führer's Office, Laws): add, remove, reset, or place a law board. Every law board shows them. The first laws are fixed and can't be removed.
 - Laws stand until a Führer removes or resets them: they stay through a change of Führer and through server restarts.
 
 # Martial law
@@ -276,11 +277,11 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Taxes can go up to 100%, but while any faction or job pays more than 50% the Reich can be raided for it (see Rules, 11e).
 - The economy, the tax rates and the treasury are kept when the server restarts: a new Führer inherits his predecessor's.
 - Hover the economy bar with your cursor out to see the treasury and every tax rate.
-- The Führer can make a Reich payout from the treasury (F3): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped. While the Reichsbank is being robbed the treasury is frozen: no payouts and no perks until the robbery is over.
+- The Führer can make a Reich payout from the treasury (F4, Führer's Office): a total shared evenly between everyone in the factions he picks, or the same amount each. Factions with nobody online are skipped. While the Reichsbank is being robbed the treasury is frozen: no payouts and no perks until the robbery is over.
 
 # Arms dealers
-- The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock (F3) and sell them on to other players. The weapon appears in front of you.
-- Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Each dealer's menu shows which ammo a weapon takes. Grenades, molotovs, mines, explosive charges, flamethrower fuel, crossbow bolts and flare rounds are sold there too. One grenade refill fits any grenade.
+- The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock, at the top of the F4 Shop tab (Your job), and sell them on to other players. Set the crate size beside the search box to buy several at once. The weapon appears in front of you.
+- Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Hover a weapon in a dealer's stock to see which ammo it takes. Grenades, molotovs, mines, explosive charges, flamethrower fuel, crossbow bolts and flare rounds are sold there too. One grenade refill fits any grenade.
 - Bought ammo is put down in front of you as a box with what it is written above it: press E on it to take the rounds. Only you can open or pocket a box you bought, and you can have 5 waiting at most.
 - Boxes of the same ammo merge into one when they touch. Ammo boxes can be stored in your inventory (F4).
 - Weapons come loaded: guns with a full magazine; a grenade, molotov, dynamite bundle or mine comes with itself to throw or place; the flamethrower with a tank of fuel.
@@ -295,9 +296,12 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - If the robber holds out, the WHOLE treasury is split evenly between the robber and the crew still alive and near the vault.
 
 # Production
-- Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop.
+- Bakers, Winemakers, Petroleum Producers and Factory Owners make goods. Buy your equipment in the F4 Shop: it's at the top, under Your job.
 - Machines have control panels: look at a button and press E.
 - Ovens, oil rigs and factory lines have an ON / OFF button. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
+- How many you can own: 3 ovens, 4 wine barrels, 2 oil rigs, 2 factory lines.
+- Upgrades: ovens, oil rigs and factory lines have UPGRADES at the top right of their panel. 3 tiers of each: Speed (faster batches), Output (more per batch), Steadier (an easier job: the fire cools slower, fewer factory faults, steadier oil pressure), and Fuel efficiency on rigs and factory lines (a battery lasts longer). Only the owner can buy them, and they stay with that machine: they're lost when it's removed or you change job or leave.
+- Power: oil rigs and factory lines run on Car Batteries (F4 Shop, Production). Push one into the machine to charge it: one battery is about 8 minutes of running (only while it's actually working), and a machine holds two. With no charge left it switches itself off, paused, until a battery goes in.
 - Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
 - Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
 - E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).
@@ -355,7 +359,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - You get a few seconds of siren before the first bomb. The all-clear shows when it's over.
 
 # Undercover (Gestapo and Resistance Operative)
-- Press F3 to open your wardrobe. Its tabs list the jobs you can pass as: civilians and the Resistance for the Gestapo, civilians and the Reich for the Operative.
+- Your wardrobe is the Wardrobe tab in the F4 menu. Its tabs list the jobs you can pass as: civilians and the Resistance for the Gestapo, civilians and the Reich for the Operative.
 - Picking one puts on that job's clothes and takes its title. Nobody is told. Jobs with several outfits open a model selection: click an outfit to preview it, then Wear This (or double-click).
 - Officers, commanders, the Führer and the Resistance Leader can't be impersonated.
 - You can also type any cover title in the wardrobe. Your own side always sees your faction tag over your head.

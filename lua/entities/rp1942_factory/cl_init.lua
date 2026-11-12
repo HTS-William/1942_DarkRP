@@ -8,7 +8,8 @@ it in game with the rp1942_panel_* console commands).
     FACTORY LINE
     Running · 2:10 left                         [progress]
     LINE HALTED: BOILER FAULT   [BELT][BOILER][FUSE]   down 0:12
-      (or the output tray, once the run is done)
+      (once the run is done: "3 goods ready", and the OUTPUT TRAY drawer
+      slides out of the panel's right edge with the list)
     THIS RUN (SO FAR)   ★★☆ downtime 0:24 · 2 faults
     SCRAP HOPPER        [loads waiting]
     [ RETHREAD BELT ] [ VENT BOILER ] [ REPLACE FUSE ]
@@ -37,7 +38,13 @@ local function qualityName(q)
     return string.upper(string.sub(n, 1, 1)) .. string.sub(n, 2)
 end
 
+-- The upgrades view is per player (only changes what you see)
+function ENT:OnLocalPress(id)
+    if id == "upgrades" then self.view = "upgrades" elseif id == "back" then self.view = nil end
+end
+
 function ENT:PaintPanel(P, w, h)
+    if self.view == "upgrades" then return RP1942.paintMachineUpgrades(self, P, w, h, "factory", ACCENT) end
     local C = RP1942.PanelColors
     local c = self:Config()
     local x, y, iw = 28, 76, w - 56
@@ -46,10 +53,14 @@ function ENT:PaintPanel(P, w, h)
     local off = self:GetOff()
     local hopper, scrap = c.hopper or 4, self:GetScrap()
     P:Title("FACTORY LINE", ACCENT)
+    RP1942.machineUpgradesButton(P, w)
 
     ------------------------------------------------------------ status and progress
+    RP1942.paintBattery(self, P, x + iw, y + 27)   -- beside the progress bar (which is shorter for it)
     local left = c.runTime - self:Progress()
-    if done then
+    if off and self:GetCharge() <= 0 then
+        P:Text("No power  ·  push a car battery in", "RP1942_PanelBody", x, y, RED_TEXT)
+    elseif done then
         P:Text("Run complete!  Collect the goods.", "RP1942_PanelBody", x, y, C.gold)
     elseif idle then
         P:Text("Idle  ·  " .. c.items .. " goods per load, " .. RP1942.clock(c.runTime) .. " a run", "RP1942_PanelBody", x, y, C.dim)
@@ -60,7 +71,7 @@ function ENT:PaintPanel(P, w, h)
     else
         P:Text("Running  ·  " .. RP1942.clock(left) .. " left", "RP1942_PanelBody", x, y, C.dim)
     end
-    P:Bar(x, y + 32, iw, 14, done and 1 or (idle and 0 or self:Progress() / c.runTime), ACCENT)
+    P:Bar(x, y + 32, iw - 160, 14, done and 1 or (idle and 0 or self:Progress() / c.runTime), ACCENT)
     y = y + 66
 
     if idle then
@@ -77,23 +88,10 @@ function ENT:PaintPanel(P, w, h)
         if not off then P:Text("PUSH SCRAP METAL INTO THE LINE", "RP1942_PanelHead", x, y, C.gold) end
     else
         if done then
-            ------------------------------------------------------------ the output tray
-            P:Text("OUTPUT TRAY", "RP1942_PanelHead", x, y, C.dim)
+            ------------------------------------------------------------ the output tray (it slides out to the right)
             local goods = self:ReadyGoods()
-            local n = math.max(c.items, 1)
-            local sw = (iw - (n - 1) * 10) / n
-            for i = 1, n do
-                local bx = x + (i - 1) * (sw + 10)
-                draw.RoundedBox(4, bx, y + 30, sw, 66, C.well)
-                local good = goods[i] and RP1942.Goods[goods[i]]
-                if good then
-                    local name = RP1942.fitText and RP1942.fitText(string.upper(good.name), "RP1942_PanelButtonSmall", sw - 10) or string.upper(good.name)
-                    draw.SimpleText(name, "RP1942_PanelButtonSmall", bx + sw / 2, y + 52, C.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    draw.SimpleText(string.upper(good.rarity or ""), "RP1942_PanelSmall", bx + sw / 2, y + 78, RARITY_COL[good.rarity] or C.dim, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                else
-                    draw.SimpleText("-", "RP1942_PanelHead", bx + sw / 2, y + 63, C.faint, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                end
-            end
+            P:Text("OUTPUT TRAY", "RP1942_PanelHead", x, y, C.dim)
+            P:Text(#goods .. (#goods == 1 and " good" or " goods") .. " ready  ·  see the tray  >", "RP1942_PanelBody", x, y + 32, C.gold)
             y = y + 122
         else
             ------------------------------------------------------------ the line's lamps
@@ -141,7 +139,7 @@ function ENT:PaintPanel(P, w, h)
     local fy = h - 170
     local n = #RP1942.FactoryFaults
     local fw = (iw - (n - 1) * 20) / n
-    local names = { collect = "COLLECT THE GOODS", power = off and "SWITCH ON" or "SWITCH OFF (PAUSES THE RUN)" }
+    local names = { collect = "COLLECT THE GOODS", power = off and "SWITCH ON" or "SWITCH OFF (PAUSES THE RUN)", ["local:upgrades"] = "UPGRADES" }
     for i, f in ipairs(RP1942.FactoryFaults) do
         P:Button("fix:" .. f.id, x + (i - 1) * (fw + 20), fy, fw, 50, f.button, { enabled = halted and not off, color = FIX_BTN, font = "RP1942_PanelButtonSmall" })
         names["fix:" .. f.id] = f.button
@@ -152,6 +150,47 @@ function ENT:PaintPanel(P, w, h)
     P:Button("power", x + iw - pw, fy + 66, pw, 46, off and "ON" or "OFF", { color = POWER_BTN })
 
     P:Hint(x, h, names)
+end
+
+--[[---------------------------------------------------------------------------
+The output tray: a drawer that slides out of the panel's right edge when a
+run is done (RP1942.drawPanel's drawer, cl_production.lua), listing what was
+made, its rarity and what the market pays for it right now.
+---------------------------------------------------------------------------]]
+ENT.DrawerSize = { w = 360, h = 600 }
+
+function ENT:DrawerOpen()
+    return self:GetState() == self.STATE_DONE and #self:ReadyGoods() > 0
+end
+
+function ENT:PaintDrawer(P, w, h)
+    local C = RP1942.PanelColors
+    local x, iw = 22, w - 44
+    local goods = self:ReadyGoods()
+    local q = self:GetReadyQuality()
+    P:Title("OUTPUT TRAY", ACCENT)
+    local sw = P:Stars(x, 76, q, 24)
+    P:Text(qualityName(q), "RP1942_PanelBody", x + sw + 8, 76, C.text)
+
+    -- one row per good: name, rarity, price
+    local y, total = 120, 0
+    local rowH = math.min(64, math.floor((h - y - 70) / math.max(#goods, 1)) - 6)
+    for _, id in ipairs(goods) do
+        local good = RP1942.Goods[id]
+        local price = RP1942.marketPrice(id, q)
+        total = total + price
+        draw.RoundedBox(4, x, y, iw, rowH, C.well)
+        local name = RP1942.fitText and RP1942.fitText(good.name, "RP1942_PanelBody", iw - 20) or good.name
+        P:Text(name, "RP1942_PanelBody", x + 10, y + 6, C.text)
+        P:Text(string.upper(good.rarity or ""), "RP1942_PanelSmall", x + 10, y + rowH - 24, RARITY_COL[good.rarity] or C.dim)
+        P:Text(DarkRP.formatMoney(price), "RP1942_PanelSmall", x + iw - 10, y + rowH - 24, C.dim, TEXT_ALIGN_RIGHT)
+        y = y + rowH + 6
+    end
+
+    surface.SetDrawColor(C.well)
+    surface.DrawRect(x, h - 62, iw, 2)
+    P:Text("At the market now", "RP1942_PanelSmall", x, h - 48, C.dim)
+    P:Text(DarkRP.formatMoney(total), "RP1942_PanelHead", x + iw, h - 50, C.gold, TEXT_ALIGN_RIGHT)
 end
 
 function ENT:Draw()

@@ -1,8 +1,10 @@
 --[[---------------------------------------------------------------------------
 42Bros - RP1942_MenuBase (client)
 
-The boilerplate every job menu inherits: window, faction theme, header,
-scrolling content area, helper widgets, and sending actions to the server.
+The boilerplate every job menu inherits: faction theme, header, scrolling
+content area, helper widgets, and sending actions to the server. Job menus
+are shown inside the F4 menu, in a tab of their own (SetupEmbedded below,
+rp1942_f4/cl_f4_job.lua); they can still be opened as a window with Setup.
 
 TO MAKE A JOB MENU (see cl_menu_baker.lua for a full example):
 
@@ -20,7 +22,8 @@ TO MAKE A JOB MENU (see cl_menu_baker.lua for a full example):
 
     vgui.Register("RP1942_BakerMenu", PANEL, "RP1942_MenuBase")
 
-Then in jobs.lua:   menu = "RP1942_BakerMenu",
+Then in jobs.lua:   menu = "RP1942_BakerMenu", menuTab = "Bakery",
+(the job gets an F4 tab called "Bakery" holding the menu)
 
 OVERRIDABLE (all optional except Populate):
     PANEL:GetTitle()          window title          default: job name
@@ -106,6 +109,20 @@ function PANEL:Setup(job)
     self:KeepClearOfHUD()
     self:MakePopup()
 
+    self:Populate()
+end
+
+-- Inside the F4 menu (its job tab, rp1942_f4/cl_f4_job.lua): no window of
+-- its own, the F4 menu's colours, a slim header with the subtitle.
+local EMBED_HEADER = 44
+function PANEL:SetupEmbedded(job, theme)
+    self.job = job
+    self.embedded = true
+    self.theme = theme or self:GetTheme()
+    self:SetDraggable(false)
+    self:ShowCloseButton(false)
+    self:SetSizable(false)
+    self:DockPadding(0, self:GetSubtitle() and EMBED_HEADER or 0, 0, 0)
     self:Populate()
 end
 
@@ -207,6 +224,15 @@ end
 function PANEL:Paint(w, h)
     local theme = self.theme
     if not theme then return end
+    if self.embedded then
+        -- in the F4 menu: a bar like its category bars, with the subtitle
+        local subtitle = self:GetSubtitle()
+        if subtitle then
+            draw.RoundedBoxEx(4, 0, 0, w, EMBED_HEADER - 8, theme.header, true, true, false, false)
+            draw.SimpleText(subtitle, "RP1942_MenuSection", 12, (EMBED_HEADER - 8) / 2, theme.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        end
+        return
+    end
 
     surface.SetDrawColor(theme.bg)
     surface.DrawRect(0, 0, w, h)
@@ -225,63 +251,31 @@ end
 -- A menu belongs to a job: close it if the player changes job while it's open
 function PANEL:Think()
     DFrameBase.Think(self)
-    if LocalPlayer():Team() ~= self.openedTeam then self:Close() end
-end
-
--- An open menu has keyboard focus, so F3 never reaches the F3 bind (see the
--- ShowSpare1 hook below). Catch it here: the key bound to F3's action closes it.
-function PANEL:OnKeyCodePressed(key)
-    local bind = input.LookupKeyBinding(key)
-    if bind and string.find(string.lower(bind), "gm_showspare1", 1, true) then
-        self:Close()
-        return true
-    end
+    if not self.embedded and LocalPlayer():Team() ~= self.openedTeam then self:Close() end
 end
 
 vgui.Register("RP1942_MenuBase", PANEL, "DFrame")
 
 --[[---------------------------------------------------------------------------
-Opening (toggle): console command, and /jobmenu via the server
+Opening: job menus live in the F4 menu now (a tab named after the job's
+`menuTab`, rp1942_f4/cl_f4_job.lua). /jobmenu and the rp1942_menu console
+command open F4 on that tab.
 ---------------------------------------------------------------------------]]
 function RP1942.openJobMenu()
-    if IsValid(RP1942.ActiveMenu) then
-        RP1942.ActiveMenu:Close()
-        return
-    end
-
     local job = RPExtraTeams[LocalPlayer():Team()]
-    local class = job and job.menu
-
-    if not class then
-        chat.AddText(Color(200, 190, 170), "Your job has no menu.")
+    if not (job and job.menu) then
+        chat.AddText(Color(200, 190, 170), "Your job has no menu of its own.")
         return
     end
-    if not vgui.GetControlTable(class) then
-        MsgC(Color(255, 170, 0), "[42Bros] Job '", job.name, "' uses menu '", class,
-            "' but no panel with that name is registered. Check the cl_menu_*.lua file.\n")
-        return
-    end
-
-    local menu = vgui.Create(class)
-    menu:Setup(job)
-    RP1942.ActiveMenu = menu
+    if RP1942.openF4 then RP1942.openF4("job") end
 end
 
 concommand.Add("rp1942_menu", RP1942.openJobMenu)
 net.Receive("RP1942_OpenMenu", RP1942.openJobMenu)
 
 --[[---------------------------------------------------------------------------
-F3: one handler for both the cursor and job menus
-
-DarkRP's own F3 toggles the mouse cursor, but a job with ShowSpare1 (every job
-with a menu) replaces that completely. So a cursor turned on before switching
-to such a job could never be turned off again. This hook runs before DarkRP's
-F3 and decides everything itself, in this order:
-
-    1. a job menu is open           -> close it
-    2. the cursor is toggled on     -> turn it off
-    3. the job has a menu           -> open it
-    4. otherwise                    -> turn the cursor on (DarkRP's normal F3)
+F3: DarkRP's cursor toggle. Handled here so a cursor turned on in one job can
+always be turned off again (DarkRP's own F3 can get out of step).
 ---------------------------------------------------------------------------]]
 local cursorOn = false
 local mouseX, mouseY = ScrW() / 2, ScrH() / 2
@@ -297,27 +291,6 @@ local function setCursor(on)
 end
 
 hook.Add("ShowSpare1", "RP1942_F3", function()
-    if IsValid(RP1942.ActiveMenu) then
-        RP1942.ActiveMenu:Close()
-    elseif cursorOn then
-        setCursor(false)
-    else
-        local job = RPExtraTeams[LocalPlayer():Team()]
-        if job and job.menu and LocalPlayer():isArrested() then
-            DarkRP.notify(LocalPlayer(), 1, 4, "You can't use your job's menu while you're under arrest.")
-        elseif job and job.menu then
-            RP1942.openJobMenu()
-        else
-            setCursor(true)
-        end
-    end
+    setCursor(not cursorOn)
     return true   -- handled: skip DarkRP's own F3
-end)
-
-
--- Being arrested closes any open job menu (so a dealer can't keep buying from the cell)
-hook.Add("DarkRPVarChanged", "RP1942_MenuArrest", function(ply, var, _, new)
-    if ply == LocalPlayer() and var == "Arrested" and new and IsValid(RP1942.ActiveMenu) then
-        RP1942.ActiveMenu:Close()
-    end
 end)

@@ -13,6 +13,7 @@ function ENT:Initialize()
     self:SetSolid(SOLID_VPHYSICS)
     self:SetUseType(SIMPLE_USE)
     self:SetDoneAt(0)
+    self:SetCharge(0)   -- needs a battery before it'll pump
     local phys = self:GetPhysicsObject()
     if IsValid(phys) then phys:EnableMotion(false) end
     -- Starts pumping once it's been set on its site (RP1942.buildOilRig)
@@ -152,6 +153,7 @@ function ENT:Think()
         self:Anchor(self.anchorPos, self.anchorAng)
     end
 
+    RP1942.drainMachine(self, self:IsPumping())   -- the battery runs down while it pumps
     if self:IsPumping() and not self:GetOff() then
         local c = self:Config()
         local dt = now - (self.lastTick or now)
@@ -192,11 +194,13 @@ function ENT:Think()
         end
 
         if now >= self:GetDoneAt() then
-            local cans = self:Grade(self:GetGreen() / c.pumpTime)
+            local stars = self:Grade(self:GetGreen() / c.pumpTime)
+            -- Output upgrade: a 1-in-3 chance per tier of an extra barrel
+            local extra = math.random() < (c.outputTier or 0) / 3 and 1 or 0
             self:SetDoneAt(0)
             self:SetValveOpen(false)
-            self:SetReady(cans)
-            self:SetReadyQuality(cans)
+            self:SetReady(stars + extra)
+            self:SetReadyQuality(stars)
             self:SetRedSince(0)
             self:Alarm(false)
             self:Engine(false)
@@ -212,7 +216,14 @@ end
 function ENT:OnPanelPress(ply, id)
     local c = self:Config()
     if id == "power" then
+        if self:GetOff() and self:GetCharge() <= 0 then
+            return DarkRP.notify(ply, 1, 4, "No power: push a car battery into the rig first.")
+        end
+        self.RP1942_NoPower = nil
         self:SetPower(self:GetOff())
+
+    elseif string.StartWith(id, "buy:") then
+        RP1942.buyMachineUpgrade(self, ply, "oil", string.sub(id, 5))
 
     elseif id == "wheel" then
         if not self:IsPumping() or self:GetOff() or self:WheelTurning() then return end

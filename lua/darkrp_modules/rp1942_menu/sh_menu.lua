@@ -5,11 +5,14 @@ How it fits together:
     cl_menu_base.lua     RP1942_MenuBase: the boilerplate panel every menu inherits
     cl_menu_*.lua        job menus: vgui.Register("Name", PANEL, "RP1942_MenuBase")
     sv_menu_*.lua        server handlers for the buttons in those menus
-    jobs.lua             a job opts in with:  menu = "RP1942_BakerMenu",
+    jobs.lua             a job opts in with:  menu = "RP1942_FuhrerMenu",
+                                              menuTab = "Führer's Office",
                          (jobs without a `menu` field have no menu)
 
-Opening: /jobmenu in chat, or the console command rp1942_menu
-(players can bind it: bind g rp1942_menu)
+Where it shows: its own tab in the F4 menu, named `menuTab` (rp1942_f4/cl_f4_job.lua).
+/jobmenu in chat, or the console command rp1942_menu, opens F4 on that tab.
+Today: the wardrobe (Gestapo, Operative) and the Führer's office. Production
+jobs have none; the dealers sell from the top of their F4 Shop tab instead.
 
 Security: a menu button never does anything on the client. It sends
 "action name + optional text" to the server, and the server only runs it if the

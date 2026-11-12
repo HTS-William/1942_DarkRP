@@ -9,7 +9,7 @@ Three parts:
     Quiet joining     jobs with quietJoin = true (the Gestapo) are never announced
     Silent cover      for undercover jobs (RP1942.Config.Disguise.jobs), the custom
                       job title (F4 > Commands, or /job) isn't announced either
-    Wardrobe          the F3 wardrobe (Gestapo, Resistance Operative): preset
+    Wardrobe          the F4 Wardrobe tab (Gestapo, Resistance Operative): preset
                       tabs that set a job's model and title together, plus
                       plain models; kept until a job change
 ---------------------------------------------------------------------------]]
@@ -156,7 +156,7 @@ local function setCover(ply, text)
     DarkRP.notify(ply, 0, 4, "Your cover is now '" .. title .. "'. Nobody was told.")
 end
 
--- The same, from the title box in the F3 wardrobe
+-- The same, from the title box in the F4 Wardrobe tab
 RP1942.addMenuHandler("RP1942_WardrobeMenu", "title", function(ply, text)
     if not RP1942.canDisguise(ply) then return end
     local now = CurTime()
@@ -175,7 +175,7 @@ hook.Add("canChatCommand", "RP1942_SilentCover", function(ply, cmd, args)
 end)
 
 --[[---------------------------------------------------------------------------
-Wardrobe (F3 menu of the undercover jobs): wear any model from RP1942.disguiseModels(ply).
+Wardrobe (the undercover jobs' F4 Wardrobe tab): wear any model from RP1942.disguiseModels(ply).
 Kept through respawns; cleared when you change job. "" = standard issue.
 ---------------------------------------------------------------------------]]
 local WARDROBE_COOLDOWN = 3

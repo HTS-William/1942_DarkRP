@@ -14,6 +14,10 @@
     drops to nothing, the pump stalls and switches itself off: shut valve,
     and someone has to switch it back on (the pressure then builds from 0).
     Left in the red too long, an alarm sounds; left longer, it explodes.
+    It runs on car batteries (rp1942_battery): push one in to charge it. With
+    the charge gone it switches itself off until a battery goes in.
+    UPGRADES (top right of the panel): speed, output, steadier, fuel
+    (rp1942_production/sh_machine_upgrades.lua).
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"
 ENT.Base      = "base_anim"
@@ -42,6 +46,7 @@ function ENT:SetupDataTables()
     self:NetworkVar("Bool",   2, "Stalled")      -- switched itself off: the pressure hit 0
     self:NetworkVar("Float",  7, "PausedAt")     -- when it was switched off
     self:NetworkVar("Float",  8, "RedSince")     -- when the pressure went into the red (0 = it isn't)
+    self:NetworkVar("Float",  9, "Charge")       -- battery charge, % (sh_machine_upgrades.lua)
 end
 
 -- Seconds in the red so far (0 = not in the red)
@@ -58,7 +63,7 @@ end
 -- The rig's clock: stands still while it's switched off
 function ENT:Now() return self:GetOff() and self:GetPausedAt() or CurTime() end
 
-function ENT:Config() return RP1942.Production.oil end
+function ENT:Config() return RP1942.upgradedConfig(self, "oil") end   -- (with its upgrades)
 
 function ENT:IsPumping() return self:GetDoneAt() > 0 end
 

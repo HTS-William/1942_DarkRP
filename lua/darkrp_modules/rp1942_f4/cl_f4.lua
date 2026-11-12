@@ -257,8 +257,13 @@ vgui.Register("RP1942_F4", PANEL, "EditablePanel")
 Opening and closing. F4 is DarkRP's "gm_showspare2"; this hook runs before
 DarkRP's own F4 handler and takes over (unless a job has its own F4 action).
 ---------------------------------------------------------------------------]]
-function RP1942.openF4()
-    if IsValid(RP1942.F4Panel) then return end
+-- tab: open on this tab ("shop", "job"...) if the player has it
+function RP1942.openF4(tab)
+    if isstring(tab) then RP1942.F4LastTab = tab end
+    if IsValid(RP1942.F4Panel) then
+        if isstring(tab) then RP1942.F4Panel:SelectTab(tab) end
+        return
+    end
     RP1942.F4Panel = vgui.Create("RP1942_F4")
 end
 

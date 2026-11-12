@@ -34,12 +34,19 @@ local function qualityName(q)
     return string.upper(string.sub(n, 1, 1)) .. string.sub(n, 2)
 end
 
+-- The upgrades view is per player (only changes what you see)
+function ENT:OnLocalPress(id)
+    if id == "upgrades" then self.view = "upgrades" elseif id == "back" then self.view = nil end
+end
+
 function ENT:PaintPanel(P, w, h)
+    if self.view == "upgrades" then return RP1942.paintMachineUpgrades(self, P, w, h, "oven", ACCENT) end
     local C = RP1942.PanelColors
     local c = self:Config()
     local x, y, iw = 28, 76, w - 56
     local baking, ready, flour, off = self:IsBaking(), self:GetReady(), self:GetFlour(), self:GetOff()
     P:Title("BREAD OVEN", ACCENT)
+    RP1942.machineUpgradesButton(P, w)
 
     ------------------------------------------------------------ status and progress
     if ready > 0 then
@@ -51,7 +58,7 @@ function ENT:PaintPanel(P, w, h)
             "RP1942_PanelBody", x, y, C.dim)
         P:Bar(x, y + 32, iw, 14, 1 - left / c.bakeTime, ACCENT)
     else
-        local maxLoaves = c.grades[1] and c.grades[1].loaves or 3
+        local maxLoaves = (c.grades[1] and c.grades[1].loaves or 3) + (c.outputTier or 0)
         P:Text(off and "Switched off" or (flour > 0 and "Starting..." or ("Ready to bake  ·  up to " .. maxLoaves .. " loaves in " .. RP1942.clock(c.bakeTime))),
             "RP1942_PanelBody", x, y, C.dim)
         P:Bar(x, y + 32, iw, 14, 0, ACCENT)
@@ -124,7 +131,7 @@ function ENT:PaintPanel(P, w, h)
     P:Button("collect", x + bw + 20, by, bw, 58, ready > 0 and ("COLLECT (" .. ready .. ")") or "COLLECT", { enabled = ready > 0, color = COLLECT_BTN })
     P:Button("power", x + 2 * bw + 40, by, pw, 58, off and "ON" or "OFF", { color = POWER_BTN })
 
-    P:Hint(x, h, { stoke = "STOKE FIRE", collect = "COLLECT BREAD", power = off and "SWITCH ON" or "SWITCH OFF (PAUSES THE BAKE)" })
+    P:Hint(x, h, { stoke = "STOKE FIRE", collect = "COLLECT BREAD", power = off and "SWITCH ON" or "SWITCH OFF (PAUSES THE BAKE)", ["local:upgrades"] = "UPGRADES" })
 end
 
 function ENT:Draw()

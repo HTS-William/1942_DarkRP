@@ -41,7 +41,13 @@ local function qualityName(q)
     return string.upper(string.sub(n, 1, 1)) .. string.sub(n, 2)
 end
 
+-- The upgrades view is per player (only changes what you see)
+function ENT:OnLocalPress(id)
+    if id == "upgrades" then self.view = "upgrades" elseif id == "back" then self.view = nil end
+end
+
 function ENT:PaintPanel(P, w, h)
+    if self.view == "upgrades" then return RP1942.paintMachineUpgrades(self, P, w, h, "oil", ACCENT) end
     local C = RP1942.PanelColors
     local c = self:Config()
     local x, y, iw = 28, 76, w - 56
@@ -49,22 +55,27 @@ function ENT:PaintPanel(P, w, h)
     local open = self:GetValveOpen()
     local alarm = pumping and not off and self:Alarming()
     P:Title("OIL RIG", ACCENT)
+    RP1942.machineUpgradesButton(P, w)
 
     ------------------------------------------------------------ status and progress
-    if ready > 0 then
+    RP1942.paintBattery(self, P, x + iw, y + 27)   -- beside the progress bar (which is shorter for it)
+    if off and self:GetCharge() <= 0 and ready <= 0 then
+        P:Text("No power  ·  push a car battery in", "RP1942_PanelBody", x, y, RED_TEXT)
+        P:Bar(x, y + 32, iw - 160, 14, pumping and (1 - math.max(self:GetDoneAt() - self:Now(), 0) / c.pumpTime) or 0, ACCENT)
+    elseif ready > 0 then
         P:Text("Tank full!  Fill the barrels.", "RP1942_PanelBody", x, y, C.gold)
-        P:Bar(x, y + 32, iw, 14, 1, ACCENT)
+        P:Bar(x, y + 32, iw - 160, 14, 1, ACCENT)
     elseif pumping then
         local left = math.max(self:GetDoneAt() - self:Now(), 0)
         local line
         if self:GetStalled() then line = "Stalled  ·  switch it back on"
-        elseif off then line = "Switched off  ·  pumping paused, " .. RP1942.clock(left) .. " left"
+        elseif off then line = "Off  ·  pumping paused, " .. RP1942.clock(left) .. " left"
         else line = "Pumping  ·  tank full in " .. RP1942.clock(left) end
         P:Text(line, "RP1942_PanelBody", x, y, self:GetStalled() and RED_TEXT or C.dim)
-        P:Bar(x, y + 32, iw, 14, 1 - left / c.pumpTime, ACCENT)
+        P:Bar(x, y + 32, iw - 160, 14, 1 - left / c.pumpTime, ACCENT)
     else
         P:Text(off and "Switched off" or "Starting...", "RP1942_PanelBody", x, y, C.dim)
-        P:Bar(x, y + 32, iw, 14, 0, ACCENT)
+        P:Bar(x, y + 32, iw - 160, 14, 0, ACCENT)
     end
     y = y + 70
 
@@ -137,6 +148,7 @@ function ENT:PaintPanel(P, w, h)
     P:Button("power", x + 2 * bw + 40, by, pw, 58, off and "ON" or "OFF", { color = POWER_BTN })
 
     P:Hint(x, h, {
+        ["local:upgrades"] = "UPGRADES",
         wheel = open and "CLOSE VALVE (PRESSURE RISES)" or "OPEN VALVE (PRESSURE FALLS)",
         fill = "FILL BARRELS",
         power = off and "SWITCH ON" or "SWITCH OFF (PAUSES PUMPING)",

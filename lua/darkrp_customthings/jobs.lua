@@ -127,14 +127,10 @@ local function job(tbl)
         tbl.RequiresVote = function(ply) return RP1942.reichJobNeedsVote(ply, command) end
     end
 
-    -- Jobs with a menu open it on F3 (DarkRP calls job.ShowSpare1 when F3 is pressed).
-    -- On the client, the ShowSpare1 hook in rp1942_menu/cl_menu_base.lua handles F3
-    -- first, so the cursor toggle keeps working alongside job menus.
-    if tbl.menu and not tbl.ShowSpare1 then
-        tbl.ShowSpare1 = function(ply)
-            if CLIENT then RP1942.openJobMenu() end
-        end
-    end
+    -- A job with a `menu` (its abilities: the wardrobe, the Führer's office)
+    -- gets its own tab in the F4 menu, named `menuTab` (rp1942_f4/cl_f4_job.lua).
+    -- F3 is just DarkRP's cursor toggle. A job with a `shop` catalog (the
+    -- dealers) sells it at the top of its F4 Shop tab.
 
     -- Jobs with demoteOnDeath = true become Hobos when they die
     if tbl.demoteOnDeath and not tbl.PlayerDeath then
@@ -302,7 +298,6 @@ TEAM_BAKER = job{
     admin = 0,
     faction = "civilian",
     category = "Production",
-    menu = "RP1942_BakerMenu",
 }
 
 --[[===========================================================================
@@ -312,7 +307,7 @@ TEAM_BLACKMARKET = job{
     name = "Black Market Dealer",
     color = Color(70, 50, 40),
     model = M.dealer_blackmarket,
-    description = [[Buys weapons and explosives off the black market (F3) at fixed prices, whatever the economy, and sells them on. Anti-tank launchers, explosives, silenced guns and plenty more.]],
+    description = [[Buys weapons and explosives off the black market (F4 Shop) at fixed prices, whatever the economy, and sells them on. Anti-tank launchers, explosives, silenced guns and plenty more.]],
     weapons = {},
     command = "blackmarket",
     max = 1,
@@ -320,8 +315,7 @@ TEAM_BLACKMARKET = job{
     admin = 0,
     faction = "civilian",       -- a civilian trade: anyone can take it, no side required
     category = "Resistance",
-    menu = "RP1942_ShopMenu",
-    shop = "blackmarket",   -- rp1942_shop/sh_shop_catalogs.lua
+    shop = "blackmarket",   -- what it sells, at the top of its F4 Shop tab (rp1942_shop/sh_shop_catalogs.lua)
 }
 --[=[
 TEAM_RUSTUNG = job{
@@ -342,7 +336,7 @@ TEAM_CHERKESOV = job{
     name = "Cherkesov Dealer",
     color = Color(120, 40, 30),
     model = M.dealer_cherkesov,
-    description = [[Buys Soviet and Allied weapons (F3) at fixed prices, whatever the economy, and sells them on: machine guns, anti-tank rifles, submachine guns and more.]],
+    description = [[Buys Soviet and Allied weapons (F4 Shop) at fixed prices, whatever the economy, and sells them on: machine guns, anti-tank rifles, submachine guns and more.]],
     weapons = {},
     command = "cherkesov",
     max = 1,
@@ -350,8 +344,7 @@ TEAM_CHERKESOV = job{
     admin = 0,
     faction = "civilian",       -- a civilian trade: anyone can take it, no side required
     category = "Resistance",
-    menu = "RP1942_ShopMenu",
-    shop = "cherkesov",   -- rp1942_shop/sh_shop_catalogs.lua
+    shop = "cherkesov",   -- what it sells, at the top of its F4 Shop tab (rp1942_shop/sh_shop_catalogs.lua)
 }
 
 TEAM_THIEF = job{
@@ -422,7 +415,7 @@ TEAM_RES_OPERATIVE = job{
     model = M.resoperative,         -- RP1942.Models.resoperative in rp1942_core/sh_config.lua
     description = [[Intelligence and infiltration for the underground.
 Joining is never announced, and you start under a civilian cover.
-Press F3 for your wardrobe of disguises. Change your cover title with "Set a custom
+Your wardrobe of disguises is the Wardrobe tab in F4. Change your cover title with "Set a custom
 job title" in the F4 Commands tab: for you, nobody is told.]],
     weapons = { W.lockpick },
     command = "resoperative",
@@ -434,7 +427,8 @@ job title" in the F4 Commands tab: for you, nobody is told.]],
     category = "Resistance",
     subOf = "resistance",   -- F4: folded under the Resistance card
     quietJoin = true,               -- never announced (rp1942_core/sv_disguise.lua)
-    menu = "RP1942_WardrobeMenu",   -- F3: the wardrobe (rp1942_menu/cl_menu_wardrobe.lua)
+    menu = "RP1942_WardrobeMenu",   -- the F4 Wardrobe tab (rp1942_menu/cl_menu_wardrobe.lua)
+    menuTab = "Wardrobe",
 }
 
 TEAM_RES_LEADER = job{
@@ -469,7 +463,7 @@ TEAM_SUPPLIER = job{
     name = "German Supplier",
     color = Color(80, 90, 70),
     model = M.supplier,
-    description = [[Buys German service weapons from the Reich armoury (F3) and supplies them to the Reich. Prices follow the economy: cheaper when it's strong, dearer when it's weak.]],
+    description = [[Buys German service weapons from the Reich armoury (F4 Shop) and supplies them to the Reich. Prices follow the economy: cheaper when it's strong, dearer when it's weak.]],
     weapons = { W.stun, W.arrest, W.unarrest },
     command = "gersupplier",
     max = 1,
@@ -479,8 +473,7 @@ TEAM_SUPPLIER = job{
     branch = "supply",
     arrests = true,    -- every Reich job carries the batons, so every one can arrest
     category = "Reich",
-    menu = "RP1942_ShopMenu",
-    shop = "supplier",   -- rp1942_shop/sh_shop_catalogs.lua
+    shop = "supplier",   -- what it sells, at the top of its F4 Shop tab (rp1942_shop/sh_shop_catalogs.lua)
     sortOrder = 10,
 }
 
@@ -794,7 +787,7 @@ TEAM_GESTAPO = job{
     model = M.gestapo,
     description = [[Geheime Staatspolizei. Works in plain clothes among the population.
 Joining is never announced, and you start under a civilian cover.
-Press F3 for your wardrobe of disguises. Change your cover title with "Set a custom
+Your wardrobe of disguises is the Wardrobe tab in F4. Change your cover title with "Set a custom
 job title" in the F4 Commands tab: for you, nobody is told.]],
     weapons = { W.p38, W.arrest, W.unarrest, W.checker, W.stun },
     command = "gestapo",
@@ -809,7 +802,8 @@ job title" in the F4 Commands tab: for you, nobody is told.]],
     -- Joining by any route (F4, /gestapo, /joingestapo) is done silently with a
     -- civilian cover title: see rp1942_core/sv_disguise.lua
     quietJoin = true,
-    menu = "RP1942_WardrobeMenu",   -- F3: the wardrobe (rp1942_menu/cl_menu_wardrobe.lua)
+    menu = "RP1942_WardrobeMenu",   -- the F4 Wardrobe tab (rp1942_menu/cl_menu_wardrobe.lua)
+    menuTab = "Wardrobe",
 }
 
 --[[===========================================================================
@@ -835,7 +829,8 @@ TEAM_FUHRER = job(whitelisted{
     branch = "command",
     ignoreBalance = true,
     category = "Reich Command",
-    menu = "RP1942_FuhrerMenu",
+    menu = "RP1942_FuhrerMenu",       -- the F4 Führer's Office tab (rp1942_menu/cl_menu_fuhrer.lua)
+    menuTab = "Führer's Office",
     demoteOnDeath = true,
 })
 -- The Propaganda Minister: newsreels and broadcasts. Carries the hand-held

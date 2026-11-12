@@ -13,6 +13,10 @@
     COLLECT, and the next run starts if there's scrap in the hopper.
     The POWER lever switches it off: the run (and any downtime) pause where
     they are. Repairs need the power on.
+    It runs on car batteries (rp1942_battery): push one in to charge it. With
+    the charge gone it switches itself off until a battery goes in.
+    UPGRADES (top right of the panel): speed, output, steadier, fuel
+    (rp1942_production/sh_machine_upgrades.lua).
 ---------------------------------------------------------------------------]]
 ENT.Type      = "anim"
 ENT.Base      = "base_anim"
@@ -36,12 +40,13 @@ function ENT:SetupDataTables()
     self:NetworkVar("String", 1, "ReadyList")    -- "clock,rations": goods waiting to be collected
     self:NetworkVar("Bool",   0, "Off")          -- switched off: everything paused
     self:NetworkVar("Float",  4, "PausedAt")     -- when it was switched off
+    self:NetworkVar("Float",  5, "Charge")       -- battery charge, % (sh_machine_upgrades.lua)
 end
 
 -- The line's clock: stands still while it's switched off
 function ENT:Now() return self:GetOff() and self:GetPausedAt() or CurTime() end
 
-function ENT:Config() return RP1942.Production.factory end
+function ENT:Config() return RP1942.upgradedConfig(self, "factory") end   -- (with its upgrades)
 
 -- Seconds of running this run (the clock stops while halted)
 function ENT:Progress()

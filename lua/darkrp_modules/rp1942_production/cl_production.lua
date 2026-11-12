@@ -503,6 +503,81 @@ local function paint(ent, P, w, h)
     end
 end
 
+--[[---------------------------------------------------------------------------
+A drawer: a second, narrower panel that slides out from the right edge of a
+machine's panel to show something (the factory's output tray). An entity
+that has one sets:
+    ENT.DrawerSize = { w =, h = }            in panel pixels
+    ENT:DrawerOpen() -> bool                  should it be out right now?
+    ENT:PaintDrawer(P, w, h)                  paint it (P as for PaintPanel;
+                                              it has no buttons)
+It slides out over DRAWER_TIME seconds and back in when it closes.
+---------------------------------------------------------------------------]]
+local DRAWER_TIME, DRAWER_GAP = 0.35, 6
+local drawerPool = {}   -- "WxH" -> list of { rt, mat, owner, used }
+
+local function drawerTexture(ent, w, h)
+    local key = w .. "x" .. h
+    local pool = drawerPool[key]
+    if not pool then pool = {} drawerPool[key] = pool end
+    local now, free = RealTime(), nil
+    for _, t in ipairs(pool) do
+        if t.owner == ent then t.used = now return t end
+        if not free and (not IsValid(t.owner) or now - t.used > RELEASE_AFTER) then free = t end
+    end
+    local t = free
+    if not t then
+        local id = key .. "_" .. (#pool + 1)
+        local rt = GetRenderTargetEx("rp1942_drawer_" .. id, w, h, RT_SIZE_OFFSCREEN, MATERIAL_RT_DEPTH_NONE,
+            bit.bor(4, 8, 256), 0, IMAGE_FORMAT_RGBA8888)
+        local mat = CreateMaterial("rp1942_drawermat_" .. id, "UnlitGeneric", {
+            ["$basetexture"] = rt:GetName(), ["$translucent"] = "1", ["$vertexalpha"] = "1", ["$vertexcolor"] = "1",
+        })
+        t = { rt = rt, mat = mat }
+        pool[#pool + 1] = t
+    end
+    t.owner, t.used = ent, now
+    ent._drawerPainted = nil
+    return t
+end
+
+local function drawDrawer(ent, pos, ang, scale, alpha, mainW)
+    if not (ent.DrawerSize and ent.PaintDrawer and ent.DrawerOpen) then return end
+    local open = ent:DrawerOpen() == true
+    ent._drawerT = math.Approach(ent._drawerT or 0, open and 1 or 0, FrameTime() / DRAWER_TIME)
+    local t = ent._drawerT
+    if t <= 0 then return end
+    local slide = 1 - (1 - t) ^ 3   -- fast out, settling at the end
+    local w, h = ent.DrawerSize.w, ent.DrawerSize.h
+    local tex = drawerTexture(ent, w, h)
+    local now = RealTime()
+    if not ent._drawerPainted or now - ent._drawerPainted >= 0.25 or ent._drawerTex ~= tex then
+        ent._drawerPainted, ent._drawerTex = now, tex
+        local P = setmetatable({ w = w, h = h, ent = ent }, Painter)
+        render.PushRenderTarget(tex.rt)
+            render.Clear(0, 0, 0, 0, true, true)
+            cam.Start2D()
+                blendOn()
+                surface.SetDrawColor(COL.bg)
+                surface.DrawRect(0, 0, w, h)
+                local ok, err = pcall(ent.PaintDrawer, ent, P, w, h)
+                if not ok and err ~= ent._drawerError then
+                    ent._drawerError = err
+                    ErrorNoHalt("[42Bros] Drawer error on " .. tostring(ent) .. ": " .. tostring(err) .. "\n")
+                end
+                blendOff()
+            cam.End2D()
+        render.PopRenderTarget()
+    end
+    -- Only the part that's out shows: its leading (right-hand) edge first
+    local shown = w * slide
+    cam.Start3D2D(pos + ang:Forward() * ((mainW + DRAWER_GAP) * scale), ang, scale)
+        surface.SetMaterial(tex.mat)
+        surface.SetDrawColor(255, 255, 255, 255 * alpha)
+        surface.DrawTexturedRectUV(0, 0, shown, h, 1 - slide, 0, 1, 1)
+    cam.End3D2D()
+end
+
 function RP1942.drawPanel(ent)
     if not ent.PanelSize or not ent.PaintPanel then return end
     local eye = LocalPlayer():EyePos()
@@ -568,6 +643,8 @@ function RP1942.drawPanel(ent)
             surface.DrawTexturedRect(0, 0, w, h)
         cam.End3D2D()
     end
+
+    drawDrawer(ent, pos, ang, scale, alpha, w)
 
     if cx then
         RP1942.PanelLook = { ent = ent, t = RealTime() }   -- the crosshair is somewhere on it

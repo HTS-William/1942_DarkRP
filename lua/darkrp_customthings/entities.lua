@@ -25,7 +25,7 @@ DarkRP.createEntity("Bread Oven", {
     ent = "rp1942_oven",
     model = "models/props_furniture/kitchen_oven1.mdl",
     price = 800,
-    max = 2,
+    max = 3,
     cmd = "buyoven",
     allowed = { TEAM_BAKER },
     category = "Production",
@@ -45,7 +45,7 @@ DarkRP.createEntity("Wine Barrel", {
     ent = "rp1942_wine_barrel",
     model = "models/props_c17/woodbarrel001.mdl",
     price = 250,
-    max = 3,
+    max = 4,
     cmd = "buywinebarrel",
     allowed = { TEAM_WINEMAKER },
     category = "Production",
@@ -57,7 +57,7 @@ DarkRP.createEntity("Oil Rig", {
     ent = "rp1942_oil_rig",
     model = "models/props_mining/oiltank01.mdl",
     price = 1500,
-    max = 1,
+    max = 2,
     cmd = "buyoilrig",
     allowed = { TEAM_PETROLEUM },
     category = "Production",
@@ -70,9 +70,21 @@ DarkRP.createEntity("Factory Line", {
     ent = "rp1942_factory",
     model = "models/props_mining/elevator_winch_empty.mdl",
     price = 1200,
-    max = 1,
+    max = 2,
     cmd = "buyfactory",
     allowed = { TEAM_FACTORY },
+    category = "Production",
+})
+
+-- Power for the factory line and the oil rig: push it in to charge the machine
+-- (rp1942_production/sh_machine_upgrades.lua)
+DarkRP.createEntity("Car Battery", {
+    ent = "rp1942_battery",
+    model = "models/items/car_battery01.mdl",
+    price = 100,
+    max = 4,
+    cmd = "buybattery",
+    allowed = { TEAM_FACTORY, TEAM_PETROLEUM },
     category = "Production",
 })
 

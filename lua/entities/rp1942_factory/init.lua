@@ -16,6 +16,7 @@ function ENT:Initialize()
     local phys = self:GetPhysicsObject()
     if IsValid(phys) then phys:Wake() end
     self:SetScrap(0)
+    self:SetCharge(0)   -- needs a battery before it'll run
     self:Idle()
 end
 
@@ -147,6 +148,7 @@ end
 
 function ENT:Think()
     local now = CurTime()
+    RP1942.drainMachine(self, self:GetState() == self.STATE_RUNNING)   -- the battery runs down while it runs
     if self:GetState() == self.STATE_RUNNING and not self:GetOff() then
         local run = self:Progress()
         local nextHalt = self.haltAt and self.haltAt[self:GetHalts() + 1]
@@ -163,7 +165,15 @@ end
 -- Buttons on the panel: "fix:<fault>" and "collect"
 function ENT:OnPanelPress(ply, id)
     if id == "power" then
+        if self:GetOff() and self:GetCharge() <= 0 then
+            return DarkRP.notify(ply, 1, 4, "No power: push a car battery into the line first.")
+        end
+        self.RP1942_NoPower = nil
         self:SetPower(self:GetOff())
+        return
+    end
+    if string.StartWith(id, "buy:") then
+        RP1942.buyMachineUpgrade(self, ply, "factory", string.sub(id, 5))
         return
     end
 
@@ -215,7 +225,7 @@ end
 
 function ENT:Use(ply)
     if IsValid(ply) and ply:IsPlayer() then
-        DarkRP.notify(ply, 0, 3, "Look at a button on the factory's panel and press E. Push scrap metal into the line to run it.")
+        DarkRP.notify(ply, 0, 3, "Look at a button on the factory's panel and press E. Push scrap metal and car batteries into the line to run it.")
     end
 end
 

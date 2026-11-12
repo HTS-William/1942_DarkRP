@@ -33,7 +33,7 @@ end
 -- The oven's clock: stands still while it's switched off
 function ENT:Now() return self:GetOff() and self:GetPausedAt() or CurTime() end
 
-function ENT:Config() return RP1942.Production.oven end
+function ENT:Config() return RP1942.upgradedConfig(self, "oven") end   -- (with its upgrades: sh_machine_upgrades.lua)
 
 function ENT:IsBaking() return self:GetDoneAt() > 0 end
 

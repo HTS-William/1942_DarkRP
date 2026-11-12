@@ -76,7 +76,7 @@ jobs:     job COMMANDS whose custom job title (F4 > Commands, or /job) is a
           exist yet when this file loads. Typing your real job name reveals you.
 freeform: false = cover must be the exact name of a civilian job (Baker, Doctor...)
           true  = any title of 3-25 characters
-presets:  the tabs in each undercover job's F3 wardrobe (see below)
+presets:  the tabs in each undercover job's wardrobe (F4, Wardrobe tab) (see below)
 models:   an optional extra "Wardrobe" tab of plain models (see below)
 ---------------------------------------------------------------------------]]
 C.Disguise = {

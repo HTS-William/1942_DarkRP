@@ -1,5 +1,5 @@
 --[[---------------------------------------------------------------------------
-F3 menu for undercover jobs: the wardrobe.
+The undercover jobs' wardrobe (their F4 Wardrobe tab).
 jobs.lua (Gestapo Agent, Resistance Operative):  menu = "RP1942_WardrobeMenu",
 Colours follow the job's faction (Reich / Resistance), like every job menu.
 Server side of the buttons: rp1942_core/sv_disguise.lua ("preset" and "model").

@@ -85,3 +85,18 @@ function RP1942.buyShopItem(ply, itemId, amount)
     DarkRP.notify(ply, 0, 4, "You bought " .. (amount > 1 and ("a crate of " .. amount .. "x ") or "") .. item.name .. " for " .. DarkRP.formatMoney(price) .. ".")
     hook.Run("RP1942_ShopPurchase", ply, item, ent, price, amount)
 end
+
+-- Buying from the top of the F4 Shop tab (where a dealer's catalog is shown):
+-- the item's id and how many. RP1942.buyShopItem checks the rest (that it's
+-- in this player's job's catalog, the money, being alive and free).
+util.AddNetworkString("RP1942_DealerBuy")
+net.Receive("RP1942_DealerBuy", function(_, ply)
+    if not IsValid(ply) then return end
+    local now = CurTime()
+    if (ply.RP1942_NextDealerBuy or 0) > now then return end
+    ply.RP1942_NextDealerBuy = now + 0.4
+    local id = net.ReadString()
+    local amount = net.ReadUInt(8)
+    if #id == 0 or #id > 64 then return end
+    RP1942.buyShopItem(ply, id, amount)
+end)
