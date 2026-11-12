@@ -14,7 +14,7 @@
     drops to nothing, the pump stalls and switches itself off: shut valve,
     and someone has to switch it back on (the pressure then builds from 0).
     Left in the red too long, an alarm sounds; left longer, it explodes.
-    It runs on car batteries (rp1942_battery): push one in to charge it. With
+    It runs on batteries (rp1942_battery): push one in to charge it. With
     the charge gone it switches itself off until a battery goes in.
     UPGRADES (top right of the panel): speed, output, steadier, fuel
     (rp1942_production/sh_machine_upgrades.lua).

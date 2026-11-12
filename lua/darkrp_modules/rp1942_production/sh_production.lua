@@ -21,9 +21,9 @@ the panel and press E.
                 climbs; turn the wheel to open it and the pressure falls. Keep
                 it in the green: more time there = more barrels of crude and
                 more stars. FILL BARRELS when the tank is full. It runs on
-                car batteries: push one in to charge it.
+                batteries: push one in to charge it.
     Factory     buys a factory line (up to 2). It runs on scrap metal and
-                car batteries (push them in), and now and then
+                batteries (push them in), and now and then
     Owner       halts with a fault (BELT, BOILER or FUSE): press the matching
                 repair button. The less downtime, the better the run, and the
                 better the odds of rare goods (clocks, radios). COLLECT.

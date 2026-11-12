@@ -158,7 +158,7 @@ Raiding - Breaking into someone's property to take their valuables.
 - Hands (slot 1, what you spawn holding): left click raises your fists, click again to punch; right click pushes the player in front of you; R raises or lowers your fists. With your hands down you're harmless, and the fists drop by themselves after a few seconds without a punch.
 - Sitting: hold your walk key (Alt by default) and press E while looking at a bench, a chair, the ground or a prop to sit there; press E again to get up. Sitting is no shield: you can still be shot, blown up or handcuffed, and getting hurt by a player stands you up (no sitting back down for a few seconds). Plain E never sits, so doors, machines, dumpsters and crates keep their own E action. !sitstuck frees you if you get stuck sitting; !spawn takes you to spawn (neither works while arrested, wanted, in a fight or robbing the bank).
 F4 - Jobs, your job's own tab if it has one (Wardrobe, Führer's Office), Appearance (your model's bodygroups and skin, remembered per model), the shop, commands and these pages
-F4 Shop - What only your job can buy is at the top (green bars). Type in the search box to filter; click a bar to fold that section away.
+F4 Shop - Pick a category on the left: what only your job can buy is at the top. Click a card to buy it; guns show the ammo they take under the name. The search box looks through every category at once.
 F2 - Look at a door: buys it if it's for sale. On a door you own, opens its menu (sell it, add co-owners, give it a title). Shift+F2 always opens the menu
 - Doors: who owns a door is written on the door itself: "Owned By:" and the owner, or the faction in its colour on a faction door. A door nobody owns says "For Sale" and its price. A title (from the door menu) shows above the owner.
 F3 - Frees the cursor (job menus are now a tab in F4: Wardrobe, Führer's Office...)
@@ -281,7 +281,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Arms dealers
 - The Black Market Dealer, the Cherkesov Dealer and the German Supplier buy weapons from their own stock, at the top of the F4 Shop tab (Your job), and sell them on to other players. Set the crate size beside the search box to buy several at once. The weapon appears in front of you.
-- Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Hover a weapon in a dealer's stock to see which ammo it takes. Grenades, molotovs, mines, explosive charges, flamethrower fuel, crossbow bolts and flare rounds are sold there too. One grenade refill fits any grenade.
+- Ammunition is sold in the F4 Shop (Ammunition), one box per calibre: 9mm Parabellum, 7.92mm Mauser, .45 ACP, 7.62mm Tokarev and so on. Hover a weapon in a dealer's stock to see which ammo it takes. Flamethrower fuel, crossbow bolts and flare rounds are sold there too.
+- Grenades, molotovs, mines and explosives are used once: throw or place it and it's gone. There are no refills; buy a new one from a dealer.
 - Bought ammo is put down in front of you as a box with what it is written above it: press E on it to take the rounds. Only you can open or pocket a box you bought, and you can have 5 waiting at most.
 - Boxes of the same ammo merge into one when they touch. Ammo boxes can be stored in your inventory (F4).
 - Weapons come loaded: guns with a full magazine; a grenade, molotov, dynamite bundle or mine comes with itself to throw or place; the flamethrower with a tank of fuel.
@@ -301,7 +302,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - Ovens, oil rigs and factory lines have an ON / OFF button. Switching one off pauses it exactly where it is (timers, heat, pressure); switching it back on carries on. Nothing is lost.
 - How many you can own: 3 ovens, 4 wine barrels, 2 oil rigs, 2 factory lines.
 - Upgrades: ovens, oil rigs and factory lines have UPGRADES at the top right of their panel. 3 tiers of each: Speed (faster batches), Output (more per batch), Steadier (an easier job: the fire cools slower, fewer factory faults, steadier oil pressure), and Fuel efficiency on rigs and factory lines (a battery lasts longer). Only the owner can buy them, and they stay with that machine: they're lost when it's removed or you change job or leave.
-- Power: oil rigs and factory lines run on Car Batteries (F4 Shop, Production). Push one into the machine to charge it: one battery is about 8 minutes of running (only while it's actually working), and a machine holds two. With no charge left it switches itself off, paused, until a battery goes in.
+- Power: oil rigs and factory lines run on Batteries (F4 Shop, Production). Push one into the machine to charge it: one battery is about 8 minutes of running (only while it's actually working), and a machine holds two. With no charge left it switches itself off, paused, until a battery goes in.
 - Goods have a quality of 1 to 3 stars: the better you tend the machine, the more you make and the better it is. Better goods sell for more.
 - Goods you collect go straight into your pocket. If it's full, the rest are left on top of the machine.
 - E picks goods up to carry. Shift+E eats or drinks them (bread, wine, tinned rations).

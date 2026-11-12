@@ -55,7 +55,9 @@ RP1942.AmmoTypes = {
 Ammo that comes WITH a weapon when it's bought, found or taken from a crate.
     Guns: a full magazine.
     Throwables and placeables (grenades, molotovs, dynamite, mines): `each`
-    of their ammo, so the one you bought can be thrown / placed.
+    of their ammo, so the one you bought can be thrown / placed. They're
+    used once: no refills are sold, and an empty one is taken away
+    (sv_one_use.lua).
     Anything else without a magazine (the flamethrower): its DefaultClip.
     byClass overrides any weapon, e.g. mcv_mk2 = 2 for two grenades.
 ---------------------------------------------------------------------------]]

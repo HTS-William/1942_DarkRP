@@ -166,7 +166,7 @@ end
 function ENT:OnPanelPress(ply, id)
     if id == "power" then
         if self:GetOff() and self:GetCharge() <= 0 then
-            return DarkRP.notify(ply, 1, 4, "No power: push a car battery into the line first.")
+            return DarkRP.notify(ply, 1, 4, "No power: push a battery into the line first.")
         end
         self.RP1942_NoPower = nil
         self:SetPower(self:GetOff())
@@ -225,7 +225,7 @@ end
 
 function ENT:Use(ply)
     if IsValid(ply) and ply:IsPlayer() then
-        DarkRP.notify(ply, 0, 3, "Look at a button on the factory's panel and press E. Push scrap metal and car batteries into the line to run it.")
+        DarkRP.notify(ply, 0, 3, "Look at a button on the factory's panel and press E. Push scrap metal and batteries into the line to run it.")
     end
 end
 

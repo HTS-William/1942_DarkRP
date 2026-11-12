@@ -59,7 +59,7 @@ function ENT:PaintPanel(P, w, h)
     RP1942.paintBattery(self, P, x + iw, y + 27)   -- beside the progress bar (which is shorter for it)
     local left = c.runTime - self:Progress()
     if off and self:GetCharge() <= 0 then
-        P:Text("No power  ·  push a car battery in", "RP1942_PanelBody", x, y, RED_TEXT)
+        P:Text("No power  ·  push a battery in", "RP1942_PanelBody", x, y, RED_TEXT)
     elseif done then
         P:Text("Run complete!  Collect the goods.", "RP1942_PanelBody", x, y, C.gold)
     elseif idle then

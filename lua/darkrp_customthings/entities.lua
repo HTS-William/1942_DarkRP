@@ -78,7 +78,7 @@ DarkRP.createEntity("Factory Line", {
 
 -- Power for the factory line and the oil rig: push it in to charge the machine
 -- (rp1942_production/sh_machine_upgrades.lua)
-DarkRP.createEntity("Car Battery", {
+DarkRP.createEntity("Battery", {
     ent = "rp1942_battery",
     model = "models/items/car_battery01.mdl",
     price = 100,

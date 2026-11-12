@@ -1,7 +1,7 @@
 include("shared.lua")
 
 function ENT:LabelInfo()
-    return { title = "CAR BATTERY", lines = { "Push it into a factory line or an oil rig to power it" } }
+    return { title = "BATTERY", lines = { "Push it into a factory line or an oil rig to power it" } }
 end
 
 function ENT:Draw()

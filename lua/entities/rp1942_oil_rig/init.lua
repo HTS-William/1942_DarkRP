@@ -217,7 +217,7 @@ function ENT:OnPanelPress(ply, id)
     local c = self:Config()
     if id == "power" then
         if self:GetOff() and self:GetCharge() <= 0 then
-            return DarkRP.notify(ply, 1, 4, "No power: push a car battery into the rig first.")
+            return DarkRP.notify(ply, 1, 4, "No power: push a battery into the rig first.")
         end
         self.RP1942_NoPower = nil
         self:SetPower(self:GetOff())

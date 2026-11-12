@@ -17,7 +17,7 @@ UPGRADES (the oven, the factory line, the oil rig)
         Fuel        (factory, rig) a battery lasts longer (x1.25 / x1.55 / x2)
 
 BATTERY POWER (the factory line and the oil rig)
-    They run on car batteries (F4 shop, Production): push one into the
+    They run on batteries (F4 shop, Production): push one into the
     machine to charge it. A full charge lasts `powerMinutes` of running (only
     while it's actually working). It holds up to two batteries' worth; a
     battery bounces off while it's more than half full. With no charge left
@@ -168,8 +168,8 @@ if SERVER then
         local owner = ent.Getowning_ent and ent:Getowning_ent()
         if IsValid(owner) then
             DarkRP.notify(owner, 1, 7, ent.RP1942_EverCharged
-                and ("Your " .. (ent.PrintName or "machine") .. " ran out of power. Push a car battery into it.")
-                or ("Your " .. (ent.PrintName or "machine") .. " needs power: push a car battery into it (F4 shop, Production)."))
+                and ("Your " .. (ent.PrintName or "machine") .. " ran out of power. Push a battery into it.")
+                or ("Your " .. (ent.PrintName or "machine") .. " needs power: push a battery into it (F4 shop, Production)."))
         end
     end
 end

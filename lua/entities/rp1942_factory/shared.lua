@@ -13,7 +13,7 @@
     COLLECT, and the next run starts if there's scrap in the hopper.
     The POWER lever switches it off: the run (and any downtime) pause where
     they are. Repairs need the power on.
-    It runs on car batteries (rp1942_battery): push one in to charge it. With
+    It runs on batteries (rp1942_battery): push one in to charge it. With
     the charge gone it switches itself off until a battery goes in.
     UPGRADES (top right of the panel): speed, output, steadier, fuel
     (rp1942_production/sh_machine_upgrades.lua).

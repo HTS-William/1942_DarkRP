@@ -60,7 +60,7 @@ function ENT:PaintPanel(P, w, h)
     ------------------------------------------------------------ status and progress
     RP1942.paintBattery(self, P, x + iw, y + 27)   -- beside the progress bar (which is shorter for it)
     if off and self:GetCharge() <= 0 and ready <= 0 then
-        P:Text("No power  ·  push a car battery in", "RP1942_PanelBody", x, y, RED_TEXT)
+        P:Text("No power  ·  push a battery in", "RP1942_PanelBody", x, y, RED_TEXT)
         P:Bar(x, y + 32, iw - 160, 14, pumping and (1 - math.max(self:GetDoneAt() - self:Now(), 0) / c.pumpTime) or 0, ACCENT)
     elseif ready > 0 then
         P:Text("Tank full!  Fill the barrels.", "RP1942_PanelBody", x, y, C.gold)
