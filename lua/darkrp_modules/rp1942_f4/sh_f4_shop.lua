@@ -89,11 +89,12 @@ RP1942.F4Shop = {
     items = {
         -- Fire extinguisher (Workshop "Fire Extinguisher" by Rubat, id 104607228,
         -- mounted on the server). Puts out the spreading fire from molotovs
-        -- and explosions (rp1942_fire). This is the never-empty version;
-        -- weapon_extinguisher is the one with 500 sprays that refills in water.
-        { name = "Fire Extinguisher", type = "weapon", class = "weapon_extinguisher_infinite", price = 1500,
+        -- and explosions (rp1942_fire). This is the one with 500 sprays that
+        -- refills in water; the never-empty weapon_extinguisher_infinite is
+        -- the Fire Patrol's (jobs.lua).
+        { name = "Fire Extinguisher", type = "weapon", class = "weapon_extinguisher", price = 150,
           category = "Tools", model = "models/weapons/w_fire_extinguisher.mdl",
-          description = "Puts out fires. Spray at the flames. Never runs out. Each fire you put out pays a small reward." },
+          description = "Puts out fires. Spray at the flames. Holds 500 sprays; stand in water to refill it. Each fire you put out pays a small reward." },
 
         -- The factory's Radio Set, as a working radio (E tunes it, Shift+E carries
         -- it, sells at the market like any good). Its price follows the market:
@@ -119,6 +120,10 @@ RP1942.F4Shop = {
         { name = "Cinema Screen", type = "entity", class = "rp1942_cinema_screen", price = 3000, max = 1,
           category = "Tools", model = "models/hunter/plates/plate3x5.mdl", jobs = { "propaganda" },
           description = "Shows a Newsreel Camera that's on air, live in black and white, with what's heard around it. E changes channel." },
+        -- A television for anyone: the same broadcast on a small set (rp1942_tv)
+        { name = "Television", type = "entity", class = "rp1942_tv", price = 750, max = 2,
+          category = "Supplies", model = "models/props_c17/tv_monitor01.mdl",
+          description = "Watch the Propaganda Minister's broadcasts at home: shows a camera that's on air, live, with what's heard around it. E changes channel." },
 
         -- More examples - remove the -- in front of a line to switch it on:
 

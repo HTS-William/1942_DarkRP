@@ -28,7 +28,6 @@ local CAM = {
 The radial menu
 ---------------------------------------------------------------------------]]
 local menu          -- the open menu panel, if any
-local waitRelease   -- R must be let go before it opens again (the keys call it every tick R is held)
 
 local function colors()
     local C = RP1942.F4UI and RP1942.F4UI.C
@@ -57,12 +56,9 @@ local function ringSegment(cx, cy, r1, r2, a1, a2, col)
     end
 end
 
-local reloadKeyDown
-
 local function closeMenu()
     if IsValid(menu) then menu:Remove() end
     menu = nil
-    waitRelease = true
 end
 
 local function choose(i)
@@ -70,22 +66,51 @@ local function choose(i)
     if i then RunConsoleCommand("rp1942_animation", tostring(i)) end
 end
 
-function reloadKeyDown()
+--[[---------------------------------------------------------------------------
+Reading R ourselves. The menu used to open from the keys SWEP's Reload, which
+the game calls every predicted tick R is held (and again when ticks are
+replayed), so presses were missed, doubled or opened and shut it at once.
+Now a Think hook watches the reload key (whatever it's bound to, a mouse
+button too) and acts only on the moment it goes down and the moment it
+comes up:
+
+    R down, menu shut      open it (unless you're at a door: that's the
+                           keys' door menu, as before)
+    R up, held > 0.25 s    play the one you're pointing at (hold, flick, let go)
+    R up, a quick tap      leave it open to click
+    R down, menu open      close it
+---------------------------------------------------------------------------]]
+local HOLD = 0.25    -- seconds: held longer than this, letting go picks
+local wasDown = false
+
+local function reloadCode()
     local key = input.LookupBinding("+reload")
     local code = key and input.GetKeyCode(key)
-    return code and code > 0 and input.IsKeyDown(code)
+    return (code and code > 0) and code or KEY_R
+end
+
+local function reloadDown()
+    return input.IsButtonDown(reloadCode())
+end
+
+-- Typing somewhere (chat, a text box, the console): R is a letter, not a key
+local function typing()
+    local ply = LocalPlayer()
+    if IsValid(ply) and ply.IsTyping and ply:IsTyping() then return true end
+    if gui.IsConsoleVisible() or gui.IsGameUIVisible() then return true end
+    local focus = vgui.GetKeyboardFocus()
+    return IsValid(focus) and focus:GetClassName() == "TextEntry"
+end
+
+-- The keys' own R at a door (the door menu): DarkRP opens it within 200 units
+local function lookingAtDoor(ply)
+    local ent = ply:GetEyeTrace().Entity
+    if not IsValid(ent) or not ent.isKeysOwnable then return false end
+    local ok, own = pcall(ent.isKeysOwnable, ent)
+    return ok and own and ent:GetPos():DistToSqr(ply:GetPos()) <= 40000
 end
 
 local function openMenu()
-    if waitRelease then
-        if reloadKeyDown() then return end
-        waitRelease = nil
-    end
-    if IsValid(menu) then
-        -- R pressed again (not the same press still held): close it
-        if menu.rWasUp and not menu.heldSince then closeMenu() end
-        return
-    end
     local ply = LocalPlayer()
     if not IsValid(ply) or not ply:Alive() then return end
 
@@ -100,8 +125,7 @@ local function openMenu()
     menu:SetPos(0, 0)
     menu:MakePopup()
     menu:SetKeyboardInputEnabled(false)   -- keys still reach the game (move, R)
-    menu.opened = RealTime()
-    menu.heldSince = reloadKeyDown() and RealTime() or nil
+    menu.heldSince = RealTime()           -- R is down right now (it just opened it)
     menu.hover = nil
     menu.fade = 0
     local cx, cy = ScrW() / 2, ScrH() / 2
@@ -124,14 +148,6 @@ local function openMenu()
             self.hover = math.floor((ang + slice / 2) / slice) % n + 1
         end
         self.fade = math.min(1, self.fade + FrameTime() * 8)
-        if not reloadKeyDown() then self.rWasUp = true end   -- (so the next R press closes it)
-
-        -- hold R, flick toward one, let go: that one. A quick tap leaves it open to click.
-        if self.heldSince and not reloadKeyDown() then
-            local held = RealTime() - self.heldSince
-            self.heldSince = nil
-            if held > 0.25 then return choose(self.hover) end
-        end
     end
 
     function menu:OnMousePressed(code)
@@ -166,8 +182,36 @@ local function openMenu()
             C.sub, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 end
-concommand.Add("_DarkRP_AnimationMenu", openMenu)   -- what the keys' R runs
-hook.Add("Initialize", "RP1942_Animations", function() concommand.Add("_DarkRP_AnimationMenu", openMenu) end)
+
+hook.Add("Think", "RP1942_AnimMenuKey", function()
+    local down = reloadDown()
+    if down == wasDown then return end
+    wasDown = down
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+
+    if down then
+        -- pressed
+        if IsValid(menu) then return closeMenu() end
+        if typing() or not ply:Alive() or ply:InVehicle() then return end
+        local w = ply:GetActiveWeapon()
+        if not (IsValid(w) and w:GetClass() == "keys") then return end
+        if lookingAtDoor(ply) then return end   -- the keys' door menu
+        openMenu()
+    elseif IsValid(menu) and menu.heldSince then
+        -- let go: a hold picks what you're pointing at, a tap leaves it open
+        local held = RealTime() - menu.heldSince
+        menu.heldSince = nil
+        if held > HOLD then choose(menu.hover) end
+    end
+end)
+
+-- The keys SWEP still runs DarkRP's menu command on every tick R is held:
+-- it does nothing now (the Think hook above opens the menu), and replacing it
+-- keeps DarkRP's own button list from opening.
+local function noop() end
+concommand.Add("_DarkRP_AnimationMenu", noop)
+hook.Add("Initialize", "RP1942_Animations", function() concommand.Add("_DarkRP_AnimationMenu", noop) end)
 
 --[[---------------------------------------------------------------------------
 Playing one: everyone sees the gesture; the player who did it also gets the

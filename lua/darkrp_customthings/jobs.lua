@@ -85,7 +85,7 @@ local RAID_JOBS = {
     thief = true, prothief = true,
     resistance = true, resmedic = true, resoperative = true, resleader = true,
 }
-local NO_RAID_REICH = { gersupplier = true, scientist = true, fuhrer = true, propaganda = true }   -- (the Reich Banker is a civilian job: NO)
+local NO_RAID_REICH = { gersupplier = true, scientist = true, fuhrer = true, propaganda = true, firepatrol = true }   -- (the Reich Banker is a civilian job: NO)
 
 
 local function job(tbl)
@@ -494,6 +494,24 @@ TEAM_SCIENTIST = job{
     category = "Reich",
     sortOrder = 11,
     demoteOnDeath = true,
+}
+
+TEAM_FIREPATROL = job{
+    name = "Fire Patrol",
+    color = Color(150, 60, 40),
+    model = M.firepatrol,   -- (Wehrmacht for now: rp1942_core/sh_config.lua)
+    description = [[The Reich's fire brigade. Puts out the fires that molotovs, explosions and air raids leave behind, with a fire extinguisher that never runs out. Every fire put out pays a reward. No police powers.]],
+    weapons = { W.extinguisher },
+    command = "firepatrol",
+    max = 4,
+    salary = SAL * 1.1,
+    admin = 0,
+    faction = "reich",
+    arrests = false,   -- no police powers (no batons, no checker)
+    noChecker = true,
+    branch = "fire",
+    category = "Reich",
+    sortOrder = 12,
 }
 
 --[[===========================================================================

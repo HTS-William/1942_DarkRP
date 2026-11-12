@@ -236,7 +236,8 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 # Fire
 - Molotovs, WP grenades and the flamethrower set the ground alight, and any big explosion (grenades, dynamite, a printer or rig going up) can leave fires behind. Bazooka and Panzerschreck rockets burst into flame like a molotov, and now and then leave fires too. Fire spreads along the ground for a while, burns anyone standing in it (the thrower gets the kill) and sets props alight, then burns itself out.
 - Fire never starts in water, and each patch can only grow so far.
-- Fire Extinguisher (F4 Shop, Tools) - Spray at the flames to put them out, and at a burning player. It never runs out. Every fire you put out pays 20 RM, unless you lit it yourself.
+- Fire Extinguisher (F4 Shop, Tools, R.M. 150) - Spray at the flames to put them out, and at a burning player. It holds 500 sprays: stand in water to refill it. Every fire you put out pays 20 RM, unless you lit it yourself.
+- Fire Patrol (Reich) - the Reich's fire brigade: their extinguisher never runs out. No police powers, and they can't raid.
 
 # Radios
 - Press E on a radio to tune it to one of the server's stations. It plays for everyone nearby, from the set itself. Only those stations can be played: nobody can put on their own link.
@@ -250,6 +251,7 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 - The placed Film Camera films where its lens points (aim it with the physgun). E on it goes on air or off.
 - E on the screen changes channel: the nearest camera on air (hand-held or placed), the next one, then off.
 - The screen and the placed camera go with the job: change to another job and they're taken down.
+- Anyone can buy a Television (F4 shop, Supplies; up to 2). It shows the same broadcasts on a small set: E changes channel, just like the screen. Move it with the physgun or Shift+E. It stays when you change job.
 - The screen shows what the camera films, live in black and white like an old newsreel. Everyone near the screen hears what's said near the camera (voice chat) and the sounds made there: gunshots, doors, footsteps.
 - Filming people is roleplay like anything else: the rules still apply.
 

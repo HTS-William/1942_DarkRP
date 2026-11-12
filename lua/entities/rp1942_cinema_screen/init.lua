@@ -30,39 +30,7 @@ function ENT:Initialize()
     end)
 end
 
--- E: the next camera on air (nearest first), then off
+-- E: the next camera on air (nearest first), then off (sv_broadcast.lua)
 function ENT:Use(ply)
-    if not (IsValid(ply) and ply:IsPlayer()) then return end
-    if not RP1942.broadcastCanUse(self, ply) then
-        return DarkRP.notify(ply, 1, 3, "That's " .. (self:GetOwnerName() ~= "" and self:GetOwnerName() or "someone else") .. "'s screen.")
-    end
-    local cams = {}
-    -- the hand-held newsreel cameras and the placed film cameras that are on air
-    for _, class in ipairs({ "rp1942_newsreel_camera", "rp1942_film_camera" }) do
-        for _, c in ipairs(ents.FindByClass(class)) do
-            if c:Broadcasting() then cams[#cams + 1] = c end
-        end
-    end
-    local here = self:GetPos()
-    local function where(c)   -- a hand-held one is where its holder is
-        local owner = c:IsWeapon() and c:GetOwner()
-        return IsValid(owner) and owner:GetPos() or c:GetPos()
-    end
-    table.sort(cams, function(a, b) return where(a):DistToSqr(here) < where(b):DistToSqr(here) end)
-    local current, nextCam = self:GetCamera(), nil
-    if not IsValid(current) then
-        nextCam = cams[1]
-    else
-        for i, c in ipairs(cams) do
-            if c == current then nextCam = cams[i + 1] break end
-        end
-    end
-    self:SetCamera(nextCam or NULL)
-    self:EmitSound("buttons/button9.wav", 55)
-    if IsValid(nextCam) then
-        local name = nextCam:BroadcastName()
-        DarkRP.notify(ply, 0, 4, "Showing " .. (name == "a" and "a" or (name .. "'s")) .. " camera.")
-    else
-        DarkRP.notify(ply, 0, 4, #cams == 0 and "No camera is on air." or "Screen off.")
-    end
+    RP1942.broadcastNextChannel(self, ply, "screen")
 end

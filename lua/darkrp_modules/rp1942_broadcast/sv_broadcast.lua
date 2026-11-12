@@ -25,7 +25,7 @@ end
 local function update()
     links, relay = {}, {}
     local hearCam, hearScreen = CFG.hearCamera ^ 2, CFG.hearScreen ^ 2
-    for _, screen in ipairs(ents.FindByClass("rp1942_cinema_screen")) do
+    for _, screen in ipairs(RP1942.broadcastScreens()) do
         local cam = screen:GetCamera()
         if onAir(cam) then
             local cPos, scrPos = camPos(cam), screen:GetPos()
@@ -107,6 +107,40 @@ function RP1942.broadcastCanUse(ent, ply)
     if ent.Getowning_ent and ent:Getowning_ent() == ply then return true end
     if ent.CPPIGetOwner and ent:CPPIGetOwner() == ply then return true end
     return false
+end
+
+-- E on a screen (cinema screen or television): the next camera on air,
+-- nearest first, then off. Only its owner or staff.
+function RP1942.broadcastNextChannel(screen, ply, what)
+    if not (IsValid(ply) and ply:IsPlayer()) then return end
+    if not RP1942.broadcastCanUse(screen, ply) then
+        local owner = screen.GetOwnerName and screen:GetOwnerName() or ""
+        return DarkRP.notify(ply, 1, 3, "That's " .. (owner ~= "" and owner or "someone else") .. "'s " .. (what or "screen") .. ".")
+    end
+    local cams = {}
+    for _, class in ipairs(CFG.cameras) do
+        for _, c in ipairs(ents.FindByClass(class)) do
+            if onAir(c) then cams[#cams + 1] = c end
+        end
+    end
+    local here = screen:GetPos()
+    table.sort(cams, function(a, b) return camPos(a):DistToSqr(here) < camPos(b):DistToSqr(here) end)
+    local current, nextCam = screen:GetCamera(), nil
+    if not IsValid(current) then
+        nextCam = cams[1]
+    else
+        for i, c in ipairs(cams) do
+            if c == current then nextCam = cams[i + 1] break end
+        end
+    end
+    screen:SetCamera(nextCam or NULL)
+    screen:EmitSound("buttons/button9.wav", 55)
+    if IsValid(nextCam) then
+        local name = nextCam:BroadcastName()
+        DarkRP.notify(ply, 0, 4, "Showing " .. (name == "a" and "a" or (name .. "'s")) .. " camera.")
+    else
+        DarkRP.notify(ply, 0, 4, #cams == 0 and "No camera is on air." or ((what == "television" and "TV" or "Screen") .. " off."))
+    end
 end
 
 -- The screen and the placed camera belong to the job (the shop only sells them

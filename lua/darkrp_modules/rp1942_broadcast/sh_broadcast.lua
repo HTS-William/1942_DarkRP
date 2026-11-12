@@ -21,9 +21,12 @@ what's going on around the camera:
                      physgun      aim it
     Cinema screen    E            change channel: the next camera that's on
                                   air, then off (its owner, or staff)
+    Television       E            the same, on a small TV set (F4 shop,
+                                  Supplies: anyone can buy one)
 
 The screen and the placed camera go with the job: they're removed when their
-owner changes to any other job (or leaves the server).
+owner changes to any other job (or leaves the server). Televisions are for
+everyone and stay when you change job (they go when you leave).
 
 A camera on air shows a red ON AIR light, so everyone can see they're being
 filmed and heard. People standing at the camera don't hear the screen as well.
@@ -32,9 +35,10 @@ filmed and heard. People standing at the camera don't hear the screen as well.
     sv_broadcast.lua    who hears what, keeping the camera's spot sent to viewers
     cl_broadcast.lua    filming (render targets) and the relayed sounds
     lua/weapons/rp1942_newsreel_camera.lua, lua/entities/rp1942_film_camera,
-    lua/entities/rp1942_cinema_screen
+    lua/entities/rp1942_cinema_screen, lua/entities/rp1942_tv
     (anything with :Broadcasting(), :BroadcastView() and :BroadcastName() can be
-    a camera: add its class to the screen's list in rp1942_cinema_screen/init.lua)
+    a camera: add its class to `cameras` below; anything with Get/SetCamera can
+    be a screen: add it to `screens`)
 ---------------------------------------------------------------------------]]
 RP1942 = RP1942 or {}
 RP1942.Broadcast = {
@@ -46,4 +50,16 @@ RP1942.Broadcast = {
     height       = 360,
     fov          = 62,     -- (the camera's own zoom sets it while filming)
     soundsPerSec = 15,     -- most relayed sounds a second, per camera
+
+    cameras = { "rp1942_newsreel_camera", "rp1942_film_camera" },
+    screens = { "rp1942_cinema_screen", "rp1942_tv" },
 }
+
+-- Every screen in the world (cinema screens and televisions)
+function RP1942.broadcastScreens()
+    local all = {}
+    for _, class in ipairs(RP1942.Broadcast.screens) do
+        for _, e in ipairs(ents.FindByClass(class)) do all[#all + 1] = e end
+    end
+    return all
+end

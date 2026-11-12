@@ -153,6 +153,7 @@ RP1942.Weapons = {
     lockpick    = "lockpick",
     lockpick_pro = "rp1942_lockpick_pro", -- the Pro Thief's fast lockpick (lua/weapons/rp1942_lockpick_pro.lua)
     medkit      = "med_kit",
+    extinguisher = "weapon_extinguisher_infinite",   -- never runs out (the Fire Patrol's); the F4 shop sells the 500-spray weapon_extinguisher
 }
 
 --[[---------------------------------------------------------------------------
@@ -227,6 +228,7 @@ RP1942.Models = {
     },
     officer      = { "models/d42rp/player/wehrmacht_kommandant.mdl" },   -- (old shared key, kept for anything still using it)
     scientist    = { "models/player/magnusson.mdl" },
+    firepatrol   = { "models/d42rp/player/wehrmacht_grunt.mdl" },   -- Fire Patrol: Wehrmacht for now, until it has its own
     fuhrer       = { "models/d42rp/player/derfuhrer_alt.mdl" },
     eliteguard   = { "models/d42rp/player/eliteguard_01.mdl" },   -- Elite Guard (whitelisted)
 }

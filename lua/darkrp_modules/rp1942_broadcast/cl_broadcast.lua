@@ -89,7 +89,7 @@ hook.Add("PreRender", "RP1942_Broadcast", function()
     local eye = lp:EyePos()
     local range = CFG.viewRange ^ 2
     local wanted, n = {}, 0
-    for _, screen in ipairs(ents.FindByClass("rp1942_cinema_screen")) do
+    for _, screen in ipairs(RP1942.broadcastScreens()) do
         local camera = screen:GetCamera()
         if IsValid(camera) and camera.Broadcasting and camera:Broadcasting() and not wanted[camera] and eye:DistToSqr(screen:GetPos()) <= range then
             -- only if the screen is somewhere in front of us
