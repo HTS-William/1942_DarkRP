@@ -227,7 +227,7 @@ RP1942.Models = {
         "models/d42rp/player/leibstandarte_kommandant.mdl",
     },
     officer      = { "models/d42rp/player/wehrmacht_kommandant.mdl" },   -- (old shared key, kept for anything still using it)
-    scientist    = { "models/player/magnusson.mdl" },
+    scientist    = { "models/d42rp/player/reich_scientist.mdl" },
     firepatrol   = { "models/d42rp/player/wehrmacht_grunt.mdl" },   -- Fire Patrol: Wehrmacht for now, until it has its own
     fuhrer       = { "models/d42rp/player/derfuhrer_alt.mdl" },
     eliteguard   = { "models/d42rp/player/eliteguard_01.mdl" },   -- Elite Guard (whitelisted)
