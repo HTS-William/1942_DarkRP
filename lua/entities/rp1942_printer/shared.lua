@@ -38,27 +38,55 @@ function ENT:Tier(id)
     return get and get(self) or 0
 end
 
+-- A setting for this printer: { bank = ..., illegal = ... } or the same number for both
+function ENT:Val(v, default)
+    if istable(v) then v = v[self.Kind] end
+    if v == nil then return default end
+    return v
+end
+
 -- What the upgrades make it do
 -- Output's increase per tier for this printer (it differs by kind)
 function ENT:OutputPer()
-    local per = self:Config().upgrades.output.per
-    return istable(per) and (per[self.Kind] or 0.25) or per
+    return self:Val(self:Config().upgrades.output.per, 0.25)
 end
 
 function ENT:PrintAmount()
-    return math.floor(self:Config().amount * (1 + self:OutputPer() * self:Tier("output")))
+    return math.floor(self:Val(self:Config().amount, 1000) * (1 + self:OutputPer() * self:Tier("output")))
 end
 function ENT:PrintInterval()
     local c = self:Config()
-    return math.max(c.interval - c.upgrades.speed.per * self:Tier("speed"), 10)
+    return math.max(self:Val(c.interval, 120) - self:Val(c.upgrades.speed.per, 15) * self:Tier("speed"), 10)
 end
 function ENT:HeatRise()   -- degrees per second while running
     local c = self:Config()
-    return math.max(c.heat.rise * (1 - c.upgrades.cooling.per * self:Tier("cooling")), 0)
+    return math.max(c.heat.rise * (1 - self:Val(c.upgrades.cooling.per, 0.2) * self:Tier("cooling")), 0)
 end
 function ENT:Volume()
     local c = self:Config()
-    return math.max(1 - c.upgrades.muffler.per * self:Tier("muffler"), 0.3)
+    return math.max(1 - self:Val(c.upgrades.muffler.per, 0.13) * self:Tier("muffler"), 0.3)
+end
+-- What the next tier of an upgrade costs on this printer (nil: maxed)
+function ENT:UpgradeCost(id)
+    local c = self:Config()
+    local def = c.upgrades[id]
+    local base = def and def.cost[self:Tier(id) + 1]
+    if not base then return nil end
+    return math.floor(base * self:Val(c.upgradeCostMult, 1))
+end
+
+-- Most the tray holds (nil: no limit): trayMax if it's set, else trayHours
+-- of what a fully upgraded printer of this kind makes (sh_printers.lua)
+function ENT:TrayMax()
+    local c = self:Config()
+    local fixed = self:Val(c.trayMax, nil)
+    if fixed then return fixed end
+    local hours = self:Val(c.trayHours, nil)
+    return hours and math.floor(RP1942.printerMaxPerHour(self.Kind) * hours) or nil
+end
+function ENT:TrayFull()
+    local max = self:TrayMax()
+    return max ~= nil and self:GetStored() >= max
 end
 
 -- Heat right now, 0-100 (the same sum on server and client)

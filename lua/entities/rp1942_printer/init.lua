@@ -60,6 +60,19 @@ function ENT:SetPower(on)
 end
 
 function ENT:DoPrint()
+    local now = CurTime()
+    -- a full tray: nothing prints until someone collects
+    if self:TrayFull() then
+        self:SetPrintStart(now)
+        self:SetNextPrint(now + self:PrintInterval())
+        if not self.toldFull then
+            self.toldFull = true
+            local owner = self:Getowning_ent()
+            if IsValid(owner) then DarkRP.notify(owner, 1, 7, "Your " .. self.PrintName .. "'s tray is full: it's stopped printing until you collect.") end
+        end
+        return
+    end
+    self.toldFull = nil
     local amount = self:PrintAmount()
     if self:IsBank() then
         local cut = math.floor(amount * RP1942.printerTreasuryShare())
@@ -67,8 +80,8 @@ function ENT:DoPrint()
         self:SetLastTreasury(cut)
         amount = amount - cut
     end
-    self:SetStored(self:GetStored() + amount)
-    local now = CurTime()
+    local max = self:TrayMax()
+    self:SetStored(max and math.min(self:GetStored() + amount, max) or (self:GetStored() + amount))
     self:SetPrintStart(now)
     self:SetNextPrint(now + self:PrintInterval())
     self:EmitSound("ambient/levels/labs/coinslot1.wav", 60, 100, self:Volume())
@@ -80,15 +93,16 @@ function ENT:ReichTakedown(officer, how)
     local c = self:Config()
     local owner = self:Getowning_ent()
     local fine = 0
-    if IsValid(owner) and (c.seizeFine or 0) > 0 then
-        fine = math.min(c.seizeFine, math.max(owner:getDarkRPVar("money") or 0, 0))
+    local seizeFine = self:Val(c.seizeFine, 0)
+    if IsValid(owner) and seizeFine > 0 then
+        fine = math.min(seizeFine, math.max(owner:getDarkRPVar("money") or 0, 0))
         if fine > 0 then
             owner:addMoney(-fine)
             if RP1942.treasuryDeposit then RP1942.treasuryDeposit(fine, "illegal printer fine") end
         end
         DarkRP.notify(owner, 1, 8, "The Reich " .. how .. " your illegal printer. You were fined " .. DarkRP.formatMoney(fine) .. ", paid to the Reich treasury.")
     end
-    local reward = c.seizeReward or 0
+    local reward = self:Val(c.seizeReward, 0)
     if IsValid(officer) then
         if reward > 0 then officer:addMoney(reward) end
         DarkRP.notify(officer, 0, 7, "You " .. how .. " an illegal printer" .. (reward > 0 and (" and earned " .. DarkRP.formatMoney(reward)) or "")
@@ -157,7 +171,7 @@ function ENT:OnPanelPress(ply, id)
         if ply ~= owner then return DarkRP.notify(ply, 1, 4, "Only the owner can upgrade this printer.") end
         local tier = self:Tier(up)
         if tier >= c.tiers then return end
-        local cost = def.cost[tier + 1] or 0
+        local cost = self:UpgradeCost(up) or 0
         if not ply:canAfford(cost) then return DarkRP.notify(ply, 1, 4, "You can't afford that (" .. DarkRP.formatMoney(cost) .. ").") end
         ply:addMoney(-cost)
         self["SetTier" .. up:sub(1, 1):upper() .. up:sub(2)](self, tier + 1)

@@ -18,6 +18,7 @@ hook.Add("OnPlayerChangedTeam", "RP1942_Printers", function(ply, oldTeam, newTea
         if not IsValid(ply) then return end
         if not RP1942.canOwnIllegalPrinter(ply) then
             local list = owned(ply, "rp1942_printer_illegal")
+            for _, p in ipairs(owned(ply, "rp1942_printer_press")) do list[#list + 1] = p end
             for _, p in ipairs(list) do p:Remove() end
             if #list > 0 then DarkRP.notify(ply, 1, 6, "Your illegal printers were dismantled: you can't keep them in this job.") end
         end
@@ -31,7 +32,7 @@ end)
 
 -- Printers can't be pocketed (it would cool them instantly)
 hook.Add("canPocket", "RP1942_Printers", function(_, ent)
-    if IsValid(ent) and (ent:GetClass() == "rp1942_printer_bank" or ent:GetClass() == "rp1942_printer_illegal") then
+    if IsValid(ent) and (ent:GetClass() == "rp1942_printer_bank" or RP1942.IllegalPrinters[ent:GetClass()]) then
         return false, "Printers are too heavy to pocket."
     end
 end)

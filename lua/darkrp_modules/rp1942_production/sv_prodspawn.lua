@@ -44,7 +44,7 @@ end
 local MACHINES = {
     rp1942_oven = true, rp1942_flour = true, rp1942_wine_barrel = true,
     rp1942_factory = true, rp1942_scrap = true, rp1942_oil_rig = true, rp1942_market = true,
-    rp1942_printer_bank = true, rp1942_printer_illegal = true,
+    rp1942_printer_bank = true, rp1942_printer_illegal = true, rp1942_printer_press = true,
     rp1942_dumpster = true,
     rp1942_bank_vault = true,
     rp1942_radio = true,        -- a wireless set (rp1942_radio); saved with the station it's tuned to
@@ -136,7 +136,7 @@ local function finish(ply)
     elseif class == "rp1942_wine_barrel" then
         if ent:GetDoneAt() <= 0 then return DarkRP.notify(ply, 1, 4, "It isn't fermenting. Press START first.") end
         ent:SetDoneAt(CurTime())
-    elseif class == "rp1942_printer_bank" or class == "rp1942_printer_illegal" then
+    elseif class == "rp1942_printer_bank" or class == "rp1942_printer_illegal" or class == "rp1942_printer_press" then
         ent:DoPrint()   -- prints once, right now
     elseif class == "rp1942_factory" then
         if ent:GetState() == ent.STATE_DONE then return DarkRP.notify(ply, 1, 4, "The run is already done: COLLECT it.") end

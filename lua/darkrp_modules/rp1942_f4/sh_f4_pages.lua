@@ -343,10 +343,12 @@ Unit music - Each unit has its own music that plays for you (only you) when you 
 
 # Money printers
 - Banking Printer (Reich Banker only, legal): up to 3. Every print is split with the Reich treasury: 15% when the economy is normal (50), more when it's weak, less when it's strong, so a good economy lets the Reich Banker keep more. A Reich member who destroys a Banking Printer pays R.M. 1,250 for it, into the treasury.
-- Money Printer (illegal): up to 3, for anyone outside the Reich except the Reich Banker. It isn't tied to the economy. The Reich can SEIZE it from its panel, or shoot it, for a reward, and its owner is fined 1,250 R.M., paid to the Reich treasury.
-- Printers start at 1,000 R.M. a print. Money waits in the tray: COLLECT takes it, and anyone can, so guard your printers.
-- They heat up while they run and explode at 100 degrees, taking the money with them. Switch one OFF to let it cool, then back ON. At Cooling tier 5 it stays cool.
-- UPGRADES (5 tiers each, bought by the owner): Output (+40% a tier on the Banking Printer, +35% on the Money Printer), Speed (prints sooner), Cooling (heats slower) and Muffler (quieter, but never silent).
+- Counterfeit Press (illegal): 25,000 R.M., 1 each. The expensive one: 1,000 R.M. a print every 2 minutes, about 220,000 R.M. an hour fully upgraded, and its tray holds 55,000 R.M. Its upgrades cost three times as much. Same rules as the Money Printer, but if the Reich seizes it the fine is 5,000 R.M. (and the reward 2,500 R.M.).
+- Money Printer (illegal): up to 2, for anyone outside the Reich except the Reich Banker. It isn't tied to the economy. The Reich can SEIZE it from its panel, or shoot it, for a reward, and its owner is fined 1,250 R.M., paid to the Reich treasury.
+- Both start at 1,250 R.M. a print every 2 minutes 45 seconds. Fully upgraded, a Banking Printer makes about 150,000 R.M. an hour (before the treasury's share) and a Money Printer about 100,000 R.M. an hour. Money waits in the tray: COLLECT takes it, and anyone can, so guard your printers.
+- The tray holds a quarter of an hour of that: 37,500 R.M. in a Banking Printer, 25,000 R.M. in a Money Printer. When it's full it stops printing until someone collects, so it can't be left running while you're away.
+- They heat up while they run and explode at 100 degrees, taking the money with them. Switch one OFF to let it cool, then back ON. At Cooling tier 5 the Banking Printer stays cool; the Money Printer still heats up, just slowly.
+- UPGRADES (5 tiers each, bought by the owner): Output (+40% a tier on the Banking Printer, +20% on the Money Printer), Speed (prints 15 s sooner a tier), Cooling (heats slower) and Muffler (quieter, but never silent).
 - When you leave the server, everything you own goes with you: props, text screens, printers, machines, padlocks and food with your name on it. Nothing is kept for when you come back.
 - If you join the Reich or become the Reich Banker, your illegal printers are dismantled. Leaving the Reich Banker job returns the Banking Printers.
 

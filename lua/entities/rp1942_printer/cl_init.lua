@@ -62,13 +62,16 @@ function ENT:PaintMain(P, w, h, C)
     surface.DrawRect(x, 96, iw, 1)
 
     -- Tray
-    draw.SimpleText("IN THE TRAY", "RP1942_PanelSmall", x, 110, C.sub)
-    draw.SimpleText(DarkRP.formatMoney(self:GetStored()), "RP1942_PrinterBig", x, 130, C.gold)
+    local trayMax = self:TrayMax()
+    draw.SimpleText(trayMax and ("IN THE TRAY  (HOLDS " .. DarkRP.formatMoney(trayMax) .. ")") or "IN THE TRAY", "RP1942_PanelSmall", x, 110, C.sub)
+    draw.SimpleText(DarkRP.formatMoney(self:GetStored()), "RP1942_PrinterBig", x, 130, self:TrayFull() and C.red or C.gold)
 
     -- Next print and heat
     local interval = self:PrintInterval()
     local left = math.max(self:GetNextPrint() - self:Now(), 0)
-    bar(P, x, 234, iw, 1 - left / interval, off and C.neutral or accent, off and "NEXT PRINT (OFF)" or "NEXT PRINT", RP1942.clock(left), C)
+    local full = self:TrayFull()
+    bar(P, x, 234, iw, full and 0 or (1 - left / interval), (off or full) and C.neutral or accent,
+        full and "TRAY FULL  ·  COLLECT TO KEEP PRINTING" or (off and "NEXT PRINT (OFF)" or "NEXT PRINT"), full and "" or RP1942.clock(left), C)
     local hotCol = heat >= c.heat.warn and C.red or (heat >= 50 and C.amber or C.green)
     bar(P, x, 294, iw, heat / 100, hotCol, off and "TEMPERATURE (COOLING DOWN)" or "TEMPERATURE", math.floor(heat) .. "°", C)
 
@@ -102,7 +105,7 @@ function ENT:PaintMain(P, w, h, C)
         line("You keep", DarkRP.formatMoney(amount - math.floor(amount * share)) .. " a print", C.green)
     else
         line("Per print", DarkRP.formatMoney(amount))
-        line("Fine if the Reich seizes it", DarkRP.formatMoney(c.seizeFine or 0))
+        line("Fine if the Reich seizes it", DarkRP.formatMoney(self:Val(c.seizeFine, 0)))
     end
     line("Prints every", interval .. " s")
 
@@ -132,7 +135,7 @@ function ENT:PaintUpgrades(P, w, h, C)
         local tier = self:Tier(id)
         draw.RoundedBox(6, x, y, iw, 104, C.card)
         draw.SimpleText(def.name, "RP1942_PanelHead", x + 16, y + 12, C.text)
-        local desc = def.desc
+        local desc = self:Val(def.desc, "")
         if id == "output" then   -- the rate differs by printer, so it's filled in here
             desc = "+" .. math.floor(self:OutputPer() * 100 + 0.5) .. "% money per print, per tier"
         end
@@ -141,7 +144,7 @@ function ENT:PaintUpgrades(P, w, h, C)
             draw.RoundedBox(2, x + 16 + (i - 1) * 30, y + 76, 24, 12, i <= tier and (tier >= c.tiers and C.green or C.gold) or C.well)
         end
         local maxed = tier >= c.tiers
-        local label = maxed and "MAXED" or ("BUY  " .. DarkRP.formatMoney(def.cost[tier + 1] or 0))
+        local label = maxed and "MAXED" or ("BUY  " .. DarkRP.formatMoney(self:UpgradeCost(id) or 0))
         P:Button("buy:" .. id, x + iw - 196, y + 26, 180, 52, label, { enabled = mine and not maxed, color = C.button })
         y = y + 114
     end

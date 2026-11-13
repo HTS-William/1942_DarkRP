@@ -17,6 +17,7 @@ local NO_POCKET = {
     rp1942_printer       = "Printers are too heavy to pocket.",
     rp1942_printer_bank  = "Printers are too heavy to pocket.",
     rp1942_printer_illegal = "Printers are too heavy to pocket.",
+    rp1942_printer_press = "Printers are too heavy to pocket.",
     rp1942_bank_vault    = "The vault is far too heavy to pocket.",
     rp1942_dumpster      = "The dumpster is far too heavy to pocket.",
     rp1942_supply_train  = "You can't pocket the supply train.",
